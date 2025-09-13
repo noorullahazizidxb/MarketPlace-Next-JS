@@ -52,30 +52,62 @@ export function Sidebar({
         <aside className="hidden md:flex flex-col gap-3 p-4 border-r border-[hsl(var(--border))] sticky top-0 h-screen bg-[hsl(var(--background))]">
           <div className="relative">
             <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] flex items-center gap-3">
-              <button onClick={() => setProfileOpen((s) => !s)} className="flex items-center gap-3">
-                <Image src={avatar} alt="avatar" width={48} height={48} className="rounded-xl" />
+              <button
+                onClick={() => setProfileOpen((s) => !s)}
+                className="flex items-center gap-3"
+              >
+                <Image
+                  src={avatar}
+                  alt="avatar"
+                  width={48}
+                  height={48}
+                  className="rounded-xl"
+                />
                 <div>
                   <div className="text-sm font-medium line-clamp-1">{name}</div>
-                  <div className="text-xs subtle">{user?.roles?.map((r: any) => r.role).join(", ")}</div>
+                  <div className="text-xs subtle">
+                    {user?.roles?.map((r: any) => r.role).join(", ")}
+                  </div>
                 </div>
               </button>
             </div>
             {profileOpen && (
-              <motion.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} className="absolute left-3 top-[78px] z-[70] w-56 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl">
+              <motion.div
+                initial={{ opacity: 0, y: -6 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="absolute left-3 top-[78px] z-[70] w-56 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl"
+              >
                 <div className="p-2">
-                  <Link href="/profile" className="flex items-center gap-3 px-3 h-10 hover:bg-white/5">
+                  <Link
+                    href="/profile"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
                     <User2 className="size-4" />
                     <span className="text-sm">Profile</span>
                   </Link>
-                  <Link href="/my-listings" className="flex items-center gap-3 px-3 h-10 hover:bg-white/5">
+                  <Link
+                    href="/my-listings"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
                     <LayoutGrid className="size-4" />
                     <span className="text-sm">My listings</span>
                   </Link>
-                  <Link href="/notifications" className="flex items-center gap-3 px-3 h-10 hover:bg-white/5">
+                  <Link
+                    href="/notifications"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
                     <Bell className="size-4" />
                     <span className="text-sm">Notifications</span>
                   </Link>
-                  <button onClick={async () => { await fetch('/api/logout', { method: 'POST' }).catch(()=>{}); window.location.href = '/login'; }} className="flex w-full items-center gap-3 px-3 h-10 hover:bg-white/5 text-left">
+                  <button
+                    onClick={async () => {
+                      await fetch("/api/logout", { method: "POST" }).catch(
+                        () => {}
+                      );
+                      window.location.href = "/login";
+                    }}
+                    className="flex w-full items-center gap-3 px-3 h-10 hover:bg-white/5 text-left"
+                  >
                     <LogOut className="size-4" />
                     <span className="text-sm">Logout</span>
                   </button>
@@ -104,7 +136,11 @@ export function Sidebar({
                   <Icon className="size-4" />
                   <span className="text-sm font-medium">{label}</span>
                   {label === "Settings" && (
-                    <ChevronDown className={`ml-auto transition-transform ${settingsOpen ? "rotate-180" : ""}`} />
+                    <ChevronDown
+                      className={`ml-auto transition-transform ${
+                        settingsOpen ? "rotate-180" : ""
+                      }`}
+                    />
                   )}
                 </div>
                 {label === "Settings" && (
@@ -116,11 +152,17 @@ export function Sidebar({
                         exit={{ height: 0, opacity: 0 }}
                         className="pl-8 pr-3 overflow-hidden"
                       >
-                        <Link href="/settings/themes" className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground">
+                        <Link
+                          href="/settings/themes"
+                          className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                        >
                           <Layers className="size-4" />
                           <span>Configure Themes</span>
                         </Link>
-                        <Link href="/settings/notifications" className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground">
+                        <Link
+                          href="/settings/notifications"
+                          className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                        >
                           <Bell className="size-4" />
                           <span>Notifications</span>
                         </Link>
@@ -152,10 +194,18 @@ export function Sidebar({
             className="absolute left-0 top-0 h-full w-72 bg-[hsl(var(--background))] border-r border-[hsl(var(--border))] shadow-xl p-4"
           >
             <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] mb-3 flex items-center gap-3">
-              <Image src={avatar} alt="avatar" width={40} height={40} className="rounded-lg" />
+              <Image
+                src={avatar}
+                alt="avatar"
+                width={40}
+                height={40}
+                className="rounded-lg"
+              />
               <div>
                 <div className="text-sm font-medium">{name}</div>
-                <div className="text-xs subtle">{user?.roles?.map((r: any) => r.role).join(", ")}</div>
+                <div className="text-xs subtle">
+                  {user?.roles?.map((r: any) => r.role).join(", ")}
+                </div>
               </div>
             </div>
             <nav className="space-y-2">
@@ -183,11 +233,19 @@ export function Sidebar({
                           exit={{ height: 0, opacity: 0 }}
                           className="pl-6 pr-3 overflow-hidden"
                         >
-                          <Link href="/settings/themes" onClick={() => onClose?.()} className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground">
+                          <Link
+                            href="/settings/themes"
+                            onClick={() => onClose?.()}
+                            className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                          >
                             <Layers className="size-4" />
                             <span>Configure Themes</span>
                           </Link>
-                          <Link href="/settings/notifications" onClick={() => onClose?.()} className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground">
+                          <Link
+                            href="/settings/notifications"
+                            onClick={() => onClose?.()}
+                            className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                          >
                             <Bell className="size-4" />
                             <span>Notifications</span>
                           </Link>

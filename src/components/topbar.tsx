@@ -2,8 +2,20 @@
 
 import Image from "next/image";
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { Bell, LogOut, User2, LayoutGrid, Stars, Menu } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  Bell,
+  LogOut,
+  User2,
+  LayoutGrid,
+  Stars,
+  Menu,
+  Home,
+  Info,
+  Phone,
+  List,
+  X,
+} from "lucide-react";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
@@ -11,11 +23,15 @@ import { adminNavItems } from "@/components/admin-nav";
 import { Sidebar } from "@/components/sidebar";
 
 export function Topbar() {
-  const { user, counts } = useAuth();
+  const { user, counts, roles } = useAuth();
   const [open, setOpen] = useState(false);
   const [drawer, setDrawer] = useState(false);
-  const avatar = user?.avatarUrl || "/favicon.svg";
-  const name = user?.fullName || user?.email || "You";
+  const [mobileMenu, setMobileMenu] = useState(false);
+  const avatar =
+    (user as any)?.photo || (user as any)?.avatarUrl || "/favicon.svg";
+  const name =
+    (user as any)?.name || (user as any)?.fullName || user?.email || "You";
+  const canSeeMobileSidebar = roles.includes("ADMIN");
 
   return (
     <header className="sticky top-0 z-50">
@@ -34,51 +50,75 @@ export function Topbar() {
             <span className="font-semibold tracking-tight">Marketplace</span>
           </motion.div>
           <nav className="flex items-center gap-4">
-            {/* Mobile sidebar toggle (only visible on small screens) */}
+            {/* Admin sidebar toggle (only visible on small screens) */}
+            {canSeeMobileSidebar && (
+              <button
+                className="sm:hidden glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+                aria-label="Open admin sidebar"
+                onClick={() => setDrawer(true)}
+              >
+                <Menu className="size-4" />
+              </button>
+            )}
+
+            {/* Mobile menu toggle (visible on small screens) */}
             <button
               className="sm:hidden glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
-              aria-label="Open menu"
-              onClick={() => setDrawer(true)}
+              aria-label="Open mobile menu"
+              onClick={() => setMobileMenu((v) => !v)}
             >
-              <Menu className="size-4" />
-            </button>
-            <Link
-              href="/listings"
-              className="text-sm subtle hover:text-foreground"
-            >
-              Home
-            </Link>
-            <Link
-              href="/about"
-              className="text-sm subtle hover:text-foreground"
-            >
-              About
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm subtle hover:text-foreground"
-            >
-              Contact
-            </Link>
-            <Link
-              href="/my-listings"
-              className="hidden sm:inline-flex text-sm subtle hover:text-foreground transition-colors"
-            >
-              My listings
-            </Link>
-            <Link
-              href="/notifications"
-              aria-label="Notifications"
-              className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
-            >
-              <Bell className="size-4" />
-              {!!counts?.notifications && (
-                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-[10px] text-white grid place-items-center border border-white/30">
-                  {counts.notifications}
-                </span>
+              {mobileMenu ? (
+                <X className="size-4" />
+              ) : (
+                <Menu className="size-4" />
               )}
-            </Link>
-            <ThemeToggle />
+            </button>
+
+            {/* Inline links: hidden on small screens */}
+            <div className="hidden sm:flex items-center gap-3">
+              <Link
+                href="/listings"
+                className="text-sm subtle hover:text-foreground flex items-center gap-2"
+              >
+                <Home className="size-4" />
+                <span>Home</span>
+              </Link>
+              <Link
+                href="/about"
+                className="text-sm subtle hover:text-foreground flex items-center gap-2"
+              >
+                <Info className="size-4" />
+                <span>About</span>
+              </Link>
+              <Link
+                href="/contact"
+                className="text-sm subtle hover:text-foreground flex items-center gap-2"
+              >
+                <Phone className="size-4" />
+                <span>Contact</span>
+              </Link>
+              <Link
+                href="/my-listings"
+                className="hidden md:inline-flex text-sm subtle hover:text-foreground transition-colors items-center gap-2"
+              >
+                <List className="size-4" />
+                <span>My listings</span>
+              </Link>
+              <Link
+                href="/notifications"
+                aria-label="Notifications"
+                className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+              >
+                <Bell className="size-4" />
+                {!!counts?.notifications && (
+                  <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-rose-500 text-[10px] text-white grid place-items-center border border-white/30">
+                    {counts.notifications}
+                  </span>
+                )}
+              </Link>
+              <ThemeToggle />
+            </div>
+
             <div className="relative">
               <button
                 onClick={() => setOpen((v) => !v)}
@@ -102,11 +142,20 @@ export function Topbar() {
                   transition={{ duration: 0.15 }}
                   className="absolute right-0 top-[calc(100%+8px)] z-[70] w-64 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl"
                 >
-                  <div className="p-3 border-b border-white/10">
-                    <p className="text-sm font-medium line-clamp-1">
-                      {user?.name || name}
-                    </p>
-                    <p className="text-xs subtle">{user?.email || ""}</p>
+                  <div className="p-3 border-b border-white/10 flex items-center gap-3">
+                    <Image
+                      src={avatar}
+                      alt="avatar"
+                      width={32}
+                      height={32}
+                      className="rounded-xl"
+                    />
+                    <div>
+                      <p className="text-sm font-medium line-clamp-1">
+                        {(user as any)?.name || name}
+                      </p>
+                      <p className="text-xs subtle">{user?.email || ""}</p>
+                    </div>
                   </div>
                   <div className="py-1">
                     <Link
@@ -152,11 +201,104 @@ export function Topbar() {
         </div>
       </div>
       {/* Mobile off-canvas sidebar using Sidebar component */}
-      <Sidebar
-        isOpen={drawer}
-        onClose={() => setDrawer(false)}
-        showDesktop={false}
-      />
+      {canSeeMobileSidebar && (
+        <Sidebar
+          isOpen={drawer}
+          onClose={() => setDrawer(false)}
+          showDesktop={false}
+        />
+      )}
+
+      <AnimatePresence>
+        {mobileMenu && (
+          <motion.div
+            className="sm:hidden fixed inset-0 z-50"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.18 }}
+            key="topbar-mobile-overlay"
+          >
+            <motion.div
+              className="absolute inset-0 bg-black/40"
+              onClick={() => setMobileMenu(false)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.18 }}
+            />
+
+            <motion.div
+              className="absolute left-0 top-0 h-full w-80 bg-background/95 border-r border-[hsl(var(--border))] p-4"
+              initial={{ x: -300 }}
+              animate={{ x: 0 }}
+              exit={{ x: -300 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-3">
+                  <div className="size-9 rounded-2xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-bold">
+                    M
+                  </div>
+                  <span className="font-semibold">Marketplace</span>
+                </div>
+                <button
+                  className="glass size-8 rounded-xl grid place-items-center"
+                  onClick={() => setMobileMenu(false)}
+                  aria-label="Close menu"
+                >
+                  <X className="size-4" />
+                </button>
+              </div>
+              <nav className="flex flex-col gap-1">
+                <Link
+                  href="/listings"
+                  className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <Home className="size-5" />
+                  <span>Home</span>
+                </Link>
+                <Link
+                  href="/about"
+                  className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <Info className="size-5" />
+                  <span>About</span>
+                </Link>
+                <Link
+                  href="/contact"
+                  className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <Phone className="size-5" />
+                  <span>Contact</span>
+                </Link>
+                <Link
+                  href="/my-listings"
+                  className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <List className="size-5" />
+                  <span>My listings</span>
+                </Link>
+                <Link
+                  href="/notifications"
+                  className="flex items-center gap-3 px-3 py-2 rounded hover:bg-white/5"
+                  onClick={() => setMobileMenu(false)}
+                >
+                  <Bell className="size-5" />
+                  <span>Notifications</span>
+                </Link>
+                <div className="pt-2">
+                  <ThemeToggle />
+                </div>
+              </nav>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
   );
 }

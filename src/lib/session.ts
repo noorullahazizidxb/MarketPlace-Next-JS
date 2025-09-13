@@ -58,7 +58,15 @@ export async function setSession(data: any) {
 const USER_INFO_COOKIE = "user_info";
 export async function setUserInfo(user: any) {
 	try {
-		const minimal = { id: user?.id, name: user?.fullName || user?.name || user?.email, photo: user?.avatarUrl || user?.photo };
+		const minimal = {
+			id: user?.id,
+			email: user?.email ?? null,
+			name: user?.fullName || user?.name || user?.email,
+			photo: user?.photo || user?.avatarUrl || null,
+			roles: Array.isArray(user?.roles)
+				? user.roles.map((r: any) => ({ id: r.id, userId: r.userId, role: r.role }))
+				: [],
+		};
 		const val = await encrypt(minimal);
 		cookies().set(USER_INFO_COOKIE, val, {
 			httpOnly: true,
@@ -70,6 +78,12 @@ export async function setUserInfo(user: any) {
 	} catch (e) {
 		// best-effort
 	}
+}
+
+export async function getUserInfo<T = any>(): Promise<T | null> {
+	const c = cookies().get(USER_INFO_COOKIE)?.value;
+	if (!c) return null;
+	return (await decrypt(c)) as T | null;
 }
 
 export async function getSession<T = any>(): Promise<T | null> {

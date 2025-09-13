@@ -40,6 +40,18 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
     let mounted = true;
     (async () => {
       try {
+        // 1) Try cached theme from localStorage
+        try {
+          const cached = localStorage.getItem("theme.cachedTokens");
+          if (cached) {
+            const tokens = JSON.parse(cached);
+            applyThemeTokens(tokens);
+            localStorage.setItem("theme.source", "cache");
+            return; // don't fetch if cache exists
+          }
+        } catch {}
+
+        // 2) Fetch remote
         const remote = await fetchRemoteThemes();
         const first = Array.isArray(remote) ? remote[0] : undefined;
         const rawTokens = first?.tokens;
@@ -51,13 +63,17 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
             localStorage.setItem("theme.source", "remote");
             const id = first?.id;
             if (id) localStorage.setItem("theme.id", String(id));
+            localStorage.setItem(
+              "theme.cachedTokens",
+              JSON.stringify(normalized)
+            );
           } catch {}
           return;
         }
       } catch (e) {
         // ignore and fallback below
       }
-      // Fallback to local
+      // 3) Fallback to bundled local presets
       try {
         const local = await loadLocalPresets();
         if (local && mounted) {
@@ -65,6 +81,7 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
           try {
             localStorage.setItem("theme.source", "local");
             localStorage.removeItem("theme.id");
+            localStorage.setItem("theme.cachedTokens", JSON.stringify(local));
           } catch {}
         }
       } catch (err) {

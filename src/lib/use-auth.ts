@@ -21,6 +21,7 @@ export function useAuth() {
           if (mounted) setSession(null);
           return;
         }
+  // try read minimal user from user_info cookie via /api/session-info (it returns full user currently)
         // Try richer session endpoint when available; fallback to token-only
         // For now, we just decode user info from a prior redirect (login saves both in cookie)
         const res2 = await fetch("/api/session-info", { cache: "no-store" }).catch(() => null as any);

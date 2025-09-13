@@ -33,11 +33,13 @@ export function FiltersBar() {
 
   const onType = (next: string) => {
     const q = setParam(search, "type", next === type ? null : next);
+    q.delete("page");
     router.push(`${pathname}?${q.toString()}`);
   };
   const onCategory = (id: string) => {
     const isSame = id === categoryId;
     const q = setParam(search, "categoryId", isSame ? null : id);
+    q.delete("page");
     router.push(`${pathname}?${q.toString()}`);
   };
 
