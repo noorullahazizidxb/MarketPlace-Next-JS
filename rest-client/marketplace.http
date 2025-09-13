@@ -1,0 +1,528 @@
+@host = http://localhost:4000/api
+@token = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZkcnRvanAwMDAwdHV3Y2dvMTdoNHRyIiwicm9sZXMiOltdLCJpYXQiOjE3NTc0OTY5NjYsImV4cCI6MTc1ODEwMTc2Nn0.dmE5KlTdGs4kjtw0fHwqb4PmgSv5BAbqXKmCQDzl7xA
+@adminToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjbWZkcnV5aG8wMDAwdHU4OGgxMmg2OGx3Iiwicm9sZXMiOlsiQURNSU4iXSwiaWF0IjoxNzU3NDk5NDk1LCJleHAiOjE3NTgxMDQyOTV9.9VqT6xQwqLs_L6Q4NbRWEVSlE6qElcIBm0juYkqzWOE
+@listingId = cmfdwnrdo0000tur0iubjermu
+@userId = USER_ID
+@notificationId = NOTIFICATION_ID
+@renewTokenId = 1
+@categoryId = 1
+@representativeId = 1
+@roleAssignmentId = 1
+
+### Health
+GET {{host}}/health
+
+### Auth - login
+POST {{host}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "admin@example.com",
+  "password": "password123"
+}
+
+### Register as USER (multipart)
+POST {{host}}/auth/user/register
+
+--file
+Content-Disposition: form-data; name="photo"; filename="photo.jpg"
+Content-Type: image/jpeg
+
+< ./photo.jpg
+
+--file
+Content-Disposition: form-data; name="email"
+
+user1@example.com
+
+--file
+Content-Disposition: form-data; name="password"
+
+password123
+
+--file
+Content-Disposition: form-data; name="phone"
+
++93000000001
+
+--file
+Content-Disposition: form-data; name="firstName"
+
+Noor
+
+--file
+Content-Disposition: form-data; name="lastName"
+
+Azizi
+
+--file
+Content-Disposition: form-data; name="fullName"
+
+Noor Azizi
+
+--file
+Content-Disposition: form-data; name="metadata"
+
+{"preferredLanguage":"en"}
+
+### Register as USER (JSON)
+POST {{host}}/auth/user/register
+Content-Type: application/json
+
+{
+  "email": "user1@example.com",
+  "password": "password123",
+  "phone": "+93000000001",
+  "firstName": "Noor",
+  "lastName": "Azizi",
+  "fullName": "Noor Azizi",
+  "metadata": {"preferredLanguage":"en"}
+}
+
+### Register Representative (multipart)
+POST {{host}}/auth/representative/register
+
+--file
+Content-Disposition: form-data; name="photo"; filename="iphone.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/iphone.jpg
+
+--file
+Content-Disposition: form-data; name="email"
+
+rep1@example.com
+
+--file
+Content-Disposition: form-data; name="password"
+
+password123
+
+--file
+Content-Disposition: form-data; name="phone"
+
++93000000002
+
+--file
+Content-Disposition: form-data; name="firstName"
+
+Rep
+
+--file
+Content-Disposition: form-data; name="lastName"
+
+One
+
+--file
+Content-Disposition: form-data; name="fullName"
+
+Rep One
+
+--file
+Content-Disposition: form-data; name="representativeInfo"
+
+{"region":"Kabul","whatsappNumber":"+93000000002","active":true}
+
+### Register Admin (multipart, requires ADMIN token)
+POST {{host}}/auth/admin/register
+Authorization: Bearer {{adminToken}}
+
+--file
+Content-Disposition: form-data; name="photo"; filename="iphone.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/iphone.jpg
+
+--file
+Content-Disposition: form-data; name="email"
+
+admin2@example.com
+
+--file
+Content-Disposition: form-data; name="password"
+
+password123
+
+--file
+Content-Disposition: form-data; name="phone"
+
++93000000003
+
+--file
+Content-Disposition: form-data; name="firstName"
+
+Admin
+
+--file
+Content-Disposition: form-data; name="lastName"
+
+Two
+
+--file
+Content-Disposition: form-data; name="fullName"
+
+Admin Two
+
+--file
+Content-Disposition: form-data; name="metadata"
+
+{"notes":"seed admin"}
+
+### Admin - stats
+GET {{host}}/admin/stats
+Authorization: Bearer {{adminToken}}
+
+### Listings - create
+POST {{host}}/listings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "2BR Apartment for Rent",
+  "description": "Nice 2 bedroom apartment near the market.",
+  "listingType": "RENT",
+  "price": 200,
+  "currency": "USD",
+  "location": "Kabul",
+  "address": "Street 1, Near Market",
+  "categoryId": 1,
+  "contactVisibility": "SHOW_SELLER",
+  "metadata": { "floor": 3, "furnished": true, "parking": "shared" },
+  "expiresAt": "2025-10-10T00:00:00.000Z",
+  "images": [
+    { "url": "/uploads/listings/1/img1.jpg", "alt": "kitchen view", "position": 0 },
+    { "url": "/uploads/listings/1/img2.jpg", "alt": "living room", "position": 1 }
+  ]
+}
+
+### Listings - get
+GET {{host}}/listings/cmff5cbxv0041tu5c1vf24px8
+
+### Listings - list approved
+GET {{host}}/listings
+
+### Listings - list pending (admin)
+GET {{host}}/listings/pending
+Authorization: Bearer {{adminToken}}
+
+### Listings - approve (admin)
+POST {{host}}/listings/{{listingId}}/approve
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "contactVisibility": "SHOW_SELLER",
+  "notes": "Approved by admin",
+  "approvedAt": "2025-09-10T12:00:00.000Z",
+  "approvedById": "user0@example.com",
+  "meta": { "moderator": "admin@example.com", "reason": "meets guidelines" }
+}
+
+### Listing images - upload (multipart)
+POST {{host}}/listings/{{listingId}}/images
+Authorization: Bearer {{token}}
+
+--file
+Content-Disposition: form-data; name="image"; filename="sample.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/sample.jpg
+
+### Listing images - get
+GET {{host}}/listings/{{listingId}}/images
+
+### User photo upload (multipart)
+POST {{host}}/users/me/photo
+Authorization: Bearer {{token}}
+
+--file
+Content-Disposition: form-data; name="photo"; filename="me.jpg"
+Content-Type: image/jpeg
+
+< ./fixtures/me.jpg
+
+### Update my profile
+PUT {{host}}/users/me
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "firstName": "Noor",
+  "lastName": "Azizi",
+  "fullName": "Noor Azizi",
+  "phone": "+93000000001",
+  "photo": "/uploads/profiles/noor.jpg",
+  "contacts": { "phone": "+93000000001", "whatsapp": "+93000000001" , "preferred": "whatsapp" },
+  "address": { "street": "Street 10", "city": "Kabul", "country": "AF", "unit": "Apt 5" },
+  "metadata": { "language": "en", "timezone": "Asia/Kabul" }
+}
+
+### Renew - issue token
+POST {{host}}/renew/issue
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "listingId": "{{listingId}}"
+}
+
+### Renew - redeem token
+POST {{host}}/renew/redeem
+Content-Type: application/json
+
+{
+  "token": "PASTE_TOKEN_HERE",
+  "redeemedBy": "{{token}}",
+  "clientIp": "127.0.0.1"
+}
+
+### Notifications - send
+POST {{host}}/notifications
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Test Notification",
+  "message": "This is a test",
+  "channel": "WHATSAPP",
+  "targetType": "USER",
+  "recipientUserIds": ["{{userId}}"],
+  "listingId": "{{listingId}}",
+  "meta": { "urgent": true },
+  "triggerEvent": "MANUAL_TEST"
+}
+
+### Roles - assign (admin)
+POST {{host}}/roles/assign
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "userId": "2",
+  "role": "REPRESENTATIVE",
+  "assignedBy": "{{adminToken}}",
+  "metadata": { "region": "Kabul" }
+}
+
+### Roles - list user roles (admin)
+GET {{host}}/roles/user/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+### Roles - list all role assignments (admin)
+GET {{host}}/roles
+Authorization: Bearer {{adminToken}}
+
+### Users - list all users
+GET {{host}}/users
+Authorization: Bearer {{adminToken}}
+
+### Users - get by id
+GET {{host}}/users/{{userId}}
+Authorization: Bearer {{adminToken}}
+
+### Users - update by id
+PUT {{host}}/users/{{userId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "firstName": "Updated",
+  "lastName": "User",
+  "contacts": { "phone": "+93000000009" }
+}
+
+### Users - patch by id
+PATCH {{host}}/users/{{userId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "address": { "city": "Kabul" }
+}
+
+### Notifications - list
+GET {{host}}/notifications
+Authorization: Bearer {{adminToken}}
+
+### Notifications - get by id
+GET {{host}}/notifications/{{notificationId}}
+Authorization: Bearer {{adminToken}}
+
+### Notifications - patch
+PATCH {{host}}/notifications/{{notificationId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "readAt": "2025-09-10T12:00:00.000Z"
+}
+
+### Renew - list tokens
+GET {{host}}/renew/tokens
+Authorization: Bearer {{adminToken}}
+
+### Renew - get token by id
+GET {{host}}/renew/tokens/{{renewTokenId}}
+Authorization: Bearer {{adminToken}}
+
+### Renew - update token
+PUT {{host}}/renew/tokens/{{renewTokenId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "used": true
+}
+
+### Renew - patch token
+PATCH {{host}}/renew/tokens/{{renewTokenId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "expiresAt": "2025-12-31T00:00:00.000Z"
+}
+
+### Renew - delete token
+DELETE {{host}}/renew/tokens/{{renewTokenId}}
+Authorization: Bearer {{adminToken}}
+
+### Categories - list
+GET {{host}}/categories
+
+### Categories - create (admin)
+POST {{host}}/categories
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Apartments",
+  "slug": "apartments",
+  "isActive": true
+}
+
+### Categories - get by id
+GET {{host}}/categories/{{categoryId}}
+
+### Categories - update (admin)
+PUT {{host}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "Updated Apartments"
+}
+
+### Categories - patch (admin)
+PATCH {{host}}/categories/{{categoryId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "isActive": false
+}
+
+### Representatives - list by region
+GET {{host}}/representatives?region=Kabul
+
+### Representatives - get by id
+GET {{host}}/representatives/{{representativeId}}
+
+### Representatives - update
+PUT {{host}}/representatives/{{representativeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "active": true
+}
+
+### Representatives - patch
+PATCH {{host}}/representatives/{{representativeId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "whatsappNumber": "+93000000002"
+}
+
+### Themes - list all themes (admin only)
+GET {{host}}/themes
+Authorization: Bearer {{adminToken}}
+
+### Themes - get default theme (admin only)
+GET {{host}}/themes/1
+Authorization: Bearer {{adminToken}}
+
+### Themes - create (admin)
+POST {{host}}/themes
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "name": "default",
+  "tokens": {
+    "light": { "color": { "primary": "#0d6efd" } },
+    "dark": { "color": { "primary": "#66b2ff" } }
+  },
+  "isActive": true
+}
+
+### Themes - update (admin)
+PUT {{host}}/themes/1
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "tokens": {
+    "light": { "color": { "primary": "#0d6efd", "background": "#ffffff" }, "spacing": { "md": 16 } },
+    "dark": { "color": { "primary": "#66b2ff", "background": "#0b1220" }, "spacing": { "md": 16 } }
+  },
+  "isActive": true
+}
+
+### Listings - update by id
+PUT {{host}}/listings/{{listingId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "title": "Updated title",
+  "price": 250,
+  "currency": "USD"
+}
+
+### Listings - patch by id
+PATCH {{host}}/listings/{{listingId}}
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "status": "APPROVED"
+}
+
+### Roles - get by id (admin)
+GET {{host}}/roles/{{roleAssignmentId}}
+Authorization: Bearer {{adminToken}}
+
+### Roles - update (admin)
+PUT {{host}}/roles/{{roleAssignmentId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "role": "REPRESENTATIVE"
+}
+
+### Roles - patch (admin)
+PATCH {{host}}/roles/{{roleAssignmentId}}
+Authorization: Bearer {{adminToken}}
+Content-Type: application/json
+
+{
+  "role": "USER"
+}
+
+### Roles - delete (admin)
+DELETE {{host}}/roles/{{roleAssignmentId}}
+Authorization: Bearer {{adminToken}}

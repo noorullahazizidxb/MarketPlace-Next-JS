@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: 210 40% 98%;
+  --foreground: 222 47% 11%;
+  --muted: 220 14% 96%;
+  --card: 0 0% 100%;
+  --border: 220 13% 91%;
+  --input: 220 13% 91%;
+  --primary: 222 89% 53%;
+  --primary-foreground: 0 0% 100%;
+  --secondary: 220 14% 96%;
+  --secondary-foreground: 222 47% 11%;
+  --accent: 260 89% 66%;
+  --accent-foreground: 235 100% 95%;
+}
+
+.dark {
+  --background: 222 47% 7%;
+  --foreground: 210 40% 98%;
+  --muted: 217 33% 12%;
+  --card: 222 47% 7%;
+  --border: 215 27% 16%;
+  --input: 215 27% 16%;
+  --primary: 222 89% 66%;
+  --primary-foreground: 222 47% 7%;
+  --secondary: 217 33% 12%;
+  --secondary-foreground: 210 40% 98%;
+  --accent: 260 89% 66%;
+  --accent-foreground: 235 100% 95%;
+}
+
+html, body {
+  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+}
+
+.glass {
+  @apply bg-white/10 dark:bg-white/5 backdrop-blur-md shadow-glass border border-white/10;
+}
+
+.neuo {
+  box-shadow: 9px 9px 16px rgba(0,0,0,0.25), -9px -9px 16px rgba(255,255,255,0.03);
+}
+
+@layer base {
+  * { @apply border-border; }
+  body { @apply min-h-screen antialiased; }
+}
+
+@layer components {
+  .container-padded { @apply container px-4 md:px-6; }
+  .card {
+    @apply glass rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5;
+  }
+  .heading-xl { @apply text-3xl md:text-4xl font-extrabold tracking-tight; }
+  .subtle { @apply text-sm text-foreground/70; }
+}
