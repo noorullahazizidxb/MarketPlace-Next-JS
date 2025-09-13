@@ -51,6 +51,27 @@ const config: Config = {
       transitionTimingFunction: {
         premium: "cubic-bezier(0.16, 1, 0.3, 1)",
       },
+      keyframes: {
+        aurora: {
+          "0%": { transform: "translate3d(0,0,0) scale(1)" },
+          "50%": { transform: "translate3d(10%, -10%, 0) scale(1.05)" },
+          "100%": { transform: "translate3d(0,0,0) scale(1)" },
+        },
+        float: {
+          "0%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-6px)" },
+          "100%": { transform: "translateY(0)" },
+        },
+        shimmer: {
+          "0%": { backgroundPosition: "0% 50%" },
+          "100%": { backgroundPosition: "200% 50%" },
+        },
+      },
+      animation: {
+        aurora: "aurora 12s ease-in-out infinite",
+        float: "float 6s ease-in-out infinite",
+        shimmer: "shimmer 2.5s linear infinite",
+      },
     },
   },
   plugins: [],

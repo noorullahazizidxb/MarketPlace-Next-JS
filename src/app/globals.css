@@ -3,33 +3,63 @@
 @tailwind utilities;
 
 :root {
-  --background: 210 40% 98%;
-  --foreground: 222 47% 11%;
-  --muted: 220 14% 96%;
-  --card: 0 0% 100%;
-  --border: 220 13% 91%;
-  --input: 220 13% 91%;
-  --primary: 222 89% 53%;
-  --primary-foreground: 0 0% 100%;
-  --secondary: 220 14% 96%;
-  --secondary-foreground: 222 47% 11%;
-  --accent: 260 89% 66%;
-  --accent-foreground: 235 100% 95%;
+  /* Default LIGHT prefixed tokens (local neon fallback) */
+  --light-background: 195 100% 98%;   /* very pale cyan */
+  --light-foreground: 220 95% 8%;     /* deep navy */
+  --light-muted: 195 100% 92%;        /* pale cyan panels */
+  --light-card: 195 100% 100%;
+  --light-border: 200 90% 85%;        /* soft cyan border */
+  --light-input: 200 90% 85%;
+  --light-primary: 180 100% 40%;      /* bright teal */
+  --light-primary-foreground: 0 0% 100%;
+  --light-secondary: 295 90% 55%;     /* vivid magenta */
+  --light-secondary-foreground: 0 0% 98%;
+  --light-accent: 45 100% 50%;        /* neon yellow accent */
+  --light-accent-foreground: 220 95% 8%;
+
+  /* Map active (unprefixed) vars to LIGHT prefixed ones */
+  --background: var(--light-background);
+  --foreground: var(--light-foreground);
+  --muted: var(--light-muted);
+  --card: var(--light-card);
+  --border: var(--light-border);
+  --input: var(--light-input);
+  --primary: var(--light-primary);
+  --primary-foreground: var(--light-primary-foreground);
+  --secondary: var(--light-secondary);
+  --secondary-foreground: var(--light-secondary-foreground);
+  --accent: var(--light-accent);
+  --accent-foreground: var(--light-accent-foreground);
 }
 
-.dark {
-  --background: 222 47% 7%;
-  --foreground: 210 40% 98%;
-  --muted: 217 33% 12%;
-  --card: 222 47% 7%;
-  --border: 215 27% 16%;
-  --input: 215 27% 16%;
-  --primary: 222 89% 66%;
-  --primary-foreground: 222 47% 7%;
-  --secondary: 217 33% 12%;
-  --secondary-foreground: 210 40% 98%;
-  --accent: 260 89% 66%;
-  --accent-foreground: 235 100% 95%;
+.dark, html[data-theme="dark"] {
+  /* Default DARK prefixed tokens (local neon fallback) */
+  --dark-background: 260 80% 6%;     /* deep purple */
+  --dark-foreground: 45 100% 95%;    /* pale neon yellow text */
+  --dark-muted: 260 80% 12%;         /* dark purple panels */
+  --dark-card: 260 80% 8%;
+  --dark-border: 260 70% 18%;
+  --dark-input: 260 70% 18%;
+  --dark-primary: 180 100% 60%;      /* bright teal on dark */
+  --dark-primary-foreground: 260 80% 6%;
+  --dark-secondary: 295 90% 65%;
+  --dark-secondary-foreground: 260 80% 6%;
+  --dark-accent: 45 100% 60%;
+  --dark-accent-foreground: 260 80% 6%;
+
+  /* Map active (unprefixed) vars to DARK prefixed ones */
+  --background: var(--dark-background);
+  --foreground: var(--dark-foreground);
+  --muted: var(--dark-muted);
+  --card: var(--dark-card);
+  --border: var(--dark-border);
+  --input: var(--dark-input);
+  --primary: var(--dark-primary);
+  --primary-foreground: var(--dark-primary-foreground);
+  --secondary: var(--dark-secondary);
+  --secondary-foreground: var(--dark-secondary-foreground);
+  --accent: var(--dark-accent);
+  --accent-foreground: var(--dark-accent-foreground);
 }
 
 html, body {
@@ -37,7 +67,8 @@ html, body {
 }
 
 .glass {
-  @apply bg-white/10 dark:bg-white/5 backdrop-blur-md shadow-glass border border-white/10;
+  /* tone glass to be subtler like nextjs panels */
+  @apply bg-white/60 dark:bg-white/5 backdrop-blur-md shadow-glass border border-[hsl(var(--border))]/60 dark:border-white/10;
 }
 
 .neuo {
@@ -52,8 +83,18 @@ html, body {
 @layer components {
   .container-padded { @apply container px-4 md:px-6; }
   .card {
-    @apply glass rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5;
+    @apply rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5 bg-[hsl(var(--card))] border border-[hsl(var(--border))];
   }
   .heading-xl { @apply text-3xl md:text-4xl font-extrabold tracking-tight; }
   .subtle { @apply text-sm text-foreground/70; }
+  .particles::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
+    pointer-events: none;
+  }
 }

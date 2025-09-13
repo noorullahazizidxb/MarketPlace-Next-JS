@@ -1,9 +1,10 @@
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ThemeProvider } from "@/components/theme-provider";
-import { Navbar } from "@/components/navbar";
-import { Sidebar } from "@/components/sidebar";
-import { PageTransition } from "@/components/page-transition";
+import { SkipLink } from "@/components/skip-link";
+import { AnimatedBg } from "@/components/animated-bg";
+import { QueryProvider } from "@/components/query-provider";
+import { AppShell } from "@/components/app-shell";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,15 +25,11 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-          <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_1fr]">
-            <Sidebar />
-            <div className="flex flex-col min-h-screen">
-              <Navbar />
-              <main className="flex-1 container-padded py-6">
-                <PageTransition>{children}</PageTransition>
-              </main>
-            </div>
-          </div>
+          <QueryProvider>
+            <SkipLink />
+            <AnimatedBg />
+            <AppShell>{children}</AppShell>
+          </QueryProvider>
         </ThemeProvider>
       </body>
     </html>
