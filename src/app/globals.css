@@ -64,6 +64,8 @@
 
 html, body {
   @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
+  font-family: var(--font-family, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial);
+  line-height: var(--line-height-normal, 1.4);
 }
 
 .glass {
@@ -83,7 +85,14 @@ html, body {
 @layer components {
   .container-padded { @apply container px-4 md:px-6; }
   .card {
-    @apply rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5 bg-[hsl(var(--card))] border border-[hsl(var(--border))];
+    @apply rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5;
+    background-color: hsl(var(--card-bg, var(--card)));
+    color: hsl(var(--card-fg, var(--foreground)));
+    border-color: hsl(var(--card-border, var(--border)));
+    border-width: var(--card-border-width, var(--border-width-regular, 1px));
+    border-style: solid;
+    border-radius: var(--radius-card, var(--radius-lg, 1rem));
+    box-shadow: var(--card-shadow, var(--shadow-md, none));
   }
   .heading-xl { @apply text-3xl md:text-4xl font-extrabold tracking-tight; }
   .subtle { @apply text-sm text-foreground/70; }
@@ -96,5 +105,19 @@ html, body {
   -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
   mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
     pointer-events: none;
+  }
+
+  /* Navbar helper class to consume component variables */
+  .app-navbar {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-index-navbar, var(--z-index-base, 40));
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+    background-color: hsl(var(--navbar-bg, var(--background)) / 0.92);
+    border-bottom: solid var(--navbar-border-width, var(--border-width-regular, 1px)) hsl(var(--navbar-border, var(--border)));
+    color: hsl(var(--navbar-fg, var(--foreground)));
+    height: var(--navbar-height, 4rem);
+    box-shadow: var(--navbar-shadow, var(--shadow-none, none));
   }
 }

@@ -154,14 +154,14 @@ export function Sidebar({
                       >
                         <Link
                           href="/settings/themes"
-                          className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                          className="flex items-center gap-3 h-10 text-sm"
                         >
                           <Layers className="size-4" />
                           <span>Configure Themes</span>
                         </Link>
                         <Link
                           href="/settings/notifications"
-                          className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                          className="flex items-center gap-3 h-10 text-sm"
                         >
                           <Bell className="size-4" />
                           <span>Notifications</span>
@@ -236,7 +236,7 @@ export function Sidebar({
                           <Link
                             href="/settings/themes"
                             onClick={() => onClose?.()}
-                            className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                            className="flex items-center gap-3 h-10 text-sm"
                           >
                             <Layers className="size-4" />
                             <span>Configure Themes</span>
@@ -244,7 +244,7 @@ export function Sidebar({
                           <Link
                             href="/settings/notifications"
                             onClick={() => onClose?.()}
-                            className="flex items-center gap-3 h-10 text-sm subtle hover:text-foreground"
+                            className="flex items-center gap-3 h-10 text-sm"
                           >
                             <Bell className="size-4" />
                             <span>Notifications</span>

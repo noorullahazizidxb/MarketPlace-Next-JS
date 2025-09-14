@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
 import { useAuth } from "@/lib/use-auth";
+import { Button } from "@/components/ui/button";
 
 export function Navbar() {
   const [drawer, setDrawer] = useState(false);
@@ -23,8 +24,8 @@ export function Navbar() {
 
   return (
     <>
-      <header className="sticky top-0 z-40 backdrop-blur bg-background/70 border-b border-[hsl(var(--border))]">
-        <div className="container-padded h-16 flex items-center justify-between">
+      <header className="app-navbar">
+        <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
           <div className="group flex items-center gap-3">
             {canSeeMobileSidebar && (
               <button
@@ -40,7 +41,35 @@ export function Navbar() {
             </div>
             <span className="font-semibold">Marketplace</span>
           </div>
-          <div className="flex items-center gap-3">
+          <nav className="hidden sm:flex items-center justify-center gap-4">
+            <a href="/listings" className="text-sm flex items-center gap-2">
+              <Home className="size-4" />
+              <span>Home</span>
+            </a>
+            <a href="/about" className="text-sm flex items-center gap-2">
+              <Info className="size-4" />
+              <span>About</span>
+            </a>
+            <a href="/contact" className="text-sm flex items-center gap-2">
+              <Phone className="size-4" />
+              <span>Contact</span>
+            </a>
+            <a
+              href="/my-listings"
+              className="hidden md:inline-flex text-sm transition-colors items-center gap-2"
+            >
+              <List className="size-4" />
+              <span>My listings</span>
+            </a>
+            <a
+              href="/notifications"
+              aria-label="Notifications"
+              className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+            >
+              <BellIcon className="size-4" />
+            </a>
+          </nav>
+          <div className="flex items-center justify-end gap-3">
             <div className="hidden md:flex items-center gap-2 glass rounded-2xl px-3 h-10 transition-colors hover:bg-white/15">
               <Search className="size-4 text-foreground/60" />
               <input
@@ -48,44 +77,10 @@ export function Navbar() {
                 placeholder="Search"
               />
             </div>
-            <nav className="hidden sm:flex items-center gap-3">
-              <a
-                href="/listings"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
-              >
-                <Home className="size-4" />
-                <span>Home</span>
-              </a>
-              <a
-                href="/about"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
-              >
-                <Info className="size-4" />
-                <span>About</span>
-              </a>
-              <a
-                href="/contact"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
-              >
-                <Phone className="size-4" />
-                <span>Contact</span>
-              </a>
-              <a
-                href="/my-listings"
-                className="hidden md:inline-flex text-sm subtle hover:text-foreground transition-colors items-center gap-2"
-              >
-                <List className="size-4" />
-                <span>My listings</span>
-              </a>
-              <a
-                href="/notifications"
-                aria-label="Notifications"
-                className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
-              >
-                <BellIcon className="size-4" />
-              </a>
-            </nav>
             <ThemeToggle />
+            <Button asChild variant="primary">
+              <a href="/sign-in">Sign In</a>
+            </Button>
 
             {/* Mobile menu button (non-admin mobile sidebar) */}
             <button
@@ -193,6 +188,9 @@ export function Navbar() {
                   <BellIcon className="size-5" />
                   <span>Notifications</span>
                 </a>
+                <Button asChild variant="primary" className="mt-2">
+                  <a href="/sign-in">Sign In</a>
+                </Button>
               </nav>
             </motion.div>
           </motion.div>

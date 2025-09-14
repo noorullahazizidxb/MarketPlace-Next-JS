@@ -34,12 +34,12 @@ export function Topbar() {
   const canSeeMobileSidebar = roles.includes("ADMIN");
 
   return (
-    <header className="sticky top-0 z-50">
+    <header className="app-navbar">
       <div className="relative overflow-visible">
         <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
           <div className="absolute -inset-x-20 -top-32 h-56 bg-gradient-to-r from-primary/30 via-fuchsia-500/20 to-cyan-400/30 blur-3xl" />
         </div>
-        <div className="container-padded h-16 flex items-center justify-between backdrop-blur-xl bg-background/70 border-b border-[hsl(var(--border))] rounded-b-2xl">
+        <div className="container-padded h-16 flex items-center justify-between rounded-b-2xl">
           <motion.div
             whileHover={{ y: -2 }}
             className="flex items-center gap-2"
@@ -78,28 +78,22 @@ export function Topbar() {
             <div className="hidden sm:flex items-center gap-3">
               <Link
                 href="/listings"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
+                className="text-sm flex items-center gap-2"
               >
                 <Home className="size-4" />
                 <span>Home</span>
               </Link>
-              <Link
-                href="/about"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
-              >
+              <Link href="/about" className="text-sm flex items-center gap-2">
                 <Info className="size-4" />
                 <span>About</span>
               </Link>
-              <Link
-                href="/contact"
-                className="text-sm subtle hover:text-foreground flex items-center gap-2"
-              >
+              <Link href="/contact" className="text-sm flex items-center gap-2">
                 <Phone className="size-4" />
                 <span>Contact</span>
               </Link>
               <Link
                 href="/my-listings"
-                className="hidden md:inline-flex text-sm subtle hover:text-foreground transition-colors items-center gap-2"
+                className="hidden md:inline-flex text-sm transition-colors items-center gap-2"
               >
                 <List className="size-4" />
                 <span>My listings</span>
