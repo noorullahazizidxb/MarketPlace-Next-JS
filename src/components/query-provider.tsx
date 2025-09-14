@@ -47,7 +47,7 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
             const tokens = JSON.parse(cached);
             applyThemeTokens(tokens);
             localStorage.setItem("theme.source", "cache");
-            return; // don't fetch if cache exists
+            // continue to fetch remote to refresh cache
           }
         } catch {}
 
