@@ -1,13 +1,15 @@
 "use client";
-import { useState } from "react";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { MobileMenu } from "@/components/mobile-menu";
 import { useAuth } from "@/lib/use-auth";
+import { useUIStore } from "@/store/ui.store";
 
 export function Navbar() {
-  const [mobileOpen, setMobileOpen] = useState(false);
+  const mobileOpen = useUIStore((s) => s.mobileMenuOpen);
+  const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
+  const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
   const { roles } = useAuth();
   const canSeeMobileSidebar = roles.includes("ADMIN");
 
@@ -18,7 +20,7 @@ export function Navbar() {
           <div className="flex items-center gap-3">
             <button
               className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5"
-              onClick={() => setMobileOpen(true)}
+              onClick={toggleMobileMenu}
               aria-label="Open menu"
             >
               <Menu className="size-5" />
@@ -49,7 +51,7 @@ export function Navbar() {
       </header>
       <MobileMenu
         isOpen={mobileOpen}
-        onClose={() => setMobileOpen(false)}
+        onClose={closeMobileMenu}
         items={[
           { href: "/", label: "Dashboard" },
           { href: "/listings", label: "Listings" },

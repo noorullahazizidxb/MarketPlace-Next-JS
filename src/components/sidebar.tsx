@@ -54,7 +54,7 @@ export function Sidebar({
             <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] flex items-center gap-3">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
-                className="flex items-center hover:bg-white gap-3"
+                className="flex items-center bg-transparent hover:bg-foreground/5 gap-3"
               >
                 <Image
                   src={avatar}

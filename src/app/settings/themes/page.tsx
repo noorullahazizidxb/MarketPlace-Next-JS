@@ -1,5 +1,6 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
+import { useThemeStore } from "@/store/theme.store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "@/lib/axiosClient";
 import {
@@ -28,6 +29,9 @@ const toCssString = (v: any): string => {
 const wrapCss = (v: string) => ({ css: v });
 
 export default function ThemeSettingsPage() {
+  const setTokensStore = useThemeStore((s) => s.setTokens);
+  const setScalesStore = useThemeStore((s) => s.setScales);
+  const setComponentsStore = useThemeStore((s) => s.setComponents);
   const [tokens, setTokens] = useState<ThemeTokensShape | null>(null);
   const [scales, setScales] = useState<ScalesShape | null>(null);
   const [loading, setLoading] = useState(true);
@@ -100,6 +104,11 @@ export default function ThemeSettingsPage() {
     if (tokens) applyThemeTokens(tokens);
     if (scales) applyThemeScales(scales);
     if (components) applyThemeComponents(components);
+    // keep store in sync for global access
+    setTokensStore(tokens);
+    setScalesStore(scales);
+    setComponentsStore(components);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tokens, scales, components]);
 
   const tokenKeys = useMemo(() => {

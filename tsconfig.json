@@ -25,6 +25,9 @@
       ],
       "@/lib/*": [
         "./src/lib/*"
+      ],
+      "@/store/*": [
+        "./src/store/*"
       ]
     },
     "plugins": [

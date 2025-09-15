@@ -1,41 +1,54 @@
 "use client";
-
-import { useEffect, useMemo, useState } from "react";
-
-type Session = {
-  token: string;
-  user: any;
-};
+import { useEffect, useMemo } from "react";
+import { useAuthStore } from "@/store/auth.store";
 
 export function useAuth() {
-  const [session, setSession] = useState<Session | null>(null);
+  const session = useAuthStore((s) => s.session);
+  const setSession = useAuthStore((s) => s.setSession);
+  const setToken = useAuthStore((s) => s.setToken);
+  const setUser = useAuthStore((s) => s.setUser);
+
+  // local loading flag while we attempt to hydrate session
+  const [loading, setLoading] = (function useLocalLoading() {
+    // simple closure hook to avoid adding to exported API surface beyond this file
+    // we use a real React state below by creating a small component-level hook pattern
+    // but since this file is a hook we can use useState inline
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const { useState } = require("react");
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    return useState(true);
+  })();
 
   useEffect(() => {
     let mounted = true;
     const load = async () => {
       try {
-        // session token only endpoint; store token for auth header and session details via another endpoint if needed
         const res = await fetch("/api/session-token", { cache: "no-store" });
         const { token } = await res.json();
         if (!token) {
           if (mounted) setSession(null);
+          if (mounted) setLoading(false);
           return;
         }
-  // try read minimal user from user_info cookie via /api/session-info (it returns full user currently)
-        // Try richer session endpoint when available; fallback to token-only
-        // For now, we just decode user info from a prior redirect (login saves both in cookie)
         const res2 = await fetch("/api/session-info", { cache: "no-store" }).catch(() => null as any);
         if (res2?.ok) {
           const j = await res2.json();
           if (mounted) setSession({ token, user: j.user });
+          if (mounted) setLoading(false);
         } else if (mounted) setSession({ token, user: null });
+        if (mounted) setLoading(false);
       } catch {
         if (mounted) setSession(null);
+        if (mounted) setLoading(false);
       }
     };
-    load();
-    return () => { mounted = false; };
-  }, []);
+    // only load once, don't clobber if already set (e.g., after sign-in)
+    if (!session) load();
+    return () => {
+      mounted = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // intentionally empty deps to avoid refetching
 
   const roles: string[] = useMemo(() => session?.user?.roles?.map((r: any) => r.role) ?? [], [session]);
   const isAdmin = roles.includes("ADMIN");
@@ -51,5 +64,5 @@ export function useAuth() {
     };
   }, [session]);
 
-  return { session, token: session?.token ?? null, user: session?.user ?? null, roles, isAdmin, counts } as const;
+  return { session, token: session?.token ?? null, user: session?.user ?? null, roles, isAdmin, counts, loading } as const;
 }

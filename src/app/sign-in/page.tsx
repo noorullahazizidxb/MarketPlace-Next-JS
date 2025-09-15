@@ -1,26 +1,87 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Lock, LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/lib/use-auth";
+import { useRouter } from "next/navigation";
+import { useAuthStore } from "@/store/auth.store";
+import { setCachedToken } from "@/lib/axiosClient";
+import { useApiMutation } from "@/lib/api-hooks";
+import { useNotificationsStore } from "@/store/notifications.store";
+import { useListingsStore } from "@/store/listings.store";
 
 type FormData = { email: string; password: string };
 
 export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit } = useForm<FormData>();
+  const { user } = useAuth();
+  const router = useRouter();
+  const setSession = useAuthStore((s) => s.setSession);
+  const setNotifications = useNotificationsStore((s) => s.set);
+  const setListings = useListingsStore((s) => s.set);
+  const loginMutation = useApiMutation<{ token: string; user: any }>(
+    "post",
+    "/auth/login"
+  );
+
+  // If already signed in, redirect to /listings
+  useEffect(() => {
+    if (user) {
+      router.replace("/listings");
+    }
+  }, [user, router]);
 
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
-      // Post to sign-in endpoint; keep current flow elsewhere
-      await fetch("/api/auth/signin", {
+      // 1) Call backend login via api-hooks middleware and unwrap envelope
+      const res = await loginMutation.mutateAsync(data);
+      const token = res.token;
+      const userObj = res.user;
+      if (!token || !userObj) throw new Error("Invalid login response");
+
+      // 2) Persist on client store immediately for snappy UI
+      setSession({ token, user: userObj });
+      // make axios send Authorization header right away
+      setCachedToken(token);
+
+      // 2b) Confirm store contains session (read directly from zustand)
+      const stored = useAuthStore.getState().session;
+      if (!stored || stored.token !== token) {
+        throw new Error("Failed to persist session locally");
+      }
+
+      // 3) Hydrate local stores from returned user payload (notifications, listings)
+      try {
+        const u = userObj || {};
+        if (Array.isArray(u.notifications) && u.notifications.length) {
+          setNotifications(
+            u.notifications.map((it: any) => ({
+              id: it.id ?? String(Math.random()),
+              title: it.title ?? it.type ?? "Notification",
+              read: !!it.read,
+              createdAt: it.createdAt,
+            }))
+          );
+        }
+        if (Array.isArray(u.listings) && u.listings.length) {
+          setListings(u.listings);
+        }
+      } catch {}
+
+      // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
+      await fetch("/api/login-session", {
         method: "POST",
-        body: JSON.stringify(data),
-      });
-      window.location.replace("/listings");
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, user: userObj }),
+      }).catch(() => null);
+
+      // 5) Go to the listings dashboard
+      router.replace("/listings");
     } catch (e: any) {
       setError(e?.message || "Sign in failed");
     }

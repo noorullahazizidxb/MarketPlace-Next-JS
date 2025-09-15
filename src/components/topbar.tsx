@@ -24,11 +24,14 @@ import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { adminNavItems } from "@/components/admin-nav";
 import { MobileMenu } from "@/components/mobile-menu";
+import { useUIStore } from "@/store/ui.store";
 
 export function Topbar() {
   const { user, counts, roles } = useAuth();
   const [open, setOpen] = useState(false);
-  const [mobileMenu, setMobileMenu] = useState(false);
+  const mobileMenu = useUIStore((s) => s.mobileMenuOpen);
+  const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
+  const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
   const avatar =
     (user as any)?.photo || (user as any)?.avatarUrl || "/favicon.svg";
   const name =
@@ -242,7 +245,7 @@ export function Topbar() {
               <button
                 className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 ml-1 order-last"
                 aria-label="Open mobile menu"
-                onClick={() => setMobileMenu((v) => !v)}
+                onClick={toggleMobileMenu}
               >
                 {mobileMenu ? (
                   <X className="size-4" />
@@ -256,7 +259,7 @@ export function Topbar() {
       </div>
       <MobileMenu
         isOpen={mobileMenu}
-        onClose={() => setMobileMenu(false)}
+        onClose={closeMobileMenu}
         items={[
           { href: "/listings", label: "Home", Icon: Home },
           { href: "/about", label: "About", Icon: Info },

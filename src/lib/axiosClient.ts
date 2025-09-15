@@ -9,6 +9,9 @@ export const axiosClient = axios.create({
 
 // Attach token by calling a tiny local endpoint that reads the HttpOnly session cookie.
 let cachedToken: string | null = null;
+export function setCachedToken(token: string | null) {
+  cachedToken = token;
+}
 axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
     if (typeof window !== "undefined") {

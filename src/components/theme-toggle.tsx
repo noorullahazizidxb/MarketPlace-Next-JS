@@ -1,8 +1,8 @@
 "use client";
-import { useTheme } from "next-themes";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useEffect, useState } from "react";
+import { useThemeStore } from "@/store/theme.store";
 
 type Props = {
   iconOnly?: boolean;
@@ -10,11 +10,11 @@ type Props = {
 };
 
 export function ThemeToggle({ iconOnly = false, className }: Props) {
-  const { theme, setTheme, resolvedTheme } = useTheme();
+  const mode = useThemeStore((s) => s.mode);
+  const setMode = useThemeStore((s) => s.setMode);
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
-
-  const isDark = (resolvedTheme ?? theme) === "dark";
+  const isDark = mode === "dark";
 
   if (!mounted) {
     if (iconOnly) {
@@ -30,7 +30,7 @@ export function ThemeToggle({ iconOnly = false, className }: Props) {
     return (
       <button
         aria-label="Toggle theme"
-        onClick={() => setTheme(isDark ? "light" : "dark")}
+        onClick={() => setMode(isDark ? "light" : "dark")}
         className={className ? `${base} ${className}` : base}
       >
         {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
@@ -42,7 +42,7 @@ export function ThemeToggle({ iconOnly = false, className }: Props) {
     <Button
       variant="ghost"
       aria-label="Toggle theme"
-      onClick={() => setTheme(isDark ? "light" : "dark")}
+      onClick={() => setMode(isDark ? "light" : "dark")}
       LeftIcon={isDark ? Sun : Moon}
     >
       {isDark ? "Light" : "Dark"}
