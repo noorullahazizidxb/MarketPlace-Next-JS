@@ -54,7 +54,7 @@ export function Sidebar({
             <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] flex items-center gap-3">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
-                className="flex items-center gap-3"
+                className="flex items-center hover:bg-white gap-3"
               >
                 <Image
                   src={avatar}
@@ -104,7 +104,7 @@ export function Sidebar({
                       await fetch("/api/logout", { method: "POST" }).catch(
                         () => {}
                       );
-                      window.location.href = "/login";
+                      window.location.href = "/sign-in";
                     }}
                     className="flex w-full items-center gap-3 px-3 h-10 hover:bg-white/5 text-left"
                   >
@@ -118,31 +118,40 @@ export function Sidebar({
           <nav className="space-y-2">
             {items.map(({ href, label, Icon }) => (
               <div key={href}>
-                <div
-                  onClick={() => {
-                    if (label === "Settings") {
-                      setSettingsOpen((v) => !v);
-                    } else {
-                      onClose?.();
+                {label === "Settings" ? (
+                  <div
+                    onClick={() => setSettingsOpen((v) => !v)}
+                    className={
+                      "flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer " +
+                      (pathname === href
+                        ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
+                        : "")
                     }
-                  }}
-                  className={
-                    "flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer " +
-                    (pathname === href
-                      ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
-                      : "")
-                  }
-                >
-                  <Icon className="size-4" />
-                  <span className="text-sm font-medium">{label}</span>
-                  {label === "Settings" && (
+                  >
+                    <Icon className="size-4" />
+                    <span className="text-sm font-medium">{label}</span>
                     <ChevronDown
                       className={`ml-auto transition-transform ${
                         settingsOpen ? "rotate-180" : ""
                       }`}
                     />
-                  )}
-                </div>
+                  </div>
+                ) : (
+                  <Link
+                    href={href}
+                    onClick={() => onClose?.()}
+                    className={
+                      "flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] " +
+                      (pathname === href
+                        ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
+                        : "")
+                    }
+                  >
+                    <Icon className="size-4" />
+                    <span className="text-sm font-medium">{label}</span>
+                  </Link>
+                )}
+
                 {label === "Settings" && (
                   <AnimatePresence>
                     {settingsOpen && (
@@ -154,6 +163,7 @@ export function Sidebar({
                       >
                         <Link
                           href="/settings/themes"
+                          onClick={() => onClose?.()}
                           className="flex items-center gap-3 h-10 text-sm"
                         >
                           <Layers className="size-4" />
@@ -161,6 +171,7 @@ export function Sidebar({
                         </Link>
                         <Link
                           href="/settings/notifications"
+                          onClick={() => onClose?.()}
                           className="flex items-center gap-3 h-10 text-sm"
                         >
                           <Bell className="size-4" />
@@ -211,19 +222,24 @@ export function Sidebar({
             <nav className="space-y-2">
               {items.map(({ href, label, Icon }) => (
                 <div key={href}>
-                  <div
-                    onClick={() => {
-                      if (label === "Settings") {
-                        setSettingsOpen((v) => !v);
-                      } else {
-                        onClose?.();
-                      }
-                    }}
-                    className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer"
-                  >
-                    <Icon className="size-4" />
-                    <span className="text-sm font-medium">{label}</span>
-                  </div>
+                  {label === "Settings" ? (
+                    <div
+                      onClick={() => setSettingsOpen((v) => !v)}
+                      className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer"
+                    >
+                      <Icon className="size-4" />
+                      <span className="text-sm font-medium">{label}</span>
+                    </div>
+                  ) : (
+                    <Link
+                      href={href}
+                      onClick={() => onClose?.()}
+                      className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer"
+                    >
+                      <Icon className="size-4" />
+                      <span className="text-sm font-medium">{label}</span>
+                    </Link>
+                  )}
                   {label === "Settings" && (
                     <AnimatePresence>
                       {settingsOpen && (

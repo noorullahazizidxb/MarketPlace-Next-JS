@@ -1,71 +1,119 @@
 "use client";
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
 import Link from "next/link";
+import { Mail, Lock, LogIn } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useForm } from "react-hook-form";
+import { Input } from "@/components/ui/input";
+
+type FormData = { email: string; password: string };
 
 export default function SignInPage() {
+  const [error, setError] = useState<string | null>(null);
+  const { register, handleSubmit } = useForm<FormData>();
+
+  const onSubmit = async (data: FormData) => {
+    setError(null);
+    try {
+      // Post to sign-in endpoint; keep current flow elsewhere
+      await fetch("/api/auth/signin", {
+        method: "POST",
+        body: JSON.stringify(data),
+      });
+      window.location.replace("/listings");
+    } catch (e: any) {
+      setError(e?.message || "Sign in failed");
+    }
+  };
+
   return (
-    <div className="min-h-[calc(100vh-4rem)] grid place-items-center p-4">
-      <div className="w-full max-w-md rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-background/60 p-6 shadow-soft">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="size-10 rounded-2xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-bold">
-            M
+    <div className="min-h-screen grid place-items-center p-6 bg-[hsl(var(--background))]">
+      <div className="w-full max-w-xl rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/60 p-8 shadow-2xl">
+        <div className="grid md:grid-cols-2 gap-6 items-center">
+          <div className="hidden md:flex flex-col justify-center items-start gap-4">
+            <div className="size-14 rounded-3xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-extrabold text-2xl w-20 h-20">
+              M
+            </div>
+            <div>
+              <h2 className="heading-xl">Welcome back</h2>
+              <p className="subtle mt-1">Sign in to your Marketplace account</p>
+            </div>
+            <p className="text-sm subtle">
+              Use your account to manage listings, messages, and settings.
+              Beautifully themed and animated.
+            </p>
           </div>
+
           <div>
-            <h1 className="heading-lg">Welcome back</h1>
-            <p className="subtle text-sm">Sign in to continue</p>
+            <h1 className="heading-lg mb-2">Sign In</h1>
+            <p className="subtle text-sm mb-6">
+              Enter your credentials to continue
+            </p>
+
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+              <label className="block text-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  <Mail className="size-4 text-foreground/70" />
+                  <span className="text-sm">Email</span>
+                </div>
+                <Input
+                  {...register("email")}
+                  type="email"
+                  placeholder="you@example.com"
+                  className="h-11"
+                />
+              </label>
+
+              <label className="block text-sm">
+                <div className="flex items-center gap-3 mb-2">
+                  <Lock className="size-4 text-foreground/70" />
+                  <span className="text-sm">Password</span>
+                </div>
+                <Input
+                  {...register("password")}
+                  type="password"
+                  placeholder="••••••••"
+                  className="h-11"
+                />
+              </label>
+
+              {error && <p className="text-rose-500 text-sm">{error}</p>}
+
+              <div className="flex items-center justify-between">
+                <label className="inline-flex items-center gap-2 text-sm">
+                  <input type="checkbox" className="rounded-md" />
+                  Remember me
+                </label>
+                <Link
+                  href="#"
+                  className="text-sm text-[hsl(var(--accent))] hover:underline"
+                >
+                  Forgot?
+                </Link>
+              </div>
+
+              <div className="flex gap-3 items-center">
+                <Button
+                  type="submit"
+                  variant="primary"
+                  className="flex-1 flex items-center justify-center gap-2"
+                >
+                  <LogIn className="size-4" />
+                  Sign In
+                </Button>
+                <Button
+                  asChild
+                  variant="ghost"
+                  className="hidden md:inline-flex"
+                >
+                  <Link href="/sign-up" className="flex items-center gap-2">
+                    Create account
+                  </Link>
+                </Button>
+              </div>
+            </form>
           </div>
         </div>
-        <form className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm">Email</label>
-            <input
-              type="email"
-              required
-              className="w-full h-11 rounded-2xl px-3 bg-transparent border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-              placeholder="you@example.com"
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm">Password</label>
-            <input
-              type="password"
-              required
-              className="w-full h-11 rounded-2xl px-3 bg-transparent border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]"
-              placeholder="••••••••"
-            />
-          </div>
-          <div className="flex items-center justify-between">
-            <label className="text-sm inline-flex items-center gap-2">
-              <input type="checkbox" className="rounded-md" />
-              Remember me
-            </label>
-            <Link
-              href="#"
-              className="text-sm text-[hsl(var(--accent))] hover:underline"
-            >
-              Forgot password?
-            </Link>
-          </div>
-          <div className="flex gap-2">
-            <Button variant="primary" className="flex-1">
-              Sign In
-            </Button>
-            <Button asChild variant="accent" className="flex-1">
-              <Link href="/sign-up">Create account</Link>
-            </Button>
-          </div>
-        </form>
-        <p className="mt-4 text-center text-sm subtle">
-          By continuing you agree to our{" "}
-          <a href="#" className="text-[hsl(var(--accent))] hover:underline">
-            Terms
-          </a>{" "}
-          and{" "}
-          <a href="#" className="text-[hsl(var(--accent))] hover:underline">
-            Privacy Policy
-          </a>
-          .
-        </p>
       </div>
     </div>
   );

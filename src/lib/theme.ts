@@ -159,10 +159,16 @@ export function applyThemeComponents(components: any) {
         setVar("--btn-primary-fg", tokenRef(b.primary.color.token));
       if (b.primary.hoverBackground?.token)
         setVar("--btn-primary-hover-bg", tokenRef(b.primary.hoverBackground.token));
+      if (b.primary.activeBackground?.token)
+        setVar("--btn-primary-active-bg", tokenRef(b.primary.activeBackground.token));
       if (b.primary.radius)
         root.style.setProperty("--radius-button", radiusRef(b.primary.radius));
       if (b.primary.shadow)
         root.style.setProperty("--btn-primary-shadow", shadowRef(b.primary.shadow));
+      if (b.primary.hoverShadow)
+        root.style.setProperty("--btn-primary-hover-shadow", shadowRef(b.primary.hoverShadow));
+      if (b.primary.activeShadow)
+        root.style.setProperty("--btn-primary-active-shadow", shadowRef(b.primary.activeShadow));
       if (b.primary.transition)
         root.style.setProperty("--btn-primary-transition", transitionRef(b.primary.transition));
     }
@@ -173,14 +179,34 @@ export function applyThemeComponents(components: any) {
         setVar("--btn-accent-fg", tokenRef(b.accent.color.token));
       if (b.accent.hoverBackground?.token)
         setVar("--btn-accent-hover-bg", tokenRef(b.accent.hoverBackground.token));
+      if (b.accent.activeBackground?.token)
+        setVar("--btn-accent-active-bg", tokenRef(b.accent.activeBackground.token));
       if (b.accent.shadow)
         root.style.setProperty("--btn-accent-shadow", shadowRef(b.accent.shadow));
+      if (b.accent.hoverShadow)
+        root.style.setProperty("--btn-accent-hover-shadow", shadowRef(b.accent.hoverShadow));
+      if (b.accent.activeShadow)
+        root.style.setProperty("--btn-accent-active-shadow", shadowRef(b.accent.activeShadow));
+      if (b.accent.transition)
+        root.style.setProperty("--btn-accent-transition", transitionRef(b.accent.transition));
     }
     if (b.secondary) {
       if (b.secondary.background?.token)
         setVar("--btn-secondary-bg", tokenRef(b.secondary.background.token));
       if (b.secondary.color?.token)
         setVar("--btn-secondary-fg", tokenRef(b.secondary.color.token));
+      if (b.secondary.hoverBackground?.token)
+        setVar("--btn-secondary-hover-bg", tokenRef(b.secondary.hoverBackground.token));
+      if (b.secondary.activeBackground?.token)
+        setVar("--btn-secondary-active-bg", tokenRef(b.secondary.activeBackground.token));
+      if (b.secondary.shadow)
+        root.style.setProperty("--btn-secondary-shadow", shadowRef(b.secondary.shadow));
+      if (b.secondary.hoverShadow)
+        root.style.setProperty("--btn-secondary-hover-shadow", shadowRef(b.secondary.hoverShadow));
+      if (b.secondary.activeShadow)
+        root.style.setProperty("--btn-secondary-active-shadow", shadowRef(b.secondary.activeShadow));
+      if (b.secondary.transition)
+        root.style.setProperty("--btn-secondary-transition", transitionRef(b.secondary.transition));
     }
   }
   if (components.navbar) {
@@ -192,5 +218,13 @@ export function applyThemeComponents(components: any) {
     if (n.color?.token) setVar("--navbar-fg", tokenRef(n.color.token));
     if (n.height) root.style.setProperty("--navbar-height", String(n.height));
     if (n.shadow) root.style.setProperty("--navbar-shadow", shadowRef(n.shadow));
+  }
+  if (components.link) {
+    const l = components.link;
+    if (l.color?.token) setVar("--link-color", tokenRef(l.color.token));
+    if (l.hoverColor?.token) setVar("--link-hover-color", tokenRef(l.hoverColor.token));
+    if (l.underline?.token) setVar("--link-underline", tokenRef(l.underline.token));
+    if (l.activeColor?.token) setVar("--link-active-color", tokenRef(l.activeColor.token));
+    if (l.transition) root.style.setProperty("--link-transition", transitionRef(l.transition));
   }
 }

@@ -66,6 +66,7 @@ html, body {
   @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
   font-family: var(--font-family, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial);
   line-height: var(--line-height-normal, 1.4);
+  font-size: var(--font-size-base, 16px);
 }
 
 .glass {
@@ -84,6 +85,33 @@ html, body {
 
 @layer components {
   .container-padded { @apply container px-4 md:px-6; }
+  /* Global interactive defaults for buttons and links using theme vars */
+  button,
+  .btn,
+  [role="button"] {
+    transition: var(--btn-primary-transition, var(--transition-normal, 200ms ease));
+  }
+  button:hover,
+  .btn:hover,
+  [role="button"]:hover {
+    box-shadow: var(--btn-primary-hover-shadow, var(--shadow-sm, none));
+    background-color: hsl(var(--btn-primary-hover-bg, var(--accent)));
+  }
+  button:active,
+  .btn:active,
+  [role="button"]:active {
+    box-shadow: var(--btn-primary-active-shadow, var(--shadow-sm, none));
+    background-color: hsl(var(--btn-primary-active-bg, var(--primary)));
+  }
+  select,
+  .select,
+  [role="listbox"] {
+    background-color: hsl(var(--card, var(--background)));
+    color: hsl(var(--foreground));
+    border: solid var(--border-width-regular, 1px) hsl(var(--border));
+  }
+  option { background-color: hsl(var(--card, var(--background))); color: hsl(var(--foreground)); }
+  select:focus-visible { outline: none; box-shadow: 0 0 0 3px hsl(var(--accent) / 0.35); }
   .card {
     @apply rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5;
     background-color: hsl(var(--card-bg, var(--card)));
@@ -94,7 +122,7 @@ html, body {
     border-radius: var(--radius-card, var(--radius-lg, 1rem));
     box-shadow: var(--card-shadow, var(--shadow-md, none));
   }
-  .heading-xl { @apply text-3xl md:text-4xl font-extrabold tracking-tight; }
+  .heading-xl { @apply font-extrabold tracking-tight; font-size: var(--font-size-3xl, 1.875rem); }
   .subtle { @apply text-sm text-foreground/70; }
   .particles::before {
     content: "";
@@ -120,4 +148,29 @@ html, body {
     height: var(--navbar-height, 4rem);
     box-shadow: var(--navbar-shadow, var(--shadow-none, none));
   }
+  .link {
+    color: hsl(var(--link-color, var(--accent)));
+    text-decoration: none;
+    transition: var(--link-transition, color var(--transition-normal, 200ms ease));
+    text-decoration-color: hsl(var(--link-underline, var(--accent)));
+    text-underline-offset: var(--space-1, 2px);
+    text-decoration-thickness: var(--border-width-regular, 1px);
+  }
+  a:hover { color: hsl(var(--link-hover-color, var(--primary))); }
+  a:active { color: hsl(var(--link-active-color, var(--foreground))); }
+  .link:hover,
+  .link.link-hover-primary:hover {
+    color: hsl(var(--link-hover-color, var(--primary)));
+    text-decoration: underline;
+    text-underline-offset: calc(var(--space-1, 2px) + 1px);
+    text-decoration-thickness: calc(var(--border-width-regular, 1px) + 0.5px);
+  }
+  .link.link-hover-secondary:hover {
+    color: hsl(var(--secondary));
+  }
+  .link:active {
+    color: hsl(var(--link-active-color, var(--foreground)));
+    opacity: 0.9;
+  }
+  .link-underline { text-decoration: underline; }
 }

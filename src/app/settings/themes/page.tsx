@@ -36,6 +36,29 @@ export default function ThemeSettingsPage() {
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const qc = useQueryClient();
   const [components, setComponents] = useState<ComponentsShape | null>(null);
+  const [activeTab, setActiveTab] = useState<
+    "colors" | "scales" | "components"
+  >("colors");
+  const [tokenQuery, setTokenQuery] = useState("");
+  const radiiKeys = useMemo(
+    () => Object.keys((scales as any)?.radii || {}),
+    [scales]
+  );
+  const shadowKeys = useMemo(
+    () => Object.keys((scales as any)?.shadow || {}),
+    [scales]
+  );
+  const borderWidthKeys = useMemo(
+    () => Object.keys((scales as any)?.borderWidth || {}),
+    [scales]
+  );
+  const transitionKeys = useMemo(
+    () =>
+      Object.keys((scales as any)?.transitions || {}).filter(
+        (k) => k !== "spring"
+      ),
+    [scales]
+  );
 
   // init: fetch from /themes only (no localStorage)
   useEffect(() => {
@@ -85,8 +108,13 @@ export default function ThemeSettingsPage() {
     [tokens.light, tokens.dark].forEach((side) => {
       Object.keys(side || {}).forEach((k) => keys.add(k));
     });
-    return Array.from(keys);
-  }, [tokens]);
+    let list = Array.from(keys);
+    if (tokenQuery.trim()) {
+      const q = tokenQuery.trim().toLowerCase();
+      list = list.filter((k) => k.toLowerCase().includes(q));
+    }
+    return list;
+  }, [tokens, tokenQuery]);
 
   const handleColorChange = (
     mode: "light" | "dark",
@@ -243,7 +271,7 @@ export default function ThemeSettingsPage() {
 
   return (
     <div className="container-padded py-8 space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
         <div>
           <h1 className="heading-xl">Theme Settings</h1>
           <p className="subtle">
@@ -252,30 +280,74 @@ export default function ThemeSettingsPage() {
         </div>
         <div className="flex gap-2 items-center">
           <ThemeToggle />
-          <Button onClick={resetFromRemote}>Reset from /themes</Button>
+          <Button variant="ghost" onClick={resetFromRemote}>
+            Reset
+          </Button>
+          <Button
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending}
+          >
+            {saveMutation.isPending ? "Saving…" : "Save"}
+          </Button>
+        </div>
+      </div>
+
+      {/* Section tabs */}
+      <div className="flex items-center gap-2">
+        <button
+          className={`px-3 py-1.5 rounded-full border ${
+            activeTab === "colors"
+              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+              : "border-[hsl(var(--border))]"
+          }`}
+          onClick={() => setActiveTab("colors")}
+        >
+          Colors
+        </button>
+        <button
+          className={`px-3 py-1.5 rounded-full border ${
+            activeTab === "scales"
+              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+              : "border-[hsl(var(--border))]"
+          }`}
+          onClick={() => setActiveTab("scales")}
+        >
+          Scales
+        </button>
+        <button
+          className={`px-3 py-1.5 rounded-full border ${
+            activeTab === "components"
+              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+              : "border-[hsl(var(--border))]"
+          }`}
+          onClick={() => setActiveTab("components")}
+        >
+          Components
+        </button>
+        <div className="ml-auto flex items-center gap-2">
+          {saveMessage && <span className="text-sm subtle">{saveMessage}</span>}
         </div>
       </div>
 
       {loading && <div className="card">Loading theme…</div>}
       {error && <div className="card text-rose-500">{error}</div>}
 
-      {!loading && tokens && (
+      {!loading && tokens && activeTab === "colors" && (
         <div className="card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold">Colors</h2>
-            <div className="flex items-center gap-2">
-              {saveMessage && (
-                <span className="text-sm subtle">{saveMessage}</span>
-              )}
-              <Button
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending}
-              >
-                {saveMutation.isPending ? "Saving…" : "Save"}
-              </Button>
-            </div>
+            <div className="flex items-center gap-2" />
           </div>
-          <div className="grid grid-cols-1 gap-2">
+          <div className="flex items-center gap-2 mb-3">
+            <input
+              type="text"
+              className="h-9 w-full md:w-72 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              placeholder="Search tokens…"
+              value={tokenQuery}
+              onChange={(e) => setTokenQuery(e.target.value)}
+            />
+          </div>
+          <div className="grid grid-cols-1 gap-2 max-h-[60vh] overflow-auto pr-1">
             <div className="hidden md:grid md:grid-cols-[12rem_1fr_1fr] px-2 py-1 text-xs subtle">
               <div>Token</div>
               <div>Light</div>
@@ -309,9 +381,29 @@ export default function ThemeSettingsPage() {
         </div>
       )}
 
-      {!loading && scales && (
+      {!loading && scales && activeTab === "scales" && (
         <div className="card">
           <h2 className="text-lg font-semibold mb-3">Scales</h2>
+          {/* Quick Option: Font base size */}
+          {scales?.font?.sizes && (
+            <div className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))] mb-4">
+              <span className="text-sm w-44">Font base size</span>
+              <select
+                aria-label="Font base size"
+                className="h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                value={String(scales.font.sizes.base ?? "")}
+                onChange={(e) =>
+                  handleScaleChange("font.sizes.base", e.target.value)
+                }
+              >
+                {Object.values(scales.font.sizes).map((v: any) => (
+                  <option key={String(v)} value={String(v)}>
+                    {String(v)}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
           <ScalesEditor
             basePath=""
             data={scales}
@@ -323,25 +415,246 @@ export default function ThemeSettingsPage() {
       <PreviewPanel />
 
       {/* Components editor */}
-      {!loading && components && (
+      {!loading && components && activeTab === "components" && (
         <div className="card">
           <h2 className="text-lg font-semibold mb-3">Components</h2>
           <div className="space-y-4">
-            <ComponentsEditor
-              data={components}
-              onChange={(next) => setComponents(next)}
-            />
-            <div className="flex justify-end gap-2">
-              {saveMessage && (
-                <span className="text-sm subtle">{saveMessage}</span>
-              )}
+            {/* Quick Options for hover/active and link states */}
+            <div className="p-2 rounded-xl border border-[hsl(var(--border))] space-y-2">
+              <div className="text-sm font-medium">Quick Options</div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button hover color</span>
+                  <select
+                    aria-label="Button hover color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        const ensureToken = (obj: any) => {
+                          obj = ensure(obj);
+                          obj.hoverBackground = ensure(obj.hoverBackground);
+                          obj.hoverBackground.token = val;
+                          return obj;
+                        };
+                        next.button = ensure(next.button);
+                        next.button.primary = ensureToken(next.button.primary);
+                        next.button.accent = ensureToken(next.button.accent);
+                        next.button.secondary = ensureToken(
+                          next.button.secondary
+                        );
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button active color</span>
+                  <select
+                    aria-label="Button active color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        const ensureToken = (obj: any) => {
+                          obj = ensure(obj);
+                          obj.activeBackground = ensure(obj.activeBackground);
+                          obj.activeBackground.token = val;
+                          return obj;
+                        };
+                        next.button = ensure(next.button);
+                        next.button.primary = ensureToken(next.button.primary);
+                        next.button.accent = ensureToken(next.button.accent);
+                        next.button.secondary = ensureToken(
+                          next.button.secondary
+                        );
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button hover shadow</span>
+                  <select
+                    aria-label="Button hover shadow"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.button = ensure(next.button);
+                        next.button.primary = ensure(next.button.primary);
+                        next.button.accent = ensure(next.button.accent);
+                        next.button.secondary = ensure(next.button.secondary);
+                        next.button.primary.hoverShadow = val;
+                        next.button.accent.hoverShadow = val;
+                        next.button.secondary.hoverShadow = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {shadowKeys.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button active shadow</span>
+                  <select
+                    aria-label="Button active shadow"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.button = ensure(next.button);
+                        next.button.primary = ensure(next.button.primary);
+                        next.button.accent = ensure(next.button.accent);
+                        next.button.secondary = ensure(next.button.secondary);
+                        next.button.primary.activeShadow = val;
+                        next.button.accent.activeShadow = val;
+                        next.button.secondary.activeShadow = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {shadowKeys.map((s) => (
+                      <option key={s} value={s}>
+                        {s}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link hover color</span>
+                  <select
+                    aria-label="Link hover color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.hoverColor = ensure(next.link.hoverColor);
+                        next.link.hoverColor.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link active color</span>
+                  <select
+                    aria-label="Link active color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.activeColor = ensure(next.link.activeColor);
+                        next.link.activeColor.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))]">
+              <span className="text-sm w-44">Button radius</span>
+              <input
+                type="range"
+                aria-label="Button radius"
+                min={0}
+                max={40}
+                step={1}
+                defaultValue={12}
+                className="w-48"
+                onChange={(e) => {
+                  const px = `${e.currentTarget.value}px`;
+                  document.documentElement.style.setProperty(
+                    "--radius-button-override",
+                    px
+                  );
+                }}
+              />
               <Button
-                onClick={() => saveMutation.mutate()}
-                disabled={saveMutation.isPending}
+                variant="ghost"
+                onClick={() =>
+                  document.documentElement.style.removeProperty(
+                    "--radius-button-override"
+                  )
+                }
               >
-                {saveMutation.isPending ? "Saving…" : "Save"}
+                Reset
               </Button>
             </div>
+            <ComponentsEditor
+              data={components}
+              tokenOptions={tokenKeys}
+              radiusOptions={radiiKeys}
+              shadowOptions={shadowKeys}
+              borderWidthOptions={borderWidthKeys}
+              transitionOptions={transitionKeys}
+              onChange={(next) => {
+                setComponents(next);
+                applyThemeComponents(next);
+              }}
+            />
+            <div className="flex justify-end gap-2" />
           </div>
         </div>
       )}
@@ -449,26 +762,53 @@ function ColorField({
   );
 }
 
-function ScaleField({
+function ScaleFieldSelect({
   label,
   value,
+  options,
   onChange,
 }: {
   label: string;
   value: string;
+  options: string[];
   onChange: (v: string) => void;
 }) {
+  const hasOptions = Array.isArray(options) && options.length > 0;
+  const isCustom = !hasOptions || (value && !options.includes(value));
   return (
     <label className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))]">
       <span className="text-sm w-44 truncate" title={label}>
         {label}
       </span>
-      <input
-        type="text"
-        className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-      />
+      {hasOptions && (
+        <select
+          aria-label={`${label} preset`}
+          className="h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+          value={isCustom ? "__custom__" : value}
+          onChange={(e) => {
+            const v = e.target.value;
+            if (v === "__custom__") return; // show input below
+            onChange(v);
+          }}
+        >
+          {options.map((opt) => (
+            <option key={opt} value={opt}>
+              {opt}
+            </option>
+          ))}
+          <option value="__custom__">Custom…</option>
+        </select>
+      )}
+      {(isCustom || !hasOptions) && (
+        <input
+          type="text"
+          aria-label={`${label} custom`}
+          className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="Enter custom value"
+        />
+      )}
     </label>
   );
 }
@@ -483,6 +823,48 @@ function ScalesEditor({
   onChange: (path: string, v: string) => void;
 }) {
   const entries = Object.entries(data || {});
+  const getOptions = (path: string, val: any): string[] => {
+    // Derive options from group values where it makes sense
+    const root = (p: string) => p.split(".")[0];
+    const top = root(path);
+    try {
+      switch (top) {
+        case "radii":
+          return Object.values((data as any).radii || {}) as string[];
+        case "spacing":
+          return Object.values((data as any).spacing || {}) as string[];
+        case "shadow":
+          return Object.values((data as any).shadow || {}) as string[];
+        case "zIndex":
+          return Object.values((data as any).zIndex || {}).map(String);
+        case "borderWidth":
+          return Object.values((data as any).borderWidth || {}) as string[];
+        case "font": {
+          if (path.includes("sizes"))
+            return Object.values(
+              ((data as any).font || {}).sizes || {}
+            ) as string[];
+          if (path.includes("weights"))
+            return Object.values(((data as any).font || {}).weights || {}).map(
+              String
+            );
+          if (path.includes("lineHeights"))
+            return Object.values(
+              ((data as any).font || {}).lineHeights || {}
+            ).map(String);
+          return [];
+        }
+        case "transitions":
+          return Object.values((data as any).transitions || {}).filter(
+            (v) => typeof v === "string"
+          ) as string[];
+        default:
+          return [];
+      }
+    } catch {
+      return [];
+    }
+  };
   return (
     <div className="space-y-6">
       {entries.map(([key, val]) => {
@@ -501,10 +883,11 @@ function ScalesEditor({
                       onChange={onChange}
                     />
                   ) : (
-                    <ScaleField
+                    <ScaleFieldSelect
                       key={`${path}.${k2}`}
                       label={`${path}.${k2}`}
                       value={String(v2)}
+                      options={getOptions(`${path}.${k2}`, v2)}
                       onChange={(v) => onChange(`${path}.${k2}`, v)}
                     />
                   )
@@ -514,10 +897,11 @@ function ScalesEditor({
           );
         }
         return (
-          <ScaleField
+          <ScaleFieldSelect
             key={path}
             label={path}
             value={String(val)}
+            options={getOptions(path, val)}
             onChange={(v) => onChange(path, v)}
           />
         );
@@ -528,9 +912,19 @@ function ScalesEditor({
 
 function ComponentsEditor({
   data,
+  tokenOptions = [],
+  radiusOptions = [],
+  shadowOptions = [],
+  borderWidthOptions = [],
+  transitionOptions = [],
   onChange,
 }: {
   data: Record<string, any>;
+  tokenOptions?: string[];
+  radiusOptions?: string[];
+  shadowOptions?: string[];
+  borderWidthOptions?: string[];
+  transitionOptions?: string[];
   onChange: (next: Record<string, any>) => void;
 }) {
   const setAtPath = (path: string[], value: any) => {
@@ -573,23 +967,103 @@ function ComponentsEditor({
         const next = { ...(node as any), css: val };
         setAtPath(path, next);
       } else {
-        // preserve primitive leaves (like radius names, widths)
         setAtPath(path, val);
       }
     };
+
+    const isTokenRef = label.endsWith(".token");
+    const isRadius = label.endsWith(".radius");
+    const isShadow =
+      label.endsWith(".shadow") ||
+      label.endsWith(".hoverShadow") ||
+      label.endsWith(".activeShadow");
+    const isBorderWidth = label.endsWith(".border.width");
+    const isTransition = label.endsWith(".transition");
     return (
       <div className="grid grid-cols-1 md:grid-cols-[16rem_1fr] items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))]">
         <div className="text-sm font-medium truncate" title={label}>
           {label}
         </div>
         <div className="flex items-center gap-2">
-          <input
-            type="text"
-            className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-            value={currentValue}
-            onChange={(e) => updateValue(e.target.value)}
-            placeholder="token name, width, or hsl(…)"
-          />
+          {isTokenRef ? (
+            <select
+              aria-label="Token reference"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+            >
+              <option value="">-- select token --</option>
+              {tokenOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          ) : isRadius ? (
+            <select
+              aria-label="Radius"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+            >
+              <option value="">-- select radius --</option>
+              {radiusOptions.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </select>
+          ) : isShadow ? (
+            <select
+              aria-label="Shadow"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+            >
+              <option value="">-- select shadow --</option>
+              {shadowOptions.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
+            </select>
+          ) : isBorderWidth ? (
+            <select
+              aria-label="Border width"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+            >
+              <option value="">-- select border width --</option>
+              {borderWidthOptions.map((w) => (
+                <option key={w} value={w}>
+                  {w}
+                </option>
+              ))}
+            </select>
+          ) : isTransition ? (
+            <select
+              aria-label="Transition"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+            >
+              <option value="">-- select transition --</option>
+              {transitionOptions.map((t) => (
+                <option key={t} value={t}>
+                  {t}
+                </option>
+              ))}
+            </select>
+          ) : (
+            <input
+              type="text"
+              className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+              value={currentValue}
+              onChange={(e) => updateValue(e.target.value)}
+              placeholder="token name, width, or hsl(…)"
+            />
+          )}
         </div>
       </div>
     );
