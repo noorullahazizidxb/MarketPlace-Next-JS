@@ -16,8 +16,12 @@ import {
   User2,
   LogOut,
   LayoutGrid,
+  List,
+  Info,
+  Mail,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
+import { useLocalMutation } from "@/lib/api-hooks";
 
 export function Sidebar({
   isOpen,
@@ -30,6 +34,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   const { user } = useAuth();
+  const logout = useLocalMutation("post", "/api/logout");
   const avatar = user?.avatarUrl || user?.photo || "/favicon.svg";
   const name = user?.fullName || user?.name || user?.email || "You";
 
@@ -99,11 +104,64 @@ export function Sidebar({
                     <Bell className="size-4" />
                     <span className="text-sm">Notifications</span>
                   </Link>
+                  <Link
+                    href="/profile/roles"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
+                    <List className="size-4" />
+                    <span className="text-sm">Roles</span>
+                  </Link>
+                  <Link
+                    href="/profile/sent-notifications"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
+                    <Bell className="size-4" />
+                    <span className="text-sm">Sent Notifications</span>
+                  </Link>
+                  <Link
+                    href="/profile/approved-listings"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
+                    <LayoutGrid className="size-4" />
+                    <span className="text-sm">Approved Listings</span>
+                  </Link>
+                  <Link
+                    href="/profile/audit-logs"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
+                    <List className="size-4" />
+                    <span className="text-sm">Audit Logs</span>
+                  </Link>
+                  <Link
+                    href="/profile/feedbacks"
+                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                  >
+                    <Info className="size-4" />
+                    <span className="text-sm">Feedbacks</span>
+                  </Link>
                   <button
                     onClick={async () => {
-                      await fetch("/api/logout", { method: "POST" }).catch(
-                        () => {}
-                      );
+                      try {
+                        await logout.mutateAsync({});
+                      } catch {}
+                      try {
+                        const { setCachedToken } = await import(
+                          "@/lib/axiosClient"
+                        );
+                        const { useAuthStore } = await import(
+                          "@/store/auth.store"
+                        );
+                        const { useListingsStore } = await import(
+                          "@/store/listings.store"
+                        );
+                        const { useNotificationsStore } = await import(
+                          "@/store/notifications.store"
+                        );
+                        setCachedToken(null);
+                        useAuthStore.getState().clear();
+                        useListingsStore.getState().clear();
+                        useNotificationsStore.getState().clear();
+                      } catch {}
                       window.location.href = "/sign-in";
                     }}
                     className="flex w-full items-center gap-3 px-3 h-10 hover:bg-white/5 text-left"

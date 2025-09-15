@@ -37,20 +37,27 @@ export function Loading({ size = 56, label = "Loading" }: Props) {
     >
       <div className={`relative ${box}`}>
         {/* Core pulse using accent color */}
-        <div className="absolute inset-0 rounded-full bg-[hsl(var(--accent))] opacity-20 animate-ping aria-hidden" />
         <div
-          className={`absolute ${coreInset} rounded-full bg-[hsl(var(--accent))] shadow-xl aria-hidden`}
+          className="absolute inset-0 rounded-full bg-[hsl(var(--accent))] opacity-20 animate-ping"
+          aria-hidden
+        />
+        <div
+          className={`absolute ${coreInset} rounded-full bg-[hsl(var(--accent))] shadow-xl`}
+          aria-hidden
         />
 
         {/* Ring */}
-        <div className="absolute inset-1 rounded-full border border-[color:oklch(0.7_0.08_260_/0.25)]/50 aria-hidden" />
+        <div
+          className="absolute inset-1 rounded-full border border-[color:oklch(0.7_0.08_260_/0.25)]/50"
+          aria-hidden
+        />
 
         {/* Orbiting dots with staggered starting angles */}
         <OrbitDot dotSize={dotSize} className="rotate-0" />
         <OrbitDot dotSize={dotSize} className="rotate-[120deg]" />
         <OrbitDot dotSize={dotSize} className="rotate-[240deg]" />
       </div>
-      <span className="sr-only">{label}…</span>
+      <span className="sr-only">{label}...</span>
     </div>
   );
 }

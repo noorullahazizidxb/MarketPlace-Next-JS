@@ -8,9 +8,11 @@ import { Navbar } from "@/components/navbar";
 import { Topbar } from "@/components/topbar";
 import { PageTransition } from "@/components/page-transition";
 import Loading from "@/components/loading";
+import { useAppStore } from "@/store/app.store";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { isAdmin, loading } = useAuth();
+  const appReady = useAppStore((s) => s.appReady);
   const pathname = usePathname();
 
   // If we're on an auth-related page, do not render Topbar/Sidebar/footer-like chrome
@@ -24,7 +26,7 @@ export function AppShell({ children }: PropsWithChildren) {
       "/verify-email",
     ].includes(pathname);
 
-  if (loading)
+  if (loading || !appReady)
     return (
       <div className="min-h-screen grid place-items-center">
         <Loading size={24} />

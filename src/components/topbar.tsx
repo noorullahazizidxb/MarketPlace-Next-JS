@@ -10,6 +10,7 @@ import {
   User2,
   LayoutGrid,
   Stars,
+  Mail,
   Menu,
   Home,
   Info,
@@ -210,6 +211,41 @@ export function Topbar() {
                           )}
                         </Link>
                         <Link
+                          href="/profile/roles"
+                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                        >
+                          <Stars className="size-4" />
+                          <span className="text-sm">Roles</span>
+                        </Link>
+                        <Link
+                          href="/profile/sent-notifications"
+                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                        >
+                          <Mail className="size-4" />
+                          <span className="text-sm">Sent Notifications</span>
+                        </Link>
+                        <Link
+                          href="/profile/approved-listings"
+                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                        >
+                          <LayoutGrid className="size-4" />
+                          <span className="text-sm">Approved Listings</span>
+                        </Link>
+                        <Link
+                          href="/profile/audit-logs"
+                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                        >
+                          <List className="size-4" />
+                          <span className="text-sm">Audit Logs</span>
+                        </Link>
+                        <Link
+                          href="/profile/feedbacks"
+                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                        >
+                          <Info className="size-4" />
+                          <span className="text-sm">Feedbacks</span>
+                        </Link>
+                        <Link
                           href="/notifications"
                           className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
                         >
@@ -221,7 +257,33 @@ export function Topbar() {
                             </span>
                           )}
                         </Link>
-                        <button className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left">
+                        <button
+                          onClick={async () => {
+                            try {
+                              await fetch("/api/logout", { method: "POST" });
+                            } catch {}
+                            try {
+                              const { setCachedToken } = await import(
+                                "@/lib/axiosClient"
+                              );
+                              const { useAuthStore } = await import(
+                                "@/store/auth.store"
+                              );
+                              const { useListingsStore } = await import(
+                                "@/store/listings.store"
+                              );
+                              const { useNotificationsStore } = await import(
+                                "@/store/notifications.store"
+                              );
+                              setCachedToken(null);
+                              useAuthStore.getState().clear();
+                              useListingsStore.getState().clear();
+                              useNotificationsStore.getState().clear();
+                            } catch {}
+                            window.location.href = "/sign-in";
+                          }}
+                          className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"
+                        >
                           <LogOut className="size-4" />
                           <span className="text-sm">Logout</span>
                         </button>

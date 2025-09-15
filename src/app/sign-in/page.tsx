@@ -9,7 +9,7 @@ import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
 import { setCachedToken } from "@/lib/axiosClient";
-import { useApiMutation } from "@/lib/api-hooks";
+import { useApiMutation, useLocalMutation } from "@/lib/api-hooks";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { useListingsStore } from "@/store/listings.store";
 
@@ -27,6 +27,7 @@ export default function SignInPage() {
     "post",
     "/auth/login"
   );
+  const setServerSession = useLocalMutation("post", "/api/login-session");
 
   // If already signed in, redirect to /listings
   useEffect(() => {
@@ -74,11 +75,9 @@ export default function SignInPage() {
       } catch {}
 
       // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
-      await fetch("/api/login-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, user: userObj }),
-      }).catch(() => null);
+      await setServerSession
+        .mutateAsync({ token, user: userObj })
+        .catch(() => null);
 
       // 5) Go to the listings dashboard
       router.replace("/listings");

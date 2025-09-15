@@ -8,7 +8,9 @@ import {
   applyThemeTokens,
   applyThemeScales,
   applyThemeComponents,
+  loadLocalPresets,
 } from "@/lib/theme";
+import { useAppStore } from "@/store/app.store";
 
 export function QueryProvider({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -41,8 +43,14 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
     let mounted = true;
     (async () => {
       try {
-        // Always fetch from /themes and apply
-        const remote = await fetchRemoteThemes();
+        // Always fetch from /themes and apply, but don't block forever — use timeout
+        const raceProms: Promise<any>[] = [
+          fetchRemoteThemes(),
+          new Promise((_, rej) =>
+            setTimeout(() => rej(new Error("theme-fetch-timeout")), 5000)
+          ),
+        ];
+        const remote = await Promise.race(raceProms);
         const first = Array.isArray(remote) ? remote[0] : remote;
         const rawTokens = (first as any)?.tokens;
         const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
@@ -52,9 +60,29 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
           if (scales) applyThemeScales(scales);
           if (normalized) applyThemeTokens(normalized);
           if (components) applyThemeComponents(components);
+          // mark app as ready once theme tokens are applied
+          useAppStore.getState().setReady(true);
         }
       } catch (e) {
-        // If remote fetch fails, cache may already have applied; otherwise CSS defaults apply
+        // Try local presets as fallback so app doesn't block forever
+        try {
+          const local = await loadLocalPresets();
+          const first = Array.isArray(local) ? local[0] : local;
+          const rawTokens = (first as any)?.tokens;
+          const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
+          const scales = (first as any)?.scales ?? rawTokens?.scales;
+          const components =
+            (first as any)?.components ?? rawTokens?.components;
+          if (mounted) {
+            if (scales) applyThemeScales(scales);
+            if (normalized) applyThemeTokens(normalized);
+            if (components) applyThemeComponents(components);
+          }
+        } catch (_) {
+          // ignore
+        } finally {
+          useAppStore.getState().setReady(true);
+        }
       }
     })();
     return () => {

@@ -38,13 +38,6 @@ export function Navbar() {
                 placeholder="Search"
               />
             </div>
-            <a
-              href="/notifications"
-              aria-label="Notifications"
-              className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
-            >
-              <BellIcon className="size-4" />
-            </a>
             <ThemeToggle />
           </div>
         </div>

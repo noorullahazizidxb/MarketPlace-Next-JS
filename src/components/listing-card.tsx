@@ -52,15 +52,15 @@ export function ListingCard({ listing }: { listing: Listing }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
         <div className="absolute bottom-2 left-2 flex items-center gap-2">
-          <span className="text-[11px] px-2 py-1 rounded-full bg-white/70 text-black border border-[hsl(var(--border))] dark:bg-black/60 dark:text-white/90">
+          <span className="text-2xs px-2 py-1 rounded-full bg-white/70 text-black border border-[hsl(var(--border))] dark:bg-black/60 dark:text-white/90">
             {listing.listingType || "LISTING"}
           </span>
           {showSeller ? (
-            <span className="text-[11px] px-2 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center gap-1">
+            <span className="text-2xs px-2 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center gap-1">
               <Phone className="size-3" /> Seller
             </span>
           ) : (
-            <span className="text-[11px] px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center gap-1">
+            <span className="text-2xs px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center gap-1">
               <ShieldCheck className="size-3" /> Protected
             </span>
           )}

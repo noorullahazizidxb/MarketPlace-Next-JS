@@ -123,6 +123,11 @@ html, body {
     box-shadow: var(--card-shadow, var(--shadow-md, none));
   }
   .heading-xl { @apply font-extrabold tracking-tight; font-size: var(--font-size-3xl, 1.875rem); }
+  .heading-2xl { @apply font-extrabold tracking-tight; font-size: var(--font-size-4xl, 2.25rem); }
+  .heading-lg { @apply font-bold tracking-tight; font-size: var(--font-size-2xl, 1.5rem); }
+  .heading-md { @apply font-semibold tracking-tight; font-size: var(--font-size-xl, 1.25rem); }
+  .heading-sm { @apply font-semibold tracking-tight; font-size: var(--font-size-lg, 1.125rem); }
+  .text-2xs { font-size: var(--font-size-2xs, 0.6875rem); }
   .subtle { @apply text-sm text-foreground/70; }
   .particles::before {
     content: "";

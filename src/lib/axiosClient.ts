@@ -15,13 +15,6 @@ export function setCachedToken(token: string | null) {
 axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
     if (typeof window !== "undefined") {
-      if (!cachedToken) {
-        const res = await fetch("/api/session-token", { cache: "no-store" });
-        if (res.ok) {
-          const j = (await res.json()) as { token?: string };
-          cachedToken = j.token || null;
-        }
-      }
       if (cachedToken) config.headers.set("Authorization", `Bearer ${cachedToken}`);
     }
   } catch {}
