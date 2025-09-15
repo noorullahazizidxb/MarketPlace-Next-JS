@@ -16,7 +16,9 @@ export function useAuth() {
     "/api/session-token"
   );
 
-  const token = session?.token ?? tokenData?.token ?? null;
+  // Keep token as `undefined` while SWR has not returned so we can distinguish
+  // between "still fetching" (undefined) and "no token" (null).
+  const token = session?.token ?? (typeof tokenData === "undefined" ? undefined : tokenData?.token ?? null);
 
   const { data: infoData } = useLocalGetImmutable<{ user: any }>(
     !session && token ? ["session-info"] : null,
@@ -45,6 +47,6 @@ export function useAuth() {
     };
   }, [session]);
 
-  const loading = !session && token === null && !tokenErr;
+  const loading = !session && typeof token === "undefined" && !tokenErr;
   return { session, token: session?.token ?? null, user: session?.user ?? null, roles, isAdmin, counts, loading } as const;
 }
