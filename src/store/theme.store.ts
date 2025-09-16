@@ -17,12 +17,15 @@ type ThemeSlice = {
 };
 
 export const useThemeStore = create<ThemeSlice>()((set, get) => ({
-      mode: "system",
+  mode: "system",
       tokens: null,
       scales: null,
       components: null,
       setMode: (m) => {
         set({ mode: m });
+        try {
+          localStorage.setItem("theme-mode", m);
+        } catch (_) {}
         const root = document.documentElement;
         if (m === "system") {
           const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
@@ -46,8 +49,18 @@ export const useThemeStore = create<ThemeSlice>()((set, get) => ({
 import { useEffect } from "react";
 
 export function ThemeManager() {
-  const { mode, applyAll } = useThemeStore();
+  const { mode, applyAll, setMode } = useThemeStore();
   useEffect(() => {
+    // On mount, read persisted mode and apply (ensures persisted theme on refresh)
+    try {
+      const saved = localStorage.getItem("theme-mode");
+      if (saved && saved !== mode) {
+        setMode(saved as any);
+      } else if (!saved && mode === "system") {
+        // if nothing saved, default to dark for initial run
+        setMode("dark");
+      }
+    } catch (_) {}
     // toggle class based on mode
     const root = document.documentElement;
     if (mode === "system") {
@@ -59,7 +72,7 @@ export function ThemeManager() {
     }
     root.classList.toggle("dark", mode === "dark");
     // no cleanup for explicit modes
-  }, [mode]);
+  }, [mode, setMode]);
 
   useEffect(() => {
     applyAll();

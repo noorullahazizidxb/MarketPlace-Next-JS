@@ -305,7 +305,7 @@ export function Topbar() {
                 </div>
               )}
               <button
-                className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 ml-1 order-last"
+                className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 absolute right-4 top-1/2 -translate-y-1/2 z-50"
                 aria-label="Open mobile menu"
                 onClick={toggleMobileMenu}
               >

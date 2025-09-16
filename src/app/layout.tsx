@@ -25,6 +25,12 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={inter.className}>
+        {/* Inline script to apply persisted theme early (default to dark) */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var m=localStorage.getItem('theme-mode');if(m==='dark'){document.documentElement.classList.add('dark');}else if(m==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){} })()`,
+          }}
+        />
         {/* Removed localStorage-based pre-hydration theme logic */}
         <ThemeProvider>
           <QueryProvider>

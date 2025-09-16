@@ -11,7 +11,7 @@ import Loading from "@/components/loading";
 import { useAppStore } from "@/store/app.store";
 
 export function AppShell({ children }: PropsWithChildren) {
-  const { isAdmin, loading } = useAuth();
+  const { isAdmin } = useAuth();
   const appReady = useAppStore((s) => s.appReady);
   const pathname = usePathname();
 
@@ -26,7 +26,7 @@ export function AppShell({ children }: PropsWithChildren) {
       "/verify-email",
     ].includes(pathname);
 
-  if (loading || !appReady)
+  if (!appReady)
     return (
       <div className="min-h-screen grid place-items-center">
         <Loading size={24} />

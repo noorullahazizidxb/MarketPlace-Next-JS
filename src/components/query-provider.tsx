@@ -41,6 +41,10 @@ export function QueryProvider({ children }: PropsWithChildren) {
 function ThemeBootstrap({ client }: { client: QueryClient }) {
   useEffect(() => {
     let mounted = true;
+    // safety timeout: don't block appReady indefinitely
+    const safety = setTimeout(() => {
+      if (mounted) useAppStore.getState().setReady(true);
+    }, 1200);
     (async () => {
       try {
         // Always fetch from /themes and apply, but don't block forever — use timeout
@@ -82,11 +86,13 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
           // ignore
         } finally {
           useAppStore.getState().setReady(true);
+          clearTimeout(safety);
         }
       }
     })();
     return () => {
       mounted = false;
+      clearTimeout(safety);
     };
   }, [client]);
 
