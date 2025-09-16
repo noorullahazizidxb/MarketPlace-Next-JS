@@ -23,15 +23,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="dark" suppressHydrationWarning>
       <body className={inter.className}>
-        {/* Inline script to apply persisted theme early (default to dark) */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){try{var m=localStorage.getItem('theme-mode');if(m==='dark'){document.documentElement.classList.add('dark');}else if(m==='light'){document.documentElement.classList.remove('dark');}else{document.documentElement.classList.add('dark');}}catch(e){} })()`,
-          }}
-        />
-        {/* Removed localStorage-based pre-hydration theme logic */}
+        {/* Default dark class for initial render; ThemeProvider will adjust on mount */}
         <ThemeProvider>
           <QueryProvider>
             <SkipLink />

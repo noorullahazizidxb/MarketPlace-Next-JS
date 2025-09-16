@@ -26,14 +26,16 @@ function ListingsContent() {
   const search = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const id = search.get("id") || undefined;
   const type = search.get("type") || undefined;
   const categoryId = search.get("categoryId") || undefined;
+  const searchText = search.get("search") || undefined;
   const page = parseInt(search.get("page") || "1", 10);
   const pageSize = 12;
   const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
-    ["listings", type, categoryId],
-    "/listings",
-    { listingType: type, categoryId }
+    id ? ["listing", id] : ["listings", type, categoryId, searchText],
+    id ? `/listings/${id}` : "/listings",
+    id ? undefined : { listingType: type, categoryId, search: searchText }
   );
   const items: Listing[] = useMemo(
     () => (Array.isArray(data) ? data : data ? [data] : []),

@@ -20,6 +20,7 @@ import {
   LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { SearchBox } from "@/components/search-box";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
@@ -119,37 +120,11 @@ export function Topbar() {
 
             <div className="flex items-center justify-end gap-2 pr-2">
               <div className="flex items-center gap-2 sm:hidden">
-                <div className="glass rounded-2xl px-3 h-10 flex items-center gap-2">
-                  <svg
-                    className="size-4 text-foreground/60"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                  >
-                    <circle cx="11" cy="11" r="7" />
-                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                  </svg>
-                  <input
-                    className="bg-transparent outline-none text-sm"
-                    placeholder="Search"
-                  />
-                </div>
+                <SearchBox className="w-full" placeholder="Search" />
               </div>
               {/* Notifications removed; ThemeToggle moved to left */}
-              <div className="hidden md:flex items-center gap-2 glass rounded-2xl px-3 h-10 transition-colors hover:bg-white/15">
-                <svg
-                  className="size-4 text-foreground/60"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                >
-                  <circle cx="11" cy="11" r="7" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
-                </svg>
-                <input
-                  className="bg-transparent outline-none text-sm"
-                  placeholder="Search"
-                />
+              <div className="hidden md:flex items-center gap-2">
+                <SearchBox placeholder="Search" />
               </div>
               {user ? (
                 <div className="relative">

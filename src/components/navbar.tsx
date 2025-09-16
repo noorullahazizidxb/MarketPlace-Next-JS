@@ -1,6 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { SearchBox } from "@/components/search-box";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { MobileMenu } from "@/components/mobile-menu";
 import { useAuth } from "@/lib/use-auth";
@@ -31,12 +32,8 @@ export function Navbar() {
             <span className="font-semibold">Marketplace</span>
           </div>
           <div className="flex items-center justify-end gap-3">
-            <div className="hidden md:flex items-center gap-2 glass rounded-2xl px-3 h-10 transition-colors hover:bg-white/15">
-              <Search className="size-4 text-foreground/60" />
-              <input
-                className="bg-transparent outline-none text-sm"
-                placeholder="Search"
-              />
+            <div className="hidden md:flex items-center gap-2">
+              <SearchBox placeholder="Search" />
             </div>
             <ThemeToggle />
           </div>
