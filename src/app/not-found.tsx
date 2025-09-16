@@ -9,10 +9,10 @@ export default function NotFound() {
           The page you requested doesn't exist or has been moved.
         </p>
         <div className="mt-6 flex justify-center gap-3">
-          <Link href="/" className="glass px-4 py-2 rounded">
+          <Link href="/" className="glass px-4 py-2 rounded link">
             Go home
           </Link>
-          <Link href="/settings" className="glass px-4 py-2 rounded">
+          <Link href="/settings" className="glass px-4 py-2 rounded link">
             Settings
           </Link>
         </div>

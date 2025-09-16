@@ -30,6 +30,13 @@
   --secondary-foreground: var(--light-secondary-foreground);
   --accent: var(--light-accent);
   --accent-foreground: var(--light-accent-foreground);
+  /* Link tokens mapping: prefer resolved vars (from components) then prefixed tokens */
+  --link-bg: var(--link-bg-resolved, var(--light-link-bg));
+  --link-hover-bg: var(--link-hover-bg-resolved, var(--light-link-hover-bg));
+  --link-color: var(--link-color-resolved, var(--light-link-color, var(--accent)));
+  --link-hover-color: var(--link-hover-color-resolved, var(--light-link-hover-color, var(--primary)));
+  --link-underline: var(--link-underline-resolved, var(--light-link-underline, var(--accent)));
+  --link-active-color: var(--link-active-color-resolved, var(--light-link-active-color, var(--foreground)));
 }
 
 .dark, html[data-theme="dark"] {
@@ -60,6 +67,13 @@
   --secondary-foreground: var(--dark-secondary-foreground);
   --accent: var(--dark-accent);
   --accent-foreground: var(--dark-accent-foreground);
+  /* Link tokens mapping: prefer resolved vars (from components) then prefixed tokens */
+  --link-bg: var(--link-bg-resolved, var(--dark-link-bg));
+  --link-hover-bg: var(--link-hover-bg-resolved, var(--dark-link-hover-bg));
+  --link-color: var(--link-color-resolved, var(--dark-link-color, var(--accent)));
+  --link-hover-color: var(--link-hover-color-resolved, var(--dark-link-hover-color, var(--primary)));
+  --link-underline: var(--link-underline-resolved, var(--dark-link-underline, var(--accent)));
+  --link-active-color: var(--link-active-color-resolved, var(--dark-link-active-color, var(--foreground)));
 }
 
 html, body {
@@ -153,16 +167,21 @@ html, body {
     height: var(--navbar-height, 4rem);
     box-shadow: var(--navbar-shadow, var(--shadow-none, none));
   }
-  .link {
+  /* Default link token styles applied to anchors */
+  a, .link {
     color: hsl(var(--link-color, var(--accent)));
+    background-color: hsl(var(--link-bg, var(--background)) / 0);
     text-decoration: none;
     transition: var(--link-transition, color var(--transition-normal, 200ms ease));
     text-decoration-color: hsl(var(--link-underline, var(--accent)));
     text-underline-offset: var(--space-1, 2px);
     text-decoration-thickness: var(--border-width-regular, 1px);
   }
-  a:hover { color: hsl(var(--link-hover-color, var(--primary))); }
-  a:active { color: hsl(var(--link-active-color, var(--foreground))); }
+  a:hover, .link:hover {
+    color: hsl(var(--link-hover-color, var(--primary)));
+    background-color: hsl(var(--link-hover-bg, var(--muted)) / 0.15);
+  }
+  a:active, .link:active { color: hsl(var(--link-active-color, var(--foreground))); }
   .link:hover,
   .link.link-hover-primary:hover {
     color: hsl(var(--link-hover-color, var(--primary)));

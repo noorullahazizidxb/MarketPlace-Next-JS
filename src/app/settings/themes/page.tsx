@@ -64,6 +64,25 @@ export default function ThemeSettingsPage() {
     [scales]
   );
 
+  // Derive current Quick Option values from components for controlled inputs
+  const quickValues = useMemo(() => {
+    const b = (components as any)?.button || {};
+    const link = (components as any)?.link || {};
+    return {
+      linkColorToken: link?.color?.token || "",
+      linkUnderlineToken: link?.underline?.token || "",
+      btnHoverToken: b?.primary?.hoverBackground?.token || "",
+      btnActiveToken: b?.primary?.activeBackground?.token || "",
+      btnHoverShadow: b?.primary?.hoverShadow || "",
+      btnActiveShadow: b?.primary?.activeShadow || "",
+      linkHoverToken: link?.hoverColor?.token || "",
+      linkActiveToken: link?.activeColor?.token || "",
+      linkBgToken: link?.background?.token || "",
+      linkHoverBgToken: link?.hoverBackground?.token || "",
+      btnRadius: b?.primary?.radius || "",
+    };
+  }, [components]);
+
   // init: fetch from /themes only (no localStorage)
   useEffect(() => {
     let mounted = true;
@@ -118,6 +137,9 @@ export default function ThemeSettingsPage() {
       Object.keys(side || {}).forEach((k) => keys.add(k));
     });
     let list = Array.from(keys);
+    ["linkBg", "linkHoverBg"].forEach((extra) => {
+      if (!list.includes(extra)) list.push(extra);
+    });
     if (tokenQuery.trim()) {
       const q = tokenQuery.trim().toLowerCase();
       list = list.filter((k) => k.toLowerCase().includes(q));
@@ -433,10 +455,67 @@ export default function ThemeSettingsPage() {
               <div className="text-sm font-medium">Quick Options</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link color</span>
+                  <select
+                    aria-label="Link color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkColorToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.color = ensure(next.link.color);
+                        next.link.color.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link underline color</span>
+                  <select
+                    aria-label="Link underline color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkUnderlineToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.underline = ensure(next.link.underline);
+                        next.link.underline.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
                   <span className="text-sm w-44">Button hover color</span>
                   <select
                     aria-label="Button hover color"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnHoverToken}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -473,6 +552,7 @@ export default function ThemeSettingsPage() {
                   <select
                     aria-label="Button active color"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnActiveToken}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -509,6 +589,7 @@ export default function ThemeSettingsPage() {
                   <select
                     aria-label="Button hover shadow"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnHoverShadow}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -540,6 +621,7 @@ export default function ThemeSettingsPage() {
                   <select
                     aria-label="Button active shadow"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnActiveShadow}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -571,6 +653,7 @@ export default function ThemeSettingsPage() {
                   <select
                     aria-label="Link hover color"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkHoverToken}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -598,6 +681,7 @@ export default function ThemeSettingsPage() {
                   <select
                     aria-label="Link active color"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkActiveToken}
                     onChange={(e) => {
                       const val = e.target.value;
                       setComponents((prev) => {
@@ -620,32 +704,110 @@ export default function ThemeSettingsPage() {
                     ))}
                   </select>
                 </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link background color</span>
+                  <select
+                    aria-label="Link background color"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkBgToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.background = ensure(next.link.background);
+                        next.link.background.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Link hover background</span>
+                  <select
+                    aria-label="Link hover background"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.linkHoverBgToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        next.link = ensure(next.link);
+                        next.link.hoverBackground = ensure(
+                          next.link.hoverBackground
+                        );
+                        next.link.hoverBackground.token = val;
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
             </div>
             <div className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))]">
               <span className="text-sm w-44">Button radius</span>
-              <input
-                type="range"
+              <select
                 aria-label="Button radius"
-                min={0}
-                max={40}
-                step={1}
-                defaultValue={12}
-                className="w-48"
+                className="h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                value={quickValues.btnRadius || ""}
                 onChange={(e) => {
-                  const px = `${e.currentTarget.value}px`;
-                  document.documentElement.style.setProperty(
-                    "--radius-button-override",
-                    px
-                  );
+                  const val = e.target.value;
+                  setComponents((prev) => {
+                    const next = JSON.parse(JSON.stringify(prev || {}));
+                    const ensure = (v: any) =>
+                      v && typeof v === "object" ? v : {};
+                    next.button = ensure(next.button);
+                    next.button.primary = ensure(next.button.primary);
+                    next.button.accent = ensure(next.button.accent);
+                    next.button.secondary = ensure(next.button.secondary);
+                    next.button.primary.radius = val || undefined;
+                    next.button.accent.radius = val || undefined;
+                    next.button.secondary.radius = val || undefined;
+                    applyThemeComponents(next);
+                    return next;
+                  });
                 }}
-              />
+              >
+                <option value="">-- none --</option>
+                {radiiKeys.map((r) => (
+                  <option key={r} value={r}>
+                    {r}
+                  </option>
+                ))}
+              </select>
               <Button
                 variant="ghost"
                 onClick={() =>
-                  document.documentElement.style.removeProperty(
-                    "--radius-button-override"
-                  )
+                  setComponents((prev) => {
+                    const next = JSON.parse(JSON.stringify(prev || {}));
+                    if (next?.button?.primary)
+                      delete next.button.primary.radius;
+                    if (next?.button?.accent) delete next.button.accent.radius;
+                    if (next?.button?.secondary)
+                      delete next.button.secondary.radius;
+                    applyThemeComponents(next);
+                    return next;
+                  })
                 }
               >
                 Reset

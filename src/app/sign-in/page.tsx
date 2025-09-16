@@ -166,7 +166,10 @@ export default function SignInPage() {
                   variant="ghost"
                   className="hidden md:inline-flex"
                 >
-                  <Link href="/sign-up" className="flex items-center gap-2">
+                  <Link
+                    href="/sign-up"
+                    className="flex items-center gap-2 link"
+                  >
                     Create account
                   </Link>
                 </Button>

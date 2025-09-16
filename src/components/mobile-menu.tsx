@@ -99,7 +99,7 @@ export function MobileMenu({
                   key={href}
                   href={href}
                   onClick={onClose}
-                  className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-colors hover:bg-white/10 border border-[hsl(var(--border))]"
+                  className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-colors border border-[hsl(var(--border))] link"
                 >
                   {Icon ? <Icon className="size-4" /> : null}
                   <span className="text-sm font-medium">{label}</span>

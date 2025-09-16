@@ -85,56 +85,56 @@ export function Sidebar({
                 <div className="p-2">
                   <Link
                     href="/profile"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <User2 className="size-4" />
                     <span className="text-sm">Profile</span>
                   </Link>
                   <Link
                     href="/my-listings"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <LayoutGrid className="size-4" />
                     <span className="text-sm">My listings</span>
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <Bell className="size-4" />
                     <span className="text-sm">Notifications</span>
                   </Link>
                   <Link
                     href="/profile/roles"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <List className="size-4" />
                     <span className="text-sm">Roles</span>
                   </Link>
                   <Link
                     href="/profile/sent-notifications"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <Bell className="size-4" />
                     <span className="text-sm">Sent Notifications</span>
                   </Link>
                   <Link
                     href="/profile/approved-listings"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <LayoutGrid className="size-4" />
                     <span className="text-sm">Approved Listings</span>
                   </Link>
                   <Link
                     href="/profile/audit-logs"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <List className="size-4" />
                     <span className="text-sm">Audit Logs</span>
                   </Link>
                   <Link
                     href="/profile/feedbacks"
-                    className="flex items-center gap-3 px-3 h-10 hover:bg-white/5"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
                   >
                     <Info className="size-4" />
                     <span className="text-sm">Feedbacks</span>

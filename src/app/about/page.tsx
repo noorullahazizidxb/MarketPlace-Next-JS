@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const MARKETPLACE_NAME = "Your Marketplace Name";
 
@@ -31,18 +32,16 @@ export default function AboutPage() {
               it makes sense — and sell when it’s time to pass things on.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
-              <Link
-                href="/listings"
-                className="inline-flex items-center rounded-xl bg-[hsl(var(--primary))] px-5 py-3 text-sm font-medium text-[hsl(var(--background))] shadow-sm transition hover:brightness-110"
-              >
-                Browse Listings
-              </Link>
-              <Link
-                href="/sign-in"
-                className="inline-flex items-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 px-5 py-3 text-sm font-medium text-[hsl(var(--foreground))] backdrop-blur transition hover:bg-[hsl(var(--muted))]/30"
-              >
-                Become a Seller
-              </Link>
+              <Button asChild variant="primary">
+                <Link href="/listings" className="px-5 py-3 h-auto">
+                  Browse Listings
+                </Link>
+              </Button>
+              <Button asChild variant="secondary">
+                <Link href="/sign-in" className="px-5 py-3 h-auto">
+                  Become a Seller
+                </Link>
+              </Button>
             </div>
           </div>
         </div>
@@ -184,18 +183,16 @@ export default function AboutPage() {
             same.
           </p>
           <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Link
-              href="/listings"
-              className="inline-flex items-center rounded-xl bg-[hsl(var(--primary))] px-5 py-3 text-sm font-medium text-[hsl(var(--background))] shadow-sm transition hover:brightness-110"
-            >
-              Browse Listings
-            </Link>
-            <Link
-              href="/sign-in"
-              className="inline-flex items-center rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] px-5 py-3 text-sm font-medium transition hover:bg-[hsl(var(--muted))]/20"
-            >
-              Become a Seller
-            </Link>
+            <Button asChild variant="primary">
+              <Link href="/listings" className="px-5 py-3 h-auto">
+                Browse Listings
+              </Link>
+            </Button>
+            <Button asChild variant="secondary">
+              <Link href="/sign-in" className="px-5 py-3 h-auto">
+                Become a Seller
+              </Link>
+            </Button>
           </div>
         </div>
       </section>

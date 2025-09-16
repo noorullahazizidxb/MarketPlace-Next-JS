@@ -67,7 +67,7 @@ export function Topbar() {
               >
                 <Link
                   href="/listings"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full hover:bg-white/5"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
                 >
                   <Home className="size-4" />
                   <span>Home</span>
@@ -85,7 +85,7 @@ export function Topbar() {
               >
                 <Link
                   href="/about"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full hover:bg-white/5"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
                 >
                   <Info className="size-4" />
                   <span>About</span>
@@ -103,7 +103,7 @@ export function Topbar() {
               >
                 <Link
                   href="/contact"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full hover:bg-white/5"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
                 >
                   <Phone className="size-4" />
                   <span>Contact</span>
@@ -168,14 +168,14 @@ export function Topbar() {
                       <div className="py-1">
                         <Link
                           href="/profile"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <User2 className="size-4" />
                           <span className="text-sm">Profile</span>
                         </Link>
                         <Link
                           href="/my-listings"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <LayoutGrid className="size-4" />
                           <span className="text-sm">My listings</span>
@@ -187,42 +187,42 @@ export function Topbar() {
                         </Link>
                         <Link
                           href="/profile/roles"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <Stars className="size-4" />
                           <span className="text-sm">Roles</span>
                         </Link>
                         <Link
                           href="/profile/sent-notifications"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <Mail className="size-4" />
                           <span className="text-sm">Sent Notifications</span>
                         </Link>
                         <Link
                           href="/profile/approved-listings"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <LayoutGrid className="size-4" />
                           <span className="text-sm">Approved Listings</span>
                         </Link>
                         <Link
                           href="/profile/audit-logs"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <List className="size-4" />
                           <span className="text-sm">Audit Logs</span>
                         </Link>
                         <Link
                           href="/profile/feedbacks"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <Info className="size-4" />
                           <span className="text-sm">Feedbacks</span>
                         </Link>
                         <Link
                           href="/notifications"
-                          className="flex items-center gap-3 px-3 h-11 hover:bg-white/10"
+                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
                           <Bell className="size-4" />
                           <span className="text-sm">Notifications</span>

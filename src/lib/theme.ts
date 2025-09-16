@@ -221,10 +221,13 @@ export function applyThemeComponents(components: any) {
   }
   if (components.link) {
     const l = components.link;
-    if (l.color?.token) setVar("--link-color", tokenRef(l.color.token));
-    if (l.hoverColor?.token) setVar("--link-hover-color", tokenRef(l.hoverColor.token));
-    if (l.underline?.token) setVar("--link-underline", tokenRef(l.underline.token));
-    if (l.activeColor?.token) setVar("--link-active-color", tokenRef(l.activeColor.token));
+    // Use resolved vars to avoid collisions with token-mapped unprefixed vars
+    if (l.color?.token) setVar("--link-color-resolved", tokenRef(l.color.token));
+    if (l.hoverColor?.token) setVar("--link-hover-color-resolved", tokenRef(l.hoverColor.token));
+    if (l.underline?.token) setVar("--link-underline-resolved", tokenRef(l.underline.token));
+    if (l.activeColor?.token) setVar("--link-active-color-resolved", tokenRef(l.activeColor.token));
+    if (l.background?.token) setVar("--link-bg-resolved", tokenRef(l.background.token));
+    if (l.hoverBackground?.token) setVar("--link-hover-bg-resolved", tokenRef(l.hoverBackground.token));
     if (l.transition) root.style.setProperty("--link-transition", transitionRef(l.transition));
   }
 }

@@ -71,7 +71,7 @@ export default function Footer() {
                   <li key={n.href}>
                     <Link
                       href={n.href}
-                      className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 hover:bg-[hsl(var(--muted))]/10 hover:text-[hsl(var(--foreground))] hover:shadow-sm"
+                      className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
                     >
                       <span>{n.label}</span>
                     </Link>
@@ -152,24 +152,15 @@ export default function Footer() {
               © {new Date().getFullYear()} Marketplace. All rights reserved.
             </div>
             <div className="flex items-center gap-3">
-              <Link
-                href="/privacy"
-                className="hover:text-[hsl(var(--foreground))]"
-              >
+              <Link href="/privacy" className="link">
                 Privacy
               </Link>
               <span className="opacity-30">•</span>
-              <Link
-                href="/terms"
-                className="hover:text-[hsl(var(--foreground))]"
-              >
+              <Link href="/terms" className="link">
                 Terms
               </Link>
               <span className="opacity-30">•</span>
-              <a
-                href="mailto:support@yourdomain.com"
-                className="hover:text-[hsl(var(--foreground))]"
-              >
+              <a href="mailto:support@yourdomain.com" className="link">
                 support@yourdomain.com
               </a>
             </div>

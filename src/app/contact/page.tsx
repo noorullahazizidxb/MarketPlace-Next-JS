@@ -104,7 +104,7 @@ function ContactInfo() {
           <a
             key={c.title}
             href={c.href}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition hover:bg-[hsl(var(--muted))]/10"
+            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition hover:[background-color:hsl(var(--link-hover-bg,var(--muted))_/_0.15)]"
           >
             <div className="flex items-start gap-3">
               <div className="shrink-0">{c.icon}</div>
