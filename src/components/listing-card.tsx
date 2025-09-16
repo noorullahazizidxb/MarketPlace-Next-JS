@@ -3,7 +3,13 @@
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Phone, ShieldCheck, ArrowRight } from "lucide-react";
+import {
+  Phone,
+  ShieldCheck,
+  ArrowRight,
+  Star,
+  MessageSquare,
+} from "lucide-react";
 import { asset } from "@/lib/assets";
 
 type ListingImage = { url: string; alt?: string | null };
@@ -28,6 +34,8 @@ export type Listing = {
   representatives?: Representative[];
   user?: { id: string; name?: string | null };
   location?: string | null;
+  averageRating?: number | null;
+  reviewCount?: number | null;
 };
 
 export function ListingCard({ listing }: { listing: Listing }) {
@@ -51,6 +59,52 @@ export function ListingCard({ listing }: { listing: Listing }) {
           className="object-cover transition-transform duration-500 group-hover:scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
+        {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
+        <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-2">
+          {/* Rating badge - default to 0.0 */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[11px] text-white shadow-sm backdrop-blur-sm dark:bg-black/60">
+            <div className="flex items-center -ml-1">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const rating =
+                  typeof listing.averageRating === "number"
+                    ? listing.averageRating
+                    : 0;
+                const filled = i + 1 <= Math.floor(rating);
+                const half =
+                  !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
+                return (
+                  <Star
+                    key={i}
+                    className={
+                      "mr-[2px] size-3 " +
+                      (filled
+                        ? "fill-yellow-400 text-yellow-400"
+                        : half
+                        ? "fill-gradient text-yellow-300"
+                        : "text-white/30")
+                    }
+                  />
+                );
+              })}
+            </div>
+            <span className="ml-1 font-medium tabular-nums">
+              {(typeof listing.averageRating === "number"
+                ? listing.averageRating
+                : 0
+              ).toFixed(1)}
+            </span>
+          </div>
+
+          {/* Reviews badge - default to 0 */}
+          <div className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[11px] text-white shadow-sm backdrop-blur-sm dark:bg-black/60">
+            <MessageSquare className="size-3.5 text-white/80" />
+            <span className="font-medium tabular-nums">
+              {typeof listing.reviewCount === "number"
+                ? listing.reviewCount
+                : 0}
+            </span>
+          </div>
+        </div>
         <div className="absolute bottom-2 left-2 flex items-center gap-2">
           <span className="text-2xs px-2 py-1 rounded-full bg-white/70 text-black border border-[hsl(var(--border))] dark:bg-black/60 dark:text-white/90">
             {listing.listingType || "LISTING"}

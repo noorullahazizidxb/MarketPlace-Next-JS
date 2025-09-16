@@ -105,13 +105,45 @@ function ListingsContent() {
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {pageItems.map((item) => (
-                  <ListingCard key={item.id} listing={item} />
+                {pageItems.map((item, idx) => (
+                  <>
+                    <ListingCard key={item.id} listing={item} />
+                    {/* Insert an ad after finishing each row */}
+                    {((idx + 1) % 4 === 0 ||
+                      (idx === pageItems.length - 1 &&
+                        (idx + 1) % 4 !== 0)) && (
+                      <div key={`ad-${idx}`} className="col-span-full">
+                        <AdPlaceholder index={Math.floor(idx / 4)} />
+                      </div>
+                    )}
+                  </>
                 ))}
               </div>
               <Pagination page={current} pageCount={pageCount} />
             </>
           ))}
+      </div>
+    </div>
+  );
+}
+
+function AdPlaceholder({ index }: { index: number }) {
+  const urls = [
+    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
+  ];
+  const url = urls[index % urls.length];
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="h-[150px] w-full">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Advertisement"
+          className="h-full w-full object-cover"
+        />
       </div>
     </div>
   );
