@@ -32,15 +32,36 @@ function ListingsContent() {
   const searchText = search.get("search") || undefined;
   const page = parseInt(search.get("page") || "1", 10);
   const pageSize = 12;
+  // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
   const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
-    id ? ["listing", id] : ["listings", type, categoryId, searchText],
-    id ? `/listings/${id}` : "/listings",
-    id ? undefined : { listingType: type, categoryId, search: searchText }
+    ["listings", "all"],
+    "/listings",
+    undefined
   );
-  const items: Listing[] = useMemo(
+  const allItems: Listing[] = useMemo(
     () => (Array.isArray(data) ? data : data ? [data] : []),
     [data]
   );
+
+  const items: Listing[] = useMemo(() => {
+    if (id) {
+      const found = allItems.find((it) => String(it.id) === String(id));
+      return found ? [found] : [];
+    }
+    return allItems.filter((it) => {
+      if (type && type.length > 0 && it.listingType !== type) return false;
+      if (categoryId && categoryId.length > 0) {
+        const itemCat =
+          (it as any).categoryId ?? (it as any).category?.id ?? undefined;
+        if (!itemCat || String(itemCat) !== String(categoryId)) return false;
+      }
+      if (searchText && searchText.length > 0) {
+        const hay = `${it.title ?? ""} ${it.description ?? ""}`.toLowerCase();
+        if (!hay.includes(searchText.toLowerCase())) return false;
+      }
+      return true;
+    });
+  }, [allItems, id, type, categoryId, searchText]);
   const total = items.length; // backend not paginated; client-side paginate available items
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const current = Math.min(Math.max(1, page), pageCount);

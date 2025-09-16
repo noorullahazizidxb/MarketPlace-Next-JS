@@ -6,6 +6,7 @@ import { AnimatedBg } from "@/components/animated-bg";
 import { QueryProvider } from "@/components/query-provider";
 import { AppShell } from "@/components/app-shell";
 import { AppToaster } from "@/components/toaster";
+import SiteFooter from "@/components/site-footer";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +32,7 @@ export default function RootLayout({
             <SkipLink />
             <AnimatedBg />
             <AppShell>{children}</AppShell>
+            <SiteFooter />
             <AppToaster />
           </QueryProvider>
         </ThemeProvider>

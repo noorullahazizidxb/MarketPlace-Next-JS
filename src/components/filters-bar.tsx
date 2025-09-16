@@ -34,12 +34,14 @@ export function FiltersBar() {
   const onType = (next: string) => {
     const q = setParam(search, "type", next === type ? null : next);
     q.delete("page");
+    q.delete("id");
     router.push(`${pathname}?${q.toString()}`);
   };
   const onCategory = (id: string) => {
     const isSame = id === categoryId;
     const q = setParam(search, "categoryId", isSame ? null : id);
     q.delete("page");
+    q.delete("id");
     router.push(`${pathname}?${q.toString()}`);
   };
 
@@ -68,13 +70,11 @@ export function FiltersBar() {
       <div className="mx-3 h-6 w-px bg-white/10" />
       <div className="mr-2 font-medium text-sm">Category:</div>
       {chip("All", categoryId === "", () => onCategory(""))}
-      {cats
-        .slice(0, 10)
-        .map((c) =>
-          chip(c.name, categoryId === String(c.id), () =>
-            onCategory(String(c.id))
-          )
-        )}
+      {cats.map((c) =>
+        chip(c.name, categoryId === String(c.id), () =>
+          onCategory(String(c.id))
+        )
+      )}
     </div>
   );
 }
