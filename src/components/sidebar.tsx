@@ -44,6 +44,7 @@ export function Sidebar({
   const items = [
     { href: "/", label: "Dashboard", Icon: LayoutDashboard },
     { href: "/listings", label: "Listings", Icon: Layers3 },
+    { href: "/pendings", label: "Pending Lists", Icon: List },
     { href: "/listings/create", label: "New Listing", Icon: PlusCircle },
     { href: "/profile", label: "Profile", Icon: User },
     // keep Settings in the nav but render children below

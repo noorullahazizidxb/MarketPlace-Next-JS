@@ -3,10 +3,13 @@
 import { useMemo } from "react";
 import { useAuthStore } from "@/store/auth.store";
 import { useNotificationsStore } from "@/store/notifications.store";
+import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 
 export default function NotificationsPage() {
   const session = useAuthStore((s) => s.session);
   const setNotifications = useNotificationsStore((s) => s.set);
+  const storeItems = useNotificationsStore((s) => s.items);
+  const { connected } = useNotificationsRealtime();
 
   const items = useMemo(() => {
     const u = session?.user ?? {};
@@ -29,13 +32,18 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-4">
-      <h2 className="heading-xl">Notifications</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="heading-xl">Notifications</h2>
+        <span className="text-xs subtle">
+          Socket: {connected ? "connected" : "disconnected"}
+        </span>
+      </div>
       <div className="card p-4 space-y-3">
-        {items.length === 0 ? (
+        {storeItems.length === 0 ? (
           <p className="subtle">No notifications.</p>
         ) : (
           <ul className="space-y-2">
-            {items.map((n: any, i: number) => (
+            {storeItems.map((n: any, i: number) => (
               <li
                 key={n.id ?? i}
                 className="p-3 rounded-xl border border-white/10 bg-white/5"

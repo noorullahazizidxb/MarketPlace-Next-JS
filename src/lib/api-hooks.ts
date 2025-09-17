@@ -51,13 +51,13 @@ async function localFetch<T>(url: string, init?: RequestInit): Promise<T> {
 
 // SWR GET for external API with axios interceptor (Authorization etc.)
 export function useSWRGet<T = any>(
-  key: string | any[],
+  key: string | any[] | null,
   url: string,
   params?: Record<string, any>,
   options?: SWRConfiguration<T, ErrorType>
 ): SWRResponse<T, ErrorType> {
-  const swrKey = Array.isArray(key) ? key : [key];
-  return useSWR<T, ErrorType>(swrKey, () => axiosGet<T>(url, params), {
+  const swrKey = key === null ? null : Array.isArray(key) ? key : [key];
+  return useSWR<T, ErrorType>(swrKey as any, () => axiosGet<T>(url, params), {
     revalidateOnFocus: false,
     ...options,
   });
@@ -91,7 +91,7 @@ export function useLocalGetImmutable<T = any>(
 
 // Backward-compatible wrapper: delegate React Query GETs to SWR
 export function useApiGet<TData = any>(
-  key: readonly unknown[],
+  key: readonly unknown[] | null,
   url: string,
   params?: Record<string, any>,
   options?: SWRConfiguration<TData, ErrorType>

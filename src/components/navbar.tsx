@@ -45,6 +45,7 @@ export function Navbar() {
         items={[
           { href: "/", label: "Dashboard" },
           { href: "/listings", label: "Listings" },
+          { href: "/pendings", label: "Pending Lists" },
           { href: "/listings/create", label: "New Listing" },
           { href: "/profile", label: "Profile" },
           { href: "/settings", label: "Settings" },
