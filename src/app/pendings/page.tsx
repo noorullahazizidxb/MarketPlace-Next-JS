@@ -24,6 +24,15 @@ export default function PendingsPageClient() {
     });
   }, [listings, q, category]);
 
+  const handleApproved = (id: string, visibility: any) => {
+    // optionally show toast here
+    refresh();
+  };
+
+  const handleRejected = (id: string) => {
+    refresh();
+  };
+
   return (
     <div className="min-h-screen p-6">
       <div className="glass rounded-2xl p-6 border border-[hsl(var(--border))] w-full max-w-8xl mx-auto">
@@ -82,7 +91,12 @@ export default function PendingsPageClient() {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-3">
             {filtered.map((l: any) => (
-              <ApprovalCard key={l.id} listing={l} />
+              <ApprovalCard
+                key={l.id}
+                listing={l}
+                onApproved={handleApproved}
+                onRejected={handleRejected}
+              />
             ))}
           </div>
         </div>

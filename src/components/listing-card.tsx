@@ -11,6 +11,7 @@ import {
   MessageSquare,
 } from "lucide-react";
 import { asset } from "@/lib/assets";
+import { ImageSlider } from "@/components/image-slider";
 
 type ListingImage = { url: string; alt?: string | null };
 type Representative = {
@@ -51,14 +52,13 @@ export function ListingCard({ listing }: { listing: Listing }) {
       viewport={{ once: true, amount: 0.4 }}
       className="group relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
     >
-      <div className="relative aspect-[16/10] overflow-hidden rounded-t-2xl">
-        <Image
-          src={img}
-          alt={listing.title}
-          fill
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
+      <div className="relative overflow-hidden rounded-t-2xl">
+        <ImageSlider
+          images={listing.images}
+          className="transition-transform duration-500 group-hover:scale-105"
+          aspect="16/10"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent pointer-events-none" />
         {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
         <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-2">
           {/* Rating badge - default to 0.0 */}

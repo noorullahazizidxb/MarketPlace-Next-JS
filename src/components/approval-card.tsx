@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
+import { ImageSlider } from "@/components/image-slider";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApiMutation } from "@/lib/api-hooks";
 import { twMerge } from "tailwind-merge";
@@ -59,11 +60,10 @@ export function ApprovalCard({
         "transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.24)]"
       )}
     >
-      <div className="relative aspect-[16/9] overflow-hidden rounded-t-2xl">
-        <Image
-          src={cover}
-          alt={listing?.title ?? "Listing"}
-          fill
+      <div className="relative overflow-hidden rounded-t-2xl">
+        <ImageSlider
+          images={listing?.images}
+          aspect="16/9"
           className="object-cover"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />

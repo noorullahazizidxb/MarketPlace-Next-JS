@@ -24,7 +24,7 @@ const nav = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-16">
+    <footer className="relative mt-16 ">
       {/* Background gradient accents */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-tr from-[hsl(var(--primary))]/30 via-fuchsia-400/20 to-cyan-400/20 blur-3xl dark:from-[hsl(var(--primary))]/20" />
@@ -36,7 +36,7 @@ export default function Footer() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, amount: 0.3 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8"
+        className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8"
       >
         <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
           <div className="grid grid-cols-1 gap-8 p-6 sm:grid-cols-2 lg:grid-cols-4 lg:p-10">
@@ -130,7 +130,7 @@ export default function Footer() {
             </div>
 
             {/* QR Code */}
-            <div>
+            <div className="flex flex-col items-start">
               <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
                 Scan & Visit
               </div>
