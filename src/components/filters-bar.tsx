@@ -45,9 +45,14 @@ export function FiltersBar() {
     router.push(`${pathname}?${q.toString()}`);
   };
 
-  const chip = (label: string, active: boolean, onClick: () => void) => (
+  const chip = (
+    label: string,
+    active: boolean,
+    onClick: () => void,
+    keyPrefix = "chip"
+  ) => (
     <motion.button
-      key={label}
+      key={`${keyPrefix}-${label}`}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={cn(
@@ -64,15 +69,18 @@ export function FiltersBar() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="mr-2 font-medium text-sm">Type:</div>
-      {chip("All", type === "", () => onType(""))}
-      {chip("Rent", type === "RENT", () => onType("RENT"))}
-      {chip("Sale", type === "SALE", () => onType("SALE"))}
+      {chip("All", type === "", () => onType(""), "type")}
+      {chip("Rent", type === "RENT", () => onType("RENT"), "type")}
+      {chip("Sale", type === "SALE", () => onType("SALE"), "type")}
       <div className="mx-3 h-6 w-px bg-white/10" />
       <div className="mr-2 font-medium text-sm">Category:</div>
-      {chip("All", categoryId === "", () => onCategory(""))}
+      {chip("All", categoryId === "", () => onCategory(""), "category")}
       {cats.map((c) =>
-        chip(c.name, categoryId === String(c.id), () =>
-          onCategory(String(c.id))
+        chip(
+          c.name,
+          categoryId === String(c.id),
+          () => onCategory(String(c.id)),
+          `category-${c.id}`
         )
       )}
     </div>

@@ -160,6 +160,7 @@ function ListingDetailsContent() {
               </div>
             </div>
 
+            <AdPlaceholder index={0} />
             <FeedbackCreateForm
               listingId={String(id)}
               onSuccess={() => mutate()}
@@ -185,6 +186,7 @@ function ListingDetailsContent() {
               canPost={!!user}
             />
             <FeedbacksSection feedbacks={feedbacks} />
+            <AdPlaceholder index={1} />
           </div>
 
           <div className="space-y-4">
@@ -198,6 +200,7 @@ function ListingDetailsContent() {
             <SocialsCard />
             <NewsletterCard />
             <QRCard url={pageUrl} />
+            <LargeAdPlaceholder />
           </div>
         </div>
       )}
@@ -520,6 +523,51 @@ function getInitials(name: string) {
   const first = parts[0]?.[0] || "";
   const last = parts[1]?.[0] || "";
   return (first + last).toUpperCase() || (first || "A").toUpperCase();
+}
+
+function AdPlaceholder({ index }: { index: number }) {
+  const urls = [
+    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1200&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
+  ];
+  const url = urls[index % urls.length];
+  return (
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="h-[150px] w-full">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Advertisement"
+          className="h-full w-full object-cover"
+        />
+      </div>
+    </div>
+  );
+}
+
+function LargeAdPlaceholder() {
+  const urls = [
+    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
+    "https://images.unsplash.com/photo-1526403224741-5a0d0fb7f7b9?q=80&w=2000&auto=format&fit=crop",
+  ];
+  const idx = Math.floor(Math.random() * urls.length);
+  const url = urls[idx];
+  return (
+    <div className="w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+      <div className="w-full h-[800px]">
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={url}
+          alt="Advertisement"
+          className="w-full h-full object-cover"
+        />
+      </div>
+    </div>
+  );
 }
 
 function FeedbackCreateForm({

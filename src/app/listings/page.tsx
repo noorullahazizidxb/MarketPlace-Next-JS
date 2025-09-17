@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useMemo } from "react";
+import { Suspense, useMemo, Fragment } from "react";
 import { useApiGet } from "@/lib/api-hooks";
 import { ListingCard, type Listing } from "@/components/listing-card";
 import { FiltersBar } from "@/components/filters-bar";
@@ -71,7 +71,6 @@ function ListingsContent() {
   );
   return (
     <div className="space-y-4">
-      <h2 className="heading-xl">Listings</h2>
       <div className="card p-4 space-y-3">
         <FiltersBar />
         {isLoading && (
@@ -106,17 +105,20 @@ function ListingsContent() {
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {pageItems.map((item, idx) => (
-                  <>
+                  <Fragment key={item.id}>
                     <ListingCard key={item.id} listing={item} />
                     {/* Insert an ad after finishing each row */}
                     {((idx + 1) % 4 === 0 ||
                       (idx === pageItems.length - 1 &&
                         (idx + 1) % 4 !== 0)) && (
-                      <div key={`ad-${idx}`} className="col-span-full">
+                      <div
+                        key={`ad-${item.id}-${idx}`}
+                        className="col-span-full"
+                      >
                         <AdPlaceholder index={Math.floor(idx / 4)} />
                       </div>
                     )}
-                  </>
+                  </Fragment>
                 ))}
               </div>
               <Pagination page={current} pageCount={pageCount} />

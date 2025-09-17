@@ -27,9 +27,15 @@ import Link from "next/link";
 import { adminNavItems } from "@/components/admin-nav";
 import { MobileMenu } from "@/components/mobile-menu";
 import { useUIStore } from "@/store/ui.store";
+import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
+import { useNotificationsStore } from "@/store/notifications.store";
+import { NotificationsPanel } from "@/components/notifications-panel";
 
 export function Topbar() {
   const { user, counts, roles } = useAuth();
+  const unreadCount = useNotificationsStore((s) => s.unreadCount);
+  const [notifOpen, setNotifOpen] = useState(false);
+  useNotificationsRealtime(!!user);
   const [open, setOpen] = useState(false);
   const mobileMenu = useUIStore((s) => s.mobileMenuOpen);
   const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
@@ -122,7 +128,35 @@ export function Topbar() {
               <div className="flex items-center gap-2 sm:hidden">
                 <SearchBox className="w-full" placeholder="Search" />
               </div>
-              {/* Notifications removed; ThemeToggle moved to left */}
+              {/* Notifications */}
+              {user && (
+                <>
+                  <button
+                    className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+                    aria-label="Open notifications"
+                    onClick={() => {
+                      try {
+                        console.log(
+                          "[notifications] bell clicked -> open panel"
+                        );
+                      } catch {}
+                      setNotifOpen(true);
+                    }}
+                  >
+                    <Bell className="size-4" />
+                    {unreadCount > 0 && (
+                      <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
+                        {unreadCount > 99 ? "99+" : unreadCount}
+                      </span>
+                    )}
+                  </button>
+                  <NotificationsPanel
+                    isOpen={notifOpen}
+                    onClose={() => setNotifOpen(false)}
+                    fetchUrl="/notifications"
+                  />
+                </>
+              )}
               <div className="hidden md:flex items-center gap-2">
                 <SearchBox placeholder="Search" />
               </div>
@@ -142,13 +176,24 @@ export function Topbar() {
                     <span className="hidden sm:block text-sm font-medium">
                       {name}
                     </span>
+                    {counts?.listings > 0 && (
+                      <span
+                        className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-xs font-semibold"
+                        aria-hidden
+                      >
+                        {counts.listings > 99 ? "99+" : counts.listings}
+                      </span>
+                    )}
                   </button>
                   {open && (
                     <motion.div
                       initial={{ opacity: 0, y: -6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-[calc(100%+8px)] z-[70] w-64 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl"
+                      className="absolute right-0 top-[calc(100%+8px)] z-[70] w-64 rounded-2xl overflow-hidden border border-[hsl(var(--card-border, var(--border)))] text-[hsl(var(--card-fg, var(--foreground)))] shadow-2xl"
+                      style={{
+                        backgroundColor: `hsl(var(--card-bg, var(--card)))`,
+                      }}
                     >
                       <div className="p-3 border-b border-white/10 flex items-center gap-3">
                         <Image
@@ -186,20 +231,6 @@ export function Topbar() {
                           )}
                         </Link>
                         <Link
-                          href="/profile/roles"
-                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
-                        >
-                          <Stars className="size-4" />
-                          <span className="text-sm">Roles</span>
-                        </Link>
-                        <Link
-                          href="/profile/sent-notifications"
-                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
-                        >
-                          <Mail className="size-4" />
-                          <span className="text-sm">Sent Notifications</span>
-                        </Link>
-                        <Link
                           href="/profile/approved-listings"
                           className="flex items-center gap-3 px-3 h-11 rounded-xl link"
                         >
@@ -220,18 +251,7 @@ export function Topbar() {
                           <Info className="size-4" />
                           <span className="text-sm">Feedbacks</span>
                         </Link>
-                        <Link
-                          href="/notifications"
-                          className="flex items-center gap-3 px-3 h-11 rounded-xl link"
-                        >
-                          <Bell className="size-4" />
-                          <span className="text-sm">Notifications</span>
-                          {!!counts?.notifications && (
-                            <span className="ml-auto text-xs px-2 py-0.5 rounded bg-white/10">
-                              {counts.notifications}
-                            </span>
-                          )}
-                        </Link>
+                        {/* Roles, Sent Notifications and Notifications removed per request */}
                         <button
                           onClick={async () => {
                             try {

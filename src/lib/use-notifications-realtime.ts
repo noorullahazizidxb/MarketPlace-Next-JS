@@ -6,7 +6,7 @@ import { useApiGet } from "./api-hooks";
 import { useNotificationsStore, NotificationItem } from "@/store/notifications.store";
 import { setCachedToken } from "./axiosClient";
 
-export function useNotificationsRealtime() {
+export function useNotificationsRealtime(enabled: boolean = true) {
   const { token, user } = useAuth();
   const setList = useNotificationsStore((s) => s.set);
   const addItem = useNotificationsStore((s) => s.add);
@@ -15,16 +15,35 @@ export function useNotificationsRealtime() {
 
   const userId = useMemo(() => (user?.id ?? user?._id ?? null), [user]);
 
-  const { data, error, isValidating, mutate } = useApiGet<NotificationItem[]>(
+  const { data, error, isValidating, mutate } = useApiGet<any[]>(
     userId ? ["notifications", userId] : (undefined as unknown as readonly unknown[]),
     "/notifications"
   );
 
-  useEffect(() => {
-    if (Array.isArray(data)) setList(data);
-  }, [data, setList]);
+  const normalize = (items: any[], uid: string | null | undefined): NotificationItem[] => {
+    return (items || []).map((it: any) => {
+      const id = String(it?.id ?? it?._id ?? "");
+      let read = false;
+      if (typeof it?.read === "boolean") read = it.read;
+      else if (Array.isArray(it?.recipients) && uid) {
+        const r = it.recipients.find((x: any) => x?.userId === uid);
+        read = r ? !!r.readAt : false;
+      }
+      return {
+        id,
+        title: it?.title ?? it?.message ?? "Notification",
+        createdAt: it?.createdAt,
+        read,
+      } as NotificationItem;
+    });
+  };
 
   useEffect(() => {
+    if (Array.isArray(data)) setList(normalize(data, userId));
+  }, [data, setList, userId]);
+
+  useEffect(() => {
+    if (!enabled) return;
     if (!token || !userId) return;
     // ensure axios client sends Authorization header for API requests
     setCachedToken(token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token);
@@ -41,16 +60,21 @@ export function useNotificationsRealtime() {
     });
     socketRef.current = socket;
 
-    socket.on("connect", () => setConnected(true));
+    socket.on("connect", () => {
+      setConnected(true);
+      try { console.log("[notifications] websocket connected"); } catch {}
+    });
     socket.on("disconnect", () => setConnected(false));
 
-    socket.on("notifications:list", (items: NotificationItem[]) => {
-      setList(Array.isArray(items) ? items : []);
-      mutate(items as any, false);
+    socket.on("notifications:list", (items: any[]) => {
+      const mapped = Array.isArray(items) ? normalize(items, userId) : [];
+      setList(mapped);
+      mutate(mapped as any, false);
     });
 
-    socket.on("notification:new", (n: NotificationItem) => {
-      addItem(n);
+    socket.on("notification:new", (n: any) => {
+      const mapped = normalize([n], userId);
+      if (mapped[0]) addItem(mapped[0]);
     });
 
     return () => {
@@ -58,7 +82,7 @@ export function useNotificationsRealtime() {
       socket.disconnect();
       socketRef.current = null;
     };
-  }, [token, userId, setList, addItem, mutate]);
+  }, [enabled, token, userId, setList, addItem, mutate]);
 
   return { connected, loading: !!isValidating, error } as const;
 }
