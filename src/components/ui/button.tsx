@@ -10,6 +10,7 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   LeftIcon?: IconType;
   RightIcon?: IconType;
   variant?: "primary" | "secondary" | "ghost" | "accent";
+  size?: "sm" | "md" | "lg";
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -20,6 +21,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       LeftIcon,
       RightIcon,
       variant = "primary",
+      size = "md",
       children,
       ...props
     },
@@ -27,7 +29,12 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     const Comp = asChild ? Slot : "button";
     const base =
-      "inline-flex items-center justify-center whitespace-nowrap [border-radius:var(--radius-button-override,var(--radius-button,var(--radius-md,0.75rem)))] text-sm font-medium transition-all duration-200 ease-premium disabled:opacity-60 disabled:cursor-not-allowed h-10 px-4 gap-2 neuo border active:translate-y-0.5 hover:scale-[1.015] active:scale-[0.985]";
+      "inline-flex items-center justify-center whitespace-nowrap [border-radius:var(--radius-button-override,var(--radius-button,var(--radius-md,0.75rem)))] font-medium transition-all duration-200 ease-premium disabled:opacity-60 disabled:cursor-not-allowed gap-2 neuo border active:translate-y-0.5 hover:scale-[1.015] active:scale-[0.985]";
+    const sizes: Record<NonNullable<ButtonProps["size"]>, string> = {
+      sm: "h-9 px-3 text-sm",
+      md: "h-10 px-4 text-sm",
+      lg: "h-11 px-6 text-base",
+    };
     const styles: Record<NonNullable<ButtonProps["variant"]>, string> = {
       primary:
         "[border-color:hsl(var(--card-border,var(--border)))] [color:hsl(var(--btn-primary-fg,var(--secondary-foreground)))] [background-color:hsl(var(--btn-primary-bg,var(--primary)))] hover:[background-color:hsl(var(--btn-primary-hover-bg,var(--accent)))] active:[background-color:hsl(var(--btn-primary-active-bg,var(--primary)))] [box-shadow:var(--btn-primary-shadow,var(--shadow-sm,none))] hover:[box-shadow:var(--btn-primary-hover-shadow,var(--btn-primary-shadow,var(--shadow-md,none)))] active:[box-shadow:var(--btn-primary-active-shadow,var(--shadow-sm,none))] [transition:var(--btn-primary-transition,var(--transition-normal,200ms_ease))] hover:-translate-y-0.5",
@@ -38,7 +45,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ghost:
         "bg-transparent hover:bg-foreground/5 [border-color:hsl(var(--card-border,var(--border)))]",
     };
-    const classes = cn(base, styles[variant], className);
+    const classes = cn(base, sizes[size], styles[variant], className);
     if (asChild) {
       // Radix Slot requires exactly one React element child
       return (

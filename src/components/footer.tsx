@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import QRCode from "react-qr-code";
-import { Github, Linkedin, Twitter } from "lucide-react";
+import { Github, Linkedin, Twitter, ArrowUpRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const socials = [
   { href: "https://github.com/yourorg", label: "GitHub", Icon: Github },
@@ -24,11 +25,12 @@ const nav = [
 
 export default function Footer() {
   return (
-    <footer className="relative mt-16 ">
-      {/* Background gradient accents */}
+    <footer className="relative mt-20">
+      {/* Background scene */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-24 left-1/2 h-64 w-64 -translate-x-1/2 rounded-full bg-gradient-to-tr from-[hsl(var(--primary))]/30 via-fuchsia-400/20 to-cyan-400/20 blur-3xl dark:from-[hsl(var(--primary))]/20" />
-        <div className="absolute bottom-0 right-0 h-40 w-40 translate-x-1/3 translate-y-1/3 rounded-full bg-gradient-to-tr from-emerald-400/20 to-blue-400/20 blur-2xl" />
+        <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,theme(colors.violet.500/.18),theme(colors.fuchsia.500/.14),theme(colors.cyan.500/.14))] blur-3xl opacity-70" />
+        <div className="absolute -bottom-14 -left-10 size-56 rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.emerald.400/.18),transparent_60%)] blur-2xl" />
+        <div className="absolute top-10 right-10 size-44 rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.sky.400/.18),transparent_60%)] blur-2xl" />
       </div>
 
       <motion.div
@@ -38,7 +40,7 @@ export default function Footer() {
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8"
       >
-        <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
+        <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
           <div className="grid grid-cols-1 gap-8 p-6 sm:grid-cols-2 lg:grid-cols-4 lg:p-10">
             {/* Brand */}
             <div>
@@ -59,6 +61,19 @@ export default function Footer() {
                 Building a trusted platform for creators and businesses with a
                 focus on quality, security, and delightful user experiences.
               </p>
+              <div className="mt-4 flex items-center gap-2">
+                <Button asChild size="sm" variant="primary">
+                  <Link
+                    href="/get-started"
+                    className="inline-flex items-center gap-1"
+                  >
+                    Get Started <ArrowUpRight className="size-4" />
+                  </Link>
+                </Button>
+                <Button asChild size="sm" variant="ghost" className="glass">
+                  <Link href="/contact">Contact</Link>
+                </Button>
+              </div>
             </div>
 
             {/* Navigation */}
@@ -120,12 +135,9 @@ export default function Footer() {
                   placeholder="you@domain.com"
                   className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
                 />
-                <button
-                  type="submit"
-                  className="rounded-xl bg-gradient-to-tr from-[hsl(var(--primary))]/70 to-[hsl(var(--primary))] px-3 py-2 text-sm font-medium text-[hsl(var(--background))] shadow-lg shadow-[hsl(var(--primary))]/20 transition-all hover:-translate-y-0.5 hover:brightness-110"
-                >
+                <Button type="submit" size="sm" variant="primary">
                   Subscribe
-                </button>
+                </Button>
               </form>
             </div>
 

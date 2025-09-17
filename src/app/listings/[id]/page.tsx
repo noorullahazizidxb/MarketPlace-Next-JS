@@ -1,17 +1,31 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
-import Image from "next/image";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
-import { asset } from "@/lib/assets";
-import { Star, ArrowLeft } from "lucide-react";
+import {
+  Star,
+  ArrowLeft,
+  MapPin,
+  BadgeCheck,
+  Tag,
+  Calendar,
+  Share2,
+  Heart,
+  Flag,
+  MessageCircle,
+  User,
+  Phone,
+  Link2,
+  Copy,
+} from "lucide-react";
 import Link from "next/link";
-import { useForm, type Resolver, type SubmitHandler } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { ImageSlider } from "@/components/image-slider";
+import QRCode from "react-qr-code";
+import { useAuth } from "@/lib/use-auth";
+import { asset } from "@/lib/assets";
+import { setCachedToken } from "@/lib/axiosClient";
 
 export default function ListingDetailsPage() {
   return (
@@ -27,24 +41,47 @@ function ListingDetailsContent() {
     data: listing,
     isLoading,
     error,
+    mutate,
   } = useApiGet<any>(["listing", id], `/listings/${id}`);
+  const { user } = useAuth();
 
-  const images: { url: string; alt?: string | null }[] = Array.isArray(
+  const images: { url?: string | null; alt?: string | null }[] = Array.isArray(
     listing?.images
   )
     ? listing.images
     : [];
 
+  const feedbacks = Array.isArray(listing?.feedbacks) ? listing?.feedbacks : [];
+  const avgRating = Number(listing?.averageRating || 0);
+  const reviewCount = Number(listing?.reviewCount || feedbacks.length || 0);
+
+  const contactHidden = listing?.contactVisibility === "HIDE_SELLER";
+
+  const pageUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
+    return window.location.href;
+  }, []);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
+      <div className="flex flex-wrap items-center gap-3">
         <Link
           href="/listings"
           className="subtle inline-flex items-center gap-1"
         >
           <ArrowLeft className="size-4" /> Back
         </Link>
-        <h1 className="heading-xl">{listing?.title ?? "Listing"}</h1>
+        <h1 className="heading-xl flex items-center gap-3">
+          {listing?.title ?? "Listing"}
+          {avgRating > 0 && (
+            <span className="inline-flex items-center gap-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-2 py-1 text-sm">
+              <Stars count={Math.round(avgRating)} />
+              <span className="text-xs">
+                {avgRating.toFixed(1)} ({reviewCount})
+              </span>
+            </span>
+          )}
+        </h1>
       </div>
       {isLoading && <p>Loading…</p>}
       {error && (
@@ -53,143 +90,353 @@ function ListingDetailsContent() {
         </p>
       )}
       {!isLoading && !error && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div className="lg:col-span-2">
-            <Gallery images={images} />
-            <div className="mt-4 card p-4 space-y-2">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+          <div className="space-y-4 lg:col-span-2">
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur overflow-hidden">
+              <ImageSlider images={images} aspect="16/10" />
+            </div>
+            <div className="card p-5 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
-                  <div className="px-2 py-1 rounded-xl bg-white/5 border border-white/10 text-sm">
+                  <div className="px-2 py-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 text-sm">
                     {listing.price} {listing.currency}
                   </div>
                 )}
                 {listing?.listingType && (
-                  <span className="text-xs px-2 py-1 rounded-full bg-black/50 backdrop-blur border border-white/10">
+                  <span className="text-xs px-2 py-1 rounded-full bg-[hsl(var(--foreground))]/10 border border-[hsl(var(--border))]">
                     {listing.listingType}
                   </span>
                 )}
+                {listing?.status && (
+                  <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10">
+                    <BadgeCheck className="size-3" /> {listing.status}
+                  </span>
+                )}
                 {listing?.location && (
-                  <span className="subtle text-sm">{listing.location}</span>
+                  <span className="inline-flex items-center gap-1 text-sm subtle">
+                    <MapPin className="size-4" /> {listing.location}
+                  </span>
+                )}
+                {listing?.category?.name && (
+                  <span className="inline-flex items-center gap-1 text-sm subtle">
+                    <Tag className="size-4" /> {listing.category.name}
+                  </span>
                 )}
               </div>
               {listing?.description && (
-                <p className="text-sm text-foreground/80 leading-relaxed">
+                <p className="text-sm leading-relaxed text-[hsl(var(--foreground))]/80">
                   {listing.description}
                 </p>
               )}
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
+                {listing?.createdAt && (
+                  <InfoPill
+                    icon={<Calendar className="size-3" />}
+                    label="Created"
+                    value={new Date(listing.createdAt).toLocaleDateString()}
+                  />
+                )}
+                {listing?.updatedAt && (
+                  <InfoPill
+                    icon={<Calendar className="size-3" />}
+                    label="Updated"
+                    value={new Date(listing.updatedAt).toLocaleDateString()}
+                  />
+                )}
+                {listing?.approvedAt && (
+                  <InfoPill
+                    icon={<Calendar className="size-3" />}
+                    label="Approved"
+                    value={new Date(listing.approvedAt).toLocaleDateString()}
+                  />
+                )}
+                {listing?.expiresAt && (
+                  <InfoPill
+                    icon={<Calendar className="size-3" />}
+                    label="Expires"
+                    value={new Date(listing.expiresAt).toLocaleDateString()}
+                  />
+                )}
+              </div>
             </div>
+
+            <FeedbackCreateForm
+              listingId={String(id)}
+              onSuccess={() => mutate()}
+              onOptimisticAdd={(fb: any) =>
+                mutate((prev: any) => {
+                  if (!prev) return prev;
+                  const list = Array.isArray(prev.feedbacks)
+                    ? prev.feedbacks
+                    : [];
+                  const count = Number(prev.reviewCount || list.length || 0);
+                  const avg = Number(prev.averageRating || 0);
+                  const nextCount = count + 1;
+                  const nextAvg =
+                    (avg * count + Number(fb?.rating || 0)) / nextCount;
+                  return {
+                    ...prev,
+                    feedbacks: [fb, ...list],
+                    reviewCount: nextCount,
+                    averageRating: nextAvg,
+                  };
+                }, false)
+              }
+              canPost={!!user}
+            />
+            <FeedbacksSection feedbacks={feedbacks} />
           </div>
+
           <div className="space-y-4">
-            <Reviews listingId={String(id)} />
+            {contactHidden ? (
+              <RepresentativesCard reps={listing?.representatives || []} />
+            ) : (
+              <SellerCard user={listing?.user} />
+            )}
+
+            <ActionsCard pageUrl={pageUrl} />
+            <SocialsCard />
+            <NewsletterCard />
+            <QRCard url={pageUrl} />
           </div>
         </div>
       )}
     </div>
   );
 }
-
-function Gallery({
-  images,
+function InfoPill({
+  icon,
+  label,
+  value,
 }: {
-  images: { url: string; alt?: string | null }[];
+  icon: React.ReactNode;
+  label: string;
+  value: string;
 }) {
-  if (images.length === 0) {
-    return (
-      <div className="relative aspect-[16/10] rounded-2xl overflow-hidden border border-white/10 bg-white/5" />
-    );
-  }
   return (
-    <div className="grid grid-cols-3 gap-3">
-      <div className="col-span-3 lg:col-span-2 relative aspect-[16/10] overflow-hidden rounded-2xl">
-        <Image
-          fill
-          alt={images[0].alt ?? ""}
-          src={asset(images[0].url)}
-          className="object-cover"
-        />
-      </div>
-      <div className="hidden lg:grid grid-cols-1 gap-3">
-        {images.slice(1, 4).map((img, i) => (
-          <div
-            key={i}
-            className="relative aspect-[16/10] overflow-hidden rounded-xl"
-          >
-            <Image
-              fill
-              alt={img.alt ?? ""}
-              src={asset(img.url)}
-              className="object-cover"
-            />
-          </div>
-        ))}
+    <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5 px-2 py-1.5">
+      <div className="flex items-center gap-2">
+        <span className="text-[hsl(var(--foreground))]/70">{icon}</span>
+        <span className="subtle">{label}:</span>
+        <span>{value}</span>
       </div>
     </div>
   );
 }
 
-const reviewSchema = z.object({
-  rating: z.coerce.number().min(1).max(5),
-  comment: z.string().min(3),
-});
-
-type ReviewForm = z.infer<typeof reviewSchema>;
-
-function Reviews({ listingId }: { listingId: string }) {
-  const { data: reviews } = useApiGet<any[] | any>(
-    ["reviews", listingId],
-    `/listings/${listingId}/reviews`
-  );
-  const list = Array.isArray(reviews) ? reviews : reviews ? [reviews] : [];
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting },
-    reset,
-  } = useForm<ReviewForm>({
-    resolver: zodResolver(reviewSchema) as Resolver<ReviewForm>,
-  });
-  const createReview = useApiMutation("post", `/listings/${listingId}/reviews`);
-
-  const onSubmit: SubmitHandler<ReviewForm> = async (data) => {
-    await createReview.mutateAsync(data);
-    reset();
-  };
-
+function RepresentativesCard({ reps }: { reps: any[] }) {
+  if (!Array.isArray(reps) || reps.length === 0) return null;
   return (
-    <div className="card p-4 space-y-4">
-      <h3 className="font-semibold">Reviews</h3>
-      {list.length === 0 && <p className="subtle">No reviews yet.</p>}
-      <div className="space-y-3">
-        {list.map((r: any, i: number) => (
-          <div
-            key={i}
-            className="p-3 rounded-xl border border-white/10 bg-white/5"
-          >
-            <div className="flex items-center gap-2 text-sm">
-              <Stars count={Number(r.rating) || 0} />
-              <span className="subtle">{r.user?.name ?? "Anonymous"}</span>
+    <div className="card p-5 space-y-3">
+      <h3 className="font-semibold flex items-center gap-2">
+        <User className="size-4" /> Listing Representatives
+      </h3>
+      <div className="space-y-2">
+        {reps.map((r, i) => {
+          const rep = r?.representative || r;
+          const phone = rep?.whatsappNumber as string | undefined;
+          const wa = phone
+            ? `https://wa.me/${normalizeWhatsapp(phone)}`
+            : undefined;
+          return (
+            <div
+              key={i}
+              className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5 p-3"
+            >
+              <div className="flex min-w-0 items-center gap-3">
+                <div className="size-9 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
+                  <User className="size-4 text-[hsl(var(--primary))]" />
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium truncate">
+                    {rep?.name ||
+                      rep?.region ||
+                      `Representative #${rep?.id ?? i + 1}`}
+                  </div>
+                  {rep?.region && (
+                    <div className="text-xs subtle">Region: {rep.region}</div>
+                  )}
+                  {phone && (
+                    <div className="text-xs subtle">WhatsApp: {phone}</div>
+                  )}
+                </div>
+              </div>
+              {wa && (
+                <Button asChild size="sm" variant="secondary">
+                  <a
+                    href={wa}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1"
+                  >
+                    <MessageCircle className="size-4" /> Chat
+                  </a>
+                </Button>
+              )}
             </div>
-            {r.comment && <p className="text-sm mt-1">{r.comment}</p>}
-          </div>
-        ))}
+          );
+        })}
       </div>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
-        <div className="flex items-center gap-2">
-          <Input
-            type="number"
-            min={1}
-            max={5}
-            step={1}
-            placeholder="Rating (1-5)"
-            {...register("rating")}
-          />
-          <Input placeholder="Write a short comment" {...register("comment")} />
-          <Button type="submit" disabled={isSubmitting}>
-            Post
-          </Button>
+    </div>
+  );
+}
+
+function SellerCard({ user }: { user?: any }) {
+  if (!user) return null;
+  return (
+    <div className="card p-5 space-y-3">
+      <h3 className="font-semibold flex items-center gap-2">
+        <User className="size-4" /> Seller
+      </h3>
+      <div className="flex items-center gap-3">
+        <div className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
+          <User className="size-5 text-[hsl(var(--primary))]" />
         </div>
+        <div>
+          <div className="text-sm font-medium">
+            {user.name || user.email || `User ${user.id?.slice?.(0, 6)}`}
+          </div>
+          <div className="text-xs subtle">ID: {user.id}</div>
+        </div>
+      </div>
+      <div className="flex items-center gap-2">
+        <Button size="sm" variant="primary" className="flex-1">
+          <Phone className="size-4" /> Contact
+        </Button>
+        <Button size="sm" variant="ghost" className="flex-1">
+          <MessageCircle className="size-4" /> Message
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function ActionsCard({ pageUrl }: { pageUrl: string }) {
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(pageUrl);
+    } catch {}
+  };
+  const share = async () => {
+    if ((navigator as any).share) {
+      try {
+        await (navigator as any).share({ url: pageUrl });
+      } catch {}
+    } else {
+      copy();
+    }
+  };
+  return (
+    <div className="card p-5 space-y-3">
+      <h3 className="font-semibold flex items-center gap-2">
+        <Share2 className="size-4" /> Quick Actions
+      </h3>
+      <div className="grid grid-cols-2 gap-2">
+        <Button
+          onClick={share}
+          size="sm"
+          variant="secondary"
+          className="w-full"
+        >
+          <Share2 className="size-4" /> Share
+        </Button>
+        <Button onClick={copy} size="sm" variant="ghost" className="w-full">
+          <Copy className="size-4" /> Copy link
+        </Button>
+        <Button size="sm" variant="ghost" className="w-full">
+          <Heart className="size-4" /> Save
+        </Button>
+        <Button size="sm" variant="ghost" className="w-full">
+          <Flag className="size-4" /> Report
+        </Button>
+      </div>
+    </div>
+  );
+}
+
+function SocialsCard() {
+  return (
+    <div className="card p-5">
+      <h3 className="font-semibold mb-3">Follow</h3>
+      <div className="flex items-center gap-2">
+        <Link
+          href="#"
+          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+        >
+          <svg
+            aria-hidden
+            className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M22.46 6c-.77.35-1.6.58-2.46.69a4.16 4.16 0 0 0 1.82-2.3a8.3 8.3 0 0 1-2.63 1a4.15 4.15 0 0 0-7.07 3.78A11.8 11.8 0 0 1 3.15 4.6a4.13 4.13 0 0 0 1.28 5.54a4.1 4.1 0 0 1-1.88-.52v.05a4.15 4.15 0 0 0 3.33 4.07a4.2 4.2 0 0 1-1.88.07a4.16 4.16 0 0 0 3.88 2.89A8.33 8.33 0 0 1 2 19.54a11.76 11.76 0 0 0 6.36 1.86c7.63 0 11.8-6.32 11.8-11.8l-.01-.54A8.4 8.4 0 0 0 22.46 6Z"
+            />
+          </svg>
+        </Link>
+        <Link
+          href="#"
+          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+        >
+          <svg
+            aria-hidden
+            className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill="currentColor"
+              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2Zm3.95 7.05L10.5 14.5L8.05 12.05l-1.4 1.4L10.5 17.3l7.85-7.85l-1.4-1.4Z"
+            />
+          </svg>
+        </Link>
+        <Link
+          href="#"
+          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+        >
+          <Link2 className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]" />
+        </Link>
+      </div>
+    </div>
+  );
+}
+
+function NewsletterCard() {
+  return (
+    <div className="card p-5 space-y-2">
+      <h3 className="font-semibold">Newsletter</h3>
+      <p className="text-xs subtle">Get product updates and curated content.</p>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          const fd = new FormData(e.currentTarget as HTMLFormElement);
+          const email = String(fd.get("email") || "");
+          if (!email) return;
+        }}
+        className="mt-1 flex items-center gap-2"
+      >
+        <input
+          name="email"
+          type="email"
+          required
+          placeholder="you@domain.com"
+          className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
+        />
+        <Button type="submit" size="sm" variant="primary">
+          Subscribe
+        </Button>
       </form>
+    </div>
+  );
+}
+
+function QRCard({ url }: { url: string }) {
+  if (!url) return null;
+  return (
+    <div className="card p-5">
+      <h3 className="font-semibold">Scan & Visit</h3>
+      <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
+        <QRCode value={url} className="h-auto w-full" />
+      </div>
     </div>
   );
 }
@@ -201,10 +448,215 @@ function Stars({ count }: { count: number }) {
         <Star
           key={i}
           className={`size-4 ${
-            i < count ? "fill-yellow-400 text-yellow-400" : "text-white/20"
+            i < count
+              ? "fill-current text-[hsl(var(--primary))]"
+              : "text-[hsl(var(--foreground))]/20"
           }`}
         />
       ))}
+    </div>
+  );
+}
+
+function FeedbacksSection({ feedbacks }: { feedbacks: any[] }) {
+  return (
+    <div className="card p-5 space-y-4">
+      <h3 className="font-semibold">Feedbacks</h3>
+      {(!feedbacks || feedbacks.length === 0) && (
+        <p className="subtle">No feedbacks yet.</p>
+      )}
+      <div className="space-y-3">
+        {feedbacks?.map((r: any, i: number) => (
+          <div
+            key={i}
+            className="p-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5"
+          >
+            <div className="flex items-center gap-3 text-sm">
+              <AvatarSmall user={r.user} />
+              <span className="font-medium">
+                {r?.user?.fullName || r?.user?.name || "Anonymous"}
+              </span>
+              <Stars count={Number(r.rating) || 0} />
+              {r.createdAt && (
+                <span className="subtle ml-auto text-xs">
+                  {new Date(r.createdAt).toLocaleDateString()}
+                </span>
+              )}
+            </div>
+            {r.comment && <p className="text-sm mt-1">{r.comment}</p>}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function normalizeWhatsapp(input: string) {
+  return String(input).replace(/[^\d]/g, "");
+}
+
+function AvatarSmall({ user }: { user?: any }) {
+  const name: string = user?.fullName || user?.name || "Anonymous";
+  const photo: string | null | undefined = user?.photo;
+  const initials = getInitials(name);
+  return (
+    <div className="size-8 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--foreground))]/80 grid place-items-center overflow-hidden">
+      {photo ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={asset(photo)}
+          alt={name}
+          className="w-full h-full object-cover"
+        />
+      ) : (
+        <span className="text-[11px] font-medium">{initials}</span>
+      )}
+    </div>
+  );
+}
+
+function getInitials(name: string) {
+  const parts = String(name).trim().split(/\s+/).filter(Boolean);
+  const first = parts[0]?.[0] || "";
+  const last = parts[1]?.[0] || "";
+  return (first + last).toUpperCase() || (first || "A").toUpperCase();
+}
+
+function FeedbackCreateForm({
+  listingId,
+  onSuccess,
+  onOptimisticAdd,
+  canPost,
+}: {
+  listingId: string;
+  onSuccess?: () => void;
+  onOptimisticAdd?: (fb: any) => void;
+  canPost: boolean;
+}) {
+  const [rating, setRating] = useState<number>(0);
+  const [hover, setHover] = useState<number>(0);
+  const [comment, setComment] = useState("");
+  const { user, token } = useAuth();
+  const createFeedback = useApiMutation("post", "/feedbacks");
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!canPost) return;
+    if (!rating) return;
+    if (token) setCachedToken(token);
+    const optimistic = {
+      id: `temp_${Date.now()}`,
+      listingId,
+      userId: user?.id,
+      statusAfter: "APPROVED",
+      rating,
+      comment: comment.trim() || undefined,
+      createdAt: new Date().toISOString(),
+      user: {
+        id: user?.id,
+        fullName: user?.fullName || user?.name || "You",
+        name: user?.name,
+        photo: user?.photo || null,
+      },
+    };
+    onOptimisticAdd?.(optimistic);
+    await createFeedback.mutateAsync({
+      listingId,
+      rating,
+      comment: comment.trim() || undefined,
+      statusAfter: "APPROVED",
+    });
+    setRating(0);
+    setHover(0);
+    setComment("");
+    onSuccess?.();
+  };
+
+  return (
+    <div className="card p-5 space-y-3">
+      <h3 className="font-semibold">Leave a feedback</h3>
+      {!canPost ? (
+        <p className="text-sm subtle">
+          Please{" "}
+          <Link href="/sign-in" className="link">
+            sign in
+          </Link>{" "}
+          to post feedback.
+        </p>
+      ) : (
+        <form onSubmit={submit} className="space-y-3">
+          <div className="flex items-center gap-3">
+            <StarRatingInput
+              value={hover || rating}
+              onChange={(v) => setRating(v)}
+              onHover={(v) => setHover(v)}
+            />
+            <span className="text-xs subtle">
+              {rating ? `${rating}/5` : "Select rating"}
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <input
+              name="comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder="Say something about this listing"
+              className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
+            />
+            <Button
+              type="submit"
+              size="sm"
+              variant="primary"
+              disabled={createFeedback.isPending || !rating}
+            >
+              Post
+            </Button>
+          </div>
+        </form>
+      )}
+    </div>
+  );
+}
+
+function StarRatingInput({
+  value,
+  onChange,
+  onHover,
+}: {
+  value: number;
+  onChange: (v: number) => void;
+  onHover?: (v: number) => void;
+}) {
+  return (
+    <div
+      className="inline-flex items-center gap-1"
+      role="group"
+      aria-label="Rating"
+    >
+      {Array.from({ length: 5 }).map((_, i) => {
+        const n = i + 1;
+        const active = n <= value;
+        return (
+          <button
+            key={n}
+            type="button"
+            aria-label={`Rate ${n} star${n > 1 ? "s" : ""}`}
+            title={`Rate ${n} star${n > 1 ? "s" : ""}`}
+            onMouseEnter={() => onHover?.(n)}
+            onMouseLeave={() => onHover?.(0)}
+            onClick={() => onChange(n)}
+            className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 rounded-md`}
+          >
+            <Star
+              className={`size-6 ${
+                active
+                  ? "fill-current text-[hsl(var(--primary))]"
+                  : "text-[hsl(var(--foreground))]/30"
+              }`}
+            />
+          </button>
+        );
+      })}
     </div>
   );
 }
