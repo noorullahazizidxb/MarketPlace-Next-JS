@@ -81,6 +81,27 @@ export function NotificationsPanel({
   onMarkRead,
   onMarkAllRead,
 }: NotificationsPanelProps) {
+  const getMessage = (n: any): string | null => {
+    const direct =
+      n?.message ??
+      n?.body ??
+      n?.content ??
+      n?.description ??
+      n?.text ??
+      n?.details ??
+      n?.note;
+    if (typeof direct === "string" && direct.trim().length)
+      return direct.trim();
+    const meta = n?.meta?.message ?? n?.meta?.description;
+    if (typeof meta === "string" && meta.trim().length) return meta.trim();
+    const payload =
+      n?.payload?.message ?? n?.payload?.content ?? n?.payload?.description;
+    if (typeof payload === "string" && payload.trim().length)
+      return payload.trim();
+    const data = n?.data?.message ?? n?.data?.description ?? n?.data?.content;
+    if (typeof data === "string" && data.trim().length) return data.trim();
+    return null;
+  };
   const { user } = useAuth();
   const uid = (user as any)?.id as string | undefined;
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -264,11 +285,14 @@ export function NotificationsPanel({
                                   <div className="text-sm font-semibold line-clamp-1">
                                     {n.title || "Notification"}
                                   </div>
-                                  {n.message && (
-                                    <div className="text-sm subtle line-clamp-2">
-                                      {n.message}
-                                    </div>
-                                  )}
+                                  {(() => {
+                                    const msg = getMessage(n as any);
+                                    return msg ? (
+                                      <div className="text-sm subtle line-clamp-2">
+                                        {msg}
+                                      </div>
+                                    ) : null;
+                                  })()}
                                 </div>
                                 <div className="text-2xs subtle whitespace-nowrap">
                                   {formatTimeAgo(n.createdAt)}

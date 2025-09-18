@@ -22,7 +22,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useLocalMutation } from "@/lib/api-hooks";
-
+import { asset } from "@/lib/assets";
 export function Sidebar({
   isOpen,
   onClose,
@@ -63,7 +63,7 @@ export function Sidebar({
                 className="flex items-center bg-transparent hover:bg-foreground/5 gap-3"
               >
                 <Image
-                  src={avatar}
+                  src={asset(avatar)}
                   alt="avatar"
                   width={48}
                   height={48}

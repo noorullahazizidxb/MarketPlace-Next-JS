@@ -60,9 +60,9 @@ export function ListingCard({ listing }: { listing: Listing }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent pointer-events-none" />
         {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
-        <div className="absolute top-2 right-2 z-10 flex flex-col items-end gap-2">
+        <div className="absolute top-2 right-2 z-[1000] flex flex-col items-end gap-2 pointer-events-none">
           {/* Rating badge - default to 0.0 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[11px] text-white shadow-sm backdrop-blur-sm dark:bg-black/60">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card-bg, var(--card)))] px-2 py-1 text-[11px] text-[hsl(var(--card-fg, var(--foreground)))] shadow-sm dark:bg-[hsl(var(--card-bg, var(--card)))]">
             <div className="flex items-center -ml-1">
               {Array.from({ length: 5 }).map((_, i) => {
                 const rating =
@@ -96,7 +96,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
           </div>
 
           {/* Reviews badge - default to 0 */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-white/15 bg-black/55 px-2 py-1 text-[11px] text-white shadow-sm backdrop-blur-sm dark:bg-black/60">
+          <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card-bg, var(--card)))] px-2 py-1 text-[11px] text-[hsl(var(--card-fg, var(--foreground)))] shadow-sm dark:bg-[hsl(var(--card-bg, var(--card)))]">
             <MessageSquare className="size-3.5 text-white/80" />
             <span className="font-medium tabular-nums">
               {typeof listing.reviewCount === "number"
@@ -105,17 +105,17 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </span>
           </div>
         </div>
-        <div className="absolute bottom-2 left-2 flex items-center gap-2">
-          <span className="text-2xs px-2 py-1 rounded-full bg-white/70 text-black border border-[hsl(var(--border))] dark:bg-black/60 dark:text-white/90">
+        <div className="absolute bottom-2 left-2 z-[1000] flex items-center gap-2">
+          <span className="text-2xs px-2 py-1 rounded-full bg-[hsl(var(--card-bg, var(--card)))] text-[hsl(var(--card-fg, var(--foreground)))] border border-[hsl(var(--border))] shadow-sm">
             {listing.listingType || "LISTING"}
           </span>
           {showSeller ? (
-            <span className="text-2xs px-2 py-1 rounded-full bg-emerald-500/15 border border-emerald-500/30 text-emerald-300 flex items-center gap-1">
+            <span className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-emerald-700 flex items-center gap-1 shadow-sm">
               <Phone className="size-3" /> Seller
             </span>
           ) : (
-            <span className="text-2xs px-2 py-1 rounded-full bg-amber-500/15 border border-amber-500/30 text-amber-300 flex items-center gap-1">
-              <ShieldCheck className="size-3" /> Protected
+            <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-amber-500 flex items-center gap-1 shadow-sm">
+              <ShieldCheck className="size-3" /> Promoted
             </span>
           )}
         </div>
@@ -149,7 +149,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </a>
           ) : (
             <Link
-              href={`/representative/${listing.id}`}
+              href={`/listings/${listing.id}`}
               className="text-sm inline-flex items-center gap-1 hover:gap-2 transition-all"
             >
               Choose representative <ArrowRight className="size-4" />

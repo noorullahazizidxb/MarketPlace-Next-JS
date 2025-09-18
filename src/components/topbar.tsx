@@ -30,6 +30,7 @@ import { useUIStore } from "@/store/ui.store";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { NotificationsPanel } from "@/components/notifications-panel";
+import { asset } from "@/lib/assets";
 
 export function Topbar() {
   const { user, counts, roles } = useAuth();
@@ -167,7 +168,7 @@ export function Topbar() {
                     className="relative glass rounded-2xl pl-2 pr-3 h-10 flex items-center gap-2 hover:ring-1 ring-white/20"
                   >
                     <Image
-                      src={avatar}
+                      src={asset(avatar)}
                       alt="avatar"
                       width={24}
                       height={24}
@@ -197,7 +198,7 @@ export function Topbar() {
                     >
                       <div className="p-3 border-b border-white/10 flex items-center gap-3">
                         <Image
-                          src={avatar}
+                          src={asset(avatar)}
                           alt="avatar"
                           width={32}
                           height={32}
