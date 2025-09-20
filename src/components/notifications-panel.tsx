@@ -126,8 +126,39 @@ export function NotificationsPanel({
   const [local, setLocal] = useState<Notification[]>(list);
   useEffect(() => setLocal(list), [list]);
 
+  const displayList: Notification[] = useMemo(() => {
+    const map = new Map<string, Notification>();
+    for (const n of local || []) map.set(n.id, n);
+    for (const s of storeItems || []) {
+      if (!map.has(s.id)) {
+        const createdAt = (s as any).createdAt || new Date().toISOString();
+        const recipients: Recipient[] = uid
+          ? [
+              {
+                id: 0,
+                userId: uid,
+                readAt: (s as any).read ? new Date().toISOString() : null,
+              },
+            ]
+          : [];
+        map.set(s.id, {
+          id: s.id,
+          title: s.title,
+          message: (s as any).message,
+          createdAt,
+          recipients,
+        } as Notification);
+      }
+    }
+    return Array.from(map.values()).sort((a, b) => {
+      const ta = new Date(a.createdAt).getTime();
+      const tb = new Date(b.createdAt).getTime();
+      return tb - ta;
+    });
+  }, [local, storeItems, uid]);
+
   const withUnread = useMemo(() => {
-    return (local || []).map((n) => {
+    return (displayList || []).map((n) => {
       const r = (n.recipients || []).find((x) => !uid || x.userId === uid);
       let unread = r ? r.readAt == null : false;
       if (!r) {
@@ -136,7 +167,7 @@ export function NotificationsPanel({
       }
       return { n, unread } as { n: Notification; unread: boolean };
     });
-  }, [local, uid, storeItems]);
+  }, [displayList, uid, storeItems]);
 
   const unreadCount = withUnread.filter((x) => x.unread).length;
 
@@ -251,7 +282,7 @@ export function NotificationsPanel({
                   <div className="p-4 text-sm text-red-500">
                     {String((error as any)?.message || error)}
                   </div>
-                ) : local.length === 0 ? (
+                ) : displayList.length === 0 ? (
                   <div className="p-6 text-center subtle text-sm">
                     No notifications
                   </div>

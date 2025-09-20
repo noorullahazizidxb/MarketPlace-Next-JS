@@ -8,7 +8,7 @@ type Slide = { url?: string | null; alt?: string | null };
 export function ImageSlider({
   images,
   className = "",
-  aspect = "16/9",
+  aspect = "4/1",
 }: {
   images?: Slide[] | null;
   className?: string;
@@ -88,7 +88,7 @@ export function ImageSlider({
               setIndex((i) => (i - 1 + slides.length) % slides.length)
             }
             className="absolute left-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full"
-            style={{ zIndex: 30 }}
+            style={{ zIndex: 1 }}
           >
             ‹
           </button>
@@ -96,7 +96,7 @@ export function ImageSlider({
             aria-label="Next image"
             onClick={() => setIndex((i) => (i + 1) % slides.length)}
             className="absolute right-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full"
-            style={{ zIndex: 30 }}
+            style={{ zIndex: 1 }}
           >
             ›
           </button>

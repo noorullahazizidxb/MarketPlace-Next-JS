@@ -26,6 +26,7 @@ import QRCode from "react-qr-code";
 import { useAuth } from "@/lib/use-auth";
 import { asset } from "@/lib/assets";
 import { setCachedToken } from "@/lib/axiosClient";
+import Image from "next/image";
 
 export default function ListingDetailsPage() {
   return (
@@ -98,7 +99,7 @@ function ListingDetailsContent() {
             <div className="card p-5 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
-                  <div className="px-2 py-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 text-sm">
+                  <div className="px-3 py-1 rounded-xl tabular-nums text-sm border border-[hsl(var(--border))] bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]">
                     {listing.price} {listing.currency}
                   </div>
                 )}
@@ -293,22 +294,67 @@ function SellerCard({ user }: { user?: any }) {
       </h3>
       <div className="flex items-center gap-3">
         <div className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
-          <User className="size-5 text-[hsl(var(--primary))]" />
+          <Image
+            src={asset(user.photo) || "/default-avatar.png"}
+            alt={user.fullName || "User Avatar"}
+            className="rounded-full"
+            width={40}
+            height={40}
+          />
         </div>
         <div>
           <div className="text-sm font-medium">
-            {user.name || user.email || `User ${user.id?.slice?.(0, 6)}`}
+            {user.firstName ||
+              user.fullName ||
+              user.email ||
+              `User ${user.id?.slice?.(0, 6)}`}
           </div>
           <div className="text-xs subtle">ID: {user.id}</div>
+          {user.contacts?.phone && (
+            <div className="text-xs subtle">Phone: {user.contacts.phone}</div>
+          )}
+          {user.contacts?.whatsapp && (
+            <div className="text-xs subtle">
+              WhatsApp: {user.contacts.whatsapp}
+            </div>
+          )}
         </div>
       </div>
       <div className="flex items-center gap-2">
-        <Button size="sm" variant="primary" className="flex-1">
-          <Phone className="size-4" /> Contact
-        </Button>
-        <Button size="sm" variant="ghost" className="flex-1">
-          <MessageCircle className="size-4" /> Message
-        </Button>
+        {user.contacts?.phone ? (
+          <Button asChild size="sm" variant="primary" className="flex-1">
+            <a
+              href={`tel:${user.contacts.phone}`}
+              className="inline-flex items-center gap-2 w-full justify-center"
+            >
+              <Phone className="size-4" /> Call
+            </a>
+          </Button>
+        ) : (
+          <Button size="sm" variant="primary" className="flex-1">
+            <Phone className="size-4" /> Contact
+          </Button>
+        )}
+
+        {user.contacts?.whatsapp ? (
+          <Button asChild size="sm" variant="ghost" className="flex-1">
+            <a
+              href={`https://wa.me/${String(user.contacts.whatsapp).replace(
+                /[+\s]/g,
+                ""
+              )}`}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex items-center gap-2 w-full justify-center"
+            >
+              <MessageCircle className="size-4" /> WhatsApp
+            </a>
+          </Button>
+        ) : (
+          <Button size="sm" variant="ghost" className="flex-1">
+            <MessageCircle className="size-4" /> Message
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -452,8 +498,8 @@ function Stars({ count }: { count: number }) {
           key={i}
           className={`size-4 ${
             i < count
-              ? "fill-current text-[hsl(var(--primary))]"
-              : "text-[hsl(var(--foreground))]/20"
+              ? "fill-yellow-400 text-yellow-400"
+              : "text-[hsl(var(--primary))]/20"
           }`}
         />
       ))}
@@ -697,9 +743,7 @@ function StarRatingInput({
           >
             <Star
               className={`size-6 ${
-                active
-                  ? "fill-current text-[hsl(var(--primary))]"
-                  : "text-[hsl(var(--foreground))]/30"
+                active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
               }`}
             />
           </button>

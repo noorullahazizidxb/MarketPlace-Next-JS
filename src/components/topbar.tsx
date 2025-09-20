@@ -191,7 +191,7 @@ export function Topbar() {
                       initial={{ opacity: 0, y: -6, scale: 0.98 }}
                       animate={{ opacity: 1, y: 0, scale: 1 }}
                       transition={{ duration: 0.15 }}
-                      className="absolute right-0 top-[calc(100%+8px)] z-[70] w-64 rounded-2xl overflow-hidden border border-[hsl(var(--card-border, var(--border)))] text-[hsl(var(--card-fg, var(--foreground)))] shadow-2xl"
+                      className="absolute right-0 top-[calc(100%+8px)] z-1000 w-64 rounded-2xl overflow-hidden border border-[hsl(var(--card-border, var(--border)))] text-[hsl(var(--card-fg, var(--foreground)))] shadow-2xl"
                       style={{
                         backgroundColor: `hsl(var(--card-bg, var(--card)))`,
                       }}

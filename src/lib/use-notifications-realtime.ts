@@ -29,9 +29,26 @@ export function useNotificationsRealtime(enabled: boolean = true) {
         const r = it.recipients.find((x: any) => x?.userId === uid);
         read = r ? !!r.readAt : false;
       }
+      const message =
+        it?.message ??
+        it?.body ??
+        it?.content ??
+        it?.description ??
+        it?.text ??
+        it?.details ??
+        it?.note ??
+        it?.meta?.message ??
+        it?.meta?.description ??
+        it?.payload?.message ??
+        it?.payload?.content ??
+        it?.payload?.description ??
+        it?.data?.message ??
+        it?.data?.description ??
+        it?.data?.content;
       return {
         id,
         title: it?.title ?? it?.message ?? "Notification",
+        message: typeof message === "string" ? message : undefined,
         createdAt: it?.createdAt,
         read,
       } as NotificationItem;
