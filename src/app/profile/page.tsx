@@ -1,105 +1,648 @@
 "use client";
 
-import { useState } from "react";
+import * as React from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import {
+  User2,
+  Mail,
+  Phone,
+  MapPin,
+  Globe2,
+  Edit3,
+  X,
+  Save,
+  Image as ImageIcon,
+  Linkedin,
+  Facebook,
+  Instagram,
+  ShieldCheck,
+} from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
+import { useAuthStore } from "@/store/auth.store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { asset } from "@/lib/assets";
 
+// ---------------- Schema ----------------
 const schema = z.object({
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  fullName: z.string().min(3),
-  phone: z.string().min(5),
-  city: z.string().min(1).optional().default(""),
+  firstName: z.string().min(1, "Required"),
+  lastName: z.string().min(1, "Required"),
+  fullName: z.string().min(2, "Too short"),
+  email: z.string().email().optional().or(z.literal("")),
+  phone: z.string().min(5, "Too short").optional().or(z.literal("")),
+  whatsapp: z.string().optional().or(z.literal("")),
+  city: z.string().optional().or(z.literal("")),
+  country: z.string().optional().or(z.literal("")),
+  street: z.string().optional().or(z.literal("")),
+  bio: z.string().max(260, "Max 260 chars").optional().or(z.literal("")),
+  website: z.string().url().optional().or(z.literal("")),
+  linkedin: z.string().url().optional().or(z.literal("")),
+  facebook: z.string().url().optional().or(z.literal("")),
+  instagram: z.string().url().optional().or(z.literal("")),
 });
-
 type FormData = z.infer<typeof schema>;
 
+// ---------------- Helper UI Primitives (inline for now) ----------------
+function FieldLabel({ icon: Icon, label }: { icon: any; label: string }) {
+  return (
+    <span className="flex items-center gap-1.5 text-2xs font-medium tracking-wide uppercase text-[hsl(var(--muted-foreground))]">
+      <Icon className="size-3.5" /> {label}
+    </span>
+  );
+}
+
+// ---------------- Profile Page ----------------
 export default function ProfilePage() {
+  const user = useAuthStore((s) => s.session?.user || (s as any).user);
+  const updateProfile = useApiMutation("put", "/users/me");
+  const updateAvatar = useApiMutation("post", "/users/me/photo");
+  const profileFetch = useApiMutation<any>("get", "/auth/profile");
+  const setUser = useAuthStore((s) => s.setUser);
+  const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
+  const fileRef = useRef<HTMLInputElement | null>(null);
+
+  const defaultValues: Partial<FormData> = useMemo(
+    () => ({
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      fullName:
+        user?.fullName ||
+        `${user?.firstName || ""} ${user?.lastName || ""}`.trim(),
+      email: user?.email || "",
+      phone: user?.phone || user?.contacts?.phone || "",
+      whatsapp: user?.contacts?.whatsapp || "",
+      city: user?.address?.city || user?.representative?.region || "",
+      country: user?.address?.country || "",
+      street: user?.address?.street || "",
+      // social links live inside `contacts` on the API; handle both casing variants
+      website: user?.contacts?.website || (user as any)?.website || "",
+      linkedin:
+        user?.contacts?.linkedIn ||
+        user?.contacts?.linkedin ||
+        (user as any)?.linkedin ||
+        "",
+      facebook: user?.contacts?.facebook || (user as any)?.facebook || "",
+      instagram: user?.contacts?.instagram || (user as any)?.instagram || "",
+      // bio is stored in metadata.bio
+      bio: (user as any)?.metadata?.bio || (user as any)?.bio || "",
+    }),
+    [user]
+  );
+
   const {
     register,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { errors, isSubmitting, dirtyFields },
     reset,
+    watch,
   } = useForm<FormData>({
     resolver: zodResolver(schema) as Resolver<FormData>,
+    defaultValues,
   });
 
-  const updateProfile = useApiMutation("put", "/users/me");
+  useEffect(() => {
+    reset(defaultValues);
+  }, [defaultValues, reset]);
+
+  const avatarUrl = avatarPreview || asset(user?.photo) || "/favicon.svg";
 
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
-      await updateProfile.mutateAsync({
-        firstName: data.firstName,
-        lastName: data.lastName,
-        fullName: data.fullName,
-        phone: data.phone,
-        address: { city: data.city },
-      });
-      reset();
+      // Construct payload matching server Joi schema (updateUserSchema)
+      const payload: any = {
+        firstName: data.firstName || undefined,
+        lastName: data.lastName || undefined,
+        fullName: data.fullName || undefined,
+        email: data.email || undefined,
+        photo: undefined, // optional; avatar handled separately
+        contacts: {
+          phone: data.phone || undefined,
+          whatsapp: data.whatsapp || undefined,
+          email: data.email || undefined,
+          linkedIn: data.linkedin || undefined,
+          facebook: data.facebook || undefined,
+          instagram: data.instagram || undefined,
+          website: data.website || undefined,
+        },
+        address: {
+          street: data.street || undefined,
+          city: data.city || undefined,
+          country: data.country || undefined,
+        },
+        metadata: { bio: data.bio || undefined },
+      };
+
+      await updateProfile.mutateAsync(payload as any);
+
+      // refresh profile from auth endpoint and map to store (prefer inner `data`)
+      try {
+        const r = await profileFetch.mutateAsync(undefined as any);
+        const body = (r as any)?.data ?? r;
+        const fetchedUser =
+          body?.data ?? body?.user ?? body?.data?.user ?? body;
+        setUser(fetchedUser || null);
+      } catch (e) {
+        console.warn("Failed to refresh profile after update", e);
+      }
+
+      setEditing(false);
     } catch (e: any) {
       setError(e?.message || "Failed to update profile");
     }
   };
 
+  const onAvatarPick = useCallback(
+    async (file: File) => {
+      const url = URL.createObjectURL(file);
+      setAvatarPreview(url);
+      const fd = new FormData();
+      fd.append("photo", file);
+      try {
+        await updateAvatar.mutateAsync(fd as any);
+        // refresh profile so avatar update is reflected
+        try {
+          const r = await profileFetch.mutateAsync(undefined as any);
+          const body = (r as any)?.data ?? r;
+          const fetchedUser =
+            body?.data ?? body?.user ?? body?.data?.user ?? body;
+          setUser(fetchedUser || null);
+        } catch (e) {
+          console.warn("Failed to refresh profile after avatar upload", e);
+        }
+      } catch (e) {
+        console.warn("Avatar upload failed", e);
+      }
+    },
+    [updateAvatar, profileFetch, setUser]
+  );
+
+  const openFile = () => fileRef.current?.click();
+
+  // Derived counts / stats mock (replace with real if available)
+  const stats = [
+    { label: "Listings", value: (user?.listings?.length ?? 0).toString() },
+    { label: "Feedbacks", value: (user?.feedbacks?.length ?? 0).toString() },
+    { label: "Roles", value: (user?.roles?.length ?? 0).toString() },
+  ];
+
   return (
-    <div className="max-w-xl mx-auto">
-      <Card className="p-6 glass">
-        <h1 className="heading-xl mb-4">Your profile</h1>
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm mb-1">First name</label>
-              <Input {...register("firstName")} />
-              {errors.firstName && (
-                <p className="text-red-500 text-sm">
-                  {errors.firstName.message}
-                </p>
-              )}
+    <div className="relative min-h-screen pb-24">
+      {/* Ambient gradient background */}
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-fuchsia-500/20 via-amber-400/10 to-transparent blur-3xl" />
+        <div className="absolute top-1/3 -right-40 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-emerald-500/20 via-cyan-400/10 to-transparent blur-3xl" />
+      </div>
+
+      <header className="relative mx-auto max-w-6xl mt-16 px-4 sm:px-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+          className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_8px_40px_-4px_rgba(0,0,0,0.25)] overflow-hidden"
+        >
+          {/* Banner */}
+          <div className="h-40 sm:h-56 relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--accent))]/30 via-fuchsia-500/20 to-emerald-500/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.4)_0%,transparent_70%)] mix-blend-overlay" />
+          </div>
+          {/* Avatar & primary info */}
+          <div className="relative px-6 pb-6 -mt-16 flex flex-col sm:flex-row sm:items-end gap-6">
+            <div className="relative group w-28 h-28 sm:w-36 sm:h-36">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={avatarUrl}
+                alt="Avatar"
+                className="w-full h-full object-cover rounded-2xl border-4 border-[hsl(var(--background))] shadow-xl group-hover:shadow-2xl transition-shadow"
+              />
+              <button
+                type="button"
+                aria-label="Change avatar"
+                onClick={openFile}
+                className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-medium backdrop-blur-sm transition-opacity"
+              >
+                <ImageIcon className="size-5 mr-1" /> Change
+              </button>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                aria-label="Upload avatar image"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) onAvatarPick(f);
+                }}
+              />
             </div>
-            <div>
-              <label className="block text-sm mb-1">Last name</label>
-              <Input {...register("lastName")} />
-              {errors.lastName && (
-                <p className="text-red-500 text-sm">
-                  {errors.lastName.message}
-                </p>
-              )}
+            <div className="flex-1 min-w-0">
+              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
+                {user?.fullName || user?.firstName || "Anonymous"}
+                {user?.roles?.some((r: any) => r.role === "REPRESENTATIVE") && (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-2xs border border-emerald-500/30">
+                    <ShieldCheck className="size-3" /> Representative
+                  </span>
+                )}
+              </h1>
+              <p className="mt-1 text-sm subtle line-clamp-2 max-w-xl">
+                {watch("bio") || "Add a short bio to introduce yourself."}
+              </p>
+              <div className="mt-4 flex flex-wrap gap-3">
+                {stats.map((s) => (
+                  <div
+                    key={s.label}
+                    className="px-4 py-2 rounded-xl bg-[hsl(var(--muted))]/60 border border-[hsl(var(--border))] text-center min-w-[110px] backdrop-blur"
+                  >
+                    <div className="text-lg font-semibold tracking-tight">
+                      {s.value}
+                    </div>
+                    <div className="text-2xs uppercase subtle mt-1">
+                      {s.label}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="flex sm:flex-col gap-2 self-start sm:self-end">
+              <Button
+                type="button"
+                variant={editing ? "secondary" : "primary"}
+                onClick={() => setEditing((v) => !v)}
+                className="rounded-xl px-5 shadow-sm bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white border-none hover:shadow-lg"
+              >
+                {editing ? (
+                  <X className="size-4" />
+                ) : (
+                  <Edit3 className="size-4" />
+                )}
+                <span className="ml-2 text-sm font-medium">
+                  {editing ? "Cancel" : "Edit"}
+                </span>
+              </Button>
             </div>
           </div>
-          <div>
-            <label className="block text-sm mb-1">Full name</label>
-            <Input {...register("fullName")} />
-            {errors.fullName && (
-              <p className="text-red-500 text-sm">{errors.fullName.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm mb-1">Phone</label>
-            <Input {...register("phone")} />
-            {errors.phone && (
-              <p className="text-red-500 text-sm">{errors.phone.message}</p>
-            )}
-          </div>
-          <div>
-            <label className="block text-sm mb-1">City</label>
-            <Input {...register("city")} />
-          </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <Button
-            type="submit"
-            disabled={isSubmitting || updateProfile.isPending}
+        </motion.div>
+      </header>
+
+      <main className="mx-auto max-w-6xl px-4 sm:px-6 mt-10 grid gap-6 lg:grid-cols-3">
+        {/* Left column: contact & address */}
+        <section className="space-y-6 lg:col-span-2">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
           >
-            Save
-          </Button>
-        </form>
-      </Card>
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+              <User2 className="size-4" /> Profile Details
+            </h2>
+            <div className="grid sm:grid-cols-2 gap-6">
+              <DetailField
+                label="First Name"
+                value={watch("firstName")}
+                icon={User2}
+              />
+              <DetailField
+                label="Last Name"
+                value={watch("lastName")}
+                icon={User2}
+              />
+              <DetailField
+                label="Email"
+                value={watch("email") || "—"}
+                icon={Mail}
+              />
+              <DetailField
+                label="Phone"
+                value={watch("phone") || "—"}
+                icon={Phone}
+              />
+              <DetailField
+                label="WhatsApp"
+                value={watch("whatsapp") || "—"}
+                icon={Phone}
+              />
+              <DetailField
+                label="Website"
+                value={watch("website") || "—"}
+                icon={Globe2}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.55 }}
+            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+          >
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+              <MapPin className="size-4" /> Address
+            </h2>
+            <div className="grid sm:grid-cols-3 gap-6">
+              <DetailField
+                label="City"
+                value={watch("city") || "—"}
+                icon={MapPin}
+              />
+              <DetailField
+                label="Country"
+                value={watch("country") || "—"}
+                icon={MapPin}
+              />
+              <DetailField
+                label="Street"
+                value={watch("street") || "—"}
+                icon={MapPin}
+              />
+            </div>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+          >
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+              <Globe2 className="size-4" /> Social
+            </h2>
+            <div className="grid sm:grid-cols-3 gap-6">
+              <DetailField
+                label="LinkedIn"
+                value={watch("linkedin") || "—"}
+                icon={Linkedin}
+              />
+              <DetailField
+                label="Facebook"
+                value={watch("facebook") || "—"}
+                icon={Facebook}
+              />
+              <DetailField
+                label="Instagram"
+                value={watch("instagram") || "—"}
+                icon={Instagram}
+              />
+            </div>
+          </motion.div>
+        </section>
+
+        {/* Right column: bio edit & actions */}
+        <aside className="space-y-6">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)] flex flex-col"
+          >
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
+              <Edit3 className="size-4" /> Quick Bio
+            </h2>
+            <textarea
+              {...register("bio")}
+              rows={6}
+              placeholder="Tell people a little about yourself, your experience or interests..."
+              className="rounded-xl w-full resize-y min-h-[140px] p-3 border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm leading-relaxed placeholder:text-[hsl(var(--muted-foreground))]"
+            />
+            <p className="mt-2 text-2xs subtle text-right">
+              {watch("bio")?.length || 0}/260
+            </p>
+            <Button
+              type="button"
+              onClick={() => setEditing(true)}
+              className="mt-4 rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg"
+            >
+              Open Full Editor
+            </Button>
+          </motion.div>
+        </aside>
+      </main>
+
+      {/* Edit Modal */}
+      <AnimatePresence>
+        {editing && (
+          <motion.div
+            className="fixed inset-0 z-[4000] flex items-center justify-center p-4"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            <div
+              className="absolute inset-0 bg-[hsl(var(--background))]/70 backdrop-blur-sm"
+              onClick={() => setEditing(false)}
+            />
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.92, opacity: 0 }}
+              transition={{ type: "spring", stiffness: 260, damping: 24 }}
+              className="relative z-[4001] w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/90 backdrop-blur-xl p-6 shadow-[0_10px_50px_-5px_rgba(0,0,0,0.4)]"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Edit profile"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-lg font-semibold">Edit Profile</h2>
+                <button
+                  aria-label="Close"
+                  className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
+                  onClick={() => setEditing(false)}
+                >
+                  <X className="size-5" />
+                </button>
+              </div>
+              <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+              >
+                <TextField
+                  label="First Name"
+                  error={errors.firstName?.message}
+                  {...register("firstName")}
+                  icon={User2}
+                />
+                <TextField
+                  label="Last Name"
+                  error={errors.lastName?.message}
+                  {...register("lastName")}
+                  icon={User2}
+                />
+                <TextField
+                  label="Full Name"
+                  error={errors.fullName?.message}
+                  {...register("fullName")}
+                  icon={User2}
+                />
+                <TextField
+                  label="Email"
+                  error={errors.email?.message}
+                  {...register("email")}
+                  icon={Mail}
+                />
+                <TextField
+                  label="Phone"
+                  error={errors.phone?.message}
+                  {...register("phone")}
+                  icon={Phone}
+                />
+                <TextField
+                  label="WhatsApp"
+                  error={errors.whatsapp?.message}
+                  {...register("whatsapp")}
+                  icon={Phone}
+                />
+                <TextField
+                  label="City"
+                  error={errors.city?.message}
+                  {...register("city")}
+                  icon={MapPin}
+                />
+                <TextField
+                  label="Country"
+                  error={errors.country?.message}
+                  {...register("country")}
+                  icon={MapPin}
+                />
+                <TextField
+                  label="Street"
+                  error={errors.street?.message}
+                  {...register("street")}
+                  icon={MapPin}
+                />
+                <TextField
+                  label="Website"
+                  error={errors.website?.message}
+                  {...register("website")}
+                  icon={Globe2}
+                />
+                <TextField
+                  label="LinkedIn"
+                  error={errors.linkedin?.message}
+                  {...register("linkedin")}
+                  icon={Linkedin}
+                />
+                <TextField
+                  label="Facebook"
+                  error={errors.facebook?.message}
+                  {...register("facebook")}
+                  icon={Facebook}
+                />
+                <TextField
+                  label="Instagram"
+                  error={errors.instagram?.message}
+                  {...register("instagram")}
+                  icon={Instagram}
+                />
+                <div className="sm:col-span-2">
+                  <FieldLabel icon={Edit3} label="Bio" />
+                  <textarea
+                    {...register("bio")}
+                    rows={4}
+                    maxLength={260}
+                    className="mt-1 w-full rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-sm focus:ring-2 ring-[hsl(var(--accent))]/40 resize-y placeholder:text-[hsl(var(--muted-foreground))]"
+                    placeholder="Short bio (max 260 chars)"
+                  />
+                  <p className="mt-1 text-2xs text-right subtle">
+                    {watch("bio")?.length || 0}/260
+                  </p>
+                </div>
+                {error && (
+                  <p className="text-red-500 text-sm sm:col-span-2">{error}</p>
+                )}
+                <div className="flex gap-3 sm:col-span-2 pt-2">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    onClick={() => {
+                      reset(defaultValues);
+                      setEditing(false);
+                    }}
+                    className="rounded-xl"
+                  >
+                    <X className="size-4" /> Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    disabled={isSubmitting || updateProfile.isPending}
+                    className="rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
+                  >
+                    <Save className="size-4" /> Save Changes
+                  </Button>
+                </div>
+              </form>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
+
+// ---------------- Reusable Components (inline; suggest splitting later) ----------------
+function DetailField({
+  label,
+  value,
+  icon: Icon,
+}: {
+  label: string;
+  value: string | number | null | undefined;
+  icon: any;
+}) {
+  return (
+    <div className="group">
+      <FieldLabel icon={Icon} label={label} />
+      <div className="mt-1 text-sm font-medium text-[hsl(var(--foreground))] bg-[hsl(var(--muted))]/40 rounded-lg px-3 py-2 border border-[hsl(var(--border))] group-hover:border-[hsl(var(--accent))]/50 transition-colors">
+        {value && String(value).trim() !== "" ? (
+          value
+        ) : (
+          <span className="opacity-50">Not set</span>
+        )}
+      </div>
+    </div>
+  );
+}
+
+type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
+  label: string;
+  error?: string;
+  icon?: any;
+};
+const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
+  ({ label, error, icon: Icon, ...rest }, ref) => (
+    <div>
+      <FieldLabel icon={Icon || User2} label={label} />
+      <div className="relative mt-1">
+        {Icon && (
+          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[hsl(var(--muted-foreground))]" />
+        )}
+        <Input
+          {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
+          ref={ref}
+          className="pl-10 h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm"
+        />
+      </div>
+      {error && <p className="mt-1 text-2xs text-red-500">{error}</p>}
+    </div>
+  )
+);
+TextField.displayName = "TextField";
+
+// ---------------- Splitting Suggestion ----------------
+// After confirming design, split into:
+//  components/profile/header.tsx (banner + avatar + stats + edit button)
+//  components/profile/detail-field.tsx
+//  components/profile/edit-modal.tsx
+//  components/profile/profile-page.tsx (container + layout)
+//  hooks/use-profile-form.ts for form logic & schema
+//  components/profile/avatar-uploader.tsx for avatar upload logic

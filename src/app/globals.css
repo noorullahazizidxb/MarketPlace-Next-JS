@@ -95,7 +95,8 @@ html, body {
 
 @layer base {
   * { @apply border-border; }
-  body { @apply min-h-screen antialiased; }
+  body { @apply min-h-screen antialiased;
+  overflow: hidden; }
 }
 
 @layer components {
