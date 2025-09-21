@@ -93,8 +93,8 @@ function ListingDetailsContent() {
       {!isLoading && !error && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-4 lg:col-span-2">
-            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur overflow-hidden">
-              <ImageSlider images={images} aspect="16/10" />
+            <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur overflow-hidden">
+              <ImageSlider images={images} aspect="1/1" />
             </div>
             <div className="card p-5 space-y-4">
               <div className="flex flex-wrap items-center gap-3">

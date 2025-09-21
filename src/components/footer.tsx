@@ -3,7 +3,18 @@
 import Link from "next/link";
 import { motion } from "framer-motion";
 import QRCode from "react-qr-code";
-import { Github, Linkedin, Twitter, ArrowUpRight } from "lucide-react";
+import {
+  Github,
+  Linkedin,
+  Twitter,
+  ArrowUpRight,
+  Info,
+  Briefcase,
+  Users,
+  Mail,
+  FileText,
+  Shield,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const socials = [
@@ -17,10 +28,10 @@ const socials = [
 ];
 
 const nav = [
-  { href: "/about", label: "About" },
-  { href: "/services", label: "Services" },
-  { href: "/careers", label: "Careers" },
-  { href: "/contact", label: "Contact" },
+  { href: "/about", label: "About", Icon: Info },
+  { href: "/services", label: "Services", Icon: Briefcase },
+  { href: "/careers", label: "Careers", Icon: Users },
+  { href: "/contact", label: "Contact", Icon: Mail },
 ];
 
 export default function Footer() {
@@ -88,6 +99,9 @@ export default function Footer() {
                       href={n.href}
                       className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
                     >
+                      {n.Icon ? (
+                        <n.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                      ) : null}
                       <span>{n.label}</span>
                     </Link>
                   </li>
@@ -164,16 +178,25 @@ export default function Footer() {
               © {new Date().getFullYear()} Marketplace. All rights reserved.
             </div>
             <div className="flex items-center gap-3">
-              <Link href="/privacy" className="link">
-                Privacy
+              <Link
+                href="/privacy"
+                className="inline-flex items-center gap-2 link"
+              >
+                <Shield className="h-4 w-4" /> Privacy
               </Link>
               <span className="opacity-30">•</span>
-              <Link href="/terms" className="link">
-                Terms
+              <Link
+                href="/terms"
+                className="inline-flex items-center gap-2 link"
+              >
+                <FileText className="h-4 w-4" /> Terms
               </Link>
               <span className="opacity-30">•</span>
-              <a href="mailto:support@yourdomain.com" className="link">
-                support@yourdomain.com
+              <a
+                href="mailto:support@yourdomain.com"
+                className="inline-flex items-center gap-2 link"
+              >
+                <Mail className="h-4 w-4" /> support@yourdomain.com
               </a>
             </div>
           </div>

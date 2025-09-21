@@ -2,6 +2,7 @@
 
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { Box, Home, Tag } from "lucide-react";
 import { useApiGet } from "@/lib/api-hooks";
 import { cn } from "@/lib/cn";
 
@@ -49,19 +50,23 @@ export function FiltersBar() {
     label: string,
     active: boolean,
     onClick: () => void,
-    keyPrefix = "chip"
+    keyPrefix = "chip",
+    Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
   ) => (
     <motion.button
       key={`${keyPrefix}-${label}`}
       whileTap={{ scale: 0.98 }}
       onClick={onClick}
       className={cn(
-        "px-3 h-9 rounded-xl border text-sm",
+        "px-3 h-9 rounded-xl border text-sm inline-flex items-center gap-2",
         active
           ? "bg-primary/15 border-primary/40 text-foreground"
           : "glass border-white/10 hover:bg-white/10"
       )}
     >
+      {Icon ? (
+        <Icon className="size-4 text-[hsl(var(--muted-foreground))]" />
+      ) : null}
       {label}
     </motion.button>
   );
@@ -69,18 +74,19 @@ export function FiltersBar() {
   return (
     <div className="flex flex-wrap items-center gap-2">
       <div className="mr-2 font-medium text-sm">Type:</div>
-      {chip("All", type === "", () => onType(""), "type")}
-      {chip("Rent", type === "RENT", () => onType("RENT"), "type")}
-      {chip("Sale", type === "SALE", () => onType("SALE"), "type")}
+      {chip("All", type === "", () => onType(""), "type", Home)}
+      {chip("Rent", type === "RENT", () => onType("RENT"), "type", Home)}
+      {chip("Sale", type === "SALE", () => onType("SALE"), "type", Tag)}
       <div className="mx-3 h-6 w-px bg-white/10" />
       <div className="mr-2 font-medium text-sm">Category:</div>
-      {chip("All", categoryId === "", () => onCategory(""), "category")}
+      {chip("All", categoryId === "", () => onCategory(""), "category", Box)}
       {cats.map((c) =>
         chip(
           c.name,
           categoryId === String(c.id),
           () => onCategory(String(c.id)),
-          `category-${c.id}`
+          `category-${c.id}`,
+          Box
         )
       )}
     </div>

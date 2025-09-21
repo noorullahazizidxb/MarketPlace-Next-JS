@@ -1,5 +1,12 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import {
+  Box,
+  MessageCircle,
+  ShieldCheck,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 
 const MARKETPLACE_NAME = "Your Marketplace Name";
 
@@ -33,13 +40,19 @@ export default function AboutPage() {
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
               <Button asChild variant="primary">
-                <Link href="/listings" className="px-5 py-3 h-auto">
-                  Browse Listings
+                <Link
+                  href="/listings"
+                  className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                >
+                  Browse Listings <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
               <Button asChild variant="secondary">
-                <Link href="/sign-in" className="px-5 py-3 h-auto">
-                  Become a Seller
+                <Link
+                  href="/sign-in"
+                  className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                >
+                  Become a Seller <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -74,7 +87,7 @@ export default function AboutPage() {
           {/* Step 1 */}
           <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
             <div className="flex items-center gap-3">
-              <IconBox />
+              <Box className="h-6 w-6 text-[hsl(var(--primary))]" />
               <h3 className="font-semibold">List Your Item</h3>
             </div>
             <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
@@ -84,18 +97,17 @@ export default function AboutPage() {
           {/* Step 2 */}
           <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
             <div className="flex items-center gap-3">
-              <IconChat />
+              <MessageCircle className="h-6 w-6 text-[hsl(var(--primary))]" />
               <h3 className="font-semibold">Connect Securely</h3>
             </div>
             <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
               Communicate with trusted members of our community.
             </p>
-            z{" "}
           </div>
           {/* Step 3 */}
           <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
             <div className="flex items-center gap-3">
-              <IconShield />
+              <ShieldCheck className="h-6 w-6 text-[hsl(var(--primary))]" />
               <h3 className="font-semibold">Transact with Confidence</h3>
             </div>
             <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
@@ -105,7 +117,7 @@ export default function AboutPage() {
           {/* Step 4 */}
           <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
             <div className="flex items-center gap-3">
-              <IconSparkles />
+              <Sparkles className="h-6 w-6 text-[hsl(var(--primary))]" />
               <h3 className="font-semibold">Enjoy the Flexibility</h3>
             </div>
             <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
@@ -200,89 +212,4 @@ export default function AboutPage() {
   );
 }
 
-// Inline icons (Heroicons-style SVGs)
-function IconBox() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-6 w-6 text-[hsl(var(--primary))]"
-    >
-      <path d="M21 7.5l-9-4.5-9 4.5 9 4.5 9-4.5z" />
-      <path d="M21 7.5v9l-9 4.5v-9l9-4.5z" opacity=".5" />
-      <path d="M12 12v9L3 16.5v-9L12 12z" opacity=".3" />
-    </svg>
-  );
-}
-
-function IconChat() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-6 w-6 text-[hsl(var(--primary))]"
-    >
-      <path
-        d="M7 8h10M7 12h6"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-      />
-      <path
-        d="M21 12a8.999 8.999 0 01-13.52 7.5L3 21l1.5-4.48A9 9 0 1121 12z"
-        fill="currentColor"
-        opacity=".2"
-      />
-      <circle
-        cx="12"
-        cy="12"
-        r="8"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.5"
-        opacity=".6"
-      />
-    </svg>
-  );
-}
-
-function IconShield() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-6 w-6 text-[hsl(var(--primary))]"
-    >
-      <path
-        d="M12 3l7 3v6c0 5.25-3.5 8.54-7 9.75C8.5 20.54 5 17.25 5 12V6l7-3z"
-        opacity=".2"
-      />
-      <path d="M12 3l7 3v6c0 5.25-3.5 8.54-7 9.75V3z" opacity=".5" />
-      <path d="M12 3L5 6v6c0 5.25 3.5 8.54 7 9.75V3z" />
-    </svg>
-  );
-}
-
-function IconSparkles() {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      viewBox="0 0 24 24"
-      fill="currentColor"
-      className="h-6 w-6 text-[hsl(var(--primary))]"
-    >
-      <path d="M11 2l1.5 4.5L17 8l-4.5 1.5L11 14 9.5 9.5 5 8l4.5-1.5L11 2z" />
-      <path
-        d="M18 10l.8 2.2L21 13l-2.2.8L18 16l-.8-2.2L15 13l2.2-.8L18 10z"
-        opacity=".6"
-      />
-      <path
-        d="M6 13l.6 1.6L8 15l-1.4.4L6 17l-.6-1.6L4 15l1.4-.4L6 13z"
-        opacity=".4"
-      />
-    </svg>
-  );
-}
+// All icons use lucide-react imports above.

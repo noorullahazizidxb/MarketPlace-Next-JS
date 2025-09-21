@@ -65,14 +65,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
       <div className="relative overflow-hidden rounded-t-2xl">
         <ImageSlider
           images={listing.images}
-          className="transition-transform duration-500 group-hover:scale-105"
-          aspect="16/10"
+          className="transition-transform duration-500 group-hover:scale-95"
+          aspect="1/1"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent pointer-events-none" />
         {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
         <div className="absolute top-2 right-2 z-[1] flex flex-col items-end gap-2 pointer-events-none">
           {/* Rating badge - default to 0.0 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card-bg, var(--card)))] px-2 py-1 text-[11px] text-[hsl(var(--card-fg, var(--foreground)))] shadow-sm dark:bg-[hsl(var(--card-bg, var(--card)))]">
+          <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
             <div className="flex items-center -ml-1">
               {Array.from({ length: 5 }).map((_, i) => {
                 const rating =
@@ -86,12 +86,12 @@ export function ListingCard({ listing }: { listing: Listing }) {
                   <Star
                     key={i}
                     className={
-                      "mr-[2px] size-3 " +
+                      "mr-[2px] size-3 transition-colors " +
                       (filled
-                        ? "text-[hsl(var(--accent))] fill-[hsl(var(--accent))]"
+                        ? "text-amber-400 fill-amber-400"
                         : half
-                        ? "text-[hsl(var(--accent))] opacity-70"
-                        : "text-[hsl(var(--muted-foreground))]")
+                        ? "text-amber-300"
+                        : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
                     }
                   />
                 );
@@ -106,8 +106,8 @@ export function ListingCard({ listing }: { listing: Listing }) {
           </div>
 
           {/* Reviews badge - default to 0 */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--card-bg, var(--card)))] px-2 py-1 text-[11px] text-[hsl(var(--card-fg, var(--foreground)))] shadow-sm dark:bg-[hsl(var(--card-bg, var(--card)))]">
-            <MessageSquare className="size-3.5 text-[hsl(var(--muted-foreground))]" />
+          <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
+            <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
             <span className="font-medium tabular-nums">
               {typeof listing.reviewCount === "number"
                 ? listing.reviewCount
@@ -146,11 +146,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
         {listing.location && (
           <p className="subtle mt-1 text-xs">{listing.location}</p>
-        )}
-        {listing.description && (
-          <p className="text-sm mt-2 line-clamp-2 text-foreground/80">
-            {listing.description}
-          </p>
         )}
         <div className="mt-4 flex items-center justify-between">
           {showSeller ? (

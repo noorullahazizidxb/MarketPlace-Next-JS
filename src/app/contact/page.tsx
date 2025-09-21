@@ -1,4 +1,5 @@
 import ContactForm from "../../components/contact-form";
+import { Mail, Headset, MapPin, HelpCircle } from "lucide-react";
 
 export const metadata = {
   title: "Contact | Your Marketplace Name",
@@ -34,67 +35,25 @@ function ContactInfo() {
       title: "General Inquiries",
       text: "contact@your-marketplace-name.com",
       href: "mailto:contact@your-marketplace-name.com",
-      icon: (
-        <svg
-          className="h-6 w-6 text-primary"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M3 7l9 6 9-6" opacity=".4" />
-          <path d="M3 7h18v10H3z" opacity=".2" />
-          <path d="M3 17l6-4" />
-        </svg>
-      ),
+      Icon: Mail,
     },
     {
       title: "Technical Support",
       text: "support@your-marketplace-name.com",
       href: "mailto:support@your-marketplace-name.com",
-      icon: (
-        <svg
-          className="h-6 w-6 text-primary"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M12 3a9 9 0 100 18 9 9 0 000-18z" opacity=".2" />
-          <path d="M9 10a3 3 0 116 0v4H9v-4z" />
-          <circle cx="12" cy="17" r="1.25" />
-        </svg>
-      ),
+      Icon: Headset,
     },
     {
       title: "Our Location",
       text: "Your City, State",
       href: "#",
-      icon: (
-        <svg
-          className="h-6 w-6 text-primary"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path
-            d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z"
-            opacity=".2"
-          />
-          <circle cx="12" cy="9" r="3" />
-        </svg>
-      ),
+      Icon: MapPin,
     },
     {
       title: "FAQs",
       text: "Find answers to common questions",
       href: "/faq",
-      icon: (
-        <svg
-          className="h-6 w-6 text-primary"
-          viewBox="0 0 24 24"
-          fill="currentColor"
-        >
-          <path d="M12 3a9 9 0 100 18 9 9 0 000-18z" opacity=".2" />
-          <path d="M9.5 9a2.5 2.5 0 115 0c0 1.5-2.5 2-2.5 3" />
-          <circle cx="12" cy="16" r="1" />
-        </svg>
-      ),
+      Icon: HelpCircle,
     },
   ];
   return (
@@ -107,7 +66,9 @@ function ContactInfo() {
             className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 transition hover:[background-color:hsl(var(--link-hover-bg,var(--muted))_/_0.15)]"
           >
             <div className="flex items-start gap-3">
-              <div className="shrink-0">{c.icon}</div>
+              <div className="shrink-0">
+                <c.Icon className="h-6 w-6 text-[hsl(var(--primary))]" />
+              </div>
               <div>
                 <h3 className="font-semibold">{c.title}</h3>
                 <p className="mt-1 text-sm text-[hsl(var(--foreground))]/80">

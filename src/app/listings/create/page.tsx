@@ -1,10 +1,13 @@
 "use client";
 
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
 import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
+import { useAuthStore } from "@/store/auth.store";
+import { useListingsStore } from "@/store/listings.store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
@@ -16,7 +19,9 @@ import {
   Coins,
   MapPin,
   Home,
+  ChevronDown,
 } from "lucide-react";
+import { asset } from "@/lib/assets";
 
 const schema = z.object({
   title: z.string().min(3),
@@ -30,16 +35,8 @@ const schema = z.object({
     .optional()
     .transform((v) => v ?? ""),
   categoryId: z.coerce.number().int().positive(),
-  // images is validated as FileList or File[]; refined to require at least one file.
-  images: z.any().refine(
-    (v) => {
-      if (typeof window === "undefined") return true;
-      if (v instanceof FileList) return v.length > 0;
-      if (Array.isArray(v)) return v.length > 0;
-      return false;
-    },
-    { message: "Add at least one image" }
-  ),
+  // images is optional here; we validate presence at runtime so edits that keep existing images pass
+  images: z.any().optional(),
 });
 
 type FormData = z.infer<typeof schema>;
@@ -87,6 +84,25 @@ export default function CreateListingPage() {
   });
 
   const createListing = useApiMutation<any>("post", "/listings");
+  const searchParams = useSearchParams();
+  const editId = searchParams.get("edit");
+  const editListingFetch = useApiGet<any>(
+    editId ? ["listing-edit", editId] : null,
+    editId ? `/listings/${editId}` : ""
+  );
+  const editListingMutation = useApiMutation<any>(
+    "patch",
+    editId ? `/listings/${editId}` : "/listings/0"
+  );
+
+  const [existingImages, setExistingImages] = useState<
+    { id?: string; url: string }[]
+  >([]);
+  const [removedExisting, setRemovedExisting] = useState<string[]>([]);
+  const profileFetch = useApiMutation<any>("get", "/auth/profile");
+
+  const setUser = useAuthStore((s) => s.setUser);
+  const setListings = useListingsStore((s) => s.set);
 
   const onSubmit = async (data: FormData) => {
     setError(null);
@@ -102,16 +118,66 @@ export default function CreateListingPage() {
       fd.append("categoryId", String(data.categoryId));
       // contact visibility default
       fd.append("contactVisibility", "HIDE_SELLER");
-      const files: File[] = imagesPreview.length
-        ? imagesPreview
-        : data.images instanceof FileList
-        ? Array.from(data.images)
-        : Array.isArray(data.images)
-        ? (data.images as any)
-        : [];
-      files.forEach((f) => fd.append("images", f));
+      // Validate images presence using only imagesPreview (new) + existingImages (edit)
+      if (!editId) {
+        if (imagesPreview.length === 0) {
+          setError("Add at least one image");
+          return;
+        }
+      } else {
+        if (imagesPreview.length === 0 && existingImages.length === 0) {
+          setError("Add at least one image");
+          return;
+        }
+      }
+      imagesPreview.forEach((f) => fd.append("images", f));
+      if (editId && removedExisting.length > 0) {
+        // Only send a single JSON array of removed image IDs
+        fd.append("removeImages", JSON.stringify(removedExisting));
+      }
+      if (process.env.NODE_ENV !== "production") {
+        // Debug: log FormData keys (cannot directly inspect values of files easily)
+        try {
+          // @ts-ignore
+          for (const [k, v] of (fd as any).entries()) {
+            console.debug(
+              "FormData:",
+              k,
+              v instanceof File ? `File(${v.name})` : v
+            );
+          }
+        } catch (e) {
+          console.debug("Failed to iterate FormData", e);
+        }
+      }
 
-      await createListing.mutateAsync(fd as any);
+      if (editId && editListingMutation) {
+        await editListingMutation.mutateAsync(fd as any);
+      } else {
+        await createListing.mutateAsync(fd as any);
+      }
+      // Refresh profile (user + listings) after successful creation
+      try {
+        const profileRes = await profileFetch.mutateAsync(undefined as any);
+        const body = (profileRes as any)?.data ?? profileRes;
+        const user = body?.user ?? body?.data?.user ?? body;
+        const listings =
+          body?.listings ??
+          body?.data?.listings ??
+          (Array.isArray(body) ? body : []);
+        try {
+          setUser(user ?? null);
+        } catch (e) {
+          console.warn("Failed to set user in store", e);
+        }
+        try {
+          setListings(Array.isArray(listings) ? listings : []);
+        } catch (e) {
+          console.warn("Failed to set listings in store", e);
+        }
+      } catch (err) {
+        console.warn("Failed to refresh profile after creating listing", err);
+      }
       reset();
       setImagesPreview([]);
       setPickedType(null);
@@ -121,6 +187,52 @@ export default function CreateListingPage() {
       setError(e?.message || "Failed to create listing");
     }
   };
+
+  const onFormErrors = (errs: any) => {
+    console.warn("Form validation errors:", errs);
+    // pick first error message
+    try {
+      const firstKey = Object.keys(errs)[0];
+      const msg = errs[firstKey]?.message || JSON.stringify(errs[firstKey]);
+      setError(msg || "Validation failed");
+    } catch (e) {
+      setError("Validation failed");
+    }
+    window.scrollTo?.({ top: 0, behavior: "smooth" });
+  };
+
+  // Prefill when editing
+  useEffect(() => {
+    if (!editId) return;
+    const d = editListingFetch.data;
+    if (!d) return;
+    const L = Array.isArray(d) ? d[0] : d;
+    try {
+      setValue("title", L.title || "");
+      setValue("description", L.description || "");
+      setValue("price", L.price ?? 0);
+      setValue("currency", L.currency || "AFG");
+      setValue("location", L.location || "");
+      setValue("address", L.address || "");
+      setValue("categoryId", L.categoryId ?? L.category?.id ?? null);
+      setValue("listingType", L.listingType || "RENT");
+      setPickedType(L.listingType || null);
+      setPickedCategory(L.categoryId ?? L.category?.id ?? null);
+      // existing images
+      const imgs = Array.isArray(L.images)
+        ? L.images.map((i: any) => ({
+            id: i?.id ?? i?.key ?? undefined,
+            url: i?.url ?? i,
+          }))
+        : [];
+      setExistingImages(imgs.filter((x: any) => x?.url));
+      setRemovedExisting([]);
+      // jump to step 4 to let user edit fields directly
+      setStep(4);
+    } catch (e) {
+      console.warn("Failed to prefill edit listing", e);
+    }
+  }, [editId, editListingFetch.data, setValue]);
 
   const Step1 = () => (
     <div className="space-y-4 transition-opacity duration-300">
@@ -199,9 +311,18 @@ export default function CreateListingPage() {
             f.type.startsWith("image/")
           );
           if (files.length) {
-            const next = [...imagesPreview, ...files];
-            setImagesPreview(next);
-            setValue("images", next as any, { shouldValidate: true });
+            const combo = [...imagesPreview, ...files];
+            const seen = new Set<string>();
+            const dedup: File[] = [];
+            combo.forEach((f) => {
+              const key = `${f.name}_${f.size}_${f.lastModified}`;
+              if (!seen.has(key)) {
+                seen.add(key);
+                dedup.push(f);
+              }
+            });
+            setImagesPreview(dedup);
+            setValue("images", dedup as any, { shouldValidate: true });
             setImagesLocalError(null);
           }
         }}
@@ -231,9 +352,18 @@ export default function CreateListingPage() {
                 const files = Array.from(e.target.files || []).filter((f) =>
                   f.type.startsWith("image/")
                 );
-                const next = [...imagesPreview, ...files];
-                setImagesPreview(next);
-                setValue("images", next as any, { shouldValidate: true });
+                const combo = [...imagesPreview, ...files];
+                const seen = new Set<string>();
+                const dedup: File[] = [];
+                combo.forEach((f) => {
+                  const key = `${f.name}_${f.size}_${f.lastModified}`;
+                  if (!seen.has(key)) {
+                    seen.add(key);
+                    dedup.push(f);
+                  }
+                });
+                setImagesPreview(dedup);
+                setValue("images", dedup as any, { shouldValidate: true });
                 setImagesLocalError(null);
               }}
             />
@@ -270,6 +400,39 @@ export default function CreateListingPage() {
             })}
           </div>
         )}
+        {existingImages.length > 0 && (
+          <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+            {existingImages.map((img, i) => (
+              <div
+                key={img.url + i}
+                className="relative rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={asset(img.url)}
+                  alt={`Image ${i + 1}`}
+                  className="h-28 w-full object-cover"
+                />
+                <button
+                  type="button"
+                  className="absolute top-2 right-2 text-2xs px-2 py-1 rounded-lg bg-[hsl(var(--background))]/70 backdrop-blur border border-[hsl(var(--border))]"
+                  onClick={() => {
+                    if (img.id)
+                      setRemovedExisting((s) => [...s, String(img.id)]);
+                    setExistingImages((s) =>
+                      s.filter((x) => {
+                        if (img.id) return x.id !== img.id; // remove by id if present
+                        return x.url !== img.url; // fallback to url match
+                      })
+                    );
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
         {(imagesLocalError || (errors as any)?.images?.message) && (
           <p className="mt-2 text-sm text-red-500">
             {imagesLocalError || (errors as any)?.images?.message}
@@ -287,7 +450,7 @@ export default function CreateListingPage() {
         <Button
           className="bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg"
           onClick={() => {
-            if (imagesPreview.length === 0) {
+            if (imagesPreview.length === 0 && existingImages.length === 0) {
               setImagesLocalError("Add at least one image");
               return;
             }
@@ -303,7 +466,7 @@ export default function CreateListingPage() {
 
   const Step4 = () => (
     <form
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleSubmit(onSubmit, onFormErrors)}
       className="grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-300"
     >
       <div className="md:col-span-2">
@@ -323,11 +486,12 @@ export default function CreateListingPage() {
       <div className="md:col-span-2">
         <label className="block text-sm mb-1">Description</label>
         <div className="relative">
-          <FileText className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
-          <Input
+          <FileText className="absolute left-3 top-3 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
+          <textarea
             {...register("description")}
             placeholder="Describe the property..."
-            className="h-11 rounded-xl pl-10 border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40"
+            rows={5}
+            className="rounded-xl w-full resize-y min-h-[140px] pt-2 pl-10 pr-3 border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm leading-relaxed placeholder:text-[hsl(var(--muted-foreground))]"
           />
         </div>
         {errors.description && (
@@ -352,12 +516,13 @@ export default function CreateListingPage() {
           <Coins className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
           <select
             {...register("currency")}
-            className="h-11 rounded-xl pl-10 w-full border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40"
+            className="h-12 text-base rounded-xl pl-10 pr-10 w-full border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 appearance-none"
           >
             <option value="USD">USD</option>
             <option value="AFG">AFG</option>
             <option value="EUR">EUR</option>
           </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))] pointer-events-none" />
         </div>
       </div>
       <div>
@@ -366,7 +531,7 @@ export default function CreateListingPage() {
           <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))]" />
           <select
             {...register("location")}
-            className="h-11 rounded-xl pl-10 w-full border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40"
+            className="h-12 text-base rounded-xl pl-10 pr-10 w-full border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 appearance-none"
           >
             <option value="">Select a region</option>
             {regions.map((r) => (
@@ -375,6 +540,7 @@ export default function CreateListingPage() {
               </option>
             ))}
           </select>
+          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--muted-foreground))] pointer-events-none" />
         </div>
       </div>
       <div>
@@ -401,9 +567,13 @@ export default function CreateListingPage() {
         <Button
           className="bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg disabled:opacity-50"
           type="submit"
-          disabled={isSubmitting || createListing.isPending}
+          disabled={
+            isSubmitting ||
+            createListing.isPending ||
+            editListingMutation.isPending
+          }
         >
-          Create
+          {editId ? "Update" : "Create"}
         </Button>
       </div>
     </form>
