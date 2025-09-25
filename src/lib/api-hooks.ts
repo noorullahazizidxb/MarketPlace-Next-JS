@@ -15,7 +15,9 @@ async function axiosGet<T>(url: string, params?: Record<string, any>): Promise<T
     const res = await api.get<T>(url, params);
     try {
       const entity = (res as any)?.entity || (res as any)?.data?.entity || "Resource";
-      toastSuccess(`${String(entity)} fetched successfully`);
+      if(!url.includes("/users") && !url.includes("/listings") && !url.includes("/me") && !url.includes("/profile") && !url.includes('/categories')) { // avoid too many toasts on common endpoints
+        toastSuccess(`${String(entity)} fetched successfully`);
+      }
     } catch {}
     return res;
   } catch (err: any) {

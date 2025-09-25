@@ -104,7 +104,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
               ).toFixed(1)}
             </span>
           </div>
-
           {/* Reviews badge - default to 0 */}
           <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
             <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
@@ -115,9 +114,15 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </span>
           </div>
         </div>
+        <div className="absolute top-2 left-2 z-[1] flex items-center gap-2">
+          <span className="text-xs px-3 py-1 rounded-full bg-indigo-900/90 text-white border border-[hsl(var(--border))] shadow-md">
+            {listing.price} {listing.currency}
+          </span>
+        </div>
+
         <div className="absolute bottom-2 left-2 z-[1] flex items-center gap-2">
-          <span className="text-2xs px-2 py-1 rounded-full bg-[hsl(var(--card-bg, var(--card)))] text-[hsl(var(--card-fg, var(--foreground)))] border border-[hsl(var(--border))] shadow-sm">
-            {listing.listingType || "LISTING"}
+          <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+            <ShieldCheck className="size-3" /> Promoted
           </span>
           {showSeller ? (
             <span
@@ -133,20 +138,17 @@ export function ListingCard({ listing }: { listing: Listing }) {
           )}
         </div>
       </div>
-      <div className="p-4">
+      <div className="p-2">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-semibold tracking-tight line-clamp-1">
             {listing.title}
           </h3>
-          {listing.price && (
-            <div className="px-2 py-1 rounded-xl bg-[hsl(var(--muted))] text-sm border border-[hsl(var(--border))]">
-              {listing.price} {listing.currency}
-            </div>
-          )}
         </div>
+
         {listing.location && (
           <p className="subtle mt-1 text-xs">{listing.location}</p>
         )}
+
         <div className="mt-4 flex items-center justify-between">
           {showSeller ? (
             <>

@@ -229,7 +229,7 @@ export function Sidebar({
                           <span>Configure Themes</span>
                         </Link>
                         <Link
-                          href="/settings/notifications"
+                          href="/admin/notifications"
                           onClick={() => onClose?.()}
                           className="flex items-center gap-3 h-10 text-sm"
                         >
