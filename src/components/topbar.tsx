@@ -74,7 +74,7 @@ export function Topbar() {
               >
                 <Link
                   href="/listings"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                 >
                   <Home className="size-4" />
                   <span>Home</span>
@@ -92,7 +92,7 @@ export function Topbar() {
               >
                 <Link
                   href="/about"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                 >
                   <Info className="size-4" />
                   <span>About</span>
@@ -110,7 +110,7 @@ export function Topbar() {
               >
                 <Link
                   href="/contact"
-                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full link"
+                  className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                 >
                   <Phone className="size-4" />
                   <span>Contact</span>

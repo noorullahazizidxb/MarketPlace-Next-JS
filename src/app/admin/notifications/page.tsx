@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useId } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
-import { useApiGet } from "@/lib/api-hooks";
+import { useApiGet, useApiMutation } from "@/lib/api-hooks";
+import { useForm } from "react-hook-form";
 import { api } from "@/lib/axiosClient";
 import {
   Eye,
@@ -42,9 +43,12 @@ function AutoCompleteUsers({
   );
 
   // backend may return an envelope with data.autocomplete.suggestions (string[])
-  const suggestionStrings: string[] = data && (data as any).autocomplete && Array.isArray((data as any).autocomplete.suggestions)
-    ? (data as any).autocomplete.suggestions
-    : [];
+  const suggestionStrings: string[] =
+    data &&
+    (data as any).autocomplete &&
+    Array.isArray((data as any).autocomplete.suggestions)
+      ? (data as any).autocomplete.suggestions
+      : [];
 
   // fallback when endpoint returns full user objects or hits
   const suggestionUsers: any[] = Array.isArray(data)
@@ -65,14 +69,21 @@ function AutoCompleteUsers({
         else if (res && Array.isArray(res.hits)) users = res.hits;
         else if (res && Array.isArray(res.data)) users = res.data;
         const found = users[0] || { id: u, fullName: u, email: "" };
-        if (selected.find((s) => String(s.id) === String(found.id) || String(s.userId) === String(found.id))) {
+        if (
+          selected.find(
+            (s) =>
+              String(s.id) === String(found.id) ||
+              String(s.userId) === String(found.id)
+          )
+        ) {
           setQ("");
           return;
         }
         onChange([...selected, found]);
       } catch (e) {
         const fallback = { id: u, fullName: u };
-        if (!selected.find((s) => String(s.id) === String(fallback.id))) onChange([...selected, fallback]);
+        if (!selected.find((s) => String(s.id) === String(fallback.id)))
+          onChange([...selected, fallback]);
       } finally {
         setQ("");
       }
@@ -89,6 +100,9 @@ function AutoCompleteUsers({
       selected.filter((s) => String(s.id || s.userId) !== String(idToRemove))
     );
   }
+
+  const uid = useId();
+  const inputId = id ?? `auto-users-${uid}`;
 
   return (
     <div className="relative">
@@ -111,7 +125,6 @@ function AutoCompleteUsers({
           </span>
         ))}
         <input
-          id={id}
           disabled={!!disabled}
           value={q}
           onChange={(e) => setQ(e.target.value)}
@@ -123,7 +136,7 @@ function AutoCompleteUsers({
         <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[hsl(var(--card))] shadow-lg max-h-60 overflow-auto">
           {isLoading ? (
             <div className="p-3 text-sm subtle">Loading…</div>
-          ) : (suggestionStrings.length === 0 && suggestionUsers.length === 0) ? (
+          ) : suggestionStrings.length === 0 && suggestionUsers.length === 0 ? (
             <div className="p-3 text-sm subtle">No users</div>
           ) : (
             <ul>
@@ -147,8 +160,12 @@ function AutoCompleteUsers({
                       className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
                       onClick={() => addUser(u)}
                     >
-                      <div className="font-medium">{u.fullName || u.name || u.email}</div>
-                      <div className="text-xs subtle">{u.email || u.userId}</div>
+                      <div className="font-medium">
+                        {u.fullName || u.name || u.email}
+                      </div>
+                      <div className="text-xs subtle">
+                        {u.email || u.userId}
+                      </div>
                     </button>
                   </li>
                 ))}
@@ -367,22 +384,25 @@ export default function NotificationsAdminPage() {
               title="Filter by channel"
               value={channelFilter ?? ""}
               onChange={(e) => setChannelFilter(e.target.value || null)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))]"
+              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
               <option value="">All channels</option>
               <option value="SYSTEM">SYSTEM</option>
               <option value="EMAIL">EMAIL</option>
-              <option value="ALERT">ALERT</option>
+              <option value="WHATSAPP">WHATSAPP</option>
+              <option value="PUSH">PUSH</option>
             </select>
             <select
               aria-label="Filter by target type"
               title="Filter by target"
               value={targetFilter ?? ""}
               onChange={(e) => setTargetFilter(e.target.value || null)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))]"
+              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
               <option value="">All targets</option>
               <option value="USER">USER</option>
+              <option value="ROLE">ROLE</option>
+              <option value="ALL">ALL</option>
               <option value="LISTING">LISTING</option>
             </select>
             <Button
@@ -712,6 +732,14 @@ export default function NotificationsAdminPage() {
                   triggerEvent: draft.triggerEvent || null,
                   sentAt: draft.sendNow ? now : null,
                   meta: draft.metaJson || null,
+                  // attach role/listings into meta for visibility
+                  // (server-side may expect different shape — this is a UI mock)
+                  // @ts-ignore
+                  meta: {
+                    ...(draft.metaJson || {}),
+                    role: draft.role ?? undefined,
+                    listings: draft.listingIds ?? undefined,
+                  },
                   recipients: draft.recipientIds.map((uid, i) => ({
                     id: Math.floor(Math.random() * 1000000) + i,
                     notificationId: "temp",
@@ -721,6 +749,11 @@ export default function NotificationsAdminPage() {
                     deliveredAt: draft.sendNow ? now : null,
                     deliveryError: null,
                   })),
+                  // if single listing selected, reference it on the notification
+                  listing:
+                    draft.listingIds && draft.listingIds.length === 1
+                      ? { id: draft.listingIds[0] }
+                      : undefined,
                 };
                 setItems((prev) => [newNotification, ...prev]);
                 setCreating(false);
@@ -795,6 +828,8 @@ type CreateDraft = {
   triggerEvent?: string;
   metaJson?: any;
   recipientIds: string[];
+  role?: string | null;
+  listingIds?: string[];
   sendNow: boolean;
 };
 
@@ -815,6 +850,18 @@ function CreateForm({
   const [sendNow, setSendNow] = useState(true);
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedRecipients, setSelectedRecipients] = useState<any[]>([]);
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+  const [selectedListings, setSelectedListings] = useState<any[]>([]);
+
+  // Role enum for dropdown
+  enum Role {
+    ADMIN = "ADMIN",
+    USER = "USER",
+    REPRESENTATIVE = "REPRESENTATIVE",
+  }
+  const { handleSubmit } = useForm();
+  const mutation = useApiMutation("post", "/notifications");
+
   function submit() {
     const errs: string[] = [];
     if (!title.trim()) errs.push("Title is required");
@@ -830,19 +877,49 @@ function CreateForm({
     const recipientIds = selectedRecipients.map((u) =>
       String(u.id ?? u.userId ?? u._id ?? u.uuid ?? "")
     );
+    const listingId = selectedListings.length
+      ? String(selectedListings[0].id ?? selectedListings[0]._id ?? "")
+      : undefined;
+    const role = selectedRole;
     if (targetType === "USER" && !recipientIds.length)
       errs.push("At least one recipient userId required for target type USER");
+    if (targetType === "ROLE" && !role)
+      errs.push("Role is required for target type ROLE");
+    if (targetType === "LISTING" && !listingId)
+      errs.push(
+        "At least one listing must be selected for target type LISTING"
+      );
     setErrors(errs);
     if (errs.length) return;
-    onCreate({
+
+    const payload: any = {
       title: title.trim(),
       message: message.trim(),
       channel,
       targetType,
+      recipientUserIds: recipientIds.length ? recipientIds : undefined,
+      listingId: listingId ?? undefined,
+      meta: parsed || undefined,
       triggerEvent: triggerEvent.trim() || undefined,
-      metaJson: parsed,
-      recipientIds,
-      sendNow,
+    };
+
+    mutation.mutate(payload, {
+      onSuccess: () => {
+        // mirror previous UI behavior: add local draft
+        onCreate({
+          title: title.trim(),
+          message: message.trim(),
+          channel,
+          targetType,
+          triggerEvent: triggerEvent.trim() || undefined,
+          metaJson: parsed,
+          recipientIds: recipientIds,
+          role,
+          listingIds: listingId ? [listingId] : [],
+          sendNow,
+        });
+        onCancel();
+      },
     });
   }
 
@@ -869,7 +946,7 @@ function CreateForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder="System maintenance"
-            className="h-10 rounded-xl border px-3"
+            className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
           />
         </div>
         <div className="grid gap-1">
@@ -881,7 +958,7 @@ function CreateForm({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder="We will perform maintenance at..."
-            className="rounded-xl border p-3 min-h-[120px]"
+            className="rounded-xl border p-3 min-h-[120px] bg-[hsl(var(--card))] text-[hsl(var(--text))]"
           />
         </div>
         <div className="grid gap-3 md:grid-cols-3">
@@ -893,11 +970,12 @@ function CreateForm({
               id="channel"
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))]"
+              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
               <option value="SYSTEM">SYSTEM</option>
               <option value="EMAIL">EMAIL</option>
-              <option value="ALERT">ALERT</option>
+              <option value="WHATSAPP">WHATSAPP</option>
+              <option value="PUSH">PUSH</option>
             </select>
           </div>
           <div className="grid gap-1">
@@ -908,9 +986,11 @@ function CreateForm({
               id="target"
               value={targetType}
               onChange={(e) => setTargetType(e.target.value)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))]"
+              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
               <option value="USER">USER</option>
+              <option value="ROLE">ROLE</option>
+              <option value="ALL">ALL</option>
               <option value="LISTING">LISTING</option>
             </select>
           </div>
@@ -931,17 +1011,44 @@ function CreateForm({
           <label className="text-xs font-medium" htmlFor="recipients">
             Recipients
           </label>
-          <AutoCompleteUsers
-            id="recipients"
-            disabled={targetType !== "USER"}
-            selected={selectedRecipients}
-            onChange={(list) => setSelectedRecipients(list)}
-            placeholder={
-              targetType === "USER"
-                ? "Search users by name or email"
-                : "Disabled for non-user targets"
-            }
-          />
+          {targetType === "USER" && (
+            <AutoCompleteUsers
+              id="recipients"
+              disabled={targetType !== "USER"}
+              selected={selectedRecipients}
+              onChange={(list) => setSelectedRecipients(list)}
+              placeholder={
+                targetType === "USER"
+                  ? "Search users by name or email"
+                  : "Disabled for non-user targets"
+              }
+            />
+          )}
+
+          {/* Role dropdown for ROLE target */}
+          {targetType === "ROLE" && (
+            <select
+              aria-label="Select role"
+              value={selectedRole ?? ""}
+              onChange={(e) => setSelectedRole(e.target.value || null)}
+              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+            >
+              <option value="">Select role</option>
+              <option value={Role.ADMIN}>{Role.ADMIN}</option>
+              <option value={Role.USER}>{Role.USER}</option>
+              <option value={Role.REPRESENTATIVE}>{Role.REPRESENTATIVE}</option>
+            </select>
+          )}
+
+          {/* Listing picker for LISTING target */}
+          {targetType === "LISTING" && (
+            <AutoCompleteListings
+              id="listings"
+              selected={selectedListings}
+              onChange={(list) => setSelectedListings(list)}
+              placeholder={"Search listings by title or id"}
+            />
+          )}
         </div>
         <div className="grid gap-1">
           <label className="text-xs font-medium" htmlFor="meta">
@@ -951,7 +1058,7 @@ function CreateForm({
             id="meta"
             value={metaRaw}
             onChange={(e) => setMetaRaw(e.target.value)}
-            className="rounded-xl border p-3 font-mono text-xs min-h-[140px]"
+            className="rounded-xl border p-3 font-mono text-xs min-h-[140px] bg-[hsl(var(--card))] text-[hsl(var(--text))]"
           />
         </div>
         <label className="inline-flex items-center gap-2 text-xs font-medium select-none">
@@ -968,10 +1075,147 @@ function CreateForm({
         <Button variant="ghost" onClick={onCancel}>
           Cancel
         </Button>
-        <Button variant="secondary" onClick={submit}>
+        <Button variant="secondary" onClick={handleSubmit(submit)}>
           Create
         </Button>
       </div>
+    </div>
+  );
+}
+
+// AutoCompleteListings component mirrors AutoCompleteUsers but targets /listings
+function AutoCompleteListings({
+  id,
+  selected,
+  onChange,
+  placeholder,
+}: {
+  id?: string;
+  selected: any[];
+  onChange: (list: any[]) => void;
+  placeholder?: string;
+}) {
+  const [q, setQ] = useState("");
+  const key = q.trim() ? (["listings", q, "autocomplete"] as const) : null;
+  const { data, isLoading } = useApiGet<any | null>(
+    key,
+    q ? `/listings?q=${encodeURIComponent(q)}&autocomplete=true` : "/listings"
+  );
+
+  const suggestionStrings: string[] =
+    data &&
+    (data as any).autocomplete &&
+    Array.isArray((data as any).autocomplete.suggestions)
+      ? (data as any).autocomplete.suggestions
+      : [];
+
+  const suggestionListings: any[] = Array.isArray(data)
+    ? data
+    : data && Array.isArray((data as any).hits)
+    ? (data as any).hits
+    : data && Array.isArray((data as any).data)
+    ? (data as any).data
+    : [];
+
+  async function addListing(l: any) {
+    if (typeof l === "string") {
+      try {
+        const res = await api.get<any>(`/listings?q=${encodeURIComponent(l)}`);
+        let listings: any[] = [];
+        if (Array.isArray(res)) listings = res;
+        else if (res && Array.isArray(res.hits)) listings = res.hits;
+        else if (res && Array.isArray(res.data)) listings = res.data;
+        const found = listings[0] || { id: l, title: l };
+        if (selected.find((s) => String(s.id) === String(found.id))) {
+          setQ("");
+          return;
+        }
+        onChange([...selected, found]);
+      } catch (e) {
+        const fallback = { id: l, title: l };
+        if (!selected.find((s) => String(s.id) === String(fallback.id)))
+          onChange([...selected, fallback]);
+      } finally {
+        setQ("");
+      }
+      return;
+    }
+    if (selected.find((s) => String(s.id) === String(l.id))) return;
+    onChange([...selected, l]);
+    setQ("");
+  }
+
+  function removeListing(idToRemove: string | number) {
+    onChange(selected.filter((s) => String(s.id) !== String(idToRemove)));
+  }
+
+  const uid = useId();
+  const inputId = id ?? `auto-listings-${uid}`;
+
+  return (
+    <div className="relative">
+      <div className="flex flex-wrap items-center gap-2 p-2 border rounded-xl bg-[hsl(var(--card))]">
+        {selected.map((s) => (
+          <span
+            key={s.id || s._id}
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--muted))]"
+          >
+            <span className="text-sm">{s.title || s.name || s.id}</span>
+            <button
+              onClick={() => removeListing(s.id || s._id)}
+              aria-label="remove"
+              className="opacity-70 hover:opacity-100"
+            >
+              <X className="size-3" />
+            </button>
+          </span>
+        ))}
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder={placeholder}
+          className="flex-1 h-9 min-w-[12rem] bg-transparent outline-none"
+        />
+      </div>
+      {q.trim().length > 0 && (
+        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[hsl(var(--card))] shadow-lg max-h-60 overflow-auto">
+          {isLoading ? (
+            <div className="p-3 text-sm subtle">Loading…</div>
+          ) : suggestionStrings.length === 0 &&
+            suggestionListings.length === 0 ? (
+            <div className="p-3 text-sm subtle">No listings</div>
+          ) : (
+            <ul>
+              {suggestionStrings.length > 0 &&
+                suggestionStrings.map((s: string) => (
+                  <li key={s}>
+                    <button
+                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      onClick={() => addListing(s)}
+                    >
+                      <div className="font-medium">{s}</div>
+                      <div className="text-xs subtle">{s}</div>
+                    </button>
+                  </li>
+                ))}
+              {suggestionListings.length > 0 &&
+                suggestionListings.map((u: any) => (
+                  <li key={u.id || u._id || u.title}>
+                    <button
+                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      onClick={() => addListing(u)}
+                    >
+                      <div className="font-medium">
+                        {u.title || u.name || u.id}
+                      </div>
+                      <div className="text-xs subtle">{u.id || u._id}</div>
+                    </button>
+                  </li>
+                ))}
+            </ul>
+          )}
+        </div>
+      )}
     </div>
   );
 }

@@ -121,9 +121,6 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
 
         <div className="absolute bottom-2 left-2 z-[1] flex items-center gap-2">
-          <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-            <ShieldCheck className="size-3" /> Promoted
-          </span>
           {showSeller ? (
             <span
               onClick={() => setContactOpen(true)}
