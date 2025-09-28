@@ -3,7 +3,6 @@ import { motion } from "framer-motion";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBox } from "@/components/search-box";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
-import { MobileMenu } from "@/components/mobile-menu";
 import { useAuth } from "@/lib/use-auth";
 import { useUIStore } from "@/store/ui.store";
 
@@ -39,18 +38,6 @@ export function Navbar() {
           </div>
         </div>
       </header>
-      <MobileMenu
-        isOpen={mobileOpen}
-        onClose={closeMobileMenu}
-        items={[
-          { href: "/", label: "Dashboard" },
-          { href: "/listings", label: "Listings" },
-          { href: "/pendings", label: "Pending Lists" },
-          { href: "/listings/create", label: "New Listing" },
-          { href: "/profile", label: "Profile" },
-          { href: "/settings", label: "Settings" },
-        ]}
-      />
     </>
   );
 }

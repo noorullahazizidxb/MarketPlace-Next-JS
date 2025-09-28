@@ -10,6 +10,9 @@ import {
   Star,
   MessageSquare,
   Tag,
+  TagIcon,
+  Banknote,
+  CreditCard,
 } from "lucide-react";
 import { asset } from "@/lib/assets";
 import { ImageSlider } from "@/components/image-slider";
@@ -43,6 +46,9 @@ export type Listing = {
     contacts?: { phone?: string; whatsapp?: string };
   };
   location?: string | null;
+  category?: {
+    name: string;
+  };
   averageRating?: number | null;
   reviewCount?: number | null;
 };
@@ -118,7 +124,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         </div>
         <div className="absolute top-2 left-2 z-[0] flex items-center gap-2">
           <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--accent))] text-white border border-[hsl(var(--border))] shadow-md">
-            <Tag className="size-4 inline-flex mr-2" />
+            <CreditCard className="size-4 inline-flex mr-2" />
             {listing.price} {listing.currency}
           </span>
         </div>
@@ -137,14 +143,22 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </span>
           )}
         </div>
+        <div className="absolute bottom-2 right-2 z-[0] flex items-center gap-2">
+          {listing.category?.name && (
+            <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+              <TagIcon className="size-3" /> {listing.category?.name}
+            </span>
+          )}
+        </div>
       </div>
+
       <div className="p-2">
         <div className="flex items-start justify-between gap-3">
           <h3 className="font-semibold tracking-tight line-clamp-1">
             {listing.title}
           </h3>
         </div>
-
+        <div className="absolute right-1 b-20"></div>
         {listing.description && (
           <p
             className="mt-1 text-[11px] leading-snug text-[hsl(var(--muted-foreground))] truncate"

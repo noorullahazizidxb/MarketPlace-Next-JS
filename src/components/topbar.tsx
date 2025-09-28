@@ -25,7 +25,6 @@ import { ThemeToggle } from "@/components/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { adminNavItems } from "@/components/admin-nav";
-import { MobileMenu } from "@/components/mobile-menu";
 import { useUIStore } from "@/store/ui.store";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 import { useNotificationsStore } from "@/store/notifications.store";
@@ -322,18 +321,6 @@ export function Topbar() {
                         </Link>
                       </Button>
                     </div>
-                    {/* Mobile Sign In */}
-                    <Button
-                      asChild
-                      size="sm"
-                      variant="primary"
-                      className="sm:hidden h-9 px-3 rounded-xl"
-                    >
-                      <Link href="/sign-in" className="flex items-center gap-1">
-                        <LogIn className="size-4" />
-                        <span className="text-sm">Sign In</span>
-                      </Link>
-                    </Button>
                   </>
                 )}
                 <button
@@ -351,11 +338,6 @@ export function Topbar() {
             </div>
           </div>
         </div>
-        <MobileMenu
-          isOpen={mobileMenu}
-          onClose={closeMobileMenu}
-          items={mobileMenuItems}
-        />
       </motion.header>
       {/* Spacer to offset fixed navbar height */}
       <div className="h-16" />

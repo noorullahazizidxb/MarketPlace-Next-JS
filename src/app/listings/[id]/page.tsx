@@ -20,6 +20,8 @@ import {
   Phone,
   Link2,
   Copy,
+  Banknote,
+  CreditCard,
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
@@ -102,6 +104,7 @@ function ListingDetailsContent() {
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
                   <div className="px-3 py-1 rounded-xl tabular-nums text-sm border border-[hsl(var(--border))] bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]">
+                    <CreditCard className="size-5 mr-1 inline-flex" />{" "}
                     {listing.price} {listing.currency}
                   </div>
                 )}
