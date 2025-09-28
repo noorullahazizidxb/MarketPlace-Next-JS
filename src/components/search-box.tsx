@@ -12,6 +12,7 @@ type Props = {
   placeholder?: string;
   perPage?: number;
   onSubmitNavigate?: boolean; // when true, pressing Enter navigates to /listings?search=...
+  onSubmitClose?: () => void; // optional callback to close a surrounding dialog/modal after submit
 };
 
 function useDebounced<T>(value: T, delay = 300) {
@@ -28,6 +29,7 @@ export function SearchBox({
   placeholder = "Search",
   perPage = 5,
   onSubmitNavigate = true,
+  onSubmitClose,
 }: Props) {
   const [q, setQ] = useState("");
   const debounced = useDebounced(q, 350);
@@ -86,6 +88,9 @@ export function SearchBox({
               if (q) qp.set("search", q);
               router.push(`/listings?${qp.toString()}`);
               setOpen(false);
+              try {
+                onSubmitClose?.();
+              } catch {}
             }
           }}
           aria-label="Search"
@@ -120,6 +125,9 @@ export function SearchBox({
                       }
                       router.push(`/listings?${qp.toString()}`);
                       setOpen(false);
+                      try {
+                        onSubmitClose?.();
+                      } catch {}
                     }}
                   >
                     <div className="font-medium line-clamp-1">

@@ -485,7 +485,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         onClose={() => setSearchOpen(false)}
         title="Search"
       >
-        <SearchBox placeholder="Search listings..." className="w-full" />
+        <SearchBox
+          placeholder="Search listings..."
+          className="w-full"
+          onSubmitClose={() => setSearchOpen(false)}
+        />
         <p className="text-xs subtle">
           Start typing to find listings, ads, and more.
         </p>
