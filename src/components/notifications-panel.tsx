@@ -48,6 +48,7 @@ export type NotificationsPanelProps = {
   fetchUrl?: string; // API URL to GET notifications; defaults to "/notifications"
   onMarkRead?: (id: string) => Promise<void> | void;
   onMarkAllRead?: (ids: string[]) => Promise<void> | void;
+  anchor?: "top-right" | "bottom-center";
 };
 
 function formatTimeAgo(input: string | Date): string {
@@ -80,6 +81,7 @@ export function NotificationsPanel({
   fetchUrl = "/notifications",
   onMarkRead,
   onMarkAllRead,
+  anchor = "top-right",
 }: NotificationsPanelProps) {
   const getMessage = (n: any): string | null => {
     const direct =
@@ -258,13 +260,23 @@ export function NotificationsPanel({
           <motion.aside
             ref={overlayRef}
             className={cn(
-              "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
+              anchor === "bottom-center"
+                ? "fixed bottom-[110px] left-1/2 -translate-x-1/2 z-[1200] w-[min(96vw,440px)] origin-bottom"
+                : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
               className
             )}
-            initial={{ opacity: 0, y: -8, scale: 0.98 }}
+            initial={
+              anchor === "bottom-center"
+                ? { opacity: 0, y: 12, scale: 0.96 }
+                : { opacity: 0, y: -8, scale: 0.98 }
+            }
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: -8, scale: 0.98 }}
-            transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            exit={
+              anchor === "bottom-center"
+                ? { opacity: 0, y: 12, scale: 0.96 }
+                : { opacity: 0, y: -8, scale: 0.98 }
+            }
+            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
             <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow-[0_0_0_1px_hsl(var(--border)),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative">
               <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">

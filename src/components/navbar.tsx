@@ -6,7 +6,7 @@ import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useUIStore } from "@/store/ui.store";
 
-export function Navbar() {
+export function Navbar({ className = "" }: { className?: string }) {
   const mobileOpen = useUIStore((s) => s.mobileMenuOpen);
   const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
   const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
@@ -15,7 +15,7 @@ export function Navbar() {
 
   return (
     <>
-      <header className="app-navbar">
+      <header className={`app-navbar ${className}`}>
         <div className="container-padded h-16 grid grid-cols-[1fr_auto] items-center gap-2">
           <div className="flex items-center gap-3">
             <button

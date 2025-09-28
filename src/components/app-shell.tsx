@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { Navbar } from "@/components/navbar";
 import { Topbar } from "@/components/topbar";
+import BottomNavigation from "@/components/BottomNavigation";
 import { PageTransition } from "@/components/page-transition";
 import Loading from "@/components/loading";
 import { useAppStore } from "@/store/app.store";
@@ -78,21 +79,25 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_1fr]">
         <Sidebar />
         <div className="flex flex-col min-h-screen">
-          <Navbar />
+          <Navbar className="hidden md:block" />
           <main id="main-content" className="flex-1 container-padded py-6">
             <PageTransition>{children}</PageTransition>
           </main>
         </div>
+        <BottomNavigation />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen flex flex-col">
-      <Topbar />
+      <div className="hidden md:block">
+        <Topbar />
+      </div>
       <main id="main-content" className="flex-1 container-padded py-6">
         <PageTransition>{children}</PageTransition>
       </main>
+      <BottomNavigation />
     </div>
   );
 }
