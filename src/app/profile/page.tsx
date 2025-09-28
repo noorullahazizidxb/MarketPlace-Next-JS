@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useForm, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -30,6 +30,7 @@ import { Card } from "@/components/ui/card";
 import { asset } from "@/lib/assets";
 
 import { Eye, EyeOff } from "lucide-react";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 
 // ---------------- Schema ----------------
 const schema = z
@@ -506,180 +507,159 @@ export default function ProfilePage() {
         </aside>
       </main>
 
-      {/* Edit Modal */}
-      <AnimatePresence>
-        {editing && (
-          <motion.div
-            className="fixed inset-0 z-[4000] flex items-center justify-center p-4"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-          >
-            <div
-              className="absolute inset-0 bg-[hsl(var(--background))]/70 backdrop-blur-sm"
-              onClick={() => setEditing(false)}
-            />
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.92, opacity: 0 }}
-              transition={{ type: "spring", stiffness: 260, damping: 24 }}
-              className="relative z-[4001] w-full max-w-2xl max-h-[85vh] overflow-y-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/90 backdrop-blur-xl p-6 shadow-[0_10px_50px_-5px_rgba(0,0,0,0.4)]"
-              role="dialog"
-              aria-modal="true"
-              aria-label="Edit profile"
-            >
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold">Edit Profile</h2>
-                <button
-                  aria-label="Close"
-                  className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
-                  onClick={() => setEditing(false)}
-                >
-                  <X className="size-5" />
-                </button>
-              </div>
-              <form
-                onSubmit={handleSubmit(onSubmit)}
-                className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+      {/* Edit Modal (Dialog) */}
+      <Dialog open={editing} onOpenChange={(o: boolean) => setEditing(o)}>
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-lg font-semibold">Edit Profile</h2>
+            <DialogClose asChild>
+              <button
+                aria-label="Close"
+                className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
               >
-                <TextField
-                  label="First Name"
-                  error={errors.firstName?.message}
-                  {...register("firstName")}
-                  icon={User2}
-                />
-                <TextField
-                  label="Last Name"
-                  error={errors.lastName?.message}
-                  {...register("lastName")}
-                  icon={User2}
-                />
-                <TextField
-                  label="Full Name"
-                  error={errors.fullName?.message}
-                  {...register("fullName")}
-                  icon={User2}
-                />
-                <TextField
-                  label="Email"
-                  error={errors.email?.message}
-                  {...register("email")}
-                  icon={Mail}
-                />
-                <TextField
-                  label="Phone"
-                  error={errors.phone?.message}
-                  {...register("phone")}
-                  icon={Phone}
-                />
-                <TextField
-                  label="WhatsApp"
-                  error={errors.whatsapp?.message}
-                  {...register("whatsapp")}
-                  icon={Phone}
-                />
-                <TextField
-                  label="City"
-                  error={errors.city?.message}
-                  {...register("city")}
-                  icon={MapPin}
-                />
-                <TextField
-                  label="Country"
-                  error={errors.country?.message}
-                  {...register("country")}
-                  icon={MapPin}
-                />
-                <TextField
-                  label="Street"
-                  error={errors.street?.message}
-                  {...register("street")}
-                  icon={MapPin}
-                />
-                <TextField
-                  label="Website"
-                  error={errors.website?.message}
-                  {...register("website")}
-                  icon={Globe2}
-                />
-                <TextField
-                  label="LinkedIn"
-                  error={errors.linkedin?.message}
-                  {...register("linkedin")}
-                  icon={Linkedin}
-                />
-                <TextField
-                  label="Facebook"
-                  error={errors.facebook?.message}
-                  {...register("facebook")}
-                  icon={Facebook}
-                />
-                <TextField
-                  label="Instagram"
-                  error={errors.instagram?.message}
-                  {...register("instagram")}
-                  icon={Instagram}
-                />
-                {/* Password fields */}
-                <div className="sm:col-span-2">
-                  <FieldLabel icon={ShieldCheck} label="Password" />
-                  <PasswordField
-                    register={register}
-                    error={errors.password?.message as any}
-                    watchPassword={watch("password")}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <FieldLabel icon={ShieldCheck} label="Confirm Password" />
-                  <ConfirmPasswordField
-                    register={register}
-                    error={errors.confirmPassword?.message as any}
-                    passwordValue={watch("password")}
-                    confirmValue={watch("confirmPassword")}
-                  />
-                </div>
-                <div className="sm:col-span-2">
-                  <FieldLabel icon={Edit3} label="Bio" />
-                  <textarea
-                    {...register("bio")}
-                    rows={4}
-                    maxLength={260}
-                    className="mt-1 w-full rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-sm focus:ring-2 ring-[hsl(var(--accent))]/40 resize-y placeholder:text-[hsl(var(--muted-foreground))]"
-                    placeholder="Short bio (max 260 chars)"
-                  />
-                  <p className="mt-1 text-2xs text-right subtle">
-                    {watch("bio")?.length || 0}/260
-                  </p>
-                </div>
-                {error && (
-                  <p className="text-red-500 text-sm sm:col-span-2">{error}</p>
-                )}
-                <div className="flex gap-3 sm:col-span-2 pt-2">
-                  <Button
-                    type="button"
-                    variant="secondary"
-                    onClick={() => {
-                      reset(defaultValues);
-                      setEditing(false);
-                    }}
-                    className="rounded-xl"
-                  >
-                    <X className="size-4" /> Cancel
-                  </Button>
-                  <Button
-                    type="submit"
-                    disabled={isSubmitting || updateProfile.isPending}
-                    className="rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
-                  >
-                    <Save className="size-4" /> Save Changes
-                  </Button>
-                </div>
-              </form>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                <X className="size-5" />
+              </button>
+            </DialogClose>
+          </div>
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+          >
+            <TextField
+              label="First Name"
+              error={errors.firstName?.message}
+              {...register("firstName")}
+              icon={User2}
+            />
+            <TextField
+              label="Last Name"
+              error={errors.lastName?.message}
+              {...register("lastName")}
+              icon={User2}
+            />
+            <TextField
+              label="Full Name"
+              error={errors.fullName?.message}
+              {...register("fullName")}
+              icon={User2}
+            />
+            <TextField
+              label="Email"
+              error={errors.email?.message}
+              {...register("email")}
+              icon={Mail}
+            />
+            <TextField
+              label="Phone"
+              error={errors.phone?.message}
+              {...register("phone")}
+              icon={Phone}
+            />
+            <TextField
+              label="WhatsApp"
+              error={errors.whatsapp?.message}
+              {...register("whatsapp")}
+              icon={Phone}
+            />
+            <TextField
+              label="City"
+              error={errors.city?.message}
+              {...register("city")}
+              icon={MapPin}
+            />
+            <TextField
+              label="Country"
+              error={errors.country?.message}
+              {...register("country")}
+              icon={MapPin}
+            />
+            <TextField
+              label="Street"
+              error={errors.street?.message}
+              {...register("street")}
+              icon={MapPin}
+            />
+            <TextField
+              label="Website"
+              error={errors.website?.message}
+              {...register("website")}
+              icon={Globe2}
+            />
+            <TextField
+              label="LinkedIn"
+              error={errors.linkedin?.message}
+              {...register("linkedin")}
+              icon={Linkedin}
+            />
+            <TextField
+              label="Facebook"
+              error={errors.facebook?.message}
+              {...register("facebook")}
+              icon={Facebook}
+            />
+            <TextField
+              label="Instagram"
+              error={errors.instagram?.message}
+              {...register("instagram")}
+              icon={Instagram}
+            />
+            {/* Password fields */}
+            <div className="sm:col-span-2">
+              <FieldLabel icon={ShieldCheck} label="Password" />
+              <PasswordField
+                register={register}
+                error={errors.password?.message as any}
+                watchPassword={watch("password")}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FieldLabel icon={ShieldCheck} label="Confirm Password" />
+              <ConfirmPasswordField
+                register={register}
+                error={errors.confirmPassword?.message as any}
+                passwordValue={watch("password")}
+                confirmValue={watch("confirmPassword")}
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <FieldLabel icon={Edit3} label="Bio" />
+              <textarea
+                {...register("bio")}
+                rows={4}
+                maxLength={260}
+                className="mt-1 w-full rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-sm focus:ring-2 ring-[hsl(var(--accent))]/40 resize-y placeholder:text-[hsl(var(--muted-foreground))]"
+                placeholder="Short bio (max 260 chars)"
+              />
+              <p className="mt-1 text-2xs text-right subtle">
+                {watch("bio")?.length || 0}/260
+              </p>
+            </div>
+            {error && (
+              <p className="text-red-500 text-sm sm:col-span-2">{error}</p>
+            )}
+            <div className="flex gap-3 sm:col-span-2 pt-2">
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={() => {
+                  reset(defaultValues);
+                  setEditing(false);
+                }}
+                className="rounded-xl"
+              >
+                <X className="size-4" /> Cancel
+              </Button>
+              <Button
+                type="submit"
+                disabled={isSubmitting || updateProfile.isPending}
+                className="rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
+              >
+                <Save className="size-4" /> Save Changes
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

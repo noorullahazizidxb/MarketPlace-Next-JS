@@ -2,12 +2,12 @@
 import { useState } from "react";
 import Image from "next/image";
 import { ImageSlider } from "@/components/image-slider";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import { useApiMutation } from "@/lib/api-hooks";
 import { twMerge } from "tailwind-merge";
 import { asset } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
-import { Portal } from "@/components/portal";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 
 type ContactVisibility = "HIDE_SELLER" | "SHOW_SELLER" | "MASKED";
@@ -172,227 +172,194 @@ export function ApprovalCard({
         </div>
       </div>
 
-      <AnimatePresence>
-        {open && (
-          <Portal>
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              className="fixed inset-0 z-[1000] grid place-items-center p-4"
-              aria-modal
-              role="dialog"
-              onClick={() => setOpen(false)}
-            >
-              <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-              <motion.div
-                initial={{ y: 24, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
-                exit={{ y: 24, opacity: 0 }}
-                transition={{ type: "spring", stiffness: 260, damping: 24 }}
-                className="relative w-full max-w-4xl max-h-[85vh] overflow-y-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-2xl"
-                onClick={(e) => e.stopPropagation()}
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="w-full max-w-4xl max-h-[85vh] overflow-y-auto p-0">
+          <div className="sticky top-0 z-10 flex items-center justify-end p-3 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/80 rounded-t-2xl">
+            <DialogClose asChild>
+              <button
+                aria-label="Close modal"
+                className="glass size-8 rounded-xl grid place-items-center"
               >
-                <div className="sticky top-0 z-10 flex items-center justify-end p-3 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/80 rounded-t-2xl">
-                  <button
-                    aria-label="Close modal"
-                    className="glass size-8 rounded-xl grid place-items-center"
-                    onClick={() => setOpen(false)}
+                <X className="size-4" />
+              </button>
+            </DialogClose>
+          </div>
+          <div className="p-5 space-y-4">
+            <div className="flex items-start gap-4">
+              <Image
+                src={
+                  asset(author?.avatarUrl || author?.photo) || "/favicon.svg"
+                }
+                alt={
+                  author?.fullName || author?.name || author?.email || "User"
+                }
+                width={64}
+                height={64}
+                className="rounded-xl border border-[hsl(var(--border))]"
+              />
+              <div className="min-w-0">
+                <div className="text-lg font-semibold line-clamp-1">
+                  {author?.fullName || author?.name || author?.email}
+                </div>
+                <div className="text-sm subtle line-clamp-2">
+                  {author?.email}
+                </div>
+                {author?.address && (
+                  <div className="text-sm subtle line-clamp-2">
+                    {[
+                      author.address.street,
+                      author.address.city,
+                      author.address.country,
+                    ]
+                      .filter(Boolean)
+                      .join(", ")}
+                  </div>
+                )}
+              </div>
+              <Button className="ml-auto" onClick={() => setOpen(false)}>
+                Close
+              </Button>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
+                <div className="text-sm font-medium">Listing Details</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  <span className="subtle">ID</span>
+                  <span className="truncate">{listing?.id}</span>
+                  <span className="subtle">Type</span>
+                  <span>{listing?.listingType || "-"}</span>
+                  <span className="subtle">Status</span>
+                  <span>{status}</span>
+                  <span className="subtle">Price</span>
+                  <span>{priceTag}</span>
+                  <span className="subtle">Visibility</span>
+                  <span>{contactVisibility}</span>
+                  <span className="subtle">Location</span>
+                  <span>{listing?.location || "-"}</span>
+                  <span className="subtle">Category</span>
+                  <span>{listing?.category?.name || "-"}</span>
+                  <span className="subtle">Created</span>
+                  <span>{createdAt ? createdAt.toLocaleString() : "-"}</span>
+                  <span className="subtle">Expires</span>
+                  <span>{expiresAt ? expiresAt.toLocaleString() : "-"}</span>
+                  <span className="subtle">Approved At</span>
+                  <span>
+                    {listing?.approvedAt
+                      ? new Date(listing.approvedAt).toLocaleString()
+                      : "-"}
+                  </span>
+                  <span className="subtle">Approved By</span>
+                  <span>{listing?.approvedById || "-"}</span>
+                </div>
+                <div className="text-sm subtle whitespace-pre-wrap mt-2">
+                  {listing?.description || "No description."}
+                </div>
+              </div>
+
+              <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
+                <div className="text-sm font-medium">Seller & Contacts</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+                  <span className="subtle">Name</span>
+                  <span className="truncate">
+                    {author?.fullName || author?.name || "-"}
+                  </span>
+                  <span className="subtle">Email</span>
+                  <a
+                    href={`mailto:${author?.email || ""}`}
+                    className="link truncate"
                   >
-                    <X className="size-4" />
-                  </button>
+                    {author?.email || "-"}
+                  </a>
+                  <span className="subtle">Phone</span>
+                  <a
+                    href={author?.phone ? `tel:${author.phone}` : "#"}
+                    className="link truncate"
+                  >
+                    {author?.phone || "-"}
+                  </a>
+                  <span className="subtle">WhatsApp</span>
+                  <a
+                    href={
+                      author?.contacts?.whatsapp
+                        ? `https://wa.me/${author.contacts.whatsapp.replace(
+                            /[^\d]/g,
+                            ""
+                          )}`
+                        : "#"
+                    }
+                    className="link truncate"
+                  >
+                    {author?.contacts?.whatsapp || "-"}
+                  </a>
+                  <span className="subtle">Address</span>
+                  <span className="truncate">
+                    {author?.address
+                      ? [
+                          author.address.street,
+                          author.address.city,
+                          author.address.country,
+                        ]
+                          .filter(Boolean)
+                          .join(", ")
+                      : "-"}
+                  </span>
                 </div>
-                <div className="p-5 space-y-4">
-                  <div className="flex items-start gap-4">
-                    <Image
-                      src={
-                        asset(author?.avatarUrl || author?.photo) ||
-                        "/favicon.svg"
-                      }
-                      alt={
-                        author?.fullName ||
-                        author?.name ||
-                        author?.email ||
-                        "User"
-                      }
-                      width={64}
-                      height={64}
-                      className="rounded-xl border border-[hsl(var(--border))]"
-                    />
-                    <div className="min-w-0">
-                      <div className="text-lg font-semibold line-clamp-1">
-                        {author?.fullName || author?.name || author?.email}
-                      </div>
-                      <div className="text-sm subtle line-clamp-2">
-                        {author?.email}
-                      </div>
-                      {author?.address && (
-                        <div className="text-sm subtle line-clamp-2">
-                          {[
-                            author.address.street,
-                            author.address.city,
-                            author.address.country,
-                          ]
-                            .filter(Boolean)
-                            .join(", ")}
-                        </div>
-                      )}
+                {reps.length > 0 && (
+                  <div className="mt-3">
+                    <div className="text-sm font-medium mb-1">
+                      Representatives
                     </div>
-                    <Button className="ml-auto" onClick={() => setOpen(false)}>
-                      Close
-                    </Button>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
-                      <div className="text-sm font-medium">Listing Details</div>
-                      <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
-                        <span className="subtle">ID</span>
-                        <span className="truncate">{listing?.id}</span>
-                        <span className="subtle">Type</span>
-                        <span>{listing?.listingType || "-"}</span>
-                        <span className="subtle">Status</span>
-                        <span>{status}</span>
-                        <span className="subtle">Price</span>
-                        <span>{priceTag}</span>
-                        <span className="subtle">Visibility</span>
-                        <span>{contactVisibility}</span>
-                        <span className="subtle">Location</span>
-                        <span>{listing?.location || "-"}</span>
-                        <span className="subtle">Category</span>
-                        <span>{listing?.category?.name || "-"}</span>
-                        <span className="subtle">Created</span>
-                        <span>
-                          {createdAt ? createdAt.toLocaleString() : "-"}
-                        </span>
-                        <span className="subtle">Expires</span>
-                        <span>
-                          {expiresAt ? expiresAt.toLocaleString() : "-"}
-                        </span>
-                        <span className="subtle">Approved At</span>
-                        <span>
-                          {listing?.approvedAt
-                            ? new Date(listing.approvedAt).toLocaleString()
-                            : "-"}
-                        </span>
-                        <span className="subtle">Approved By</span>
-                        <span>{listing?.approvedById || "-"}</span>
-                      </div>
-                      <div className="text-sm subtle whitespace-pre-wrap mt-2">
-                        {listing?.description || "No description."}
-                      </div>
-                    </div>
-
-                    <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
-                      <div className="text-sm font-medium">
-                        Seller & Contacts
-                      </div>
-                      <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
-                        <span className="subtle">Name</span>
-                        <span className="truncate">
-                          {author?.fullName || author?.name || "-"}
-                        </span>
-                        <span className="subtle">Email</span>
-                        <a
-                          href={`mailto:${author?.email || ""}`}
-                          className="link truncate"
+                    <div className="flex flex-wrap gap-2">
+                      {reps.map((r, i) => (
+                        <span
+                          key={r.id || i}
+                          className="px-2 py-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4] text-2xs"
                         >
-                          {author?.email || "-"}
-                        </a>
-                        <span className="subtle">Phone</span>
-                        <a
-                          href={author?.phone ? `tel:${author.phone}` : "#"}
-                          className="link truncate"
-                        >
-                          {author?.phone || "-"}
-                        </a>
-                        <span className="subtle">WhatsApp</span>
-                        <a
-                          href={
-                            author?.contacts?.whatsapp
-                              ? `https://wa.me/${author.contacts.whatsapp.replace(
-                                  /[^\d]/g,
-                                  ""
-                                )}`
-                              : "#"
-                          }
-                          className="link truncate"
-                        >
-                          {author?.contacts?.whatsapp || "-"}
-                        </a>
-                        <span className="subtle">Address</span>
-                        <span className="truncate">
-                          {author?.address
-                            ? [
-                                author.address.street,
-                                author.address.city,
-                                author.address.country,
-                              ]
-                                .filter(Boolean)
-                                .join(", ")
-                            : "-"}
+                          {r?.representative?.region || "Region"} ·{" "}
+                          {r?.representative?.whatsappNumber || "N/A"}
                         </span>
-                      </div>
-                      {reps.length > 0 && (
-                        <div className="mt-3">
-                          <div className="text-sm font-medium mb-1">
-                            Representatives
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {reps.map((r, i) => (
-                              <span
-                                key={r.id || i}
-                                className="px-2 py-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4] text-2xs"
-                              >
-                                {r?.representative?.region || "Region"} ·{" "}
-                                {r?.representative?.whatsappNumber || "N/A"}
-                              </span>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                      <div className="mt-3 text-sm subtle">
-                        Reviews: {reviews.average?.toFixed?.(1) || 0} ⭐ (
-                        {reviews.count})
-                      </div>
+                      ))}
                     </div>
                   </div>
-
-                  {gallery.length > 0 && (
-                    <div className="rounded-xl border border-[hsl(var(--border))] p-4">
-                      <div className="text-sm font-medium mb-3">Gallery</div>
-                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                        {gallery.map((img, idx) => (
-                          <div
-                            key={img.id || idx}
-                            className="relative aspect-square overflow-hidden rounded-xl"
-                          >
-                            <Image
-                              src={
-                                asset(img.url) || "/images/placeholder-card.jpg"
-                              }
-                              alt={img.alt || ""}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="rounded-xl border border-[hsl(var(--border))] p-4">
-                    <div className="text-sm font-medium mb-2">Metadata</div>
-                    <pre className="text-xs subtle overflow-auto max-h-48">
-                      {JSON.stringify(listing?.metadata ?? {}, null, 2)}
-                    </pre>
-                  </div>
+                )}
+                <div className="mt-3 text-sm subtle">
+                  Reviews: {reviews.average?.toFixed?.(1) || 0} ⭐ (
+                  {reviews.count})
                 </div>
-              </motion.div>
-            </motion.div>
-          </Portal>
-        )}
-      </AnimatePresence>
+              </div>
+            </div>
+
+            {gallery.length > 0 && (
+              <div className="rounded-xl border border-[hsl(var(--border))] p-4">
+                <div className="text-sm font-medium mb-3">Gallery</div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                  {gallery.map((img, idx) => (
+                    <div
+                      key={img.id || idx}
+                      className="relative aspect-square overflow-hidden rounded-xl"
+                    >
+                      <Image
+                        src={asset(img.url) || "/images/placeholder-card.jpg"}
+                        alt={img.alt || ""}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <div className="rounded-xl border border-[hsl(var(--border))] p-4">
+              <div className="text-sm font-medium mb-2">Metadata</div>
+              <pre className="text-xs subtle overflow-auto max-h-48">
+                {JSON.stringify(listing?.metadata ?? {}, null, 2)}
+              </pre>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

@@ -7,6 +7,8 @@ import { useListingsStore } from "@/store/listings.store";
 import { useApiMutation } from "@/lib/api-hooks";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, PencilLine, Trash2, Loader2 } from "lucide-react";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
 // minimal classnames merger
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -72,7 +74,7 @@ function ListingWithActions({ listing }: { listing: Listing }) {
         ? (listing as any).renewTokens
         : [];
       if (tokens.length === 0) {
-        alert("No renew tokens available for this listing.");
+        toastInfo("No renew tokens available for this listing.");
         return;
       }
       const sorted = tokens
@@ -84,7 +86,7 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       const chosen = sorted[0];
       const tokenValue = chosen?.token;
       if (!tokenValue) {
-        alert("No valid token found.");
+        toastError("No valid token found.");
         return;
       }
       try {
@@ -95,17 +97,22 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       } catch {}
       await renewMutation.mutateAsync({ token: tokenValue });
       await refreshProfile();
+      toastSuccess("Listing renewed successfully");
     } catch (e) {
       console.warn("Renew failed", e);
-      alert("Renew failed: " + String((e as any)?.message || e));
+      toastError("Renew failed: " + String((e as any)?.message || e));
     }
   };
-  const onDelete = async () => {
-    if (!confirm("Delete this listing?")) return;
+  const [confirmOpen, setConfirmOpen] = useState(false);
+  const onDelete = async () => setConfirmOpen(true);
+  const confirmDelete = async () => {
     try {
       await deleteMutation.mutateAsync(undefined as any);
       await refreshProfile();
-    } catch {}
+      toastSuccess("Listing deleted");
+    } catch (e) {
+      toastError("Failed to delete listing");
+    }
   };
 
   return (
@@ -145,6 +152,20 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       <div className={cn("transition-all", hover ? "scale-[1.015]" : "")}>
         <ListingCard listing={listing} />
       </div>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete listing"
+        description="This action cannot be undone. The listing will be permanently removed."
+        tone="danger"
+        confirmLabel="Delete"
+        loading={deleteMutation.isPending}
+        onConfirm={async () => {
+          await confirmDelete();
+          setConfirmOpen(false);
+        }}
+        onCancel={() => setConfirmOpen(false)}
+      />
     </div>
   );
 }

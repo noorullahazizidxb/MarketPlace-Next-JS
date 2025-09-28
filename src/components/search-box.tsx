@@ -93,7 +93,7 @@ export function SearchBox({
       </div>
 
       {open && (
-        <div className="absolute left-0 right-0 mt-2 z-50 rounded-2xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl">
+        <div className="absolute left-0 right-0 p-3 mt-2 z-50 rounded-2xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl">
           <div className="p-2 text-xs subtle flex items-center justify-between">
             <span>
               {isLoading
@@ -108,7 +108,7 @@ export function SearchBox({
                 <li key={h.id ?? idx} className="hover:bg-[hsl(var(--muted))]">
                   <button
                     type="button"
-                    className="w-full text-left px-3 py-2 text-sm"
+                    className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
                     onClick={() => {
                       const qp = new URLSearchParams();
                       if (h.id) {

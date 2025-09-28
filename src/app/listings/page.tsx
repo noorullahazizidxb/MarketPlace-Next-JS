@@ -143,7 +143,14 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
     const el = document.querySelector("h2.heading-xl");
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
-  const pages = Array.from({ length: pageCount }).map((_, i) => i + 1);
+  const generateVisible = (cur: number, total: number) => {
+    if (total <= 5) return Array.from({ length: total }).map((_, i) => i + 1);
+    if (cur <= 3) return [1, 2, 3, 4, total];
+    if (cur >= total - 2) return [1, total - 3, total - 2, total - 1, total];
+    return [1, cur - 1, cur, cur + 1, total];
+  };
+  const visible = generateVisible(page, pageCount);
+
   return (
     <div className="mt-4 flex items-center justify-center gap-2">
       <button
@@ -154,20 +161,28 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
         Prev
       </button>
       <div className="flex items-center gap-1">
-        {pages.map((p) => (
-          <motion.button
-            key={p}
-            whileTap={{ scale: 0.98 }}
-            onClick={() => set(p)}
-            className={
-              p === page
-                ? "px-3 h-9 rounded-xl bg-primary/20 border border-primary/40"
-                : "px-3 h-9 rounded-xl glass border border-white/10 hover:bg-white/10"
-            }
-          >
-            {p}
-          </motion.button>
-        ))}
+        {visible.map((p, idx) => {
+          const prev = visible[idx - 1];
+          const showEllipsis = prev !== undefined && p - prev > 1;
+          return (
+            <Fragment key={p}>
+              {showEllipsis && (
+                <span className="px-2 text-sm opacity-60">…</span>
+              )}
+              <motion.button
+                whileTap={{ scale: 0.98 }}
+                onClick={() => set(p)}
+                className={
+                  p === page
+                    ? "px-3 h-9 rounded-xl bg-primary/20 border border-primary/40"
+                    : "px-3 h-9 rounded-xl glass border border-white/10 hover:bg-white/10"
+                }
+              >
+                {p}
+              </motion.button>
+            </Fragment>
+          );
+        })}
       </div>
       <button
         onClick={() => page < pageCount && set(page + 1)}
