@@ -2,6 +2,8 @@
 
 import { PropsWithChildren, useEffect, useState } from "react";
 import { useAuth } from "@/lib/use-auth";
+import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
+import { useUIStore } from "@/store/ui.store";
 import { usePathname, useRouter } from "next/navigation";
 import { Sidebar } from "@/components/sidebar";
 import { Navbar } from "@/components/navbar";
@@ -25,6 +27,18 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
+  const density = useUIStore((s) => s.density);
+
+  useEffect(() => {
+    // reflect density as data attribute for global CSS hooks
+    if (typeof document !== "undefined") {
+      document.documentElement.dataset.density = density;
+    }
+  }, [density]);
+  usePrefetchOnIdle(
+    ["/listings/create", "/my-listings", "/profile", "/pendings", "/about"],
+    true
+  );
 
   const isPublicRoute = (() => {
     if (!pathname) return true;

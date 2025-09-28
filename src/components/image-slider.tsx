@@ -72,7 +72,12 @@ export function ImageSlider({
                 src={asset(s?.url) || "/images/placeholder-card.jpg"}
                 alt={s?.alt || `Slide ${i + 1}`}
                 fill
-                className="object-cover"
+                className="object-cover will-change-transform"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
+                sizes="(max-width: 768px) 100vw, 33vw"
+                loading={i === 0 ? "eager" : "lazy"}
+                priority={i === 0}
               />
             </div>
           ))}

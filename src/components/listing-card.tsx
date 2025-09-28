@@ -68,15 +68,20 @@ export function ListingCard({ listing }: { listing: Listing }) {
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
-      className="group relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+      className="group hover-ambient relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
     >
       <div className="relative overflow-hidden rounded-t-2xl">
-        <ImageSlider
-          images={listing.images}
-          className="transition-transform duration-500 group-hover:scale-95"
-          aspect="1/1"
-        />
+        {listing.images && listing.images.length > 0 ? (
+          <ImageSlider
+            images={listing.images}
+            className="transition-transform duration-500 group-hover:scale-95"
+            aspect="1/1"
+          />
+        ) : (
+          <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
+        )}
         <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent pointer-events-none" />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light" />
         {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
         <div className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none">
           {/* Rating badge - default to 0.0 */}

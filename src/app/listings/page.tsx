@@ -1,6 +1,13 @@
 "use client";
 
-import { Suspense, useMemo, Fragment } from "react";
+import {
+  Suspense,
+  useMemo,
+  Fragment,
+  useRef,
+  useState,
+  useEffect,
+} from "react";
 import { useApiGet } from "@/lib/api-hooks";
 import { ListingCard, type Listing } from "@/components/listing-card";
 import { FiltersBar } from "@/components/filters-bar";
@@ -21,6 +28,48 @@ export default function ListingsPage() {
       <ListingsContent />
     </Suspense>
   );
+}
+
+// Simple pull-to-refresh wrapper: detects vertical pull at top and triggers a soft reload (revisit route)
+function usePullToRefresh(onRefresh: () => void) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const startY = useRef<number | null>(null);
+  const [pulling, setPulling] = useState(false);
+  const [distance, setDistance] = useState(0);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const onTouchStart = (e: TouchEvent) => {
+      if (el.scrollTop > 0) return;
+      startY.current = e.touches[0].clientY;
+    };
+    const onTouchMove = (e: TouchEvent) => {
+      if (startY.current == null) return;
+      const dy = e.touches[0].clientY - startY.current;
+      if (dy > 0) {
+        e.preventDefault();
+        setPulling(true);
+        setDistance(Math.min(120, dy * 0.6));
+      }
+    };
+    const end = () => {
+      if (pulling && distance > 60) onRefresh();
+      setPulling(false);
+      setDistance(0);
+      startY.current = null;
+    };
+    el.addEventListener("touchstart", onTouchStart, { passive: true });
+    el.addEventListener("touchmove", onTouchMove, { passive: false });
+    el.addEventListener("touchend", end);
+    el.addEventListener("touchcancel", end);
+    return () => {
+      el.removeEventListener("touchstart", onTouchStart);
+      el.removeEventListener("touchmove", onTouchMove);
+      el.removeEventListener("touchend", end);
+      el.removeEventListener("touchcancel", end);
+    };
+  }, [pulling, distance, onRefresh]);
+  return { ref, pulling, distance };
 }
 
 function ListingsContent() {
@@ -70,8 +119,33 @@ function ListingsContent() {
     () => items.slice((current - 1) * pageSize, current * pageSize),
     [items, current]
   );
+  const {
+    ref: ptrRef,
+    pulling,
+    distance,
+  } = usePullToRefresh(() => {
+    // Soft reload: just refresh the route (Next.js navigation) or window reload fallback
+    try {
+      router.refresh?.();
+    } catch {
+      window.location.reload();
+    }
+  });
+
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" ref={ptrRef}>
+      <div
+        className="sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden"
+        style={{
+          height: pulling ? distance : 0,
+          transition: pulling ? "none" : "height .3s ease",
+        }}
+      >
+        <div className="text-[10px] tracking-wide font-medium text-foreground/60">
+          {distance > 75 ? "Release to refresh" : "Pull to refresh"}
+        </div>
+        <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-fuchsia-500/40 to-cyan-400/40" />
+      </div>
       <div className="card p-4 space-y-3">
         <FiltersBar />
         {isLoading && (

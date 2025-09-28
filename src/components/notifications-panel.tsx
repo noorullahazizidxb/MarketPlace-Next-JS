@@ -174,6 +174,28 @@ export function NotificationsPanel({
 
   const unreadCount = withUnread.filter((x) => x.unread).length;
 
+  // Group notifications by relative bucket (Today, Yesterday, This Week, Older)
+  const grouped = useMemo(() => {
+    const buckets: Record<string, { n: Notification; unread: boolean }[]> = {};
+    const now = new Date();
+    const todayKey = now.toDateString();
+    const yesterday = new Date(now.getTime() - 86400000).toDateString();
+    const startOfWeek = new Date(now);
+    startOfWeek.setDate(now.getDate() - now.getDay()); // Sunday
+    return withUnread.reduce((acc, item) => {
+      const d = new Date(item.n.createdAt);
+      let label: string;
+      if (d.toDateString() === todayKey) label = "Today";
+      else if (d.toDateString() === yesterday) label = "Yesterday";
+      else if (d >= startOfWeek) label = "This Week";
+      else label = "Earlier";
+      (acc[label] ||= []).push(item);
+      return acc;
+    }, buckets);
+  }, [withUnread]);
+
+  const groupOrder = ["Today", "Yesterday", "This Week", "Earlier"]; // order
+
   const markOne = async (id: string) => {
     setLocal((prev) =>
       prev.map((n) => {
@@ -333,67 +355,99 @@ export function NotificationsPanel({
                     No notifications
                   </div>
                 ) : (
-                  <ul className="space-y-2">
-                    {withUnread.map(({ n, unread }) => {
-                      const Icon = channelIcon(n.channel);
+                  <ul className="space-y-4">
+                    {groupOrder.map((g) => {
+                      if (!grouped[g]?.length) return null;
                       return (
-                        <li
-                          key={n.id}
-                          className={cn(
-                            "group relative rounded-2xl border p-3 transition-colors",
-                            "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
-                            unread && "ring-1 ring-[hsl(var(--accent))]/40"
-                          )}
-                        >
-                          <div className="flex items-start gap-3">
-                            <div
-                              className={cn(
-                                "mt-0.5 size-9 rounded-xl grid place-items-center shadow-sm",
-                                unread
-                                  ? "bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))]"
-                                  : "bg-[hsl(var(--muted))] subtle"
-                              )}
-                            >
-                              <Icon className="size-5" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <div className="flex items-start justify-between gap-3">
-                                <div>
-                                  <div className="text-sm font-semibold line-clamp-1">
-                                    {n.title || "Notification"}
-                                  </div>
-                                  {(() => {
-                                    const msg = getMessage(n as any);
-                                    return msg ? (
-                                      <div className="text-sm subtle line-clamp-2">
-                                        {msg}
-                                      </div>
-                                    ) : null;
-                                  })()}
-                                </div>
-                                <div className="text-2xs subtle whitespace-nowrap">
-                                  {formatTimeAgo(n.createdAt)}
-                                </div>
-                              </div>
-                              <div className="mt-2 flex items-center gap-2">
-                                {unread ? (
-                                  <button
-                                    onClick={() => markOne(n.id)}
-                                    className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
-                                  >
-                                    <CheckCircle2 className="size-4" />
-                                    Mark as read
-                                  </button>
-                                ) : (
-                                  <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
-                                    <CheckCircle2 className="size-4" />
-                                    Read
-                                  </span>
-                                )}
-                              </div>
-                            </div>
+                        <li key={g} className="space-y-2">
+                          <div className="px-2 text-[10px] font-semibold tracking-wide uppercase text-foreground/60">
+                            {g}
                           </div>
-                          <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_12px_40px_rgba(0,0,0,0.25)]" />
+                          {grouped[g].map(({ n, unread }) => {
+                            const Icon = channelIcon(n.channel);
+                            return (
+                              <motion.li
+                                key={n.id}
+                                layout
+                                initial={{ opacity: 0, y: 6 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -6 }}
+                                className="relative"
+                              >
+                                <motion.div
+                                  drag="x"
+                                  dragConstraints={{ left: 0, right: 0 }}
+                                  dragElastic={0.4}
+                                  onDragEnd={(e, info) => {
+                                    if (info.offset.x < -90) {
+                                      if (unread) markOne(n.id);
+                                    }
+                                  }}
+                                  className={cn(
+                                    "group relative rounded-2xl border p-3 pr-4 transition-colors overflow-hidden",
+                                    "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
+                                    unread &&
+                                      "ring-1 ring-[hsl(var(--accent))]/40"
+                                  )}
+                                >
+                                  <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[hsl(var(--accent))/0.12] opacity-0 group-active:opacity-100 pointer-events-none">
+                                    <span className="text-[10px] font-semibold text-[hsl(var(--accent))] rotate-6">
+                                      SWIPE
+                                    </span>
+                                  </div>
+                                  <div className="flex items-start gap-3">
+                                    <div
+                                      className={cn(
+                                        "mt-0.5 size-9 rounded-xl grid place-items-center shadow-sm",
+                                        unread
+                                          ? "bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))]"
+                                          : "bg-[hsl(var(--muted))] subtle"
+                                      )}
+                                    >
+                                      <Icon className="size-5" />
+                                    </div>
+                                    <div className="min-w-0 flex-1">
+                                      <div className="flex items-start justify-between gap-3">
+                                        <div>
+                                          <div className="text-sm font-semibold line-clamp-1">
+                                            {n.title || "Notification"}
+                                          </div>
+                                          {(() => {
+                                            const msg = getMessage(n as any);
+                                            return msg ? (
+                                              <div className="text-sm subtle line-clamp-2">
+                                                {msg}
+                                              </div>
+                                            ) : null;
+                                          })()}
+                                        </div>
+                                        <div className="text-2xs subtle whitespace-nowrap">
+                                          {formatTimeAgo(n.createdAt)}
+                                        </div>
+                                      </div>
+                                      <div className="mt-2 flex items-center gap-2">
+                                        {unread ? (
+                                          <button
+                                            onClick={() => markOne(n.id)}
+                                            className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
+                                          >
+                                            <CheckCircle2 className="size-4" />
+                                            Mark as read
+                                          </button>
+                                        ) : (
+                                          <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
+                                            <CheckCircle2 className="size-4" />
+                                            Read
+                                          </span>
+                                        )}
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_12px_40px_rgba(0,0,0,0.25)]" />
+                                </motion.div>
+                              </motion.li>
+                            );
+                          })}
                         </li>
                       );
                     })}

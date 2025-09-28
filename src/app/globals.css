@@ -100,6 +100,39 @@ html, body {
 }
 
 @layer components {
+  html[data-density="compact"] .card { padding: 0.85rem !important; }
+  html[data-density="compact"] .card h3, html[data-density="compact"] h3 { font-size: 0.9rem; }
+  html[data-density="compact"] .card p { font-size: 0.7rem; }
+  .noise-overlay::before { content:""; position:absolute; inset:0; background-image:url("/images/placeholder-card.jpg"); mix-blend-mode:overlay; opacity:0.03; pointer-events:none; }
+  /* Utilities */
+  .safe-pb { padding-bottom: calc(var(--safe-bottom) + 0.25rem); }
+  .safe-pt { padding-top: calc(var(--safe-top) + 0.25rem); }
+  .safe-pl { padding-left: calc(var(--safe-left)); }
+  .safe-pr { padding-right: calc(var(--safe-right)); }
+
+  /* Unread badge pop animation */
+  @keyframes badge-pop {
+    0% { transform: scale(0); opacity: 0; }
+    55% { transform: scale(1.15); opacity: 1; }
+    75% { transform: scale(0.9); }
+    100% { transform: scale(1); }
+  }
+  .badge-pop { animation: badge-pop 420ms cubic-bezier(.22,1,.36,1); }
+
+  /* Ambient hover gradient helper */
+  .hover-ambient { position: relative; }
+  .hover-ambient::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .35s ease;
+    background: radial-gradient(circle at 50% 60%, hsl(var(--accent) / 0.18), transparent 70%);
+    mix-blend-mode: plus-lighter;
+  }
+  .hover-ambient:hover::after { opacity: 1; }
+
   .container-padded { @apply container px-4 md:px-6; }
   /* Global interactive defaults for buttons and links using theme vars */
   button,

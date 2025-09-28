@@ -32,8 +32,10 @@ import { useAuth } from "@/lib/use-auth";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBox } from "@/components/search-box";
 import { NotificationsPanel } from "@/components/notifications-panel";
+import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { asset } from "@/lib/assets";
+import { useUIStore } from "@/store/ui.store";
 
 /**
  * Bottom navigation item descriptor.
@@ -194,12 +196,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   const isAuthed = !!user;
   const isAdmin = isAdminProp ?? roles.includes("ADMIN");
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
+  const density = useUIStore((s) => s.density);
+  const toggleDensity = useUIStore((s) => s.toggleDensity);
 
   // Overlays state
   const [adminOpen, setAdminOpen] = useState(false);
   const [userOpen, setUserOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [notifOpen, setNotifOpen] = useState(false);
+  const prefersReducedMotion = usePrefersReducedMotion();
 
   // Navigation always visible now; scroll hide removed
   const visible = true;
@@ -314,10 +319,18 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <AnimatePresence>
         {(forceVisible || visible) && (
           <motion.nav
-            initial={{ y: 80, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 80, opacity: 0 }}
-            transition={{ type: "spring", stiffness: 260, damping: 26 }}
+            initial={
+              prefersReducedMotion ? { opacity: 0 } : { y: 80, opacity: 0 }
+            }
+            animate={
+              prefersReducedMotion ? { opacity: 1 } : { y: 0, opacity: 1 }
+            }
+            exit={prefersReducedMotion ? { opacity: 0 } : { y: 80, opacity: 0 }}
+            transition={
+              prefersReducedMotion
+                ? { duration: 0.15 }
+                : { type: "spring", stiffness: 260, damping: 26 }
+            }
             className={
               "md:hidden fixed bottom-3 left-0 right-0 z-[700] flex justify-center pointer-events-none " +
               className
@@ -345,7 +358,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         index={i}
                       />
                       {item.key === "notifications" && unreadCount > 0 && (
-                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
+                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center badge-pop">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
@@ -367,14 +380,18 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         />
       )}
 
-      {/* Admin Quick Actions Centered */}
-      <CenterOverlay
+      {/* Admin Quick Actions Bottom Sheet */}
+      <BottomSheet
         open={adminOpen}
-        onClose={() => setAdminOpen(false)}
+        onOpenChange={setAdminOpen}
         title="Admin Hub"
+        snapPoints={[0.5, 0.8, 1]}
+        initialSnap={0}
       >
-        <AdminUserHeader user={user} />
-        <div className="grid grid-cols-3 gap-4 mt-2">
+        <div className="pb-4">
+          <AdminUserHeader user={user} />
+        </div>
+        <div className="grid grid-cols-3 gap-4">
           <ActionTile
             icon={Layers3}
             label="Listings"
@@ -434,18 +451,30 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <ThemeToggle />
             <span className="text-[10px] subtle">Theme</span>
           </div>
+          <div className="flex flex-col gap-2 items-center justify-center">
+            <button
+              onClick={toggleDensity}
+              className="size-10 grid place-items-center rounded-xl bg-white/5 hover:bg-white/10 text-[10px]"
+            >
+              {density === "comfort" ? "Co" : "Cm"}
+            </button>
+            <span className="text-[10px] subtle">Density</span>
+          </div>
         </div>
         <ButtonRowLogout onDone={() => setAdminOpen(false)} />
-      </CenterOverlay>
+      </BottomSheet>
 
-      {/* User Quick Actions */}
-      <CenterOverlay
+      {/* User Quick Actions Bottom Sheet */}
+      <BottomSheet
         open={userOpen}
-        onClose={() => setUserOpen(false)}
+        onOpenChange={setUserOpen}
         title="Quick Menu"
+        snapPoints={[0.45, 0.75]}
       >
-        <AdminUserHeader user={user} />
-        <div className="grid grid-cols-3 gap-4 mt-2">
+        <div className="pb-4">
+          <AdminUserHeader user={user} />
+        </div>
+        <div className="grid grid-cols-3 gap-4">
           <ActionTile
             icon={User2}
             label="Profile"
@@ -475,27 +504,55 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <ThemeToggle />
             <span className="text-[10px] subtle">Theme</span>
           </div>
+          <div className="flex flex-col gap-2 items-center justify-center">
+            <button
+              onClick={toggleDensity}
+              className="size-10 grid place-items-center rounded-xl bg-white/5 hover:bg-white/10 text-[10px]"
+            >
+              {density === "comfort" ? "Co" : "Cm"}
+            </button>
+            <span className="text-[10px] subtle">Density</span>
+          </div>
         </div>
         <ButtonRowLogout onDone={() => setUserOpen(false)} />
-      </CenterOverlay>
+      </BottomSheet>
 
-      {/* Guest Search Modal */}
-      <CenterOverlay
+      {/* Search Bottom Sheet */}
+      <BottomSheet
         open={searchOpen}
-        onClose={() => setSearchOpen(false)}
+        onOpenChange={setSearchOpen}
         title="Search"
+        snapPoints={[1]}
+        initialSnap={0}
       >
-        <SearchBox
-          placeholder="Search listings..."
-          className="w-full"
-          onSubmitClose={() => setSearchOpen(false)}
-        />
-        <p className="text-xs subtle">
-          Start typing to find listings, ads, and more.
-        </p>
-      </CenterOverlay>
+        <div className="flex flex-col h-full">
+          <SearchBox
+            placeholder="Search listings..."
+            className="w-full flex-1 min-h-0"
+            onSubmitClose={() => setSearchOpen(false)}
+            mode="sheet"
+          />
+          <p className="text-xs subtle mt-3 px-1">
+            Start typing to find listings, ads, and more.
+          </p>
+        </div>
+      </BottomSheet>
+      {/* Edge swipe opener area (left 24px) */}
+      <div
+        className="fixed inset-y-0 left-0 w-6 z-[650] md:hidden"
+        onPointerDown={(e) => {
+          if (e.pointerType === "touch") {
+            if (isAdmin) setAdminOpen(true);
+            else if (isAuthed) setUserOpen(true);
+            try {
+              navigator.vibrate?.(10);
+            } catch {}
+          }
+        }}
+        aria-hidden
+      />
       {/* Scroll spacer (not strictly needed) */}
-      <div className="h-4 md:hidden" aria-hidden />
+      <div className="h-10 md:hidden" aria-hidden />
     </>
   );
 };
@@ -587,3 +644,15 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
     </div>
   );
 };
+
+function usePrefersReducedMotion() {
+  const [prefers, setPrefers] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setPrefers(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
+  return prefers;
+}
