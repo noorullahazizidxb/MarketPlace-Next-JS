@@ -48,7 +48,7 @@ export type NotificationsPanelProps = {
   fetchUrl?: string; // API URL to GET notifications; defaults to "/notifications"
   onMarkRead?: (id: string) => Promise<void> | void;
   onMarkAllRead?: (ids: string[]) => Promise<void> | void;
-  anchor?: "top-right" | "bottom-center";
+  anchor?: "top-right" | "bottom-center" | "center";
 };
 
 function formatTimeAgo(input: string | Date): string {
@@ -107,6 +107,7 @@ export function NotificationsPanel({
   const { user } = useAuth();
   const uid = (user as any)?.id as string | undefined;
   const overlayRef = useRef<HTMLDivElement | null>(null);
+  const contentRef = useRef<HTMLDivElement | null>(null);
   const storeItems = useNotificationsStore((s) => s.items);
   const markReadInStore = useNotificationsStore((s) => s.markRead);
   const markAllMutation = useApiMutation<void>(
@@ -236,8 +237,14 @@ export function NotificationsPanel({
   useEffect(() => {
     if (!isOpen) return;
     const onPointer = (e: PointerEvent | MouseEvent) => {
-      const node = overlayRef.current as HTMLElement | null;
       const target = e.target as Node | null;
+      // If we're rendering a full-screen centered overlay, the aside
+      // covers the whole viewport. In that case we want clicks on the
+      // backdrop (outside the inner content) to close the panel. Use
+      // `contentRef` for that detection. For other anchors, fall back
+      // to the overlayRef behavior.
+      const node =
+        anchor === "center" ? contentRef.current : overlayRef.current;
       if (!node) return;
       if (target && node.contains(target)) return;
       onClose();
@@ -249,7 +256,7 @@ export function NotificationsPanel({
       document.removeEventListener("pointerdown", onPointer);
       document.removeEventListener("touchstart", onPointer as any);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen, onClose, anchor]);
 
   return (
     <AnimatePresence>
@@ -260,7 +267,9 @@ export function NotificationsPanel({
           <motion.aside
             ref={overlayRef}
             className={cn(
-              anchor === "bottom-center"
+              anchor === "center"
+                ? "fixed inset-0 z-[1200] flex items-center justify-center p-4"
+                : anchor === "bottom-center"
                 ? "fixed bottom-[110px] left-1/2 -translate-x-1/2 z-[1200] w-[min(96vw,440px)] origin-bottom"
                 : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
               className
@@ -268,17 +277,30 @@ export function NotificationsPanel({
             initial={
               anchor === "bottom-center"
                 ? { opacity: 0, y: 12, scale: 0.96 }
+                : anchor === "center"
+                ? { opacity: 0, scale: 0.98 }
                 : { opacity: 0, y: -8, scale: 0.98 }
             }
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={
               anchor === "bottom-center"
                 ? { opacity: 0, y: 12, scale: 0.96 }
+                : anchor === "center"
+                ? { opacity: 0, scale: 0.98 }
                 : { opacity: 0, y: -8, scale: 0.98 }
             }
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow-[0_0_0_1px_hsl(var(--border)),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative">
+            <div
+              ref={contentRef}
+              className={cn(
+                "rounded-2xl border bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow-[0_0_0_1px_hsl(var(--border)),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative",
+                anchor === "center"
+                  ? "w-full max-w-md max-h-[84vh] overflow-y-auto p-4"
+                  : "w-full",
+                className
+              )}
+            >
               <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
                 <div className="flex items-center gap-2">
                   <div className="size-8 rounded-xl bg-gradient-to-br from-primary/60 to-fuchsia-500/50 grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">

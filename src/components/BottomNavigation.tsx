@@ -96,7 +96,7 @@ const BottomNavItem: React.FC<{
         className={
           "grid place-items-center relative size-9 rounded-xl transition-all shadow-[inset_0_0_0_1px_hsl(var(--border)),0_4px_12px_-3px_rgba(0,0,0,0.35)] " +
           (active
-            ? "bg-gradient-to-br from-primary/30 via-fuchsia-500/30 to-cyan-500/30 text-[hsl(var(--accent))] ring-1 ring-primary/50"
+            ? "bg-gradient-to-br from-primary/30 via-fuchsia-500/30 to-cyan-500/30 text-[hsl(var(--foreground))] ring-1 ring-primary/50"
             : "bg-[hsl(var(--background))]/50 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--background))]/35")
         }
       >
@@ -248,12 +248,6 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onClick: () => setSearchOpen(true),
         },
         { key: "contact", label: "Contact", href: "/contact", icon: Phone },
-        {
-          key: "theme",
-          label: "Theme",
-          icon: Palette,
-          onClick: () => setSearchOpen(false),
-        },
         { key: "sign-in", label: "Sign In", href: "/sign-in", icon: LogIn },
       ];
     }
@@ -351,7 +345,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         index={i}
                       />
                       {item.key === "notifications" && unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
+                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
@@ -369,7 +363,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           isOpen={notifOpen}
           onClose={() => setNotifOpen(false)}
           fetchUrl="/notifications"
-          anchor="bottom-center"
+          anchor="center"
         />
       )}
 
@@ -508,7 +502,7 @@ export default BottomNavigation;
 
 const AdminUserHeader: React.FC<{ user: any }> = ({ user }) => {
   if (!user) return null;
-  const avatar = user?.avatarUrl || user?.photo || "/favicon.svg";
+  const avatar = asset(user?.photo) || "/favicon.svg";
   const name = user?.fullName || user?.name || user?.email || "You";
   return (
     <div className="flex items-center gap-3 p-2 -mt-1">

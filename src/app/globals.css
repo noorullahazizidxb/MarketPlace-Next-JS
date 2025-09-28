@@ -200,3 +200,7 @@ html, body {
   }
   .link-underline { text-decoration: underline; }
 }
+input, textarea, select {
+  font-size: 16px !important;
+}
+
