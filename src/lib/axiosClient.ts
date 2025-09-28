@@ -1,4 +1,5 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
+import { useAuthStore } from "@/store/auth.store";
 
 const baseURL = process.env.NEXT_PUBLIC_API_BASE_URL || "";
 
@@ -11,11 +12,40 @@ export const axiosClient = axios.create({
 let cachedToken: string | null = null;
 export function setCachedToken(token: string | null) {
   cachedToken = token;
+  try {
+    if (typeof window !== "undefined") {
+      if (token) {
+        // also set axios default header for immediate effect
+        (axiosClient.defaults.headers as any).common = {
+          ...(axiosClient.defaults.headers as any).common,
+          Authorization: `Bearer ${token}`,
+        };
+      } else {
+        if ((axiosClient.defaults.headers as any).common)
+          delete (axiosClient.defaults.headers as any).common.Authorization;
+      }
+    }
+  } catch {}
 }
 axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
     if (typeof window !== "undefined") {
-      if (cachedToken) config.headers.set("Authorization", `Bearer ${cachedToken}`);
+      // prefer explicit cachedToken, otherwise try to read from auth store (persisted zustand)
+      let token = cachedToken;
+      try {
+        if (!token) {
+          const store = useAuthStore as any;
+          const state = store.getState ? store.getState() : undefined;
+          token = state?.session?.token ?? null;
+          if (token) cachedToken = token;
+        }
+      } catch {}
+      if (token) {
+        // ensure headers exists
+        (config.headers as any) = (config.headers as any) || {};
+        // prefer standard header key
+        (config.headers as any).Authorization = `Bearer ${token}`;
+      }
     }
   } catch {}
   return config;
@@ -47,9 +77,9 @@ function unwrap<T>(r: AxiosResponse<ApiEnvelope<T> | T>): T {
 }
 
 export const api = {
-  get: <T = any>(url: string, params?: any) => axiosClient.get<ApiEnvelope<T> | T>(url, { params }).then((r) => unwrap<T>(r)),
+  get: <T = any>(url: string, params?: any, headers?: any) => axiosClient.get<ApiEnvelope<T> | T>(url, { params, headers }).then((r) => unwrap<T>(r)),
   post: <T = any>(url: string, data?: any, headers?: any) => axiosClient.post<ApiEnvelope<T> | T>(url, data, { headers }).then((r) => unwrap<T>(r)),
-  put: <T = any>(url: string, data?: any) => axiosClient.put<ApiEnvelope<T> | T>(url, data).then((r) => unwrap<T>(r)),
-  patch: <T = any>(url: string, data?: any) => axiosClient.patch<ApiEnvelope<T> | T>(url, data).then((r) => unwrap<T>(r)),
-  delete: <T = any>(url: string) => axiosClient.delete<ApiEnvelope<T> | T>(url).then((r) => unwrap<T>(r)),
+  put: <T = any>(url: string, data?: any, headers?: any) => axiosClient.put<ApiEnvelope<T> | T>(url, data, { headers }).then((r) => unwrap<T>(r)),
+  patch: <T = any>(url: string, data?: any, headers?: any) => axiosClient.patch<ApiEnvelope<T> | T>(url, data, { headers }).then((r) => unwrap<T>(r)),
+  delete: <T = any>(url: string, headers?: any) => axiosClient.delete<ApiEnvelope<T> | T>(url, { headers }).then((r) => unwrap<T>(r)),
 };

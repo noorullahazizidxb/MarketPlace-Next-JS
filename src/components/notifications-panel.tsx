@@ -230,23 +230,35 @@ export function NotificationsPanel({
     return () => window.removeEventListener("keydown", onEsc);
   }, [isOpen, onClose]);
 
+  // Close when clicking/tapping outside the panel
+  useEffect(() => {
+    if (!isOpen) return;
+    const onPointer = (e: PointerEvent | MouseEvent) => {
+      const node = overlayRef.current as HTMLElement | null;
+      const target = e.target as Node | null;
+      if (!node) return;
+      if (target && node.contains(target)) return;
+      onClose();
+    };
+    document.addEventListener("pointerdown", onPointer);
+    // fallback for older browsers / touch
+    document.addEventListener("touchstart", onPointer as any);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("touchstart", onPointer as any);
+    };
+  }, [isOpen, onClose]);
+
   return (
     <AnimatePresence>
       {isOpen && (
         <>
-          <motion.div
-            ref={overlayRef}
-            className="fixed inset-0 z-[80] bg-black/40"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            onClick={onClose}
-          />
+          {/* Backdrop removed per request */}
 
           <motion.aside
+            ref={overlayRef}
             className={cn(
-              "fixed right-4 top-20 z-[90] w-[min(92vw,420px)] origin-top-right",
+              "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
               className
             )}
             initial={{ opacity: 0, y: -8, scale: 0.98 }}
@@ -254,7 +266,7 @@ export function NotificationsPanel({
             exit={{ opacity: 0, y: -8, scale: 0.98 }}
             transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
           >
-            <div className="rounded-2xl border border-[hsl(var(--card-border, var(--border)))] bg-[hsl(var(--card-bg, var(--card)))] text-[hsl(var(--card-fg, var(--foreground)))] shadow-2xl">
+            <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow-[0_0_0_1px_hsl(var(--border)),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative">
               <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
                 <div className="flex items-center gap-2">
                   <div className="size-8 rounded-xl bg-gradient-to-br from-primary/60 to-fuchsia-500/50 grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">

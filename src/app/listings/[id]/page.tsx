@@ -2,6 +2,8 @@
 
 import { Suspense, useMemo, useState } from "react";
 import { useParams } from "next/navigation";
+// Removed unused HomeAdPlaceholder import (was previously used for homepage ads)
+import DetailAdSlot from "@/components/ads/detail-page-ad-slot";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import {
   Star,
@@ -161,7 +163,8 @@ function ListingDetailsContent() {
               </div>
             </div>
 
-            <AdPlaceholder index={0} />
+            {/* Detail page advertisement slot 1 */}
+            <DetailAdSlot placement="DETAIL_PAGE_1ST" />
             <FeedbackCreateForm
               listingId={String(id)}
               onSuccess={() => mutate()}
@@ -187,7 +190,8 @@ function ListingDetailsContent() {
               canPost={!!user}
             />
             <FeedbacksSection feedbacks={feedbacks} />
-            <AdPlaceholder index={1} />
+            {/* Detail page advertisement slot 2 */}
+            <DetailAdSlot placement="DETAIL_PAGE_2ND" />
           </div>
 
           <div className="space-y-4">
@@ -201,7 +205,8 @@ function ListingDetailsContent() {
             <SocialsCard />
             <NewsletterCard />
             <QRCard url={pageUrl} />
-            <LargeAdPlaceholder />
+            {/* Sidebar large ad slot (DETAIL_PAGE_SIDEBAR) */}
+            <DetailAdSlot placement="DETAIL_PAGE_SIDEBAR" />
           </div>
         </div>
       )}

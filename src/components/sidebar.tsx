@@ -13,6 +13,7 @@ import {
   ChevronDown,
   Layers,
   Bell,
+  Megaphone,
   User2,
   LogOut,
   LayoutGrid,
@@ -44,10 +45,10 @@ export function Sidebar({
   const items = [
     { href: "/", label: "Dashboard", Icon: LayoutDashboard },
     { href: "/listings", label: "Listings", Icon: Layers3 },
+    { href: "/admin/notifications", label: "Notifications", Icon: Bell },
+    { href: "/admin/ads", label: "Advertisements", Icon: Megaphone },
     { href: "/pendings", label: "Pending Lists", Icon: List },
-    { href: "/listings/create", label: "New Listing", Icon: PlusCircle },
-    { href: "/profile", label: "Profile", Icon: User },
-    // keep Settings in the nav but render children below
+    { href: "/listings/create", label: "New Listing", Icon: PlusCircle }, // keep Settings in the nav but render children below
     { href: "/settings", label: "Settings", Icon: Settings },
   ];
 
@@ -57,10 +58,10 @@ export function Sidebar({
       {showDesktop && (
         <aside className="hidden md:flex flex-col gap-3 p-4 border-r border-[hsl(var(--border))] sticky top-0 h-screen bg-[hsl(var(--background))]">
           <div className="relative">
-            <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] flex items-center gap-3">
+            <div className="glass rounded-full p-3  border border-[hsl(var(--border))] flex items-center justify-center gap-3">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
-                className="flex items-center bg-transparent hover:bg-foreground/5 gap-3"
+                className="flex items-center rounded-2xl  bg-transparent hover:bg-foreground/5 gap-3"
               >
                 <Image
                   src={asset(avatar)}
@@ -83,59 +84,59 @@ export function Sidebar({
                 animate={{ opacity: 1, y: 0 }}
                 className="absolute left-3 top-[78px] z-[70] w-56 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl"
               >
-                <div className="p-2">
+                <div className="p-5">
                   <Link
                     href="/profile"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl "
                   >
                     <User2 className="size-4" />
                     <span className="text-sm">Profile</span>
                   </Link>
                   <Link
                     href="/my-listings"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl "
                   >
                     <LayoutGrid className="size-4" />
                     <span className="text-sm">My listings</span>
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <Bell className="size-4" />
                     <span className="text-sm">Notifications</span>
                   </Link>
                   <Link
                     href="/profile/roles"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <List className="size-4" />
                     <span className="text-sm">Roles</span>
                   </Link>
                   <Link
                     href="/profile/sent-notifications"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <Bell className="size-4" />
                     <span className="text-sm">Sent Notifications</span>
                   </Link>
                   <Link
                     href="/profile/approved-listings"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <LayoutGrid className="size-4" />
                     <span className="text-sm">Approved Listings</span>
                   </Link>
                   <Link
                     href="/profile/audit-logs"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <List className="size-4" />
                     <span className="text-sm">Audit Logs</span>
                   </Link>
                   <Link
                     href="/profile/feedbacks"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl link"
+                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
                   >
                     <Info className="size-4" />
                     <span className="text-sm">Feedbacks</span>
@@ -165,7 +166,7 @@ export function Sidebar({
                       } catch {}
                       window.location.href = "/sign-in";
                     }}
-                    className="flex w-full items-center gap-3 px-3 h-10 hover:bg-white/5 text-left"
+                    className="flex w-full items-center rounded-2xl gap-3 px-3 h-10 hover:bg-white/5 text-left"
                   >
                     <LogOut className="size-4" />
                     <span className="text-sm">Logout</span>

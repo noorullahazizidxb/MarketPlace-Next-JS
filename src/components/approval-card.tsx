@@ -131,20 +131,24 @@ export function ApprovalCard({
           <div className="text-xs subtle">
             {createdAt ? `Created ${createdAt.toLocaleString()}` : null}
           </div>
-          <div className="flex items-center gap-2">
-            <select
-              aria-label="Contact visibility"
-              value={contactVisibility}
-              onChange={(e) =>
-                setContactVisibility(e.target.value as ContactVisibility)
-              }
-              className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1"
-            >
-              <option value="HIDE_SELLER">Hide Seller</option>
-              <option value="SHOW_SELLER">Show Seller</option>
-              <option value="MASKED">Masked</option>
-            </select>
+          <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
+            <div className="min-w-[120px] sm:min-w-0">
+              <select
+                aria-label="Contact visibility"
+                value={contactVisibility}
+                onChange={(e) =>
+                  setContactVisibility(e.target.value as ContactVisibility)
+                }
+                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full"
+              >
+                <option value="HIDE_SELLER">Hide Seller</option>
+                <option value="SHOW_SELLER">Show Seller</option>
+                <option value="MASKED">Masked</option>
+              </select>
+            </div>
             <Button
+              size="sm"
+              className="w-full sm:w-auto"
               onClick={async () => {
                 await approve.mutateAsync({ contactVisibility });
                 onApproved?.(listing.id, contactVisibility);
@@ -154,6 +158,8 @@ export function ApprovalCard({
               Approve
             </Button>
             <Button
+              size="sm"
+              className="w-full sm:w-auto"
               onClick={async () => {
                 await reject.mutateAsync({});
                 onRejected?.(listing.id);

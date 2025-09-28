@@ -1,12 +1,13 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { createPortal } from "react-dom";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/use-auth";
 import { Search, X, LogIn } from "lucide-react";
+import { SearchBox } from "@/components/search-box";
 
 export type MobileMenuItem = {
   href: string;
@@ -25,6 +26,10 @@ export function MobileMenu({
 }) {
   const { user } = useAuth();
   const [mounted, setMounted] = useState(false);
+  const hasSignInItem = useMemo(
+    () => items.some((item) => item.href === "/sign-in"),
+    [items]
+  );
 
   useEffect(() => {
     const onEsc = (e: KeyboardEvent) => {
@@ -85,12 +90,8 @@ export function MobileMenu({
               </button>
             </div>
 
-            <div className="flex items-center gap-2 glass rounded-2xl px-3 h-11 mb-3">
-              <Search className="size-4 text-foreground/60" />
-              <input
-                className="bg-transparent outline-none text-sm flex-1"
-                placeholder="Search"
-              />
+            <div className="mb-3">
+              <SearchBox className="w-full" placeholder="Search listings" />
             </div>
 
             <nav className="max-h-[50vh] overflow-y-auto pr-1 space-y-1">
@@ -109,19 +110,19 @@ export function MobileMenu({
 
             <div className="mt-4 flex items-center justify-between gap-3">
               <ThemeToggle />
-              {user ? null : (
+              {!user && (
                 <Button
                   asChild
                   variant="ghost"
-                  className="glass rounded-xl size-9"
+                  className="glass rounded-xl h-11 px-4 flex-1"
                 >
                   <Link
                     href="/sign-in"
                     onClick={onClose}
-                    className="flex items-center gap-2 px-3"
+                    className="flex items-center gap-2 justify-center"
                   >
                     <LogIn className="size-4" />
-                    <span className="hidden sm:inline">Sign In</span>
+                    <span className="text-sm font-medium">Sign In</span>
                   </Link>
                 </Button>
               )}

@@ -128,7 +128,7 @@ export function useApiMutation<TData = any>(
           }
         case "put":
           try {
-            const r = await api.put<TData>(url, body);
+            const r = await api.put<TData>(url, body, config?.headers);
             try {
               const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
               toastSuccess(`${String(entity)} updated successfully`);
@@ -140,7 +140,7 @@ export function useApiMutation<TData = any>(
           }
         case "patch":
           try {
-            const r = await api.patch<TData>(url, body);
+            const r = await api.patch<TData>(url, body, config?.headers);
             try {
               const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
               toastSuccess(`${String(entity)} updated successfully`);
@@ -152,7 +152,7 @@ export function useApiMutation<TData = any>(
           }
         case "delete":
           try {
-            const r = await api.delete<TData>(url);
+            const r = await api.delete<TData>(url, config?.headers);
             try {
               const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
               toastSuccess(`${String(entity)} deleted successfully`);
@@ -165,7 +165,7 @@ export function useApiMutation<TData = any>(
         case "get":
         default:
           try {
-            const r = await api.get<TData>(url, config?.params);
+            const r = await api.get<TData>(url, config?.params, config?.headers);
             try {
               const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
               toastSuccess(`${String(entity)} fetched successfully`);

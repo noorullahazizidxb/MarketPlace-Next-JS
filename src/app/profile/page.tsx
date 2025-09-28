@@ -21,6 +21,7 @@ import {
   Instagram,
   ShieldCheck,
 } from "lucide-react";
+import { Check } from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
 import { useAuthStore } from "@/store/auth.store";
 import { Input } from "@/components/ui/input";
@@ -28,24 +29,88 @@ import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { asset } from "@/lib/assets";
 
+import { Eye, EyeOff } from "lucide-react";
+
 // ---------------- Schema ----------------
-const schema = z.object({
-  firstName: z.string().min(1, "Required"),
-  lastName: z.string().min(1, "Required"),
-  fullName: z.string().min(2, "Too short"),
-  email: z.string().email().optional().or(z.literal("")),
-  phone: z.string().min(5, "Too short").optional().or(z.literal("")),
-  whatsapp: z.string().optional().or(z.literal("")),
-  city: z.string().optional().or(z.literal("")),
-  country: z.string().optional().or(z.literal("")),
-  street: z.string().optional().or(z.literal("")),
-  bio: z.string().max(260, "Max 260 chars").optional().or(z.literal("")),
-  website: z.string().url().optional().or(z.literal("")),
-  linkedin: z.string().url().optional().or(z.literal("")),
-  facebook: z.string().url().optional().or(z.literal("")),
-  instagram: z.string().url().optional().or(z.literal("")),
-});
+const schema = z
+  .object({
+    firstName: z.string().min(1, "Required"),
+    lastName: z.string().min(1, "Required"),
+    fullName: z.string().min(2, "Too short"),
+    email: z.string().email().optional().or(z.literal("")),
+    phone: z.string().min(5, "Too short").optional().or(z.literal("")),
+    whatsapp: z.string().optional().or(z.literal("")),
+    city: z.string().optional().or(z.literal("")),
+    country: z.string().optional().or(z.literal("")),
+    street: z.string().optional().or(z.literal("")),
+    bio: z.string().max(260, "Max 260 chars").optional().or(z.literal("")),
+    website: z.string().url().optional().or(z.literal("")),
+    linkedin: z.string().url().optional().or(z.literal("")),
+    facebook: z.string().url().optional().or(z.literal("")),
+    instagram: z.string().url().optional().or(z.literal("")),
+    password: z.string().optional().or(z.literal("")),
+    confirmPassword: z.string().optional().or(z.literal("")),
+  })
+  .superRefine((val, ctx) => {
+    const pw = val.password && String(val.password).trim();
+    const cpw = val.confirmPassword && String(val.confirmPassword).trim();
+    if (pw) {
+      if (pw.length < 8)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["password"],
+          message: "Password must be at least 8 characters",
+        });
+      if (!/[A-Z]/.test(pw))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["password"],
+          message: "Include at least one uppercase letter",
+        });
+      if (!/[0-9]/.test(pw))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["password"],
+          message: "Include at least one number",
+        });
+      if (!/[^A-Za-z0-9]/.test(pw))
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["password"],
+          message: "Include at least one special character",
+        });
+      if (!cpw)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["confirmPassword"],
+          message: "Please confirm your password",
+        });
+      if (cpw && pw !== cpw)
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ["confirmPassword"],
+          message: "Passwords do not match",
+        });
+    } else if (cpw) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        path: ["password"],
+        message: "Enter a password",
+      });
+    }
+  });
 type FormData = z.infer<typeof schema>;
+
+// Add password strength helper
+function passwordStrength(pw: string) {
+  let score = 0;
+  if (!pw) return 0;
+  if (pw.length >= 8) score += 1;
+  if (/[A-Z]/.test(pw)) score += 1;
+  if (/[0-9]/.test(pw)) score += 1;
+  if (/[^A-Za-z0-9]/.test(pw)) score += 1;
+  return score; // 0..4
+}
 
 // ---------------- Helper UI Primitives (inline for now) ----------------
 function FieldLabel({ icon: Icon, label }: { icon: any; label: string }) {
@@ -139,6 +204,18 @@ export default function ProfilePage() {
         },
         metadata: { bio: data.bio || undefined },
       };
+
+      // Include password fields only when a password was provided
+      if (data.password && String(data.password).trim() !== "") {
+        // Some APIs expect only `password`; including confirmPassword is harmless if server expects it
+        payload.password = data.password;
+        if (
+          data.confirmPassword &&
+          String(data.confirmPassword).trim() !== ""
+        ) {
+          payload.confirmPassword = data.confirmPassword;
+        }
+      }
 
       await updateProfile.mutateAsync(payload as any);
 
@@ -544,6 +621,24 @@ export default function ProfilePage() {
                   {...register("instagram")}
                   icon={Instagram}
                 />
+                {/* Password fields */}
+                <div className="sm:col-span-2">
+                  <FieldLabel icon={ShieldCheck} label="Password" />
+                  <PasswordField
+                    register={register}
+                    error={errors.password?.message as any}
+                    watchPassword={watch("password")}
+                  />
+                </div>
+                <div className="sm:col-span-2">
+                  <FieldLabel icon={ShieldCheck} label="Confirm Password" />
+                  <ConfirmPasswordField
+                    register={register}
+                    error={errors.confirmPassword?.message as any}
+                    passwordValue={watch("password")}
+                    confirmValue={watch("confirmPassword")}
+                  />
+                </div>
                 <div className="sm:col-span-2">
                   <FieldLabel icon={Edit3} label="Bio" />
                   <textarea
@@ -637,6 +732,122 @@ const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
   )
 );
 TextField.displayName = "TextField";
+
+function PasswordField({
+  register,
+  error,
+  watchPassword,
+}: {
+  register: any;
+  error?: string | null;
+  watchPassword?: string;
+}) {
+  const [visible, setVisible] = useState(false);
+  const strength = passwordStrength(String(watchPassword || ""));
+  const widthClass =
+    ["w-0", "w-1/4", "w-1/2", "w-3/4", "w-full"][strength] || "w-0";
+  const colorClass =
+    strength <= 1
+      ? "bg-red-400"
+      : strength === 2
+      ? "bg-yellow-400"
+      : "bg-emerald-400";
+
+  return (
+    <div className="relative mt-1">
+      <Input
+        {...register("password")}
+        type={visible ? "text" : "password"}
+        className="h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm pr-10"
+      />
+      <button
+        type="button"
+        aria-label={visible ? "Hide password" : "Show password"}
+        onClick={() => setVisible((v) => !v)}
+        className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))]
+          hover:text-[hsl(var(--foreground))]"
+      >
+        {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+      </button>
+      <div className="mt-2 flex items-center gap-2">
+        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+          <div
+            className={`h-full transition-all ${widthClass} ${colorClass}`}
+          />
+        </div>
+        <div className="text-2xs subtle w-20 text-right">
+          {watchPassword
+            ? ["Very weak", "Weak", "Okay", "Good", "Strong"][strength]
+            : ""}
+        </div>
+      </div>
+      {error && <p className="mt-1 text-2xs text-red-500">{error}</p>}
+    </div>
+  );
+}
+
+function ConfirmPasswordField({
+  register,
+  error,
+  passwordValue,
+  confirmValue,
+}: {
+  register: any;
+  error?: string | null;
+  passwordValue?: string;
+  confirmValue?: string;
+}) {
+  const [visible, setVisible] = useState(false);
+  const filled = Boolean(confirmValue && String(confirmValue).length > 0);
+  const matches = filled && String(passwordValue) === String(confirmValue);
+
+  return (
+    <div className="relative mt-1">
+      <Input
+        {...register("confirmPassword")}
+        type={visible ? "text" : "password"}
+        className="h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm pr-28"
+        aria-invalid={Boolean(error || (filled && !matches))}
+        aria-describedby={error ? "confirm-error" : undefined}
+      />
+
+      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+        <div className="flex items-center gap-2 text-sm">
+          <span
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${
+              !filled
+                ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
+                : matches
+                ? "bg-emerald-500/10 text-emerald-400"
+                : "bg-red-500/10 text-red-400"
+            }`}
+            aria-live="polite"
+          >
+            <Check className="size-3" />
+            {filled ? (matches ? "Match" : "No match") : "—"}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          aria-label={
+            visible ? "Hide confirm password" : "Show confirm password"
+          }
+          onClick={() => setVisible((v) => !v)}
+          className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] p-1"
+        >
+          {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
+        </button>
+      </div>
+
+      {error && (
+        <p id="confirm-error" className="mt-1 text-2xs text-red-500">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
 
 // ---------------- Splitting Suggestion ----------------
 // After confirming design, split into:

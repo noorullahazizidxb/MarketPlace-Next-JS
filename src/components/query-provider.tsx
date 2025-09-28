@@ -41,10 +41,41 @@ export function QueryProvider({ children }: PropsWithChildren) {
 function ThemeBootstrap({ client }: { client: QueryClient }) {
   useEffect(() => {
     let mounted = true;
-    // safety timeout: don't block appReady indefinitely
+    let completed = false;
+
+    const applyThemePayload = (source: any) => {
+      if (!mounted || !source) return;
+      const first = Array.isArray(source) ? source[0] : source;
+      if (!first) return;
+      const rawTokens = (first as any)?.tokens;
+      const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
+      const scales = (first as any)?.scales ?? rawTokens?.scales;
+      const components = (first as any)?.components ?? rawTokens?.components;
+      if (scales) applyThemeScales(scales);
+      if (normalized) applyThemeTokens(normalized);
+      if (components) applyThemeComponents(components);
+    };
+
+    const finalize = () => {
+      if (!mounted || completed) return;
+      completed = true;
+      useAppStore.getState().setReady(true);
+    };
+
     const safety = setTimeout(() => {
-      if (mounted) useAppStore.getState().setReady(true);
-    }, 1200);
+      if (!mounted || completed) return;
+      void (async () => {
+        try {
+          const local = await loadLocalPresets();
+          applyThemePayload(local);
+        } catch (_) {
+          // ignore, we'll still mark the app ready
+        } finally {
+          finalize();
+        }
+      })();
+    }, 5000);
+
     (async () => {
       try {
         // Always fetch from /themes and apply, but don't block forever — use timeout
@@ -55,41 +86,21 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
           ),
         ];
         const remote = await Promise.race(raceProms);
-        const first = Array.isArray(remote) ? remote[0] : remote;
-        const rawTokens = (first as any)?.tokens;
-        const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
-        const scales = (first as any)?.scales ?? rawTokens?.scales;
-        const components = (first as any)?.components ?? rawTokens?.components;
-        if (mounted) {
-          if (scales) applyThemeScales(scales);
-          if (normalized) applyThemeTokens(normalized);
-          if (components) applyThemeComponents(components);
-          // mark app as ready once theme tokens are applied
-          useAppStore.getState().setReady(true);
-        }
+        applyThemePayload(remote);
       } catch (e) {
         // Try local presets as fallback so app doesn't block forever
         try {
           const local = await loadLocalPresets();
-          const first = Array.isArray(local) ? local[0] : local;
-          const rawTokens = (first as any)?.tokens;
-          const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
-          const scales = (first as any)?.scales ?? rawTokens?.scales;
-          const components =
-            (first as any)?.components ?? rawTokens?.components;
-          if (mounted) {
-            if (scales) applyThemeScales(scales);
-            if (normalized) applyThemeTokens(normalized);
-            if (components) applyThemeComponents(components);
-          }
+          applyThemePayload(local);
         } catch (_) {
           // ignore
-        } finally {
-          useAppStore.getState().setReady(true);
-          clearTimeout(safety);
         }
+      } finally {
+        clearTimeout(safety);
+        finalize();
       }
     })();
+
     return () => {
       mounted = false;
       clearTimeout(safety);

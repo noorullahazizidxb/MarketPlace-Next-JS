@@ -24,7 +24,7 @@ export default function AboutPage() {
           <img
             src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000&auto=format&fit=crop"
             alt="Community background"
-            className="h-full w-full object-cover opacity-30"
+            className="h-full w-full rounded-[20px] object-cover opacity-50"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/40 via-[hsl(var(--background))]/40 to-[hsl(var(--background))]" />
         </div>

@@ -6,6 +6,7 @@ import { ListingCard, type Listing } from "@/components/listing-card";
 import { FiltersBar } from "@/components/filters-bar";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 
 export default function ListingsPage() {
   return (
@@ -129,27 +130,7 @@ function ListingsContent() {
   );
 }
 
-function AdPlaceholder({ index }: { index: number }) {
-  const urls = [
-    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-  ];
-  const url = urls[index % urls.length];
-  return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
-      <div className="h-[150px] w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={url}
-          alt="Advertisement"
-          className="h-full w-full object-cover"
-        />
-      </div>
-    </div>
-  );
-}
+// (AdPlaceholder moved to shared component)
 
 function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const search = useSearchParams();
