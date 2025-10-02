@@ -134,6 +134,8 @@ html, body {
   .hover-ambient:hover::after { opacity: 1; }
 
   .container-padded { @apply container px-4 md:px-6; }
+  /* Smooth native touch scrolling helper */
+  .touch-scroll { -webkit-overflow-scrolling: touch; }
   /* Global interactive defaults for buttons and links using theme vars */
   button,
   .btn,
@@ -233,7 +235,9 @@ html, body {
   }
   .link-underline { text-decoration: underline; }
 }
-input, textarea, select {
-  font-size: 16px !important;
+
+/* Prevent mobile browsers (iOS Safari) from zooming when focusing inputs with <16px font-size */
+@media (max-width: 640px) {
+  input, select, textarea { font-size:16px !important; line-height:1.35; }
 }
 

@@ -16,6 +16,7 @@ import {
   Phone,
   Bell,
   User2,
+  User,
   LogIn,
   LayoutDashboard,
   Layers3,
@@ -428,9 +429,9 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onClick={() => onNavigate("/")}
           />
           <ActionTile
-            icon={LayoutDashboard}
-            label="Approved"
-            onClick={() => onNavigate("/profile/approved-listings")}
+            icon={User}
+            label="User Management"
+            onClick={() => onNavigate("/admin/users")}
           />
           <ActionTile
             icon={List}

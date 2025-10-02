@@ -47,6 +47,7 @@ export function Sidebar({
     { href: "/listings", label: "Listings", Icon: Layers3 },
     { href: "/admin/notifications", label: "Notifications", Icon: Bell },
     { href: "/admin/ads", label: "Advertisements", Icon: Megaphone },
+    { href: "/admin/users", label: "Users Management", Icon: User },
     { href: "/pendings", label: "Pending Lists", Icon: List },
     { href: "/listings/create", label: "New Listing", Icon: PlusCircle }, // keep Settings in the nav but render children below
     { href: "/settings", label: "Settings", Icon: Settings },

@@ -74,7 +74,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
         {listing.images && listing.images.length > 0 ? (
           <ImageSlider
             images={listing.images}
-            className="transition-transform duration-500 group-hover:scale-95"
+            className="transition-transform duration-500 group-hover:scale-103"
             aspect="1/1"
           />
         ) : (

@@ -437,188 +437,207 @@ export default function NotificationsAdminPage() {
         </div>
       </div>
 
-      <div className="rounded-2xl border overflow-hidden">
-        <table className="w-full table-auto">
-          <thead className="bg-[hsl(var(--card))] border-b">
-            <tr>
-              <th className="text-left p-3">Title</th>
-              <th className="text-left p-3">Message</th>
-              <th className="text-left p-3">Channel</th>
-              <th className="text-left p-3">Target</th>
-              <th className="text-left p-3">Sender</th>
-              <th className="text-left p-3">Created At</th>
-              <th className="text-left p-3">Sent At</th>
-              <th className="text-left p-3">Trigger</th>
-              <th className="p-3">Actions</th>
-            </tr>
-          </thead>
-          <tbody className="bg-[hsl(var(--card))]">
-            {current.map((n) => (
-              <>
-                <tr
-                  key={n.id}
-                  className="border-b hover:bg-[hsl(var(--muted))]/5 transition-colors"
-                >
-                  <td className="p-3 align-top">
-                    <div className="font-semibold">{n.title}</div>
-                    <div className="text-xs subtle">{n.id}</div>
-                  </td>
-                  <td className="p-3 align-top max-w-[28rem]">
-                    <div className="line-clamp-2 text-sm">{n.message}</div>
-                  </td>
-                  <td className="p-3 align-top flex items-center gap-2">
-                    <ChannelIcon channel={n.channel} />
-                    <span className="text-sm">{n.channel}</span>
-                  </td>
-                  <td className="p-3 align-top">{n.targetType}</td>
-                  <td className="p-3 align-top">
-                    {n.sender?.fullName || n.senderId || "—"}
-                  </td>
-                  <td className="p-3 align-top">
-                    {new Date(n.createdAt).toLocaleString()}
-                  </td>
-                  <td className="p-3 align-top">
-                    {n.sentAt ? new Date(n.sentAt).toLocaleString() : "—"}
-                  </td>
-                  <td className="p-3 align-top">{n.triggerEvent || "—"}</td>
-                  <td className="p-3 align-top">
-                    <div className="flex items-center gap-2">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setViewing(n)}
-                      >
-                        <Eye className="size-4" />
-                      </Button>
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => setEditing(n)}
-                      >
-                        <Edit3 className="size-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => setConfirmDelete(n)}
-                      >
-                        <Trash2 className="size-4 text-red-500" />
-                      </Button>
-                      <button
-                        onClick={() => toggleExpand(n.id)}
-                        aria-label="expand recipients"
-                        className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
-                      >
-                        {expanded[n.id] ? (
-                          <ChevronUp className="size-4" />
-                        ) : (
-                          <ChevronDown className="size-4" />
-                        )}
-                      </button>
-                    </div>
-                  </td>
+      <div className="rounded-2xl border">
+        <div className="rounded-2xl overflow-hidden">
+          {/* Horizontal scroll wrapper for small screens; enable smooth touch scrolling */}
+          <div
+            className="overflow-x-auto touch-scroll"
+            role="region"
+            aria-label="Notifications table, scroll horizontally on small screens"
+          >
+            <table className="w-full table-auto min-w-[920px] md:min-w-full">
+              <thead className="bg-[hsl(var(--card))] border-b">
+                <tr>
+                  <th className="text-left p-3 whitespace-nowrap">Title</th>
+                  <th className="text-left p-3">Message</th>
+                  <th className="text-left p-3 whitespace-nowrap">Channel</th>
+                  <th className="text-left p-3 whitespace-nowrap">Target</th>
+                  <th className="text-left p-3 whitespace-nowrap">Sender</th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    Created At
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">Sent At</th>
+                  <th className="text-left p-3 whitespace-nowrap">Trigger</th>
+                  <th className="p-3 whitespace-nowrap">Actions</th>
                 </tr>
-
-                {expanded[n.id] && (
-                  <tr className="bg-[hsl(var(--card))]">
-                    <td colSpan={9} className="p-4">
-                      <div className="rounded-xl border p-3">
-                        <div className="mb-3 flex items-center justify-between">
-                          <div className="font-medium">
-                            Recipients ({n.recipients?.length ?? 0})
-                          </div>
-                          <div className="text-xs subtle">
-                            Actions: mark read / resend
-                          </div>
-                        </div>
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="text-xs subtle">
-                              <th className="text-left p-2">ID</th>
-                              <th className="text-left p-2">User</th>
-                              <th className="text-left p-2">Role</th>
-                              <th className="text-left p-2">Read At</th>
-                              <th className="text-left p-2">Delivered At</th>
-                              <th className="text-left p-2">Error</th>
-                              <th className="p-2">Actions</th>
-                            </tr>
-                          </thead>
-                          <tbody>
-                            {n.recipients && n.recipients.length ? (
-                              n.recipients.map((r) => (
-                                <tr
-                                  key={r.id}
-                                  className="border-t hover:bg-[hsl(var(--muted))]/5"
-                                >
-                                  <td className="p-2 align-top">{r.id}</td>
-                                  <td className="p-2 align-top">
-                                    <div className="font-medium">
-                                      {r.user?.fullName || r.userId}
-                                    </div>
-                                    <div className="text-xs subtle">
-                                      {r.user?.email || ""}
-                                    </div>
-                                  </td>
-                                  <td className="p-2 align-top">
-                                    {r.role || "—"}
-                                  </td>
-                                  <td className="p-2 align-top">
-                                    {r.readAt
-                                      ? new Date(r.readAt).toLocaleString()
-                                      : "—"}
-                                  </td>
-                                  <td className="p-2 align-top">
-                                    {r.deliveredAt
-                                      ? new Date(r.deliveredAt).toLocaleString()
-                                      : "—"}
-                                  </td>
-                                  <td className="p-2 align-top text-sm text-red-600">
-                                    {r.deliveryError || ""}
-                                  </td>
-                                  <td className="p-2 align-top">
-                                    <div className="flex gap-2">
-                                      <Button
-                                        variant="ghost"
-                                        size="sm"
-                                        onClick={() =>
-                                          markRecipientRead(n.id, r.id)
-                                        }
-                                      >
-                                        Mark read
-                                      </Button>
-                                      <Button
-                                        variant="secondary"
-                                        size="sm"
-                                        onClick={() =>
-                                          resendToRecipient(n.id, r.id)
-                                        }
-                                      >
-                                        Resend
-                                      </Button>
-                                    </div>
-                                  </td>
-                                </tr>
-                              ))
+              </thead>
+              <tbody className="bg-[hsl(var(--card))]">
+                {current.map((n) => (
+                  <>
+                    <tr
+                      key={n.id}
+                      className="border-b hover:bg-[hsl(var(--muted))]/5 transition-colors"
+                    >
+                      <td className="p-3 align-top whitespace-nowrap">
+                        <div className="font-semibold">{n.title}</div>
+                        <div className="text-xs subtle">{n.id}</div>
+                      </td>
+                      <td className="p-3 align-top max-w-[28rem]">
+                        <div className="line-clamp-2 text-sm">{n.message}</div>
+                      </td>
+                      <td className="p-3 align-top flex items-center gap-2 whitespace-nowrap">
+                        <ChannelIcon channel={n.channel} />
+                        <span className="text-sm">{n.channel}</span>
+                      </td>
+                      <td className="p-3 align-top whitespace-nowrap">
+                        {n.targetType}
+                      </td>
+                      <td className="p-3 align-top whitespace-nowrap">
+                        {n.sender?.fullName || n.senderId || "—"}
+                      </td>
+                      <td className="p-3 align-top whitespace-nowrap">
+                        {new Date(n.createdAt).toLocaleString()}
+                      </td>
+                      <td className="p-3 align-top whitespace-nowrap">
+                        {n.sentAt ? new Date(n.sentAt).toLocaleString() : "—"}
+                      </td>
+                      <td className="p-3 align-top whitespace-nowrap">
+                        {n.triggerEvent || "—"}
+                      </td>
+                      <td className="p-3 align-top">
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setViewing(n)}
+                          >
+                            <Eye className="size-4" />
+                          </Button>
+                          <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => setEditing(n)}
+                          >
+                            <Edit3 className="size-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => setConfirmDelete(n)}
+                          >
+                            <Trash2 className="size-4 text-red-500" />
+                          </Button>
+                          <button
+                            onClick={() => toggleExpand(n.id)}
+                            aria-label="expand recipients"
+                            className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
+                          >
+                            {expanded[n.id] ? (
+                              <ChevronUp className="size-4" />
                             ) : (
-                              <tr>
-                                <td
-                                  colSpan={7}
-                                  className="p-3 subtle text-center"
-                                >
-                                  No recipients
-                                </td>
-                              </tr>
+                              <ChevronDown className="size-4" />
                             )}
-                          </tbody>
-                        </table>
-                      </div>
-                    </td>
-                  </tr>
-                )}
-              </>
-            ))}
-          </tbody>
-        </table>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+
+                    {expanded[n.id] && (
+                      <tr className="bg-[hsl(var(--card))]">
+                        <td colSpan={9} className="p-4">
+                          <div className="rounded-xl border p-3 overflow-x-auto">
+                            <div className="mb-3 flex items-center justify-between">
+                              <div className="font-medium">
+                                Recipients ({n.recipients?.length ?? 0})
+                              </div>
+                              <div className="text-xs subtle">
+                                Actions: mark read / resend
+                              </div>
+                            </div>
+                            <table className="w-full text-sm min-w-[720px]">
+                              <thead>
+                                <tr className="text-xs subtle">
+                                  <th className="text-left p-2">ID</th>
+                                  <th className="text-left p-2">User</th>
+                                  <th className="text-left p-2">Role</th>
+                                  <th className="text-left p-2">Read At</th>
+                                  <th className="text-left p-2">
+                                    Delivered At
+                                  </th>
+                                  <th className="text-left p-2">Error</th>
+                                  <th className="p-2">Actions</th>
+                                </tr>
+                              </thead>
+                              <tbody>
+                                {n.recipients && n.recipients.length ? (
+                                  n.recipients.map((r) => (
+                                    <tr
+                                      key={r.id}
+                                      className="border-t hover:bg-[hsl(var(--muted))]/5"
+                                    >
+                                      <td className="p-2 align-top">{r.id}</td>
+                                      <td className="p-2 align-top">
+                                        <div className="font-medium">
+                                          {r.user?.fullName || r.userId}
+                                        </div>
+                                        <div className="text-xs subtle">
+                                          {r.user?.email || ""}
+                                        </div>
+                                      </td>
+                                      <td className="p-2 align-top">
+                                        {r.role || "—"}
+                                      </td>
+                                      <td className="p-2 align-top">
+                                        {r.readAt
+                                          ? new Date(r.readAt).toLocaleString()
+                                          : "—"}
+                                      </td>
+                                      <td className="p-2 align-top">
+                                        {r.deliveredAt
+                                          ? new Date(
+                                              r.deliveredAt
+                                            ).toLocaleString()
+                                          : "—"}
+                                      </td>
+                                      <td className="p-2 align-top text-sm text-red-600">
+                                        {r.deliveryError || ""}
+                                      </td>
+                                      <td className="p-2 align-top">
+                                        <div className="flex gap-2">
+                                          <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            onClick={() =>
+                                              markRecipientRead(n.id, r.id)
+                                            }
+                                          >
+                                            Mark read
+                                          </Button>
+                                          <Button
+                                            variant="secondary"
+                                            size="sm"
+                                            onClick={() =>
+                                              resendToRecipient(n.id, r.id)
+                                            }
+                                          >
+                                            Resend
+                                          </Button>
+                                        </div>
+                                      </td>
+                                    </tr>
+                                  ))
+                                ) : (
+                                  <tr>
+                                    <td
+                                      colSpan={7}
+                                      className="p-3 subtle text-center"
+                                    >
+                                      No recipients
+                                    </td>
+                                  </tr>
+                                )}
+                              </tbody>
+                            </table>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+                  </>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
 
       <div className="mt-4 flex items-center justify-between">

@@ -132,14 +132,14 @@ export function ApprovalCard({
             {createdAt ? `Created ${createdAt.toLocaleString()}` : null}
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <div className="min-w-[120px] sm:min-w-0">
+            <div className="min-w-[120px] sm:min-w-[160px]">
               <select
                 aria-label="Contact visibility"
                 value={contactVisibility}
                 onChange={(e) =>
                   setContactVisibility(e.target.value as ContactVisibility)
                 }
-                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full"
+                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full max-w-[220px]"
               >
                 <option value="HIDE_SELLER">Hide Seller</option>
                 <option value="SHOW_SELLER">Show Seller</option>
