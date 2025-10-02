@@ -19,6 +19,7 @@ import {
   AlertTriangle,
   X,
 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 // --- AutoCompleteUsers component ------------------------------------------------
 function AutoCompleteUsers({
@@ -281,6 +282,7 @@ function ChannelIcon({ channel }: { channel?: string }) {
 }
 
 export default function NotificationsAdminPage() {
+  const { t } = useLanguage();
   const [items, setItems] = useState<Notification[]>(MOCK);
   const [query, setQuery] = useState("");
   const [channelFilter, setChannelFilter] = useState<string | null>(null);
@@ -399,7 +401,7 @@ export default function NotificationsAdminPage() {
               onChange={(e) => setTargetFilter(e.target.value || null)}
               className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
-              <option value="">All targets</option>
+              <option value="">{t("allTargets")}</option>
               <option value="USER">USER</option>
               <option value="ROLE">ROLE</option>
               <option value="ALL">ALL</option>
@@ -410,13 +412,13 @@ export default function NotificationsAdminPage() {
               size="sm"
               onClick={() => setCreating(true)}
             >
-              Create Notification
+              {t("createNotification")}
             </Button>
           </div>
         </div>
         <div className="flex flex-wrap gap-3 text-xs subtle">
           <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--muted))] px-3 py-1">
-            Total: {total}
+            {t("totalLabel")}: {total}
           </span>
           {channelFilter && (
             <button
@@ -448,17 +450,29 @@ export default function NotificationsAdminPage() {
             <table className="w-full table-auto min-w-[920px] md:min-w-full">
               <thead className="bg-[hsl(var(--card))] border-b">
                 <tr>
-                  <th className="text-left p-3 whitespace-nowrap">Title</th>
-                  <th className="text-left p-3">Message</th>
-                  <th className="text-left p-3 whitespace-nowrap">Channel</th>
-                  <th className="text-left p-3 whitespace-nowrap">Target</th>
-                  <th className="text-left p-3 whitespace-nowrap">Sender</th>
                   <th className="text-left p-3 whitespace-nowrap">
-                    Created At
+                    {t("titleLabel")}
                   </th>
-                  <th className="text-left p-3 whitespace-nowrap">Sent At</th>
-                  <th className="text-left p-3 whitespace-nowrap">Trigger</th>
-                  <th className="p-3 whitespace-nowrap">Actions</th>
+                  <th className="text-left p-3">{t("messageLabel")}</th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("channelLabel")}
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("targetLabel")}
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("senderLabel")}
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("createdAtLabel")}
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("sentAtLabel")}
+                  </th>
+                  <th className="text-left p-3 whitespace-nowrap">
+                    {t("triggerLabel")}
+                  </th>
+                  <th className="p-3 whitespace-nowrap">{t("actionsLabel")}</th>
                 </tr>
               </thead>
               <tbody className="bg-[hsl(var(--card))]">
@@ -538,24 +552,34 @@ export default function NotificationsAdminPage() {
                           <div className="rounded-xl border p-3 overflow-x-auto">
                             <div className="mb-3 flex items-center justify-between">
                               <div className="font-medium">
-                                Recipients ({n.recipients?.length ?? 0})
+                                {t("recipients")} ({n.recipients?.length ?? 0})
                               </div>
                               <div className="text-xs subtle">
-                                Actions: mark read / resend
+                                {t("recipientsActions")}
                               </div>
                             </div>
                             <table className="w-full text-sm min-w-[720px]">
                               <thead>
                                 <tr className="text-xs subtle">
-                                  <th className="text-left p-2">ID</th>
-                                  <th className="text-left p-2">User</th>
-                                  <th className="text-left p-2">Role</th>
-                                  <th className="text-left p-2">Read At</th>
                                   <th className="text-left p-2">
-                                    Delivered At
+                                    {t("idLabel")}
                                   </th>
-                                  <th className="text-left p-2">Error</th>
-                                  <th className="p-2">Actions</th>
+                                  <th className="text-left p-2">
+                                    {t("userLabel")}
+                                  </th>
+                                  <th className="text-left p-2">
+                                    {t("roleLabel")}
+                                  </th>
+                                  <th className="text-left p-2">
+                                    {t("readAtLabel")}
+                                  </th>
+                                  <th className="text-left p-2">
+                                    {t("deliveredAtLabel")}
+                                  </th>
+                                  <th className="text-left p-2">
+                                    {t("errorLabel")}
+                                  </th>
+                                  <th className="p-2">{t("actionsLabel")}</th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -601,7 +625,7 @@ export default function NotificationsAdminPage() {
                                               markRecipientRead(n.id, r.id)
                                             }
                                           >
-                                            Mark read
+                                            {t("markRead")}
                                           </Button>
                                           <Button
                                             variant="secondary"
@@ -610,7 +634,7 @@ export default function NotificationsAdminPage() {
                                               resendToRecipient(n.id, r.id)
                                             }
                                           >
-                                            Resend
+                                            {t("resend")}
                                           </Button>
                                         </div>
                                       </td>
@@ -711,20 +735,24 @@ export default function NotificationsAdminPage() {
         <DialogContent>
           {confirmDelete && (
             <div>
-              <h3 className="text-lg font-semibold">Delete notification?</h3>
+              <h3 className="text-lg font-semibold">
+                {t("deleteNotificationConfirm")}
+              </h3>
               <p className="text-sm subtle mt-2">
-                Are you sure you want to permanently delete{" "}
-                <strong>{confirmDelete.title}</strong>?
+                {t("deleteNotificationBody").replace(
+                  "{title}",
+                  `"${confirmDelete.title}"`
+                )}
               </p>
               <div className="mt-4 flex gap-2 justify-end">
                 <Button variant="ghost" onClick={() => setConfirmDelete(null)}>
-                  Cancel
+                  {t("cancel")}
                 </Button>
                 <Button
                   variant="secondary"
                   onClick={() => deleteNotification(confirmDelete.id)}
                 >
-                  Delete
+                  {t("delete")}
                 </Button>
               </div>
             </div>
@@ -859,6 +887,7 @@ function CreateForm({
   onCancel: () => void;
   onCreate: (draft: CreateDraft) => void;
 }) {
+  const { t } = useLanguage();
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
   const [channel, setChannel] = useState("SYSTEM");
@@ -944,10 +973,8 @@ function CreateForm({
 
   return (
     <div className="max-h-[80vh] overflow-y-auto pr-2">
-      <h3 className="text-lg font-semibold">Create Notification</h3>
-      <p className="text-xs subtle mt-1">
-        Fill details and deliver to recipients.
-      </p>
+      <h3 className="text-lg font-semibold">{t("createNotification")}</h3>
+      <p className="text-xs subtle mt-1">{t("createNotificationHint")}</p>
       {errors.length > 0 && (
         <ul className="mt-3 space-y-1 text-xs text-red-500">
           {errors.map((e) => (
@@ -958,32 +985,32 @@ function CreateForm({
       <div className="mt-4 grid gap-4">
         <div className="grid gap-1">
           <label className="text-xs font-medium" htmlFor="title">
-            Title
+            {t("titleLabel")}
           </label>
           <input
             id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            placeholder="System maintenance"
+            placeholder={t("notificationTitlePlaceholder")}
             className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
           />
         </div>
         <div className="grid gap-1">
           <label className="text-xs font-medium" htmlFor="message">
-            Message
+            {t("messageLabel")}
           </label>
           <textarea
             id="message"
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="We will perform maintenance at..."
+            placeholder={t("notificationMessagePlaceholder")}
             className="rounded-xl border p-3 min-h-[120px] bg-[hsl(var(--card))] text-[hsl(var(--text))]"
           />
         </div>
         <div className="grid gap-3 md:grid-cols-3">
           <div className="grid gap-1">
             <label className="text-xs font-medium" htmlFor="channel">
-              Channel
+              {t("channelLabel")}
             </label>
             <select
               id="channel"
@@ -999,7 +1026,7 @@ function CreateForm({
           </div>
           <div className="grid gap-1">
             <label className="text-xs font-medium" htmlFor="target">
-              Target Type
+              {t("targetTypeLabel")}
             </label>
             <select
               id="target"
@@ -1015,7 +1042,7 @@ function CreateForm({
           </div>
           <div className="grid gap-1">
             <label className="text-xs font-medium" htmlFor="trigger">
-              Trigger Event (optional)
+              {t("triggerEventLabel")}
             </label>
             <input
               id="trigger"
@@ -1052,7 +1079,7 @@ function CreateForm({
               onChange={(e) => setSelectedRole(e.target.value || null)}
               className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
             >
-              <option value="">Select role</option>
+              <option value="">{t("selectRole")}</option>
               <option value={Role.ADMIN}>{Role.ADMIN}</option>
               <option value={Role.USER}>{Role.USER}</option>
               <option value={Role.REPRESENTATIVE}>{Role.REPRESENTATIVE}</option>
@@ -1087,15 +1114,15 @@ function CreateForm({
             onChange={(e) => setSendNow(e.target.checked)}
             className="size-4 rounded border"
           />
-          Send immediately
+          {t("sendImmediately")}
         </label>
       </div>
       <div className="mt-6 flex flex-wrap gap-2 justify-end">
         <Button variant="ghost" onClick={onCancel}>
-          Cancel
+          {t("cancel")}
         </Button>
         <Button variant="secondary" onClick={handleSubmit(submit)}>
-          Create
+          {t("createNotification")}
         </Button>
       </div>
     </div>

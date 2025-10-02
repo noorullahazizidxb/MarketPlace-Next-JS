@@ -13,6 +13,7 @@ import {
 import { Switch } from "../../../components/ads/switch"; // relative to avoid path alias issues
 import { PlacementSelect } from "../../../components/ads/placement-select";
 import { Plus, Search, Loader2 } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -72,6 +73,7 @@ function timeAgo(iso: string) {
 }
 
 export default function AdsManagementPage() {
+  const { t } = useLanguage();
   const [query, setQuery] = React.useState("");
   const [statusFilter, setStatusFilter] = React.useState<
     "all" | "active" | "inactive"
@@ -151,10 +153,10 @@ export default function AdsManagementPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight">
-            Ads Management
+            {t("adsManagement")}
           </h1>
           <p className="text-sm text-muted-foreground mt-1">
-            Create, organize and optimize ad placements across the marketplace.
+            {t("adsManagementSubtitle")}
           </p>
         </div>
         <Dialog
@@ -176,21 +178,21 @@ export default function AdsManagementPage() {
                 form.reset();
               }}
             >
-              Create New Ad
+              {t("createNewAd")}
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto">
             <h2 className="text-xl font-semibold mb-4">
-              {editingAd ? "Edit Ad" : "Create New Ad"}
+              {editingAd ? t("editAd") : t("createNewAd")}
             </h2>
             <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="title">
-                  Title
+                  {(t as any)("titleLabel")}
                 </label>
                 <Input
                   id="title"
-                  placeholder="Summer Sale Banner"
+                  placeholder={(t as any)("adTitlePlaceholder")}
                   {...form.register("title")}
                 />
                 {form.formState.errors.title && (
@@ -201,12 +203,12 @@ export default function AdsManagementPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="body">
-                  Body
+                  {(t as any)("adBodyLabel")}
                 </label>
                 <textarea
                   id="body"
                   className="min-h-[120px] w-full rounded-2xl bg-input/20 border border-white/10 px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40 outline-none"
-                  placeholder="Optional supporting text"
+                  placeholder={t("optionalSupportingText")}
                   {...form.register("body")}
                 />
                 {form.formState.errors.body && (
@@ -217,7 +219,7 @@ export default function AdsManagementPage() {
               </div>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="imageUrl">
-                  Image URL
+                  {t("imageUrlLabel")}
                 </label>
                 <Input
                   id="imageUrl"
@@ -231,7 +233,9 @@ export default function AdsManagementPage() {
                 )}
               </div>
               <div className="space-y-2">
-                <label className="text-sm font-medium">Placement</label>
+                <label className="text-sm font-medium">
+                  {t("placementLabel")}
+                </label>
                 <PlacementSelect
                   value={form.watch("placement")}
                   onChange={(p: AdPlacement) => form.setValue("placement", p)}
@@ -244,9 +248,9 @@ export default function AdsManagementPage() {
               </div>
               <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 border border-white/10">
                 <div className="space-y-0.5">
-                  <p className="text-sm font-medium">Active</p>
+                  <p className="text-sm font-medium">{t("activeLabel")}</p>
                   <p className="text-xs text-muted-foreground">
-                    Toggle to immediately enable or pause serving.
+                    {t("activeHint")}
                   </p>
                 </div>
                 <Switch
@@ -258,7 +262,7 @@ export default function AdsManagementPage() {
               <div className="flex justify-end gap-3 pt-4">
                 <DialogClose asChild>
                   <Button type="button" variant="ghost">
-                    Cancel
+                    {t("cancel")}
                   </Button>
                 </DialogClose>
                 <Button
@@ -270,9 +274,9 @@ export default function AdsManagementPage() {
                   {createMutation.isPending || updateMutation.isPending ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : editingAd ? (
-                    "Update"
+                    t("updateLabel")
                   ) : (
-                    "Create"
+                    t("createNewAd")
                   )}
                 </Button>
               </div>
@@ -287,8 +291,8 @@ export default function AdsManagementPage() {
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
             <Input
-              aria-label="Search ads"
-              placeholder="Search ads by title or placement"
+              aria-label={(t as any)("search")}
+              placeholder={(t as any)("searchAdsPlaceholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
               className="pl-9"
@@ -301,9 +305,9 @@ export default function AdsManagementPage() {
               onChange={(e) => setStatusFilter(e.target.value as any)}
               className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
             >
-              <option value="all">All Statuses</option>
-              <option value="active">Active</option>
-              <option value="inactive">Inactive</option>
+              <option value="all">{(t as any)("adsAllStatuses")}</option>
+              <option value="active">{(t as any)("active")}</option>
+              <option value="inactive">{(t as any)("inactive")}</option>
             </select>
             <select
               aria-label="Filter by placement"
@@ -311,7 +315,7 @@ export default function AdsManagementPage() {
               onChange={(e) => setPlacementFilter(e.target.value)}
               className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40 min-w-[180px]"
             >
-              <option value="all">All Placements</option>
+              <option value="all">{(t as any)("adsAllPlacements")}</option>
               {AD_PLACEMENTS.map((p) => (
                 <option key={p} value={p}>
                   {p.replace(/_/g, " ")}
@@ -326,7 +330,7 @@ export default function AdsManagementPage() {
       <AnimatePresence mode="popLayout">
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" /> Loading ads...
+            <Loader2 className="size-4 animate-spin" /> {t("loadingAds")}
           </div>
         ) : filtered.length === 0 ? (
           <motion.div
@@ -334,7 +338,7 @@ export default function AdsManagementPage() {
             animate={{ opacity: 1, y: 0 }}
             className="text-sm text-muted-foreground"
           >
-            No ads match your filters.
+            {t("noAdsMatchFilters")}
           </motion.div>
         ) : (
           <motion.div

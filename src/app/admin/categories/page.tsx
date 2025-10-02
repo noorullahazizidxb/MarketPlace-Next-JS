@@ -3,6 +3,7 @@
 import { redirect } from "next/navigation";
 import { getSession } from "@/lib/session";
 import { CategoriesTable } from "@/components/categories/CategoriesTable";
+// server-side page: keep static strings or use server translation helper if available
 
 export default async function AdminCategoriesPage() {
   const session = await getSession();

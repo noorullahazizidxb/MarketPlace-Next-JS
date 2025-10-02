@@ -14,7 +14,7 @@ import {
   Pie,
   Cell,
 } from "recharts";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
 import { ChartCard } from "@/components/admin/chart-card";
 import { SkeletonBlock } from "@/components/admin/skeleton-block";
@@ -75,6 +75,10 @@ interface AdminStatsResponse {
     }[];
     approvalTimeDaily?: { date: string; avgHours: number }[];
     representativesByRegion?: { region: string; count: number }[];
+    listingsTypeStatusDaily?: any[];
+    listingsTypeStatusWeekly?: any[];
+    listingsTypeStatusMonthly?: any[];
+    listingsTypeStatusYearly?: any[];
   };
 }
 
@@ -317,6 +321,19 @@ export default function AdminDashboardPage() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 auto-rows-[minmax(320px,_1fr)]">
+        {/* Listings Type / Status Composite Chart */}
+        <ChartCard
+          title={(t as any)("listingsTypeStatus")}
+          description={(t as any)("listingsTypeStatus")}
+          isLoading={isLoading}
+          className="xl:col-span-3"
+        >
+          <ListingsTypeStatusCharts
+            charts={charts}
+            t={t}
+            isLoading={isLoading}
+          />
+        </ChartCard>
         <ChartCard
           title={t("listings") + " (30d)"}
           description={t("listings")}
@@ -702,6 +719,150 @@ export default function AdminDashboardPage() {
               </p>
             )}
         </ChartCard>
+      </div>
+    </div>
+  );
+}
+
+// Sub-component: ListingsTypeStatusCharts
+function ListingsTypeStatusCharts({
+  charts,
+  t,
+  isLoading,
+}: {
+  charts: any;
+  t: (k: any) => string;
+  isLoading: boolean;
+}) {
+  const [mode, setMode] = useState<"daily" | "weekly" | "monthly" | "yearly">(
+    "daily"
+  );
+
+  const dataset = useMemo(() => {
+    switch (mode) {
+      case "weekly":
+        return charts.listingsTypeStatusWeekly || [];
+      case "monthly":
+        return charts.listingsTypeStatusMonthly || [];
+      case "yearly":
+        return charts.listingsTypeStatusYearly || [];
+      default:
+        return charts.listingsTypeStatusDaily || [];
+    }
+  }, [charts, mode]);
+
+  // Derive category key based on mode
+  const keyField =
+    mode === "daily"
+      ? "day"
+      : mode === "weekly"
+      ? "week"
+      : mode === "monthly"
+      ? "month"
+      : "year";
+
+  const statusKeys = [
+    "PENDING",
+    "APPROVED",
+    "REJECTED",
+    "SOLD",
+    "RENTED",
+    "EXPIRED",
+    "DRAFT",
+    "HIDDEN",
+  ];
+
+  const colorPalette = {
+    PENDING: "#f59e0b",
+    APPROVED: "#16a34a",
+    REJECTED: "#f43f5e",
+    SOLD: "#6366f1",
+    RENTED: "#0ea5e9",
+    EXPIRED: "#6b7280",
+    DRAFT: "#10b981",
+    HIDDEN: "#64748b",
+  } as Record<string, string>;
+
+  return (
+    <div className="flex flex-col h-full">
+      {/* Mode Toggle */}
+      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
+        {(["daily", "weekly", "monthly", "yearly"] as const).map((m) => (
+          <button
+            key={m}
+            onClick={() => setMode(m)}
+            className={
+              "px-3 py-1.5 rounded-full border text-[11px] font-medium transition-colors " +
+              (mode === m
+                ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))]"
+                : "bg-[hsl(var(--muted))]/20 hover:bg-[hsl(var(--muted))]/30 border-[hsl(var(--border))]")
+            }
+          >
+            {(t as any)(m)}
+          </button>
+        ))}
+      </div>
+      <div className="flex-1 min-h-[280px]">
+        {!isLoading && dataset.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart
+              data={dataset}
+              stackOffset="expand"
+              margin={{ top: 10, right: 10, left: 0, bottom: 0 }}
+            >
+              <CartesianGrid
+                strokeDasharray="3 3"
+                stroke="hsl(var(--border))"
+              />
+              <XAxis dataKey={keyField} tick={{ fontSize: 11 }} />
+              <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} />
+              <Tooltip
+                content={<ChartTooltip />}
+                wrapperStyle={{ outline: "none" }}
+                formatter={(value: any, name: string) => [
+                  `${(Number(value) * 100).toFixed(1)}%`,
+                  (t as any)(name.toLowerCase()) || name,
+                ]}
+              />
+              <Legend wrapperStyle={{ fontSize: 11 }} />
+              {statusKeys.map((k) => (
+                <Bar
+                  key={k}
+                  dataKey={k}
+                  stackId="a"
+                  fill={colorPalette[k]}
+                  name={k}
+                  radius={k === "HIDDEN" ? [4, 4, 0, 0] : 0}
+                />
+              ))}
+            </BarChart>
+          </ResponsiveContainer>
+        ) : !isLoading && dataset.length === 0 ? (
+          <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+            {(t as any)("noData")}
+          </p>
+        ) : null}
+      </div>
+      <div className="mt-2 text-[10px] text-[hsl(var(--foreground))]/50 flex flex-wrap gap-3">
+        {statusKeys.map((k) => {
+          const swatch =
+            {
+              PENDING: "bg-amber-500",
+              APPROVED: "bg-emerald-600",
+              REJECTED: "bg-rose-500",
+              SOLD: "bg-indigo-500",
+              RENTED: "bg-sky-500",
+              EXPIRED: "bg-zinc-500",
+              DRAFT: "bg-emerald-400",
+              HIDDEN: "bg-slate-500",
+            }[k] || "bg-primary";
+          return (
+            <span key={k} className="flex items-center gap-1">
+              <span className={`inline-block size-2 rounded-sm ${swatch}`} />
+              {(t as any)(k.toLowerCase()) || k}
+            </span>
+          );
+        })}
       </div>
     </div>
   );
