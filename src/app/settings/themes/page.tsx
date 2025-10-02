@@ -11,6 +11,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { applyThemeComponents } from "@/lib/theme";
 import { ThemeToggle } from "@/components/theme-toggle";
+import { useLanguage } from "@/components/language-provider";
 
 type ThemeTokensShape = {
   light: Record<string, any>;
@@ -300,25 +301,25 @@ export default function ThemeSettingsPage() {
     },
   });
 
+  const { t } = useLanguage();
+
   return (
     <div className="container-padded py-8 space-y-8">
       <div className="flex items-center justify-between gap-4">
         <div>
-          <h1 className="heading-xl">Theme Settings</h1>
-          <p className="subtle">
-            Edit theme. Changes apply live; Save updates backend.
-          </p>
+          <h1 className="heading-xl">{t("configureThemes")}</h1>
+          <p className="subtle">{t("editThemeHint")}</p>
         </div>
         <div className="flex gap-2 items-center">
           <ThemeToggle />
           <Button variant="ghost" onClick={resetFromRemote}>
-            Reset
+            {t("reset")}
           </Button>
           <Button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
           >
-            {saveMutation.isPending ? "Saving…" : "Save"}
+            {saveMutation.isPending ? t("saving") : t("save")}
           </Button>
         </div>
       </div>
@@ -333,7 +334,7 @@ export default function ThemeSettingsPage() {
           }`}
           onClick={() => setActiveTab("colors")}
         >
-          Colors
+          {t("colors")}
         </button>
         <button
           className={`px-3 py-1.5 rounded-full border ${
@@ -343,7 +344,7 @@ export default function ThemeSettingsPage() {
           }`}
           onClick={() => setActiveTab("scales")}
         >
-          Scales
+          {t("scales")}
         </button>
         <button
           className={`px-3 py-1.5 rounded-full border ${
@@ -353,7 +354,7 @@ export default function ThemeSettingsPage() {
           }`}
           onClick={() => setActiveTab("components")}
         >
-          Components
+          {t("components")}
         </button>
         <div className="ml-auto flex items-center gap-2">
           {saveMessage && <span className="text-sm subtle">{saveMessage}</span>}
@@ -366,14 +367,14 @@ export default function ThemeSettingsPage() {
       {!loading && tokens && activeTab === "colors" && (
         <div className="card">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-lg font-semibold">Colors</h2>
+            <h2 className="text-lg font-semibold">{t("colors")}</h2>
             <div className="flex items-center gap-2" />
           </div>
           <div className="flex items-center gap-2 mb-3">
             <input
               type="text"
               className="h-9 w-full md:w-72 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-              placeholder="Search tokens…"
+              placeholder={t("search") + " tokens…"}
               value={tokenQuery}
               onChange={(e) => setTokenQuery(e.target.value)}
             />

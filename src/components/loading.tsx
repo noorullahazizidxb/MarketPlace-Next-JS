@@ -1,9 +1,12 @@
 "use client";
 import React from "react";
+import { useLanguage } from "@/components/language-provider";
 
 type Props = { size?: number; label?: string };
 
-export function Loading({ size = 56, label = "Loading" }: Props) {
+export function Loading({ size = 56, label }: Props) {
+  const { t } = useLanguage();
+  const finalLabel = label ?? t("loading");
   const box =
     size <= 40
       ? "w-10 h-10"
@@ -33,7 +36,7 @@ export function Loading({ size = 56, label = "Loading" }: Props) {
     <div
       className="inline-grid place-items-center"
       role="status"
-      aria-label={label}
+      aria-label={finalLabel}
     >
       <div className={`relative ${box}`}>
         {/* Core pulse using accent color */}
@@ -57,7 +60,7 @@ export function Loading({ size = 56, label = "Loading" }: Props) {
         <OrbitDot dotSize={dotSize} className="rotate-[120deg]" />
         <OrbitDot dotSize={dotSize} className="rotate-[240deg]" />
       </div>
-      <span className="sr-only">{label}...</span>
+      <span className="sr-only">{finalLabel}...</span>
     </div>
   );
 }

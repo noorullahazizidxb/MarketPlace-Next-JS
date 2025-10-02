@@ -1,14 +1,5 @@
-/** @type {import('next').NextConfig} */
-const nextConfig = {
-  reactStrictMode: true,
-  images: {
-    remotePatterns: [
-      { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/**' },
-      { protocol: 'http', hostname: '127.0.0.1', port: '4000', pathname: '/**' },
-      { protocol: 'http', hostname: '192.168.11.205', port: '4000', pathname: '/**' },
-      { protocol: 'http', hostname: '192.168.11.205', port: '3002', pathname: '/**' },
-      { protocol: 'https', hostname: '**', pathname: '/**' },
-    ],
-  },
-};
-module.exports = nextConfig;
+// NOTE: This file simply forwards to next.config.mjs. Keep until all environments reliably load the ESM config.
+// This ensures image remotePatterns (including 192.168.11.205:3002) are always applied.
+// If you modify config, do it in next.config.mjs only.
+const esmConfig = require('./next.config.mjs');
+module.exports = esmConfig.default || esmConfig;

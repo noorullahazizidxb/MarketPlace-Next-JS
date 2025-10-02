@@ -16,6 +16,7 @@ import {
   Shield,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/language-provider";
 
 const socials = [
   { href: "https://github.com/yourorg", label: "GitHub", Icon: Github },
@@ -28,15 +29,16 @@ const socials = [
 ];
 
 const nav = [
-  { href: "/about", label: "About", Icon: Info },
-  { href: "/services", label: "Services", Icon: Briefcase },
-  { href: "/careers", label: "Careers", Icon: Users },
-  { href: "/contact", label: "Contact", Icon: Mail },
+  { href: "/about", key: "about", Icon: Info },
+  { href: "/services", key: "services", Icon: Briefcase },
+  { href: "/careers", key: "careers", Icon: Users },
+  { href: "/contact", key: "contact", Icon: Mail },
 ];
 
 export default function Footer() {
+  const { locale, t } = useLanguage();
   return (
-    <footer className="relative mt-20">
+    <footer className="relative mt-20" dir={locale === "fa" ? "rtl" : "ltr"}>
       {/* Background scene */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,theme(colors.violet.500/.18),theme(colors.fuchsia.500/.14),theme(colors.cyan.500/.14))] blur-3xl opacity-70" />
@@ -61,16 +63,15 @@ export default function Footer() {
                 </div>
                 <div>
                   <div className="text-base font-semibold tracking-tight">
-                    Marketplace
+                    {t("marketplace")}
                   </div>
                   <div className="text-xs text-[hsl(var(--foreground))]/70">
-                    Premium digital goods & services
+                    {t("premiumTagline")}
                   </div>
                 </div>
               </div>
               <p className="mt-4 text-sm text-[hsl(var(--foreground))]/80">
-                Building a trusted platform for creators and businesses with a
-                focus on quality, security, and delightful user experiences.
+                {t("platformMissionShort")}
               </p>
               <div className="mt-4 flex items-center gap-2">
                 <Button asChild size="sm" variant="primary">
@@ -78,11 +79,11 @@ export default function Footer() {
                     href="/get-started"
                     className="inline-flex items-center gap-1"
                   >
-                    Get Started <ArrowUpRight className="size-4" />
+                    {t("getStarted")} <ArrowUpRight className="size-4" />
                   </Link>
                 </Button>
                 <Button asChild size="sm" variant="ghost" className="glass">
-                  <Link href="/contact">Contact</Link>
+                  <Link href="/contact">{t("contact")}</Link>
                 </Button>
               </div>
             </div>
@@ -90,7 +91,7 @@ export default function Footer() {
             {/* Navigation */}
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
-                Explore
+                {t("explore")}
               </div>
               <ul className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-2">
                 {nav.map((n) => (
@@ -102,7 +103,7 @@ export default function Footer() {
                       {n.Icon ? (
                         <n.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
                       ) : null}
-                      <span>{n.label}</span>
+                      <span>{t(n.key as any)}</span>
                     </Link>
                   </li>
                 ))}
@@ -126,11 +127,10 @@ export default function Footer() {
             {/* Newsletter */}
             <div>
               <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
-                Newsletter
+                {t("newsletter")}
               </div>
               <p className="mt-3 text-sm text-[hsl(var(--foreground))]/80">
-                Subscribe to get product updates, launch announcements, and
-                curated content.
+                {t("subscribeBlurb")}
               </p>
               <form
                 onSubmit={(e) => {
@@ -150,7 +150,7 @@ export default function Footer() {
                   className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
                 />
                 <Button type="submit" size="sm" variant="primary">
-                  Subscribe
+                  {t("subscribe")}
                 </Button>
               </form>
             </div>
@@ -158,7 +158,7 @@ export default function Footer() {
             {/* QR Code */}
             <div className="flex flex-col items-start">
               <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
-                Scan & Visit
+                {t("scanVisit")}
               </div>
               <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
                 <QRCode
@@ -167,7 +167,7 @@ export default function Footer() {
                 />
               </div>
               <p className="mt-2 text-xs text-[hsl(var(--foreground))]/70">
-                Scan to open our website
+                {t("scanToOpen")}
               </p>
             </div>
           </div>
@@ -175,21 +175,22 @@ export default function Footer() {
           {/* Bottom bar */}
           <div className="flex flex-col items-center justify-between gap-3 border-t border-[hsl(var(--border))] px-6 py-4 text-xs text-[hsl(var(--foreground))]/70 sm:flex-row lg:px-10">
             <div>
-              © {new Date().getFullYear()} Marketplace. All rights reserved.
+              © {new Date().getFullYear()} {t("marketplace")}.{" "}
+              {t("allRightsReserved")}
             </div>
             <div className="flex items-center gap-3">
               <Link
                 href="/privacy"
                 className="inline-flex items-center gap-2 link"
               >
-                <Shield className="h-4 w-4" /> Privacy
+                <Shield className="h-4 w-4" /> {t("privacy")}
               </Link>
               <span className="opacity-30">•</span>
               <Link
                 href="/terms"
                 className="inline-flex items-center gap-2 link"
               >
-                <FileText className="h-4 w-4" /> Terms
+                <FileText className="h-4 w-4" /> {t("terms")}
               </Link>
               <span className="opacity-30">•</span>
               <a

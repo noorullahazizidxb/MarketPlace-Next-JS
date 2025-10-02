@@ -6,6 +6,7 @@ import { SkipLink } from "@/components/skip-link";
 import { AnimatedBg } from "@/components/animated-bg";
 import { QueryProvider } from "@/components/query-provider";
 import { AppShell } from "@/components/app-shell";
+import { LanguageProvider } from "@/components/language-provider";
 import { AppToaster } from "@/components/toaster";
 import SiteFooter from "@/components/site-footer";
 
@@ -30,11 +31,13 @@ export default function RootLayout({
         {/* Default dark class for initial render; ThemeProvider will adjust on mount */}
         <ThemeProvider>
           <QueryProvider>
-            <SkipLink />
-            <AnimatedBg />
-            <AppShell>{children}</AppShell>
-            <SiteFooter />
-            <AppToaster />
+            <LanguageProvider>
+              <SkipLink />
+              <AnimatedBg />
+              <AppShell>{children}</AppShell>
+              <SiteFooter />
+              <AppToaster />
+            </LanguageProvider>
           </QueryProvider>
         </ThemeProvider>
       </body>

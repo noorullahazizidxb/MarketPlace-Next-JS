@@ -12,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useApiMutation } from "@/lib/api-hooks";
+import { useLanguage } from "@/components/language-provider";
 
 const gradientBg =
   "relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_hsl(var(--primary))/0.28,_transparent_58%),radial-gradient(circle_at_bottom,_hsl(var(--accent))/0.22,_transparent_64%)]";
@@ -51,6 +52,8 @@ type SignUpValues = z.infer<typeof signUpSchema>;
 
 export default function SignUpPage() {
   const router = useRouter();
+  const { t } = useLanguage();
+  const { isRtl } = useLanguage();
   const [focusedField, setFocusedField] = useState<keyof SignUpValues | null>(
     null
   );
@@ -134,6 +137,7 @@ export default function SignUpPage() {
 
   return (
     <div
+      dir={isRtl ? "rtl" : "ltr"}
       className={cn(
         gradientBg,
         "flex items-center justify-center p-4 sm:p-6 lg:p-10"
@@ -181,7 +185,7 @@ export default function SignUpPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
             >
-              Create your account
+              {t("createAccount")}
             </motion.h1>
             <motion.p
               className="text-sm text-[hsl(var(--foreground))/0.7]"
@@ -189,7 +193,7 @@ export default function SignUpPage() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18, duration: 0.4 }}
             >
-              Join the marketplace community and unlock futuristic experiences.
+              {t("joinCommunityText")}
             </motion.p>
           </div>
 
@@ -204,7 +208,7 @@ export default function SignUpPage() {
                 className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
                 htmlFor="fullName"
               >
-                Full Name
+                {t("fullName")}
               </label>
               <div className="group relative">
                 <motion.span
@@ -244,7 +248,7 @@ export default function SignUpPage() {
                 className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
                 htmlFor="email"
               >
-                Email address
+                {t("emailAddress")}
               </label>
               <div className="group relative">
                 <motion.span
@@ -284,7 +288,7 @@ export default function SignUpPage() {
                 className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
                 htmlFor="phone"
               >
-                Phone (optional)
+                {t("phoneOptional")}
               </label>
               <div className="group relative">
                 <motion.span
@@ -325,7 +329,7 @@ export default function SignUpPage() {
                   className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
                   htmlFor="password"
                 >
-                  Password
+                  {t("password")}
                 </label>
                 <div className="group relative">
                   <motion.span
@@ -365,7 +369,7 @@ export default function SignUpPage() {
                   className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
                   htmlFor="confirmPassword"
                 >
-                  Confirm password
+                  {t("confirmPassword")}
                 </label>
                 <div className="group relative">
                   <motion.span
@@ -428,7 +432,7 @@ export default function SignUpPage() {
                 animate={submitting ? { opacity: 0.6 } : { opacity: 1 }}
                 transition={{ duration: 0.2 }}
               >
-                {submitting ? "Creating account…" : "Create account"}
+                {submitting ? t("creatingAccount") : t("createAccountCta")}
               </motion.span>
               <motion.span
                 className="absolute inset-0 rounded-2xl bg-[hsl(var(--btn-primary-fg,var(--primary-foreground)))/0.16]"
@@ -446,12 +450,12 @@ export default function SignUpPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4 }}
           >
-            Already have an account?{" "}
+            {t("alreadyHaveAccount")}{" "}
             <Link
               href="/sign-in"
               className="font-semibold text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent))/0.8]"
             >
-              Log in
+              {t("logIn")}
             </Link>
           </motion.div>
         </motion.div>
@@ -486,7 +490,10 @@ function FieldMessages({
 }
 
 function PasswordStrength({ score }: { score: number }) {
-  const labels = ["Too weak", "Weak", "Fair", "Good", "Strong"];
+  // Use dynamic import of language hook to avoid prop drilling
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { t } = require("@/components/language-provider").useLanguage();
+  const labels = [t("tooWeak"), t("weak"), t("fair"), t("good"), t("strong")];
   const pct = (score / 5) * 100;
   const color =
     score <= 1

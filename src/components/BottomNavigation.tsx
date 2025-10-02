@@ -30,6 +30,7 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
+import { useLanguage } from "@/components/language-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { SearchBox } from "@/components/search-box";
 import { NotificationsPanel } from "@/components/notifications-panel";
@@ -194,6 +195,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   const router = useRouter();
   const pathname = usePathname();
   const { user, roles, counts } = useAuth();
+  const { t } = useLanguage();
   const isAuthed = !!user;
   const isAdmin = isAdminProp ?? roles.includes("ADMIN");
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
@@ -214,80 +216,85 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   const computedItems = useMemo<BottomNavDescriptor[]>(() => {
     if (isAdmin) {
       return [
-        { key: "home", label: "Home", href: "/listings", icon: Home },
+        { key: "home", label: t("home"), href: "/listings", icon: Home },
         {
           key: "search",
-          label: "Search",
+          label: t("search"),
           icon: Search,
           onClick: () => setSearchOpen(true),
         },
-        { key: "pendings", label: "Pendings", href: "/pendings", icon: List },
+        {
+          key: "pendings",
+          label: t("pendings"),
+          href: "/pendings",
+          icon: List,
+        },
         {
           key: "create",
-          label: "Create",
+          label: t("create"),
           href: "/listings/create",
           icon: PlusCircle,
         },
         {
           key: "admin",
-          label: "Admin",
+          label: t("admin"),
           icon: LayoutDashboard,
           onClick: () => setAdminOpen(true),
         },
         {
           key: "notifications",
-          label: "Alerts",
+          label: t("alerts"),
           href: "/admin/notifications",
           icon: Bell,
         },
-        { key: "ads", label: "Ads", href: "/admin/ads", icon: Megaphone },
+        { key: "ads", label: t("ads"), href: "/admin/ads", icon: Megaphone },
       ];
     }
     if (!isAuthed) {
       return [
-        { key: "home", label: "Home", href: "/listings", icon: Home },
-        { key: "about", label: "About", href: "/about", icon: Info },
+        { key: "home", label: t("home"), href: "/listings", icon: Home },
+        { key: "about", label: t("about"), href: "/about", icon: Info },
         {
           key: "search",
-          label: "Search",
+          label: t("search"),
           icon: Search,
           onClick: () => setSearchOpen(true),
         },
-        { key: "contact", label: "Contact", href: "/contact", icon: Phone },
-        { key: "sign-in", label: "Sign In", href: "/sign-in", icon: LogIn },
+        { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
+        { key: "sign-in", label: t("signIn"), href: "/sign-in", icon: LogIn },
       ];
     }
     // Normal authed user (non-admin)
     return [
-      { key: "home", label: "Home", href: "/listings", icon: Home },
-      { key: "about", label: "About", href: "/about", icon: Info },
+      { key: "home", label: t("home"), href: "/listings", icon: Home },
+      { key: "about", label: t("about"), href: "/about", icon: Info },
       {
         key: "search",
-        label: "Search",
+        label: t("search"),
         icon: Search,
         onClick: () => setSearchOpen(true),
       },
       {
         key: "create",
-        label: "Create",
+        label: t("create"),
         href: "/listings/create",
         icon: PlusCircle,
       },
-      { key: "contact", label: "Contact", href: "/contact", icon: Phone },
+      { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
       {
         key: "user",
-        label: "You",
+        label: t("you"),
         icon: User2,
         onClick: () => setUserOpen(true),
       },
       {
         key: "notifications",
-        label: "Alerts",
+        label: t("alerts"),
         icon: Bell,
         onClick: () => setNotifOpen((v) => !v),
       },
     ];
-  }, [isAdmin, isAuthed]);
+  }, [isAdmin, isAuthed, t]);
 
   const onNavigate = useCallback(
     (href?: string, override?: () => void) => {
@@ -385,7 +392,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <BottomSheet
         open={adminOpen}
         onOpenChange={setAdminOpen}
-        title="Admin Hub"
+        title={t("adminHub")}
         snapPoints={[0.5, 0.8, 1]}
         initialSnap={0}
       >
@@ -395,62 +402,62 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="grid grid-cols-3 gap-4">
           <ActionTile
             icon={Layers3}
-            label="Listings"
+            label={t("listings")}
             onClick={() => onNavigate("/listings")}
           />
           <ActionTile
             icon={List}
-            label="Pendings"
+            label={t("pendings")}
             onClick={() => onNavigate("/pendings")}
           />
           <ActionTile
             icon={PlusCircle}
-            label="Create"
+            label={t("create")}
             onClick={() => onNavigate("/listings/create")}
           />
           <ActionTile
             icon={Megaphone}
-            label="Ads"
+            label={t("ads")}
             onClick={() => onNavigate("/admin/ads")}
           />
           <ActionTile
             icon={Layers}
-            label="Themes"
+            label={t("themes")}
             onClick={() => onNavigate("/settings/themes")}
           />
           <ActionTile
             icon={User2}
-            label="Profile"
+            label={t("profile")}
             onClick={() => onNavigate("/profile")}
           />
           <ActionTile
             icon={LayoutDashboard}
-            label="Dashboard"
+            label={t("dashboard")}
             onClick={() => onNavigate("/")}
           />
           <ActionTile
             icon={User}
-            label="User Management"
+            label={t("userManagement")}
             onClick={() => onNavigate("/admin/users")}
           />
           <ActionTile
             icon={List}
-            label="Audit"
+            label={t("audit")}
             onClick={() => onNavigate("/profile/audit-logs")}
           />
           <ActionTile
             icon={Info}
-            label="Feedbacks"
+            label={t("feedbacks")}
             onClick={() => onNavigate("/profile/feedbacks")}
           />
           <ActionTile
             icon={LayoutDashboard}
-            label="My Listings"
+            label={t("myListings")}
             onClick={() => onNavigate("/my-listings")}
           />
           <div className="flex flex-col gap-2 items-center justify-center">
             <ThemeToggle />
-            <span className="text-[10px] subtle">Theme</span>
+            <span className="text-[10px] subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
             <button
@@ -459,7 +466,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             >
               {density === "comfort" ? "Co" : "Cm"}
             </button>
-            <span className="text-[10px] subtle">Density</span>
+            <span className="text-[10px] subtle">{t("density")}</span>
           </div>
         </div>
         <ButtonRowLogout onDone={() => setAdminOpen(false)} />
@@ -469,7 +476,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <BottomSheet
         open={userOpen}
         onOpenChange={setUserOpen}
-        title="Quick Menu"
+        title={t("quickMenu")}
         snapPoints={[0.45, 0.75]}
       >
         <div className="pb-4">
@@ -478,32 +485,32 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="grid grid-cols-3 gap-4">
           <ActionTile
             icon={User2}
-            label="Profile"
+            label={t("profile")}
             onClick={() => onNavigate("/profile")}
           />
           <ActionTile
             icon={LayoutDashboard}
-            label="My Listings"
+            label={t("myListings")}
             onClick={() => onNavigate("/my-listings")}
           />
           <ActionTile
             icon={LayoutDashboard}
-            label="Approved"
+            label={t("approvedShort")}
             onClick={() => onNavigate("/profile/approved-listings")}
           />
           <ActionTile
             icon={List}
-            label="Audit"
+            label={t("audit")}
             onClick={() => onNavigate("/profile/audit-logs")}
           />
           <ActionTile
             icon={Info}
-            label="Feedbacks"
+            label={t("feedbacks")}
             onClick={() => onNavigate("/profile/feedbacks")}
           />
           <div className="flex flex-col gap-2 items-center justify-center">
             <ThemeToggle />
-            <span className="text-[10px] subtle">Theme</span>
+            <span className="text-[10px] subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
             <button
@@ -512,7 +519,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             >
               {density === "comfort" ? "Co" : "Cm"}
             </button>
-            <span className="text-[10px] subtle">Density</span>
+            <span className="text-[10px] subtle">{t("density")}</span>
           </div>
         </div>
         <ButtonRowLogout onDone={() => setUserOpen(false)} />
@@ -522,20 +529,18 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
       <BottomSheet
         open={searchOpen}
         onOpenChange={setSearchOpen}
-        title="Search"
+        title={t("search")}
         snapPoints={[1]}
         initialSnap={0}
       >
         <div className="flex flex-col h-full">
           <SearchBox
-            placeholder="Search listings..."
+            placeholder={t("searchListingsPlaceholder")}
             className="w-full flex-1 min-h-0"
             onSubmitClose={() => setSearchOpen(false)}
             mode="sheet"
           />
-          <p className="text-xs subtle mt-3 px-1">
-            Start typing to find listings, ads, and more.
-          </p>
+          <p className="text-xs subtle mt-3 px-1">{t("searchIntro")}</p>
         </div>
       </BottomSheet>
       {/* Edge swipe opener area (left 24px) */}
@@ -563,9 +568,12 @@ export default BottomNavigation;
 // Supporting small components (kept at bottom to avoid clutter)
 
 const AdminUserHeader: React.FC<{ user: any }> = ({ user }) => {
-  if (!user) return null;
+  const { t } = useLanguage();
+  if (!user) {
+    return null;
+  }
   const avatar = asset(user?.photo) || "/favicon.svg";
-  const name = user?.fullName || user?.name || user?.email || "You";
+  const name = user?.fullName || user?.name || user?.email || t("you");
   return (
     <div className="flex items-center gap-3 p-2 -mt-1">
       <div className="relative size-12 rounded-2xl overflow-hidden border border-[hsl(var(--border))]">
@@ -614,6 +622,7 @@ const ActionTile: React.FC<ActionTileProps> = ({
 );
 
 const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
+  const { t } = useLanguage();
   const handleLogout = async () => {
     try {
       await fetch("/api/logout", { method: "POST" });
@@ -640,7 +649,7 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
         className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-red-500/15 text-red-400 hover:bg-red-500/25 text-sm font-medium"
       >
         <LogOut className="size-4" />
-        Logout
+        {t("logout")}
       </button>
     </div>
   );

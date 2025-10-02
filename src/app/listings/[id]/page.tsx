@@ -31,6 +31,7 @@ import { useAuth } from "@/lib/use-auth";
 import { asset } from "@/lib/assets";
 import { setCachedToken } from "@/lib/axiosClient";
 import Image from "next/image";
+import { useLanguage } from "@/components/language-provider";
 
 export default function ListingDetailsPage() {
   return (
@@ -41,6 +42,7 @@ export default function ListingDetailsPage() {
 }
 
 function ListingDetailsContent() {
+  const { t } = useLanguage();
   const { id } = useParams<{ id: string }>();
   const {
     data: listing,
@@ -74,10 +76,10 @@ function ListingDetailsContent() {
           href="/listings"
           className="subtle inline-flex items-center gap-1"
         >
-          <ArrowLeft className="size-4" /> Back
+          <ArrowLeft className="size-4" /> {t("back")}
         </Link>
         <h1 className="heading-xl flex items-center gap-3">
-          {listing?.title ?? "Listing"}
+          {listing?.title ?? t("listing")}
           {avgRating > 0 && (
             <span className="inline-flex items-center gap-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-2 py-1 text-sm">
               <Stars count={Math.round(avgRating)} />
@@ -88,7 +90,7 @@ function ListingDetailsContent() {
           )}
         </h1>
       </div>
-      {isLoading && <p>Loading…</p>}
+      {isLoading && <p>{t("loading")}</p>}
       {error && (
         <p className="text-red-500">
           {String((error as any).message || error)}
@@ -138,28 +140,28 @@ function ListingDetailsContent() {
                 {listing?.createdAt && (
                   <InfoPill
                     icon={<Calendar className="size-3" />}
-                    label="Created"
+                    label={t("created")}
                     value={new Date(listing.createdAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.updatedAt && (
                   <InfoPill
                     icon={<Calendar className="size-3" />}
-                    label="Updated"
+                    label={t("updated") || "Updated"}
                     value={new Date(listing.updatedAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.approvedAt && (
                   <InfoPill
                     icon={<Calendar className="size-3" />}
-                    label="Approved"
+                    label={t("approvedAt") || "Approved"}
                     value={new Date(listing.approvedAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.expiresAt && (
                   <InfoPill
                     icon={<Calendar className="size-3" />}
-                    label="Expires"
+                    label={t("expires")}
                     value={new Date(listing.expiresAt).toLocaleDateString()}
                   />
                 )}
@@ -238,10 +240,11 @@ function InfoPill({
 
 function RepresentativesCard({ reps }: { reps: any[] }) {
   if (!Array.isArray(reps) || reps.length === 0) return null;
+  const { t } = useLanguage();
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <User className="size-4" /> Listing Representatives
+        <User className="size-4" /> {t("listingRepresentatives")}
       </h3>
       <div className="space-y-2">
         {reps.map((r, i) => {
@@ -266,10 +269,14 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
                       `Representative #${rep?.id ?? i + 1}`}
                   </div>
                   {rep?.region && (
-                    <div className="text-xs subtle">Region: {rep.region}</div>
+                    <div className="text-xs subtle">
+                      {t("region")}: {rep.region}
+                    </div>
                   )}
                   {phone && (
-                    <div className="text-xs subtle">WhatsApp: {phone}</div>
+                    <div className="text-xs subtle">
+                      {t("whatsApp")}: {phone}
+                    </div>
                   )}
                 </div>
               </div>
@@ -281,7 +288,7 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
                     rel="noreferrer"
                     className="inline-flex items-center gap-1"
                   >
-                    <MessageCircle className="size-4" /> Chat
+                    <MessageCircle className="size-4" /> {t("chat")}
                   </a>
                 </Button>
               )}
@@ -295,10 +302,11 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
 
 function SellerCard({ user }: { user?: any }) {
   if (!user) return null;
+  const { t } = useLanguage();
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <User className="size-4" /> Seller
+        <User className="size-4" /> {t("seller")}
       </h3>
       <div className="flex items-center gap-3">
         <div className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
@@ -319,11 +327,13 @@ function SellerCard({ user }: { user?: any }) {
           </div>
           <div className="text-xs subtle">ID: {user.id}</div>
           {user.contacts?.phone && (
-            <div className="text-xs subtle">Phone: {user.contacts.phone}</div>
+            <div className="text-xs subtle">
+              {t("phone")}: {user.contacts.phone}
+            </div>
           )}
           {user.contacts?.whatsapp && (
             <div className="text-xs subtle">
-              WhatsApp: {user.contacts.whatsapp}
+              {t("whatsApp")}: {user.contacts.whatsapp}
             </div>
           )}
         </div>
@@ -335,12 +345,12 @@ function SellerCard({ user }: { user?: any }) {
               href={`tel:${user.contacts.phone}`}
               className="inline-flex items-center gap-2 w-full justify-center"
             >
-              <Phone className="size-4" /> Call
+              <Phone className="size-4" /> {t("call")}
             </a>
           </Button>
         ) : (
           <Button size="sm" variant="primary" className="flex-1">
-            <Phone className="size-4" /> Contact
+            <Phone className="size-4" /> {t("contact")}
           </Button>
         )}
 
@@ -355,12 +365,12 @@ function SellerCard({ user }: { user?: any }) {
               rel="noreferrer"
               className="inline-flex items-center gap-2 w-full justify-center"
             >
-              <MessageCircle className="size-4" /> WhatsApp
+              <MessageCircle className="size-4" /> {t("whatsApp")}
             </a>
           </Button>
         ) : (
           <Button size="sm" variant="ghost" className="flex-1">
-            <MessageCircle className="size-4" /> Message
+            <MessageCircle className="size-4" /> {t("message")}
           </Button>
         )}
       </div>
@@ -369,6 +379,7 @@ function SellerCard({ user }: { user?: any }) {
 }
 
 function ActionsCard({ pageUrl }: { pageUrl: string }) {
+  const { t } = useLanguage();
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(pageUrl);
@@ -395,16 +406,16 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
           variant="secondary"
           className="w-full"
         >
-          <Share2 className="size-4" /> Share
+          <Share2 className="size-4" /> {t("shareText")}
         </Button>
         <Button onClick={copy} size="sm" variant="ghost" className="w-full">
-          <Copy className="size-4" /> Copy link
+          <Copy className="size-4" /> {t("copyLink")}
         </Button>
         <Button size="sm" variant="ghost" className="w-full">
-          <Heart className="size-4" /> Save
+          <Heart className="size-4" /> {t("save")}
         </Button>
         <Button size="sm" variant="ghost" className="w-full">
-          <Flag className="size-4" /> Report
+          <Flag className="size-4" /> {t("report") || "Report"}
         </Button>
       </div>
     </div>
@@ -458,10 +469,11 @@ function SocialsCard() {
 }
 
 function NewsletterCard() {
+  const { t } = useLanguage();
   return (
     <div className="card p-5 space-y-2">
-      <h3 className="font-semibold">Newsletter</h3>
-      <p className="text-xs subtle">Get product updates and curated content.</p>
+      <h3 className="font-semibold">{t("newsletter")}</h3>
+      <p className="text-xs subtle">{t("subscribeBlurb")}</p>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -475,11 +487,11 @@ function NewsletterCard() {
           name="email"
           type="email"
           required
-          placeholder="you@domain.com"
+          placeholder={t("emailPlaceholder")}
           className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
         />
         <Button type="submit" size="sm" variant="primary">
-          Subscribe
+          {t("subscribe")}
         </Button>
       </form>
     </div>
@@ -487,10 +499,11 @@ function NewsletterCard() {
 }
 
 function QRCard({ url }: { url: string }) {
+  const { t } = useLanguage();
   if (!url) return null;
   return (
     <div className="card p-5">
-      <h3 className="font-semibold">Scan & Visit</h3>
+      <h3 className="font-semibold">{t("scanVisit")}</h3>
       <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
         <QRCode value={url} className="h-auto w-full" />
       </div>

@@ -83,7 +83,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
   if (hideChrome) {
     return (
-      <main id="main-content" className="flex-1">
+      <main id="main-content" className="flex-1" dir="ltr">
         <PageTransition>{children}</PageTransition>
       </main>
     );
@@ -94,7 +94,11 @@ export function AppShell({ children }: PropsWithChildren) {
         <Sidebar />
         <div className="flex flex-col min-h-screen">
           <Navbar className="hidden md:block" />
-          <main id="main-content" className="flex-1 container-padded py-6">
+          <main
+            id="main-content"
+            className="flex-1 container-padded py-6"
+            dir="ltr"
+          >
             <PageTransition>{children}</PageTransition>
           </main>
         </div>
@@ -108,7 +112,11 @@ export function AppShell({ children }: PropsWithChildren) {
       <div className="hidden md:block">
         <Topbar />
       </div>
-      <main id="main-content" className="flex-1 container-padded py-6">
+      <main
+        id="main-content"
+        className="flex-1 container-padded py-6"
+        dir="ltr"
+      >
         <PageTransition>{children}</PageTransition>
       </main>
       <BottomNavigation />

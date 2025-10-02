@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Box, Home, Tag } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 import { useApiGet } from "@/lib/api-hooks";
 import { cn } from "@/lib/cn";
 
@@ -16,6 +17,7 @@ function setParam(params: URLSearchParams, key: string, value?: string | null) {
 }
 
 export function FiltersBar() {
+  const { t } = useLanguage();
   const search = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -73,13 +75,13 @@ export function FiltersBar() {
 
   return (
     <div className="flex flex-wrap items-center gap-2">
-      <div className="mr-2 font-medium text-sm">Type:</div>
-      {chip("All", type === "", () => onType(""), "type", Home)}
-      {chip("Rent", type === "RENT", () => onType("RENT"), "type", Home)}
-      {chip("Sale", type === "SALE", () => onType("SALE"), "type", Tag)}
+      <div className="mr-2 font-medium text-sm">{t("typeLabel")}</div>
+      {chip(t("all"), type === "", () => onType(""), "type", Home)}
+      {chip(t("rent"), type === "RENT", () => onType("RENT"), "type", Home)}
+      {chip(t("sale"), type === "SALE", () => onType("SALE"), "type", Tag)}
       <div className="mx-3 h-6 w-px bg-white/10" />
-      <div className="mr-2 font-medium text-sm">Category:</div>
-      {chip("All", categoryId === "", () => onCategory(""), "category", Box)}
+      <div className="mr-2 font-medium text-sm">{t("categoryLabel")}</div>
+      {chip(t("all"), categoryId === "", () => onCategory(""), "category", Box)}
       {cats.map((c) =>
         chip(
           c.name,

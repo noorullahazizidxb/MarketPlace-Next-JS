@@ -5,6 +5,8 @@ import { SearchBox } from "@/components/search-box";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useUIStore } from "@/store/ui.store";
+import { LanguageDropdown } from "@/components/language-dropdown";
+import { useLanguage } from "@/components/language-provider";
 
 export function Navbar({ className = "" }: { className?: string }) {
   const mobileOpen = useUIStore((s) => s.mobileMenuOpen);
@@ -12,10 +14,14 @@ export function Navbar({ className = "" }: { className?: string }) {
   const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
   const { roles } = useAuth();
   const canSeeMobileSidebar = roles.includes("ADMIN");
+  const { t, locale } = useLanguage();
 
   return (
     <>
-      <header className={`app-navbar ${className}`}>
+      <header
+        className={`app-navbar ${className}`}
+        dir={locale === "fa" ? "rtl" : "ltr"}
+      >
         <div className="container-padded h-16 grid grid-cols-[1fr_auto] items-center gap-2">
           <div className="flex items-center gap-3">
             <button
@@ -28,12 +34,13 @@ export function Navbar({ className = "" }: { className?: string }) {
             <div className="size-8 rounded-xl glass hidden sm:flex items-center justify-center font-bold">
               M
             </div>
-            <span className="font-semibold">Marketplace</span>
+            <span className="font-semibold">{t("marketplace")}</span>
           </div>
           <div className="flex items-center justify-end gap-3">
             <div className="hidden md:flex items-center gap-2">
-              <SearchBox placeholder="Search" />
+              <SearchBox placeholder={t("search")} />
             </div>
+            <LanguageDropdown className="hidden sm:inline-flex" />
             <ThemeToggle />
           </div>
         </div>

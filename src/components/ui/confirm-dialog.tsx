@@ -3,6 +3,7 @@ import * as React from "react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { X } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -31,6 +32,7 @@ export function ConfirmDialog({
   onConfirm,
   onCancel,
 }: ConfirmDialogProps) {
+  const { t } = useLanguage();
   const [submitting, setSubmitting] = React.useState(false);
   const handleConfirm = async () => {
     if (submitting) return;
@@ -80,7 +82,7 @@ export function ConfirmDialog({
                 close();
               }}
             >
-              {cancelLabel}
+              {cancelLabel || t("cancel")}
             </Button>
           </DialogClose>
           <Button
@@ -93,7 +95,9 @@ export function ConfirmDialog({
                 : undefined
             }
           >
-            {loading || submitting ? "Please wait" : confirmLabel}
+            {loading || submitting
+              ? t("pleaseWait")
+              : confirmLabel || t("confirm")}
           </Button>
         </div>
       </DialogContent>

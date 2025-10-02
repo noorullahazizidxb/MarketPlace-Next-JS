@@ -1,8 +1,11 @@
 "use client";
 
 import { useState } from "react";
+import { useLanguage } from "@/components/language-provider";
 
 export default function ContactForm() {
+  const { t } = useLanguage();
+  const { isRtl } = useLanguage();
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -15,22 +18,25 @@ export default function ContactForm() {
       // Mock API delay
       await new Promise((r) => setTimeout(r, 900));
       setStatus("success");
-      setMessage("Thanks! Your message has been sent.");
+      setMessage(t("sendMessageSuccess"));
     } catch (e) {
       setStatus("error");
-      setMessage("Something went wrong. Please try again.");
+      setMessage(t("sendMessageError"));
     }
   }
 
   return (
-    <section className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-12">
+    <section
+      dir={isRtl ? "rtl" : "ltr"}
+      className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-12"
+    >
       <form
         className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-4"
         action={onSubmit}
       >
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm mb-1">Full Name</label>
+            <label className="block text-sm mb-1">{t("fullName")}</label>
             <input
               required
               name="name"
@@ -40,7 +46,7 @@ export default function ContactForm() {
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">Email Address</label>
+            <label className="block text-sm mb-1">{t("emailAddress")}</label>
             <input
               required
               name="email"
@@ -52,7 +58,7 @@ export default function ContactForm() {
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm mb-1">Subject</label>
+            <label className="block text-sm mb-1">{t("subject")}</label>
             <select
               name="subject"
               required
@@ -61,16 +67,16 @@ export default function ContactForm() {
               aria-label="Subject"
             >
               <option value="" disabled>
-                Choose a subject
+                {t("chooseSubject")}
               </option>
-              <option>General Question</option>
-              <option>Listing Support</option>
-              <option>Account Issue</option>
-              <option>Partnership Inquiry</option>
+              <option>{t("generalQuestion")}</option>
+              <option>{t("listingSupport")}</option>
+              <option>{t("accountIssue")}</option>
+              <option>{t("partnershipInquiry")}</option>
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-1">Phone (optional)</label>
+            <label className="block text-sm mb-1">{t("phoneOptional")}</label>
             <input
               name="phone"
               type="tel"
@@ -80,12 +86,12 @@ export default function ContactForm() {
           </div>
         </div>
         <div>
-          <label className="block text-sm mb-1">Message</label>
+          <label className="block text-sm mb-1">{t("message")}</label>
           <textarea
             required
             name="message"
             rows={5}
-            placeholder="Tell us how we can help…"
+            placeholder={t("messagePlaceholder")}
             className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
           />
         </div>
@@ -103,7 +109,7 @@ export default function ContactForm() {
             disabled={status === "loading"}
             className="inline-flex items-center rounded-xl bg-[hsl(var(--primary))] px-5 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow-sm transition hover:bg-[hsl(var(--primary))]/90 disabled:opacity-60"
           >
-            {status === "loading" ? "Sending…" : "Send Message"}
+            {status === "loading" ? t("sending") : t("sendMessage")}
           </button>
         </div>
       </form>

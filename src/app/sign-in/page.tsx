@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Mail, Lock, LogIn } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { Input } from "@/components/ui/input";
@@ -16,6 +17,7 @@ import { useListingsStore } from "@/store/listings.store";
 type FormData = { email: string; password: string };
 
 export default function SignInPage() {
+  const { t, isRtl } = useLanguage();
   const [error, setError] = useState<string | null>(null);
   const { register, handleSubmit } = useForm<FormData>();
   const { user } = useAuth();
@@ -87,7 +89,10 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen grid place-items-center p-6 bg-[hsl(var(--background))]">
+    <div
+      dir={isRtl ? "rtl" : "ltr"}
+      className="min-h-screen grid place-items-center p-6 bg-[hsl(var(--background))]"
+    >
       <div className="w-full max-w-xl rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/60 p-8 shadow-2xl">
         <div className="grid md:grid-cols-2 gap-6 items-center">
           <div className="hidden md:flex flex-col justify-center items-start gap-4">
@@ -95,26 +100,21 @@ export default function SignInPage() {
               M
             </div>
             <div>
-              <h2 className="heading-xl">Welcome back</h2>
-              <p className="subtle mt-1">Sign in to your Marketplace account</p>
+              <h2 className="heading-xl">{t("welcomeBack")}</h2>
+              <p className="subtle mt-1">{t("signInHeroSubtitle")}</p>
             </div>
-            <p className="text-sm subtle">
-              Use your account to manage listings, messages, and settings.
-              Beautifully themed and animated.
-            </p>
+            <p className="text-sm subtle">{t("signInHeroDescription")}</p>
           </div>
 
           <div>
-            <h1 className="heading-lg mb-2">Sign In</h1>
-            <p className="subtle text-sm mb-6">
-              Enter your credentials to continue
-            </p>
+            <h1 className="heading-lg mb-2">{t("signInTitle")}</h1>
+            <p className="subtle text-sm mb-6">{t("signInSubtitle")}</p>
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <label className="block text-sm">
                 <div className="flex items-center gap-3 mb-2">
                   <Mail className="size-4 text-foreground/70" />
-                  <span className="text-sm">Email</span>
+                  <span className="text-sm">{t("email")}</span>
                 </div>
                 <Input
                   {...register("email")}
@@ -127,7 +127,7 @@ export default function SignInPage() {
               <label className="block text-sm">
                 <div className="flex items-center gap-3 mb-2">
                   <Lock className="size-4 text-foreground/70" />
-                  <span className="text-sm">Password</span>
+                  <span className="text-sm">{t("password")}</span>
                 </div>
                 <Input
                   {...register("password")}
@@ -142,13 +142,13 @@ export default function SignInPage() {
               <div className="flex items-center justify-between">
                 <label className="inline-flex items-center gap-2 text-sm">
                   <input type="checkbox" className="rounded-md" />
-                  Remember me
+                  {t("rememberMe")}
                 </label>
                 <Link
                   href="#"
                   className="text-sm text-[hsl(var(--accent))] hover:underline"
                 >
-                  Forgot?
+                  {t("forgot")}
                 </Link>
               </div>
 
@@ -159,7 +159,7 @@ export default function SignInPage() {
                   className="flex-1 flex items-center justify-center gap-2"
                 >
                   <LogIn className="size-4" />
-                  Sign In
+                  {t("signIn")}
                 </Button>
                 <Button
                   asChild
@@ -167,7 +167,7 @@ export default function SignInPage() {
                   className="hidden md:inline-flex"
                 >
                   <Link href="/sign-up" className="flex items-center gap-2">
-                    Create account
+                    {t("createAccount")}
                   </Link>
                 </Button>
               </div>

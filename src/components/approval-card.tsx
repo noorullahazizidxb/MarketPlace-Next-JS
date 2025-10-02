@@ -9,6 +9,7 @@ import { asset } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X } from "lucide-react";
+import { useLanguage } from "@/components/language-provider";
 
 type ContactVisibility = "HIDE_SELLER" | "SHOW_SELLER" | "MASKED";
 
@@ -23,6 +24,7 @@ export function ApprovalCard({
   onApproved,
   onRejected,
 }: ApprovalCardProps) {
+  const { t } = useLanguage();
   const [open, setOpen] = useState(false);
   const [contactVisibility, setContactVisibility] = useState<ContactVisibility>(
     listing?.contactVisibility || "HIDE_SELLER"
@@ -93,10 +95,10 @@ export function ApprovalCard({
         <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="text-base font-semibold line-clamp-1">
-              {listing?.title || "Untitled"}
+              {listing?.title || t("untitled")}
             </h3>
             <p className="text-sm subtle line-clamp-2">
-              {listing?.description || "No description provided."}
+              {listing?.description || t("noDescriptionProvided")}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs">
               <span className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]">
@@ -117,19 +119,19 @@ export function ApprovalCard({
                   title="Expires"
                   className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]"
                 >
-                  Expires {expiresAt.toLocaleDateString()}
+                  {t("expires")} {expiresAt.toLocaleDateString()}
                 </span>
               )}
             </div>
           </div>
           <button onClick={() => setOpen(true)} className="link text-sm">
-            View
+            {t("view")}
           </button>
         </div>
 
         <div className="flex items-center justify-between gap-3">
           <div className="text-xs subtle">
-            {createdAt ? `Created ${createdAt.toLocaleString()}` : null}
+            {createdAt ? `${t("created")} ${createdAt.toLocaleString()}` : null}
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
             <div className="min-w-[120px] sm:min-w-[160px]">
@@ -141,9 +143,9 @@ export function ApprovalCard({
                 }
                 className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full max-w-[220px]"
               >
-                <option value="HIDE_SELLER">Hide Seller</option>
-                <option value="SHOW_SELLER">Show Seller</option>
-                <option value="MASKED">Masked</option>
+                <option value="HIDE_SELLER">{t("hideSeller")}</option>
+                <option value="SHOW_SELLER">{t("showSeller")}</option>
+                <option value="MASKED">{t("masked")}</option>
               </select>
             </div>
             <Button
@@ -155,7 +157,7 @@ export function ApprovalCard({
               }}
               variant="primary"
             >
-              Approve
+              {t("approve")}
             </Button>
             <Button
               size="sm"
@@ -166,7 +168,7 @@ export function ApprovalCard({
               }}
               variant="accent"
             >
-              Reject
+              {t("reject")}
             </Button>
           </div>
         </div>
@@ -217,43 +219,43 @@ export function ApprovalCard({
                 )}
               </div>
               <Button className="ml-auto" onClick={() => setOpen(false)}>
-                Close
+                {t("closeDialog")}
               </Button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
-                <div className="text-sm font-medium">Listing Details</div>
+                <div className="text-sm font-medium">{t("listingDetails")}</div>
                 <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
-                  <span className="subtle">ID</span>
+                  <span className="subtle">{t("id")}</span>
                   <span className="truncate">{listing?.id}</span>
-                  <span className="subtle">Type</span>
+                  <span className="subtle">{t("type")}</span>
                   <span>{listing?.listingType || "-"}</span>
-                  <span className="subtle">Status</span>
+                  <span className="subtle">{t("status")}</span>
                   <span>{status}</span>
-                  <span className="subtle">Price</span>
+                  <span className="subtle">{t("price")}</span>
                   <span>{priceTag}</span>
-                  <span className="subtle">Visibility</span>
+                  <span className="subtle">{t("visibility")}</span>
                   <span>{contactVisibility}</span>
-                  <span className="subtle">Location</span>
+                  <span className="subtle">{t("location")}</span>
                   <span>{listing?.location || "-"}</span>
-                  <span className="subtle">Category</span>
+                  <span className="subtle">{t("category")}</span>
                   <span>{listing?.category?.name || "-"}</span>
-                  <span className="subtle">Created</span>
+                  <span className="subtle">{t("created")}</span>
                   <span>{createdAt ? createdAt.toLocaleString() : "-"}</span>
-                  <span className="subtle">Expires</span>
+                  <span className="subtle">{t("expires")}</span>
                   <span>{expiresAt ? expiresAt.toLocaleString() : "-"}</span>
-                  <span className="subtle">Approved At</span>
+                  <span className="subtle">{t("approvedAt")}</span>
                   <span>
                     {listing?.approvedAt
                       ? new Date(listing.approvedAt).toLocaleString()
                       : "-"}
                   </span>
-                  <span className="subtle">Approved By</span>
+                  <span className="subtle">{t("approvedBy")}</span>
                   <span>{listing?.approvedById || "-"}</span>
                 </div>
                 <div className="text-sm subtle whitespace-pre-wrap mt-2">
-                  {listing?.description || "No description."}
+                  {listing?.description || t("noDescription")}
                 </div>
               </div>
 

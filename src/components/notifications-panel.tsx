@@ -15,6 +15,7 @@ import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { api } from "@/lib/axiosClient";
+import { useLanguage } from "@/components/language-provider";
 
 type Recipient = {
   id: number;
@@ -83,6 +84,7 @@ export function NotificationsPanel({
   onMarkAllRead,
   anchor = "top-right",
 }: NotificationsPanelProps) {
+  const { t } = useLanguage();
   const getMessage = (n: any): string | null => {
     const direct =
       n?.message ??
@@ -329,8 +331,12 @@ export function NotificationsPanel({
                     <Bell className="size-4" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold">Notifications</div>
-                    <div className="text-xs subtle">{unreadCount} unread</div>
+                    <div className="text-sm font-semibold">
+                      {t("notifications")}
+                    </div>
+                    <div className="text-xs subtle">
+                      {unreadCount} {t("unread")}
+                    </div>
                   </div>
                 </div>
                 {unreadCount > 0 && (
@@ -338,21 +344,21 @@ export function NotificationsPanel({
                     onClick={markAll}
                     className="px-3 h-9 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/30 text-sm"
                   >
-                    Mark all as read
+                    {t("markAllAsRead")}
                   </button>
                 )}
               </div>
 
               <div className="max-h-[60vh] overflow-y-auto p-2">
                 {isLoading ? (
-                  <div className="p-4 subtle text-sm">Loading…</div>
+                  <div className="p-4 subtle text-sm">{t("loading")}</div>
                 ) : error ? (
                   <div className="p-4 text-sm text-red-500">
                     {String((error as any)?.message || error)}
                   </div>
                 ) : displayList.length === 0 ? (
                   <div className="p-6 text-center subtle text-sm">
-                    No notifications
+                    {t("noNotifications")}
                   </div>
                 ) : (
                   <ul className="space-y-4">
@@ -361,7 +367,15 @@ export function NotificationsPanel({
                       return (
                         <li key={g} className="space-y-2">
                           <div className="px-2 text-[10px] font-semibold tracking-wide uppercase text-foreground/60">
-                            {g}
+                            {g === "Today"
+                              ? t("today")
+                              : g === "Yesterday"
+                              ? t("yesterday")
+                              : g === "This Week"
+                              ? t("thisWeek")
+                              : g === "Earlier"
+                              ? t("earlier")
+                              : g}
                           </div>
                           {grouped[g].map(({ n, unread }) => {
                             const Icon = channelIcon(n.channel);
@@ -392,7 +406,7 @@ export function NotificationsPanel({
                                 >
                                   <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[hsl(var(--accent))/0.12] opacity-0 group-active:opacity-100 pointer-events-none">
                                     <span className="text-[10px] font-semibold text-[hsl(var(--accent))] rotate-6">
-                                      SWIPE
+                                      {t("swipe")}
                                     </span>
                                   </div>
                                   <div className="flex items-start gap-3">
@@ -410,7 +424,8 @@ export function NotificationsPanel({
                                       <div className="flex items-start justify-between gap-3">
                                         <div>
                                           <div className="text-sm font-semibold line-clamp-1">
-                                            {n.title || "Notification"}
+                                            {n.title ||
+                                              t("notificationSingular")}
                                           </div>
                                           {(() => {
                                             const msg = getMessage(n as any);
@@ -432,12 +447,12 @@ export function NotificationsPanel({
                                             className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
                                           >
                                             <CheckCircle2 className="size-4" />
-                                            Mark as read
+                                            {t("markAsRead")}
                                           </button>
                                         ) : (
                                           <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
                                             <CheckCircle2 className="size-4" />
-                                            Read
+                                            {t("read")}
                                           </span>
                                         )}
                                       </div>

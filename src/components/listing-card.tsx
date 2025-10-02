@@ -19,6 +19,7 @@ import { ImageSlider } from "@/components/image-slider";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom"; // legacy; will remove after dialog refactor if unused
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { useLanguage } from "@/components/language-provider";
 
 type ListingImage = { url: string; alt?: string | null };
 type Representative = {
@@ -54,6 +55,7 @@ export type Listing = {
 };
 
 export function ListingCard({ listing }: { listing: Listing }) {
+  const { t } = useLanguage();
   const [contactOpen, setContactOpen] = useState(false);
   const [repOpen, setRepOpen] = useState(false);
   const [mounted, setMounted] = useState(false);
@@ -140,11 +142,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
               onClick={() => setContactOpen(true)}
               className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm"
             >
-              <Phone className="size-3" /> Seller
+              <Phone className="size-3" /> {t("seller")}
             </span>
           ) : (
             <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-              <ShieldCheck className="size-3" /> Promoted
+              <ShieldCheck className="size-3" /> {t("promoted")}
             </span>
           )}
         </div>
@@ -184,12 +186,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
                 onClick={() => setContactOpen(true)}
                 className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
               >
-                Contact seller
+                {t("contactSeller")}
               </button>
               <Dialog open={contactOpen} onOpenChange={setContactOpen}>
                 <DialogContent className="max-w-sm p-5">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">Contact Seller</h3>
+                    <h3 className="text-lg font-semibold">
+                      {t("contactSellerTitle")}
+                    </h3>
                     <DialogClose asChild>
                       <button
                         aria-label="Close"
@@ -200,7 +204,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                     </DialogClose>
                   </div>
                   <p className="subtle mb-4 text-sm">
-                    Choose how you'd like to contact the seller
+                    {t("contactSellerSubtitle")}
                   </p>
                   <div className="flex flex-col gap-2">
                     {listing.user?.contacts?.phone && (
@@ -209,7 +213,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                         className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-amber-400 text-[hsl(var(--foreground))] border border-[hsl(var(--border))] hover:ring-2 ring-[hsl(var(--accent))]/40 transition-all"
                         onClick={() => setContactOpen(false)}
                       >
-                        <Phone className="size-4" /> Call{" "}
+                        <Phone className="size-4" /> {t("call")}{" "}
                         {listing.user.contacts.phone}
                       </a>
                     )}
@@ -223,13 +227,13 @@ export function ListingCard({ listing }: { listing: Listing }) {
                         className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-400 border border-border text-[hsl(var(--accent-foreground, var(--foreground)))] hover:shadow-lg hover:-translate-y-0.5 transition-all"
                         onClick={() => setContactOpen(false)}
                       >
-                        <Phone className="size-4" /> WhatsApp{" "}
+                        <Phone className="size-4" /> {t("whatsApp")}{" "}
                         {listing.user.contacts.whatsapp}
                       </a>
                     )}
                     <DialogClose asChild>
                       <button className="mt-2 text-sm inline-flex items-center justify-center bg-[hsl(var(--accent))] gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all">
-                        Close
+                        {t("close")}
                       </button>
                     </DialogClose>
                   </div>
@@ -242,12 +246,14 @@ export function ListingCard({ listing }: { listing: Listing }) {
                 onClick={() => setRepOpen(true)}
                 className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
               >
-                Choose representative
+                {t("chooseRepresentative")}
               </button>
               <Dialog open={repOpen} onOpenChange={setRepOpen}>
                 <DialogContent className="max-w-md p-5">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">Representatives</h3>
+                    <h3 className="text-lg font-semibold">
+                      {t("representatives")}
+                    </h3>
                     <DialogClose asChild>
                       <button
                         aria-label="Close"
@@ -258,7 +264,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                     </DialogClose>
                   </div>
                   <p className="subtle mb-4 text-sm">
-                    Choose a local representative to contact via WhatsApp
+                    {t("representativesSubtitle")}
                   </p>
                   <div className="flex flex-col gap-3 max-h-[50vh] overflow-y-auto pr-1">
                     {Array.isArray(listing.representatives) &&
@@ -274,7 +280,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                           >
                             <div>
                               <div className="font-medium">
-                                {rep?.region ?? "Unknown"}
+                                {rep?.region ?? t("unknown")}
                               </div>
                               {phone && (
                                 <div className="text-xs subtle">{phone}</div>
@@ -290,29 +296,27 @@ export function ListingCard({ listing }: { listing: Listing }) {
                                 rel="noreferrer"
                                 className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500 text-white hover:shadow-lg"
                               >
-                                WhatsApp
+                                {t("whatsApp")}
                               </a>
                             ) : (
                               <button
                                 className="px-3 py-1 rounded-lg bg-gray-300 text-gray-700"
                                 disabled
                               >
-                                No contact
+                                {t("noContact")}
                               </button>
                             )}
                           </div>
                         );
                       })
                     ) : (
-                      <p className="text-sm">
-                        No representatives available for this listing.
-                      </p>
+                      <p className="text-sm">{t("noRepresentatives")}</p>
                     )}
                   </div>
                   <div className="mt-4">
                     <DialogClose asChild>
                       <button className="w-full px-4 py-2 rounded-lg bg-[hsl(var(--accent))] text-white">
-                        Close
+                        {t("close")}
                       </button>
                     </DialogClose>
                   </div>
@@ -324,7 +328,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
             href={`/listings/${listing.id}`}
             className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
           >
-            Details <ArrowRight className="size-4" />
+            {t("details")} <ArrowRight className="size-4" />
           </Link>
         </div>
       </div>

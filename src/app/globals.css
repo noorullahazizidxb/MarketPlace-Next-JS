@@ -2,6 +2,27 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Local font faces */
+@font-face { font-family: 'Popppins'; src: url('../english_font/Poppins-Regular.woff2') format('woff2'); font-display: swap; }
+@font-face { font-family: 'Coolvetica'; src: url('../english_font/Coolvetica\ Rg.otf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Yekan'; src: url('../persian_font/Yekan.woff2') format('woff2'), url('../persian_font/Yekan.woff') format('woff'); font-display: swap; }
+@font-face { font-family: 'HSDream'; src: url('../persian_font/HSDreamRegular.woff2') format('woff2'), url('../persian_font/HSDreamRegular.woff') format('woff'); font-display: swap; }
+
+/* English (default) fonts */
+html[lang="en"] body { font-family: 'Popppins', var(--font-family, ui-sans-serif, system-ui); }
+html[lang="en"] h1, html[lang="en"] h2, html[lang="en"] h3, html[lang="en"] h4, html[lang="en"] h5, html[lang="en"] h6,
+html[lang="en"] .heading-xl, html[lang="en"] .heading-2xl, html[lang="en"] .heading-lg, html[lang="en"] .heading-md, html[lang="en"] .heading-sm {
+  font-family: 'SuperKindly', 'Popppins', sans-serif;
+}
+
+/* Dari (fa) fonts + RTL */
+html[lang="fa"] { direction: rtl; }
+html[lang="fa"] body { font-family: 'Yekan', 'Vazirmatn', sans-serif; }
+html[lang="fa"] h1, html[lang="fa"] h2, html[lang="fa"] h3, html[lang="fa"] h4, html[lang="fa"] h5, html[lang="fa"] h6,
+html[lang="fa"] .heading-xl, html[lang="fa"] .heading-2xl, html[lang="fa"] .heading-lg, html[lang="fa"] .heading-md, html[lang="fa"] .heading-sm {
+  font-family: 'HSDream', 'Yekan', sans-serif;
+}
+
 :root {
   /* Default LIGHT prefixed tokens (local neon fallback) */
   --light-background: 195 100% 98%;   /* very pale cyan */

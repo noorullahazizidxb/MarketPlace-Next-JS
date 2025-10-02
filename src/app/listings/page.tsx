@@ -14,19 +14,23 @@ import { FiltersBar } from "@/components/filters-bar";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
+import { useLanguage } from "@/components/language-provider";
 
 export default function ListingsPage() {
   return (
-    <Suspense
-      fallback={
-        <div className="space-y-4">
-          <h2 className="heading-xl">Listings</h2>
-          <div className="card p-4">Loading…</div>
-        </div>
-      }
-    >
+    <Suspense fallback={<ListingsFallback />}>
       <ListingsContent />
     </Suspense>
+  );
+}
+
+function ListingsFallback() {
+  const { t } = useLanguage();
+  return (
+    <div className="space-y-4">
+      <h2 className="heading-xl">{t("listings")}</h2>
+      <div className="card p-4">{t("loading")}</div>
+    </div>
   );
 }
 
@@ -73,6 +77,7 @@ function usePullToRefresh(onRefresh: () => void) {
 }
 
 function ListingsContent() {
+  const { t } = useLanguage();
   const search = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -134,18 +139,46 @@ function ListingsContent() {
 
   return (
     <div className="space-y-4" ref={ptrRef}>
-      <div
-        className="sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden"
-        style={{
-          height: pulling ? distance : 0,
-          transition: pulling ? "none" : "height .3s ease",
-        }}
-      >
-        <div className="text-[10px] tracking-wide font-medium text-foreground/60">
-          {distance > 75 ? "Release to refresh" : "Pull to refresh"}
-        </div>
-        <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-fuchsia-500/40 to-cyan-400/40" />
-      </div>
+      {(() => {
+        // Map dynamic distance to a discrete height class to avoid inline style lint issue
+        const h = pulling ? Math.round(distance / 10) * 10 : 0; // nearest 10
+        const heightClass =
+          h >= 110
+            ? "h-[110px]"
+            : h >= 100
+            ? "h-[100px]"
+            : h >= 90
+            ? "h-[90px]"
+            : h >= 80
+            ? "h-[80px]"
+            : h >= 70
+            ? "h-[70px]"
+            : h >= 60
+            ? "h-[60px]"
+            : h >= 50
+            ? "h-[50px]"
+            : h >= 40
+            ? "h-[40px]"
+            : h >= 30
+            ? "h-[30px]"
+            : h >= 20
+            ? "h-[20px]"
+            : h >= 10
+            ? "h-[10px]"
+            : "h-0";
+        return (
+          <div
+            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${
+              pulling ? "" : "transition-[height] duration-300 ease-in-out"
+            }`}
+          >
+            <div className="text-[10px] tracking-wide font-medium text-foreground/60">
+              {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
+            </div>
+            <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-fuchsia-500/40 to-cyan-400/40" />
+          </div>
+        );
+      })()}
       <div className="card p-4 space-y-3">
         <FiltersBar />
         {isLoading && (
@@ -175,7 +208,7 @@ function ListingsContent() {
         {!isLoading &&
           !error &&
           (items.length === 0 ? (
-            <p>No listings found.</p>
+            <p>{t("noListingsFound")}</p>
           ) : (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
@@ -207,6 +240,7 @@ function ListingsContent() {
 // (AdPlaceholder moved to shared component)
 
 function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
+  const { t } = useLanguage();
   const search = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
@@ -232,7 +266,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
         className="px-3 h-9 rounded-xl glass hover:ring-1 ring-white/20 disabled:opacity-50"
         disabled={page <= 1}
       >
-        Prev
+        {t("prev")}
       </button>
       <div className="flex items-center gap-1">
         {visible.map((p, idx) => {
@@ -263,7 +297,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
         className="px-3 h-9 rounded-xl glass hover:ring-1 ring-white/20 disabled:opacity-50"
         disabled={page >= pageCount}
       >
-        Next
+        {t("next")}
       </button>
     </div>
   );

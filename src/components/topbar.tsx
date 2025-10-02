@@ -30,10 +30,13 @@ import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { NotificationsPanel } from "@/components/notifications-panel";
 import { asset } from "@/lib/assets";
+import { LanguageDropdown } from "@/components/language-dropdown";
+import { useLanguage } from "@/components/language-provider";
 
 export function Topbar() {
   const { user, counts, roles } = useAuth();
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
+  const { t, locale } = useLanguage();
   const [notifOpen, setNotifOpen] = useState(false);
   useNotificationsRealtime(!!user);
   const [open, setOpen] = useState(false);
@@ -49,15 +52,15 @@ export function Topbar() {
   const isActive = (href: string) => (pathname || "").startsWith(href);
   const mobileMenuItems = useMemo(() => {
     const items = [
-      { href: "/listings", label: "Home", Icon: Home },
-      { href: "/about", label: "About", Icon: Info },
-      { href: "/contact", label: "Contact", Icon: Phone },
+      { href: "/listings", label: t("home"), Icon: Home },
+      { href: "/about", label: t("about"), Icon: Info },
+      { href: "/contact", label: t("contact"), Icon: Phone },
     ];
     if (!user) {
       items.push({ href: "/sign-in", label: "Sign In", Icon: LogIn });
     }
     return items;
-  }, [user]);
+  }, [user, t]);
 
   return (
     <>
@@ -66,6 +69,7 @@ export function Topbar() {
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
         className="app-navbar fixed top-1  left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
+        dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="relative  overflow-visible">
           <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
@@ -82,7 +86,7 @@ export function Topbar() {
                   <Stars className="size-5" />
                 </div>
                 <span className="font-semibold tracking-tight">
-                  Marketplace
+                  {t("marketplace")}
                 </span>
               </motion.div>
               <nav className="hidden sm:flex items-center justify-center gap-5">
@@ -95,7 +99,7 @@ export function Topbar() {
                     className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                   >
                     <Home className="size-4" />
-                    <span>Home</span>
+                    <span>{t("home")}</span>
                     {isActive("/listings") && (
                       <motion.span
                         layoutId="top-underline"
@@ -113,7 +117,7 @@ export function Topbar() {
                     className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                   >
                     <Info className="size-4" />
-                    <span>About</span>
+                    <span>{t("about")}</span>
                     {isActive("/about") && (
                       <motion.span
                         layoutId="top-underline"
@@ -131,7 +135,7 @@ export function Topbar() {
                     className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                   >
                     <Phone className="size-4" />
-                    <span>Contact</span>
+                    <span>{t("contact")}</span>
                     {isActive("/contact") && (
                       <motion.span
                         layoutId="top-underline"
@@ -144,8 +148,9 @@ export function Topbar() {
               </nav>
 
               <div className="flex items-center justify-end gap-2 pr-12 sm:pr-2">
+                <LanguageDropdown className="sm:hidden inline-flex" />
                 <div className="flex items-center gap-2 sm:hidden">
-                  <SearchBox className="w-full" placeholder="Search" />
+                  <SearchBox className="w-full" placeholder={t("search")} />
                 </div>
                 {/* Notifications */}
                 {user && (
@@ -177,7 +182,7 @@ export function Topbar() {
                   </>
                 )}
                 <div className="hidden md:flex items-center gap-2">
-                  <SearchBox placeholder="Search" />
+                  <SearchBox placeholder={t("search")} />
                 </div>
                 {user ? (
                   <div className="relative">
@@ -237,14 +242,14 @@ export function Topbar() {
                             className="flex items-center gap-3 px-3 h-11 rounded-xl "
                           >
                             <User2 className="size-4" />
-                            <span className="text-sm">Profile</span>
+                            <span className="text-sm">{t("profile")}</span>
                           </Link>
                           <Link
                             href="/my-listings"
                             className="flex items-center gap-3 px-3 h-11 rounded-xl "
                           >
                             <LayoutGrid className="size-4" />
-                            <span className="text-sm">My listings</span>
+                            <span className="text-sm">{t("myListings")}</span>
                             {!!counts?.listings && (
                               <span className="ml-auto text-xs px-2 py-0.5 rounded bg-white/10">
                                 {counts.listings}
@@ -256,21 +261,23 @@ export function Topbar() {
                             className="flex items-center gap-3 px-3 h-11 rounded-xl "
                           >
                             <LayoutGrid className="size-4" />
-                            <span className="text-sm">Approved Listings</span>
+                            <span className="text-sm">
+                              {t("approvedListings")}
+                            </span>
                           </Link>
                           <Link
                             href="/profile/audit-logs"
                             className="flex items-center gap-3 px-3 h-11 rounded-xl "
                           >
                             <List className="size-4" />
-                            <span className="text-sm">Audit Logs</span>
+                            <span className="text-sm">{t("auditLogs")}</span>
                           </Link>
                           <Link
                             href="/profile/feedbacks"
                             className="flex items-center gap-3 px-3 h-11 rounded-xl "
                           >
                             <Info className="size-4" />
-                            <span className="text-sm">Feedbacks</span>
+                            <span className="text-sm">{t("feedbacks")}</span>
                           </Link>
                           {/* Roles, Sent Notifications and Notifications removed per request */}
                           <button
@@ -301,7 +308,7 @@ export function Topbar() {
                             className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"
                           >
                             <LogOut className="size-4" />
-                            <span className="text-sm">Logout</span>
+                            <span className="text-sm">{t("logout")}</span>
                           </button>
                         </div>
                       </motion.div>
@@ -317,12 +324,13 @@ export function Topbar() {
                           className="flex items-center gap-2 px-3"
                         >
                           <LogIn className="size-4" />
-                          <span>Sign In</span>
+                          <span>{t("signIn")}</span>
                         </Link>
                       </Button>
                     </div>
                   </>
                 )}
+                <LanguageDropdown className="hidden sm:inline-flex" />
                 <button
                   className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 absolute right-4 top-1/2 -translate-y-1/2 z-50"
                   aria-label="Open mobile menu"

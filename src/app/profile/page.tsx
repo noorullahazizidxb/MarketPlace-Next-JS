@@ -31,6 +31,7 @@ import { asset } from "@/lib/assets";
 
 import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { useLanguage } from "@/components/language-provider";
 
 // ---------------- Schema ----------------
 const schema = z
@@ -124,6 +125,7 @@ function FieldLabel({ icon: Icon, label }: { icon: any; label: string }) {
 
 // ---------------- Profile Page ----------------
 export default function ProfilePage() {
+  const { t } = useLanguage();
   const user = useAuthStore((s) => s.session?.user || (s as any).user);
   const updateProfile = useApiMutation("put", "/users/me");
   const updateAvatar = useApiMutation("post", "/users/me/photo");
@@ -302,11 +304,11 @@ export default function ProfilePage() {
               />
               <button
                 type="button"
-                aria-label="Change avatar"
+                aria-label={t("change") || "Change avatar"}
                 onClick={openFile}
                 className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-medium backdrop-blur-sm transition-opacity"
               >
-                <ImageIcon className="size-5 mr-1" /> Change
+                <ImageIcon className="size-5 mr-1" /> {t("change") || "Change"}
               </button>
               <input
                 ref={fileRef}
@@ -501,7 +503,7 @@ export default function ProfilePage() {
               onClick={() => setEditing(true)}
               className="mt-4 rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg"
             >
-              Open Full Editor
+              {t("openFullEditor")}
             </Button>
           </motion.div>
         </aside>
@@ -511,7 +513,9 @@ export default function ProfilePage() {
       <Dialog open={editing} onOpenChange={(o: boolean) => setEditing(o)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">Edit Profile</h2>
+            <h2 className="text-lg font-semibold">
+              {t("saveChanges") ? t("saveChanges") : t("profile")}
+            </h2>
             <DialogClose asChild>
               <button
                 aria-label="Close"
@@ -613,7 +617,10 @@ export default function ProfilePage() {
               />
             </div>
             <div className="sm:col-span-2">
-              <FieldLabel icon={ShieldCheck} label="Confirm Password" />
+              <FieldLabel
+                icon={ShieldCheck}
+                label={t("confirmPassword") || "Confirm Password"}
+              />
               <ConfirmPasswordField
                 register={register}
                 error={errors.confirmPassword?.message as any}
@@ -647,14 +654,14 @@ export default function ProfilePage() {
                 }}
                 className="rounded-xl"
               >
-                <X className="size-4" /> Cancel
+                <X className="size-4" /> {t("cancel")}
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting || updateProfile.isPending}
                 className="rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
               >
-                <Save className="size-4" /> Save Changes
+                <Save className="size-4" /> {t("saveChanges")}
               </Button>
             </div>
           </form>
@@ -674,6 +681,7 @@ function DetailField({
   value: string | number | null | undefined;
   icon: any;
 }) {
+  const { t } = useLanguage();
   return (
     <div className="group">
       <FieldLabel icon={Icon} label={label} />
@@ -681,7 +689,7 @@ function DetailField({
         {value && String(value).trim() !== "" ? (
           value
         ) : (
-          <span className="opacity-50">Not set</span>
+          <span className="opacity-50">{t("notSet")}</span>
         )}
       </div>
     </div>
@@ -778,6 +786,7 @@ function ConfirmPasswordField({
   confirmValue?: string;
 }) {
   const [visible, setVisible] = useState(false);
+  const { t } = useLanguage();
   const filled = Boolean(confirmValue && String(confirmValue).length > 0);
   const matches = filled && String(passwordValue) === String(confirmValue);
 
@@ -811,7 +820,9 @@ function ConfirmPasswordField({
         <button
           type="button"
           aria-label={
-            visible ? "Hide confirm password" : "Show confirm password"
+            visible
+              ? t("hideConfirmPassword") || "Hide confirm password"
+              : t("showConfirmPassword") || "Show confirm password"
           }
           onClick={() => setVisible((v) => !v)}
           className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] p-1"
