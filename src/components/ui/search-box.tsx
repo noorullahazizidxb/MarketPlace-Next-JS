@@ -287,7 +287,7 @@ export function SearchBox({
           const content = (
             <div
               ref={popupRef}
-              className="p-3 mt-2 rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col"
+              className="p-5 rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col"
             >
               {recent.length > 0 && q.length === 0 && (
                 <div className="mb-2 flex flex-wrap gap-2">
