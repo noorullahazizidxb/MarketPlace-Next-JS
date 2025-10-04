@@ -13,9 +13,5 @@ export const adminNavItems = [
 
 export function AdminNavContainer({ children }: { children: React.ReactNode }) {
   const { locale } = useLanguage();
-  return React.createElement(
-    'div',
-    { dir: locale === 'fa' ? 'rtl' : 'ltr', className: 'border-aurora border-aurora-soft rounded-2xl' },
-    children
-  );
+  return React.createElement('div', { dir: locale === 'fa' ? 'rtl' : 'ltr' }, children);
 }
