@@ -31,6 +31,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useLocalMutation } from "@/lib/api-hooks";
 import { ThemeToggle } from "../../theme/theme-toggle";
 import { SearchBox } from "@/components/ui/search-box";
 import { NotificationsPanel } from "@/components/ui/notifications-panel";
@@ -623,9 +624,10 @@ const ActionTile: React.FC<ActionTileProps> = ({
 
 const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
   const { t } = useLanguage();
+  const { mutateAsync, isPending } = useLocalMutation("post", "/api/logout");
   const handleLogout = async () => {
     try {
-      await fetch("/api/logout", { method: "POST" });
+      await mutateAsync({} as any);
     } catch {}
     try {
       const { setCachedToken } = await import("@/lib/axiosClient");
@@ -648,7 +650,11 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
         onClick={handleLogout}
         className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-red-500/15 text-red-400 hover:bg-red-500/25 text-sm font-medium"
       >
-        <LogOut className="size-4" />
+        {isPending ? (
+          <span className="size-4 rounded-full border-2 border-red-300/50 border-t-red-400 animate-spin" />
+        ) : (
+          <LogOut className="size-4" />
+        )}
         {t("logout")}
       </button>
     </div>

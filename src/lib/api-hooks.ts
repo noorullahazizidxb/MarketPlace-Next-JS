@@ -181,6 +181,83 @@ export function useApiMutation<TData = any>(
   });
 }
 
+// Dynamic URL mutation: use when the URL segment (e.g., id) is only known at action time
+export function useApiMutationDynamic<TData = any>(
+  method: HttpMethod,
+  options?: MutationOptions<TData>
+) {
+  return useMutation<TData, ErrorType, { url: string; body?: any; config?: AxiosRequestConfig }>(
+    {
+      mutationFn: async ({ url, body, config }) => {
+        switch (method) {
+          case "post":
+            try {
+              const r = await api.post<TData>(url, body, config?.headers);
+              try {
+                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
+                toastSuccess(`${String(entity)} created successfully`);
+              } catch {}
+              return r;
+            } catch (err: any) {
+              toastError(err?.message || "Request failed");
+              throw err;
+            }
+          case "put":
+            try {
+              const r = await api.put<TData>(url, body, config?.headers);
+              try {
+                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
+                toastSuccess(`${String(entity)} updated successfully`);
+              } catch {}
+              return r;
+            } catch (err: any) {
+              toastError(err?.message || "Request failed");
+              throw err;
+            }
+          case "patch":
+            try {
+              const r = await api.patch<TData>(url, body, config?.headers);
+              try {
+                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
+                toastSuccess(`${String(entity)} updated successfully`);
+              } catch {}
+              return r;
+            } catch (err: any) {
+              toastError(err?.message || "Request failed");
+              throw err;
+            }
+          case "delete":
+            try {
+              const r = await api.delete<TData>(url, config?.headers);
+              try {
+                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
+                toastSuccess(`${String(entity)} deleted successfully`);
+              } catch {}
+              return r;
+            } catch (err: any) {
+              toastError(err?.message || "Request failed");
+              throw err;
+            }
+          case "get":
+          default:
+            try {
+              const r = await api.get<TData>(url, config?.params, config?.headers);
+              try {
+                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
+                toastSuccess(`${String(entity)} fetched successfully`);
+              } catch {}
+              return r;
+            } catch (err: any) {
+              toastError(err?.message || "Request failed");
+              throw err;
+            }
+        }
+      },
+      ...options,
+    }
+  );
+}
+
 // React Query mutations for internal Next API routes (/api/*)
 export function useLocalMutation<TData = any>(
   method: HttpMethod,

@@ -10,6 +10,7 @@ export default function SiteFooter() {
   // Do not show footer on sign-in page
   if (!pathname) return null;
   // Hide footer until app is fully ready to avoid initial loading scroll/footer flash
+  // Footer renders with the rest of the UI once appReady is true.
   if (!appReady) return null;
   if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up"))
     return null;

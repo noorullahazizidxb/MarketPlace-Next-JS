@@ -1,13 +1,9 @@
 "use client";
 import React, { useEffect, useMemo, useState } from "react";
 import { useThemeStore } from "@/store/theme.store";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { api } from "@/lib/axiosClient";
-import {
-  applyThemeScales,
-  applyThemeTokens,
-  fetchRemoteThemes,
-} from "../../../theme/theme";
+import { useQueryClient } from "@tanstack/react-query";
+import { useApiGet, useApiMutation } from "@/lib/api-hooks";
+import { applyThemeScales, applyThemeTokens } from "../../../theme/theme";
 import { Button } from "@/components/ui/button";
 import { applyThemeComponents } from "../../../theme/theme";
 import { ThemeToggle } from "../../../theme/theme-toggle";
@@ -84,40 +80,41 @@ export default function ThemeSettingsPage() {
     };
   }, [components]);
 
-  // init: fetch from /themes only (no localStorage)
+  // Fetch via centralized SWR hook
+  const {
+    data: themesData,
+    isLoading: isThemesLoading,
+    error: themesError,
+    mutate: refetchThemes,
+  } = useApiGet<any[]>(["themes"], "/themes");
+
+  // Drive local UI state from SWR
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      try {
-        const data = await fetchRemoteThemes();
-        const first = Array.isArray(data) ? data[0] : undefined;
-        const envelope = (first?.tokens as any) || null;
-        const rawTokens = envelope ?? null;
-        const normalized: ThemeTokensShape | null = rawTokens?.tokens
-          ? rawTokens.tokens
-          : rawTokens;
-        let foundScales: ScalesShape | null = (first?.scales as any) || null;
-        let foundComponents: ComponentsShape | null =
-          (first?.components as any) || null;
-        if (!foundScales && envelope?.scales) foundScales = envelope.scales;
-        if (!foundComponents && envelope?.components)
-          foundComponents = envelope.components;
-        if (mounted) {
-          if (envelope) setThemeMeta(envelope);
-          if (normalized) setTokens(normalized);
-          if (foundScales) setScales(foundScales);
-          if (foundComponents) setComponents(foundComponents);
-        }
-      } catch (e: any) {
-        if (mounted) setError(e?.message || "Failed to load theme");
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => {
-      mounted = false;
-    };
-  }, []);
+    setLoading(!!isThemesLoading);
+  }, [isThemesLoading]);
+  useEffect(() => {
+    if (themesError)
+      setError((themesError as any)?.message || "Failed to load theme");
+  }, [themesError]);
+  useEffect(() => {
+    if (!themesData) return;
+    const first = Array.isArray(themesData) ? themesData[0] : themesData;
+    const envelope = (first?.tokens as any) || null;
+    const rawTokens = envelope ?? null;
+    const normalized: ThemeTokensShape | null = rawTokens?.tokens
+      ? rawTokens.tokens
+      : rawTokens;
+    let foundScales: ScalesShape | null = (first?.scales as any) || null;
+    let foundComponents: ComponentsShape | null =
+      (first?.components as any) || null;
+    if (!foundScales && envelope?.scales) foundScales = envelope.scales;
+    if (!foundComponents && envelope?.components)
+      foundComponents = envelope.components;
+    if (envelope) setThemeMeta(envelope);
+    if (normalized) setTokens(normalized);
+    if (foundScales) setScales(foundScales);
+    if (foundComponents) setComponents(foundComponents);
+  }, [themesData]);
 
   // apply on load
   useEffect(() => {
@@ -185,32 +182,7 @@ export default function ThemeSettingsPage() {
     setLoading(true);
     setError(null);
     try {
-      const data = await fetchRemoteThemes();
-      const first = Array.isArray(data) ? data[0] : undefined;
-      const envelope = (first?.tokens as any) || null;
-      const rawTokens = envelope ?? null;
-      const normalized: ThemeTokensShape | null = rawTokens?.tokens
-        ? rawTokens.tokens
-        : rawTokens;
-      let foundScales: ScalesShape | null = (first?.scales as any) || null;
-      let foundComponents: ComponentsShape | null =
-        (first?.components as any) || null;
-      if (!foundScales && envelope?.scales) foundScales = envelope.scales;
-      if (!foundComponents && envelope?.components)
-        foundComponents = envelope.components;
-      if (envelope) setThemeMeta(envelope);
-      if (normalized) {
-        setTokens(normalized);
-        applyThemeTokens(normalized);
-      }
-      if (foundScales) {
-        setScales(foundScales);
-        applyThemeScales(foundScales);
-      }
-      if (foundComponents) {
-        setComponents(foundComponents);
-        applyThemeComponents(foundComponents);
-      }
+      await refetchThemes();
     } catch (e: any) {
       setError(e?.message || "Failed to reload /themes");
     } finally {
@@ -268,13 +240,7 @@ export default function ThemeSettingsPage() {
     return { tokens: envelope };
   };
 
-  const saveMutation = useMutation({
-    mutationFn: async () => {
-      const body = buildPayload();
-      if (!body) throw new Error("Nothing to save yet");
-      const next = await api.put<any>("/themes", body);
-      return next ?? null;
-    },
+  const saveMutation = useApiMutation<any>("put", "/themes", undefined, {
     onSuccess: (data: any) => {
       setSaveMessage("Saved");
       setTimeout(() => setSaveMessage(null), 1500);
@@ -284,15 +250,9 @@ export default function ThemeSettingsPage() {
         if (first) setThemeMeta(first);
       }
       // Re-apply and persist current edits
-      if (tokens) {
-        applyThemeTokens(tokens);
-      }
-      if (scales) {
-        applyThemeScales(scales);
-      }
-      if (components) {
-        applyThemeComponents(components);
-      }
+      if (tokens) applyThemeTokens(tokens);
+      if (scales) applyThemeScales(scales);
+      if (components) applyThemeComponents(components);
       qc.invalidateQueries();
     },
     onError: (e: any) => {
@@ -316,7 +276,11 @@ export default function ThemeSettingsPage() {
             {t("reset")}
           </Button>
           <Button
-            onClick={() => saveMutation.mutate()}
+            onClick={() => {
+              const body = buildPayload();
+              if (!body) return;
+              saveMutation.mutate(body as any);
+            }}
             disabled={saveMutation.isPending}
           >
             {saveMutation.isPending ? t("saving") : t("save")}

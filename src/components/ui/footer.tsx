@@ -17,7 +17,6 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
-import { usePathname } from "next/navigation";
 
 const socials = [
   { href: "https://github.com/yourorg", label: "GitHub", Icon: Github },
@@ -38,9 +37,7 @@ const nav = [
 
 export default function Footer() {
   const { locale, t } = useLanguage();
-  const pathname = usePathname();
-  if (pathname?.startsWith("/admin/*") || pathname?.startsWith("/"))
-    return null;
+
   return (
     <footer className="relative mt-20" dir={locale === "fa" ? "rtl" : "ltr"}>
       {/* Background scene */}

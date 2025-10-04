@@ -11,10 +11,14 @@ import {
   Shield,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { useApiGet, useApiMutation } from "@/lib/api-hooks";
+import {
+  useApiGet,
+  useApiMutation,
+  useApiMutationDynamic,
+} from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useNotificationsStore } from "@/store/notifications.store";
-import { api } from "@/lib/axiosClient";
+// centralized axios api still used under the hood by hooks
 import { useLanguage } from "@/components/providers/language-provider";
 
 type Recipient = {
@@ -116,6 +120,7 @@ export function NotificationsPanel({
     "patch",
     "/notifications/mark-all-read"
   );
+  const markOneMutation = useApiMutationDynamic<void>("patch");
 
   const { data, isLoading, error } = useApiGet<ApiEnvelope | Notification[]>(
     ["notifications", uid ?? "anon"],
@@ -217,8 +222,9 @@ export function NotificationsPanel({
       if (onMarkRead) {
         await onMarkRead(id);
       } else {
-        await api.patch(`/notifications/${id}`, {
-          readAt: new Date().toISOString(),
+        await markOneMutation.mutateAsync({
+          url: `/notifications/${id}`,
+          body: { readAt: new Date().toISOString() },
         });
       }
     } catch {}
@@ -325,6 +331,11 @@ export function NotificationsPanel({
                 className
               )}
             >
+              {(markOneMutation.isPending || markAllMutation.isPending) && (
+                <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-black/10 grid place-items-center">
+                  <div className="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                </div>
+              )}
               <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
                 <div className="flex items-center gap-2">
                   <div className="size-8 rounded-xl bg-gradient-to-br from-primary/60 to-fuchsia-500/50 grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">

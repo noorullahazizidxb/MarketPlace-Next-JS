@@ -12,6 +12,10 @@ import BottomNavigation from "@/components/ui/BottomNavigation";
 import { PageTransition } from "@/components/ui/page-transition";
 import Loading from "@/components/ui/loading";
 import { useAppStore } from "@/store/app.store";
+import SiteFooter from "@/components/ui/site-footer";
+import { Partners } from "@/components/ui/partners";
+import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
+import { AnimatedBg } from "@/components/ui/animated-bg";
 
 const PUBLIC_PATH_PREFIXES = [
   "/listings",
@@ -47,6 +51,8 @@ export function AppShell({ children }: PropsWithChildren) {
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     );
   })();
+  const isHome =
+    pathname === "/" || (pathname ? pathname.startsWith("/listings") : false);
 
   // If we're on an auth-related page, do not render Topbar/Sidebar/footer-like chrome
   const hideChrome =
@@ -87,20 +93,27 @@ export function AppShell({ children }: PropsWithChildren) {
 
   // Render public routes even if theme bootstrap hasn't finished yet
   if (!appReady && isPublicRoute) {
-    // Render the main content area only, fixed to viewport with no footer to avoid initial scroll
-    return (
-      <div className="fixed inset-0 flex flex-col overflow-hidden bg-[hsl(var(--background))]">
-        <div className="hidden md:block">
-          <Topbar />
+    // Show a home page skeleton while the theme is loading; do NOT render Partners/Footer yet
+    if (isHome) {
+      return (
+        <div className="min-h-screen flex flex-col bg-[hsl(var(--background))]">
+          <div className="hidden md:block">
+            <Topbar />
+          </div>
+          <main id="main-content" className="flex-1" dir="ltr">
+            <HomeSkeleton />
+          </main>
         </div>
-        <main
-          id="main-content"
-          className="flex-1 container-padded py-6"
-          dir="ltr"
-        >
-          <PageTransition>{children}</PageTransition>
-        </main>
-        {/* Footer and bottom nav intentionally omitted until appReady to avoid initial scrollbars */}
+      );
+    }
+    // Non-home public routes: keep a minimal loading view
+    return (
+      <div
+        className="fixed inset-0 grid place-items-center overflow-hidden bg-[hsl(var(--background))]"
+        aria-busy="true"
+        aria-live="polite"
+      >
+        <Loading size={24} />
       </div>
     );
   }
@@ -115,6 +128,7 @@ export function AppShell({ children }: PropsWithChildren) {
   if (isAdmin) {
     return (
       <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_1fr]">
+        {appReady && <AnimatedBg />}
         <Sidebar />
         <div className="flex flex-col min-h-screen">
           <Navbar className="hidden md:block" />
@@ -125,6 +139,12 @@ export function AppShell({ children }: PropsWithChildren) {
           >
             <PageTransition>{children}</PageTransition>
           </main>
+          {appReady && (
+            <>
+              <Partners />
+              <SiteFooter />
+            </>
+          )}
         </div>
         {appReady && <BottomNavigation />}
       </div>
@@ -133,6 +153,7 @@ export function AppShell({ children }: PropsWithChildren) {
 
   return (
     <div className="min-h-screen flex flex-col">
+      {appReady && <AnimatedBg />}
       <div className="hidden md:block">
         <Topbar />
       </div>
@@ -143,6 +164,12 @@ export function AppShell({ children }: PropsWithChildren) {
       >
         <PageTransition>{children}</PageTransition>
       </main>
+      {appReady && (
+        <>
+          <Partners />
+          <SiteFooter />
+        </>
+      )}
       {appReady && <BottomNavigation />}
     </div>
   );

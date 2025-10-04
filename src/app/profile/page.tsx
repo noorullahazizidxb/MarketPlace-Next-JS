@@ -22,7 +22,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { Check } from "lucide-react";
-import { useApiMutation } from "@/lib/api-hooks";
+import { useApiMutation, useApiGet } from "@/lib/api-hooks";
 import { useAuthStore } from "@/store/auth.store";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -32,6 +32,7 @@ import { asset } from "@/lib/assets";
 import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useLanguage } from "@/components/providers/language-provider";
+import { ProfileSkeleton } from "@/components/skeletons/ProfileSkeleton";
 
 // ---------------- Schema ----------------
 const schema = z
@@ -129,12 +130,28 @@ export default function ProfilePage() {
   const user = useAuthStore((s) => s.session?.user || (s as any).user);
   const updateProfile = useApiMutation("put", "/users/me");
   const updateAvatar = useApiMutation("post", "/users/me/photo");
-  const profileFetch = useApiMutation<any>("get", "/auth/profile");
   const setUser = useAuthStore((s) => s.setUser);
   const [editing, setEditing] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const fileRef = useRef<HTMLInputElement | null>(null);
+
+  // Centralized GET with SWR; renders skeleton while loading
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    error: profileError,
+    mutate: refetchProfile,
+  } = useApiGet<any>(["auth", "profile"], "/auth/profile");
+
+  // Map fetched profile to store when available (keeps local user in sync)
+  useEffect(() => {
+    if (profile) {
+      const body = (profile as any)?.data ?? profile;
+      const fetchedUser = body?.data ?? body?.user ?? body?.data?.user ?? body;
+      if (fetchedUser) setUser(fetchedUser);
+    }
+  }, [profile, setUser]);
 
   const defaultValues: Partial<FormData> = useMemo(
     () => ({
@@ -222,9 +239,9 @@ export default function ProfilePage() {
 
       await updateProfile.mutateAsync(payload as any);
 
-      // refresh profile from auth endpoint and map to store (prefer inner `data`)
+      // revalidate profile and update store
       try {
-        const r = await profileFetch.mutateAsync(undefined as any);
+        const r = await refetchProfile();
         const body = (r as any)?.data ?? r;
         const fetchedUser =
           body?.data ?? body?.user ?? body?.data?.user ?? body;
@@ -247,9 +264,9 @@ export default function ProfilePage() {
       fd.append("photo", file);
       try {
         await updateAvatar.mutateAsync(fd as any);
-        // refresh profile so avatar update is reflected
+        // revalidate profile so avatar update is reflected
         try {
-          const r = await profileFetch.mutateAsync(undefined as any);
+          const r = await refetchProfile();
           const body = (r as any)?.data ?? r;
           const fetchedUser =
             body?.data ?? body?.user ?? body?.data?.user ?? body;
@@ -261,7 +278,7 @@ export default function ProfilePage() {
         console.warn("Avatar upload failed", e);
       }
     },
-    [updateAvatar, profileFetch, setUser]
+    [updateAvatar, refetchProfile, setUser]
   );
 
   const openFile = () => fileRef.current?.click();
@@ -273,8 +290,19 @@ export default function ProfilePage() {
     { label: "Roles", value: (user?.roles?.length ?? 0).toString() },
   ];
 
+  if (profileLoading && !user) {
+    return <ProfileSkeleton />;
+  }
+  // non-blocking: if error, render page with any store user and a subtle notice
   return (
     <div className="relative min-h-screen pb-24">
+      {profileError && (
+        <div className="container-padded mt-4">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-2 text-sm">
+            Failed to load latest profile. Showing cached data.
+          </div>
+        </div>
+      )}
       {/* Ambient gradient background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-fuchsia-500/20 via-amber-400/10 to-transparent blur-3xl" />

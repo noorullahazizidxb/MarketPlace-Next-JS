@@ -20,6 +20,7 @@ import {
   LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocalMutation } from "@/lib/api-hooks";
 import { SearchBox } from "@/components/ui/search-box";
 import { ThemeToggle } from "../../theme/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
@@ -280,36 +281,7 @@ export function Topbar() {
                             <span className="text-sm">{t("feedbacks")}</span>
                           </Link>
                           {/* Roles, Sent Notifications and Notifications removed per request */}
-                          <button
-                            onClick={async () => {
-                              try {
-                                await fetch("/api/logout", { method: "POST" });
-                              } catch {}
-                              try {
-                                const { setCachedToken } = await import(
-                                  "@/lib/axiosClient"
-                                );
-                                const { useAuthStore } = await import(
-                                  "@/store/auth.store"
-                                );
-                                const { useListingsStore } = await import(
-                                  "@/store/listings.store"
-                                );
-                                const { useNotificationsStore } = await import(
-                                  "@/store/notifications.store"
-                                );
-                                setCachedToken(null);
-                                useAuthStore.getState().clear();
-                                useListingsStore.getState().clear();
-                                useNotificationsStore.getState().clear();
-                              } catch {}
-                              window.location.href = "/sign-in";
-                            }}
-                            className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"
-                          >
-                            <LogOut className="size-4" />
-                            <span className="text-sm">{t("logout")}</span>
-                          </button>
+                          <LogoutButton />
                         </div>
                       </motion.div>
                     )}
@@ -350,5 +322,40 @@ export function Topbar() {
       {/* Spacer to offset fixed navbar height */}
       <div className="h-16" />
     </>
+  );
+}
+
+function LogoutButton() {
+  const { t } = useLanguage();
+  const { mutateAsync, isPending } = useLocalMutation("post", "/api/logout");
+  return (
+    <button
+      onClick={async () => {
+        try {
+          await mutateAsync({} as any);
+        } catch {}
+        try {
+          const { setCachedToken } = await import("@/lib/axiosClient");
+          const { useAuthStore } = await import("@/store/auth.store");
+          const { useListingsStore } = await import("@/store/listings.store");
+          const { useNotificationsStore } = await import(
+            "@/store/notifications.store"
+          );
+          setCachedToken(null);
+          useAuthStore.getState().clear();
+          useListingsStore.getState().clear();
+          useNotificationsStore.getState().clear();
+        } catch {}
+        window.location.href = "/sign-in";
+      }}
+      className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"
+    >
+      {isPending ? (
+        <span className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+      ) : (
+        <LogOut className="size-4" />
+      )}
+      <span className="text-sm">{t("logout")}</span>
+    </button>
   );
 }

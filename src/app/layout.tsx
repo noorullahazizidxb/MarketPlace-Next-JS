@@ -7,18 +7,6 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { AppToaster } from "@/components/ui/toaster";
-import SiteFooter from "@/components/ui/site-footer";
-import dynamic from "next/dynamic";
-
-// Defer visually rich UI to client-only chunks to avoid layout.js parse issues on first boot
-const Partners = dynamic(
-  () => import("@/components/ui/partners").then((m) => m.Partners),
-  { ssr: false }
-);
-const AnimatedBg = dynamic(
-  () => import("@/components/ui/animated-bg").then((m) => m.AnimatedBg),
-  { ssr: false }
-);
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -43,11 +31,8 @@ export default function RootLayout({
           <QueryProvider>
             <LanguageProvider>
               <SkipLink />
-              {/** Temporarily disabled to isolate initial layout parse error on first dev load */}
-              {false && <AnimatedBg />}
+              {/** Background now rendered from AppShell to reduce layout.js payload */}
               <AppShell>{children}</AppShell>
-              {false && <Partners />}
-              <SiteFooter />
               <AppToaster />
             </LanguageProvider>
           </QueryProvider>
