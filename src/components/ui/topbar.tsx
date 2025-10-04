@@ -25,7 +25,6 @@ import { SearchBox } from "@/components/ui/search-box";
 import { ThemeToggle } from "../../theme/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
-import { adminNavItems } from "@/components/ui/admin-nav";
 import { useUIStore } from "@/store/ui.store";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 import { useNotificationsStore } from "@/store/notifications.store";

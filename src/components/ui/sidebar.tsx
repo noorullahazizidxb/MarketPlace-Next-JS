@@ -63,13 +63,11 @@ export function Sidebar({
         <aside
           dir={isRtl ? "rtl" : "ltr"}
           className={
-            (isRtl
-              ? "hidden md:flex flex-col gap-3 p-4 "
-              : "hidden md:flex flex-col gap-3 p-4 ") +
-            " sticky top-0 h-screen bg-transparent"
+            (isRtl ? "hidden md:flex flex-col " : "hidden md:flex flex-col ") +
+            " sticky top-0 h-screen bg-transparent border-r border-[hsl(var(--border))] liquid-glass"
           }
         >
-          <div className="relative">
+          <div className="relative p-4">
             <div className="liquid-glass glass-hover rounded-full p-3 flex items-center justify-center gap-3">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
@@ -94,7 +92,7 @@ export function Sidebar({
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute left-3 top-[78px] z-[70] w-56 liquid-glass glass-hover rounded-2xl overflow-hidden"
+                className="absolute left-7 top-[78px] z-[70] w-56 liquid-glass glass-hover rounded-2xl overflow-hidden"
               >
                 <div className="p-5">
                   <Link
@@ -187,7 +185,7 @@ export function Sidebar({
               </motion.div>
             )}
           </div>
-          <nav className="space-y-2">
+          <nav className="space-y-2 p-5">
             {items.map(({ href, label, Icon }) => (
               <div key={href}>
                 {label === "Settings" ? (

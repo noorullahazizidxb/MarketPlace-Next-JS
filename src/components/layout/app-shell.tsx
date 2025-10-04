@@ -127,10 +127,10 @@ export function AppShell({ children }: PropsWithChildren) {
   }
   if (isAdmin) {
     return (
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_1fr]">
+      <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
         {appReady && <AnimatedBg />}
         <Sidebar />
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen min-w-0 w-full">
           <Navbar className="hidden md:block" />
           <main
             id="main-content"

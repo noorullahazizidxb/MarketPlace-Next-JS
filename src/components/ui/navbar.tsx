@@ -19,7 +19,7 @@ export function Navbar({ className = "" }: { className?: string }) {
   return (
     <>
       <header
-        className={`app-navbar liquid-glass glass-hover ${className}`}
+        className={`app-navbar liquid-glass glass-hover m-0 ${className}`}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="container-padded h-16 grid grid-cols-[1fr_auto] items-center gap-2">

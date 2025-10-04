@@ -136,7 +136,8 @@ html, body {
 
 @layer components {
   /* Liquid glass gradient border panel */
-  .liquid-glass { position: relative; border-radius: var(--radius-lg, 1rem);
+  .liquid-glass { position: relative; 
+    border-radius: var(--radius-lg, 1rem);
     background: hsl(var(--background) / 0.18);
     -webkit-backdrop-filter: saturate(160%) blur(16px);
     backdrop-filter: saturate(160%) blur(16px);
