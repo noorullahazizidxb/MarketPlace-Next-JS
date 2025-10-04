@@ -28,7 +28,7 @@ import {
   LineChart as LineChartIcon,
 } from "lucide-react";
 import { useApiGet } from "@/lib/api-hooks";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 // NOTE: Using direct client-only import. Recharts is safe client-side because file is marked "use client".
 

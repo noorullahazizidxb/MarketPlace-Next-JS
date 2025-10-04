@@ -1,4 +1,4 @@
-import ContactForm from "@/components/contact-form";
+import ContactForm from "@/components/ui/contact-form";
 import { ContactContent } from "./contact-content";
 
 export const metadata = {

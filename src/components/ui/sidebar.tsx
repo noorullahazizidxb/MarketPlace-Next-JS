@@ -24,8 +24,8 @@ import {
 import { useAuth } from "@/lib/use-auth";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
-import { useLanguage } from "@/components/language-provider";
-import { LanguageDropdown } from "@/components/language-dropdown";
+import { useLanguage } from "@/components/providers/language-provider";
+import { LanguageDropdown } from "@/components/ui/language-dropdown";
 export function Sidebar({
   isOpen,
   onClose,
@@ -64,13 +64,13 @@ export function Sidebar({
           dir={isRtl ? "rtl" : "ltr"}
           className={
             (isRtl
-              ? "hidden md:flex flex-col gap-3 p-4 border-l "
-              : "hidden md:flex flex-col gap-3 p-4 border-r ") +
-            " border-[hsl(var(--border))] sticky top-0 h-screen bg-[hsl(var(--background))]"
+              ? "hidden md:flex flex-col gap-3 p-4 "
+              : "hidden md:flex flex-col gap-3 p-4 ") +
+            " sticky top-0 h-screen bg-transparent"
           }
         >
           <div className="relative">
-            <div className="glass rounded-full p-3  border border-[hsl(var(--border))] flex items-center justify-center gap-3">
+            <div className="liquid-glass glass-hover rounded-full p-3 flex items-center justify-center gap-3">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
                 className="flex items-center rounded-2xl  bg-transparent hover:bg-foreground/5 gap-3"
@@ -94,7 +94,7 @@ export function Sidebar({
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute left-3 top-[78px] z-[70] w-56 glass rounded-2xl overflow-hidden border border-[hsl(var(--border))] shadow-2xl"
+                className="absolute left-3 top-[78px] z-[70] w-56 liquid-glass glass-hover rounded-2xl overflow-hidden"
               >
                 <div className="p-5">
                   <Link
@@ -194,7 +194,7 @@ export function Sidebar({
                   <div
                     onClick={() => setSettingsOpen((v) => !v)}
                     className={
-                      "flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer " +
+                      "flex items-center gap-3 px-3 h-11 rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 cursor-pointer " +
                       (pathname === href
                         ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
                         : "")
@@ -213,7 +213,7 @@ export function Sidebar({
                     href={href}
                     onClick={() => onClose?.()}
                     className={
-                      "flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] " +
+                      "flex items-center gap-3 px-3 h-11 rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 " +
                       (pathname === href
                         ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
                         : "")
@@ -284,7 +284,7 @@ export function Sidebar({
                 : "left-0 border-r border-[hsl(var(--border))]")
             }
           >
-            <div className="glass rounded-2xl p-3 border border-[hsl(var(--border))] mb-3 flex items-center gap-3">
+            <div className="liquid-glass glass-hover rounded-2xl p-3 mb-3 flex items-center gap-3">
               <Image
                 src={avatar}
                 alt="avatar"

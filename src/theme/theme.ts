@@ -1,5 +1,5 @@
-import { api } from "./axiosClient";
-import presets from "../theme/presets.json";
+import { api } from "../lib/axiosClient";
+import presets from "./presets.json";
 
 type ThemeTokens = any;
 

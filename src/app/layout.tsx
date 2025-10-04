@@ -1,14 +1,24 @@
 import "./globals.css";
 
 import { Inter } from "next/font/google";
-import { ThemeProvider } from "@/components/theme-provider";
-import { SkipLink } from "@/components/skip-link";
-import { AnimatedBg } from "@/components/animated-bg";
-import { QueryProvider } from "@/components/query-provider";
-import { AppShell } from "@/components/app-shell";
-import { LanguageProvider } from "@/components/language-provider";
-import { AppToaster } from "@/components/toaster";
-import SiteFooter from "@/components/site-footer";
+import { ThemeProvider } from "@/components/providers/theme-provider";
+import { SkipLink } from "@/components/ui/skip-link";
+import { QueryProvider } from "@/components/providers/query-provider";
+import { AppShell } from "@/components/layout/app-shell";
+import { LanguageProvider } from "@/components/providers/language-provider";
+import { AppToaster } from "@/components/ui/toaster";
+import SiteFooter from "@/components/ui/site-footer";
+import dynamic from "next/dynamic";
+
+// Defer visually rich UI to client-only chunks to avoid layout.js parse issues on first boot
+const Partners = dynamic(
+  () => import("@/components/ui/partners").then((m) => m.Partners),
+  { ssr: false }
+);
+const AnimatedBg = dynamic(
+  () => import("@/components/ui/animated-bg").then((m) => m.AnimatedBg),
+  { ssr: false }
+);
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,8 +43,10 @@ export default function RootLayout({
           <QueryProvider>
             <LanguageProvider>
               <SkipLink />
-              <AnimatedBg />
+              {/** Temporarily disabled to isolate initial layout parse error on first dev load */}
+              {false && <AnimatedBg />}
               <AppShell>{children}</AppShell>
+              {false && <Partners />}
               <SiteFooter />
               <AppToaster />
             </LanguageProvider>

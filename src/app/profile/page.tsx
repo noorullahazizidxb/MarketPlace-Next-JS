@@ -31,7 +31,7 @@ import { asset } from "@/lib/assets";
 
 import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 // ---------------- Schema ----------------
 const schema = z

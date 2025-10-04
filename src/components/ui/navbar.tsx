@@ -1,12 +1,12 @@
 "use client";
 import { motion } from "framer-motion";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { SearchBox } from "@/components/search-box";
+import { ThemeToggle } from "../../theme/theme-toggle";
+import { SearchBox } from "./search-box";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useUIStore } from "@/store/ui.store";
-import { LanguageDropdown } from "@/components/language-dropdown";
-import { useLanguage } from "@/components/language-provider";
+import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function Navbar({ className = "" }: { className?: string }) {
   const mobileOpen = useUIStore((s) => s.mobileMenuOpen);
@@ -19,7 +19,7 @@ export function Navbar({ className = "" }: { className?: string }) {
   return (
     <>
       <header
-        className={`app-navbar ${className}`}
+        className={`app-navbar liquid-glass glass-hover ${className}`}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="container-padded h-16 grid grid-cols-[1fr_auto] items-center gap-2">

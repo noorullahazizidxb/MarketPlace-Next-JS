@@ -15,11 +15,11 @@ import {
   CreditCard,
 } from "lucide-react";
 import { asset } from "@/lib/assets";
-import { ImageSlider } from "@/components/image-slider";
+import { ImageSlider } from "@/components/ui/image-slider";
 import { useEffect, useState } from "react";
 import { createPortal } from "react-dom"; // legacy; will remove after dialog refactor if unused
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type ListingImage = { url: string; alt?: string | null };
 type Representative = {

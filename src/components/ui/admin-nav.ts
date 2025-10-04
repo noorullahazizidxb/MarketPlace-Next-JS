@@ -1,5 +1,5 @@
 import { LayoutDashboard, Settings, Layers3, PlusCircle, User } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 import React from "react";
 
 // Use key instead of raw translated label; consumers should translate via t()
@@ -13,5 +13,9 @@ export const adminNavItems = [
 
 export function AdminNavContainer({ children }: { children: React.ReactNode }) {
   const { locale } = useLanguage();
-  return React.createElement('div', { dir: locale === 'fa' ? 'rtl' : 'ltr' }, children);
+  return React.createElement(
+    'div',
+    { dir: locale === 'fa' ? 'rtl' : 'ltr', className: 'border-aurora border-aurora-soft rounded-2xl' },
+    children
+  );
 }

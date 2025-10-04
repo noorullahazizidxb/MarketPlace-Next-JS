@@ -30,10 +30,10 @@ import {
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
-import { useLanguage } from "@/components/language-provider";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { SearchBox } from "@/components/search-box";
-import { NotificationsPanel } from "@/components/notifications-panel";
+import { useLanguage } from "@/components/providers/language-provider";
+import { ThemeToggle } from "../../theme/theme-toggle";
+import { SearchBox } from "@/components/ui/search-box";
+import { NotificationsPanel } from "@/components/ui/notifications-panel";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { asset } from "@/lib/assets";

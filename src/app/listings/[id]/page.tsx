@@ -25,13 +25,13 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ImageSlider } from "@/components/image-slider";
+import { ImageSlider } from "@/components/ui/image-slider";
 import QRCode from "react-qr-code";
 import { useAuth } from "@/lib/use-auth";
 import { asset } from "@/lib/assets";
 import { setCachedToken } from "@/lib/axiosClient";
 import Image from "next/image";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function ListingDetailsPage() {
   return (

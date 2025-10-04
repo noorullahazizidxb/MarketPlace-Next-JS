@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Box, Home, Tag } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 import { useApiGet } from "@/lib/api-hooks";
 import { cn } from "@/lib/cn";
 

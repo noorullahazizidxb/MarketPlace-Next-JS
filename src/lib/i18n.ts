@@ -354,6 +354,12 @@ export const translations = {
   privacy: "Privacy",
   terms: "Terms",
   allRightsReserved: "All rights reserved.",
+  // Home hero + partners
+  heroHeadline: "Find Your Dream Property With Us",
+  heroSubheadline: "Discover premium listings tailored to your lifestyle.",
+  browseNow: "Browse Now",
+  listYourProperty: "List Your Property",
+  featuredPartners: "Our Trusted Partners",
   },
   fa: {
     welcome: "خوش آمدید",
@@ -690,6 +696,12 @@ export const translations = {
   privacy: "حریم خصوصی",
   terms: "شرایط",
   allRightsReserved: "تمام حقوق محفوظ است.",
+  // Home hero + partners (fa)
+  heroHeadline: "ملک رویایی خود را با ما پیدا کنید",
+  heroSubheadline: "لیست‌های ممتاز متناسب با سبک زندگی شما را کشف کنید.",
+  browseNow: "اکنون جستجو کنید",
+  listYourProperty: "ملک خود را لیست کنید",
+  featuredPartners: "شرکای مورد اعتماد ما",
   },
 };
 

@@ -15,7 +15,7 @@ import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { api } from "@/lib/axiosClient";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type Recipient = {
   id: number;

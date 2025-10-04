@@ -13,7 +13,7 @@ import {
 import { Switch } from "../../../components/ads/switch"; // relative to avoid path alias issues
 import { PlacementSelect } from "../../../components/ads/placement-select";
 import { Plus, Search, Loader2 } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";

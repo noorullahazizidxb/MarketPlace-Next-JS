@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ListingCard, type Listing } from "@/components/listing-card";
+import { ListingCard, type Listing } from "@/components/ui/listing-card";
 import { useAuthStore } from "@/store/auth.store";
 import { useListingsStore } from "@/store/listings.store";
 import { useApiMutation } from "@/lib/api-hooks";

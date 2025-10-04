@@ -13,7 +13,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { BaseUser, RepProvince, emptyRepProvince } from "./types";
-import { Portal } from "../portal";
+import { Portal } from "../ui/portal";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
 import { useApiMutation } from "@/lib/api-hooks";

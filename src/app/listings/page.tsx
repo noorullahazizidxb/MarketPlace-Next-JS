@@ -9,12 +9,14 @@ import {
   useEffect,
 } from "react";
 import { useApiGet } from "@/lib/api-hooks";
-import { ListingCard, type Listing } from "@/components/listing-card";
-import { FiltersBar } from "@/components/filters-bar";
+import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { FiltersBar } from "@/components/ui/filters-bar";
+import { HomeHero } from "@/components/listings/HomeHero";
+import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function ListingsPage() {
   return (
@@ -137,8 +139,30 @@ function ListingsContent() {
     }
   });
 
+  // Scroll to listings anchor when navigated from search (router pushes include #listings)
+  const listingsAnchorRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    try {
+      const hash = window.location.hash;
+      if (hash === "#listings") {
+        // give time for content to render
+        setTimeout(() => {
+          const el =
+            listingsAnchorRef.current || document.getElementById("listings");
+          if (el) {
+            el.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        }, 120);
+      }
+    } catch {}
+  }, [allItems, id, searchText]);
+
   return (
-    <div className="space-y-4" ref={ptrRef}>
+    <div className="space-y-6" ref={ptrRef}>
+      {/* Hero */}
+      <HomeHero />
+      {/* Hidden listings slider */}
+      <HiddenListingsSlider items={allItems} />
       {(() => {
         // Map dynamic distance to a discrete height class to avoid inline style lint issue
         const h = pulling ? Math.round(distance / 10) * 10 : 0; // nearest 10
@@ -179,7 +203,7 @@ function ListingsContent() {
           </div>
         );
       })()}
-      <div className="card p-4 space-y-3">
+      <div id="listings" ref={listingsAnchorRef} className="card p-4 space-y-3">
         <FiltersBar />
         {isLoading && (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">

@@ -5,12 +5,12 @@ import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
 import { usePathname, useRouter } from "next/navigation";
-import { Sidebar } from "@/components/sidebar";
-import { Navbar } from "@/components/navbar";
-import { Topbar } from "@/components/topbar";
-import BottomNavigation from "@/components/BottomNavigation";
-import { PageTransition } from "@/components/page-transition";
-import Loading from "@/components/loading";
+import { Sidebar } from "@/components/ui/sidebar";
+import { Navbar } from "@/components/ui/navbar";
+import { Topbar } from "@/components/ui/topbar";
+import BottomNavigation from "@/components/ui/BottomNavigation";
+import { PageTransition } from "@/components/ui/page-transition";
+import Loading from "@/components/ui/loading";
 import { useAppStore } from "@/store/app.store";
 
 const PUBLIC_PATH_PREFIXES = [
@@ -74,12 +74,36 @@ export function AppShell({ children }: PropsWithChildren) {
     setRedirecting(false);
   }, [user, loading, isPublicRoute, router, hideChrome]);
 
-  if (!appReady || loading || redirecting)
+  if (loading || redirecting)
     return (
-      <div className="min-h-screen grid place-items-center">
+      <div
+        className="fixed inset-0 grid place-items-center overflow-hidden bg-[hsl(var(--background))]"
+        aria-busy="true"
+        aria-live="polite"
+      >
         <Loading size={24} />
       </div>
     );
+
+  // Render public routes even if theme bootstrap hasn't finished yet
+  if (!appReady && isPublicRoute) {
+    // Render the main content area only, fixed to viewport with no footer to avoid initial scroll
+    return (
+      <div className="fixed inset-0 flex flex-col overflow-hidden bg-[hsl(var(--background))]">
+        <div className="hidden md:block">
+          <Topbar />
+        </div>
+        <main
+          id="main-content"
+          className="flex-1 container-padded py-6"
+          dir="ltr"
+        >
+          <PageTransition>{children}</PageTransition>
+        </main>
+        {/* Footer and bottom nav intentionally omitted until appReady to avoid initial scrollbars */}
+      </div>
+    );
+  }
 
   if (hideChrome) {
     return (
@@ -102,7 +126,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <PageTransition>{children}</PageTransition>
           </main>
         </div>
-        <BottomNavigation />
+        {appReady && <BottomNavigation />}
       </div>
     );
   }
@@ -119,7 +143,7 @@ export function AppShell({ children }: PropsWithChildren) {
       >
         <PageTransition>{children}</PageTransition>
       </main>
-      <BottomNavigation />
+      {appReady && <BottomNavigation />}
     </div>
   );
 }

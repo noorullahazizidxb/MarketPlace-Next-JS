@@ -2,7 +2,7 @@
 import * as DropdownMenu from "@radix-ui/react-dropdown-menu";
 import { motion, AnimatePresence } from "framer-motion";
 import { supportedLocales } from "@/lib/i18n";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
 

@@ -2,9 +2,23 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Subtle grid overlay used in AnimatedBg (moved from inline styles to satisfy lint rules) */
+.bg-grid-overlay {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
+    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+
+.bg-aurora-one {
+  background: radial-gradient(closest-side, #60a5fa, transparent 70%);
+}
+.bg-aurora-two {
+  background: radial-gradient(closest-side, #a78bfa, transparent 70%);
+}
+
 /* Local font faces */
 @font-face { font-family: 'Popppins'; src: url('../english_font/Poppins-Regular.woff2') format('woff2'); font-display: swap; }
-@font-face { font-family: 'Coolvetica'; src: url('../english_font/Coolvetica\ Rg.otf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Coolvetica'; src: url('../english_font/Coolvetica Rg.otf') format('truetype'); font-display: swap; }
 @font-face { font-family: 'Yekan'; src: url('../persian_font/Yekan.woff2') format('woff2'), url('../persian_font/Yekan.woff') format('woff'); font-display: swap; }
 @font-face { font-family: 'HSDream'; src: url('../persian_font/HSDreamRegular.woff2') format('woff2'), url('../persian_font/HSDreamRegular.woff') format('woff'); font-display: swap; }
 
@@ -121,6 +135,25 @@ html, body {
 }
 
 @layer components {
+  /* Liquid glass gradient border panel */
+  .liquid-glass { position: relative; border-radius: var(--radius-lg, 1rem);
+    background: hsl(var(--background) / 0.18);
+    -webkit-backdrop-filter: saturate(160%) blur(16px);
+    backdrop-filter: saturate(160%) blur(16px);
+  }
+  .liquid-glass::before { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit; padding: 1px;
+    background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)/.85), hsl(var(--secondary)/.85), hsl(var(--primary)/.85));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor; mask-composite: exclude; opacity: .9;
+  }
+  .liquid-glass::after { content: ""; position: absolute; inset: 0; pointer-events: none; border-radius: inherit;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.12), 0 8px 30px rgba(0,0,0,.12);
+  }
+
+  /* Subtle hover lift for glass panels */
+  .glass-hover { transition: transform .25s var(--transition-normal, ease); }
+  .glass-hover:hover { transform: translateY(-2px); }
+
   html[data-density="compact"] .card { padding: 0.85rem !important; }
   html[data-density="compact"] .card h3, html[data-density="compact"] h3 { font-size: 0.9rem; }
   html[data-density="compact"] .card p { font-size: 0.7rem; }

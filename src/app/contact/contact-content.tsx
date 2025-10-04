@@ -1,6 +1,6 @@
 "use client";
 import { Mail, Headset, MapPin, HelpCircle } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function ContactContent() {
   const { t, isRtl } = useLanguage();

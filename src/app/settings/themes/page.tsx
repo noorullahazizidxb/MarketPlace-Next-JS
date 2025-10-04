@@ -7,11 +7,11 @@ import {
   applyThemeScales,
   applyThemeTokens,
   fetchRemoteThemes,
-} from "@/lib/theme";
+} from "../../../theme/theme";
 import { Button } from "@/components/ui/button";
-import { applyThemeComponents } from "@/lib/theme";
-import { ThemeToggle } from "@/components/theme-toggle";
-import { useLanguage } from "@/components/language-provider";
+import { applyThemeComponents } from "../../../theme/theme";
+import { ThemeToggle } from "../../../theme/theme-toggle";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type ThemeTokensShape = {
   light: Record<string, any>;

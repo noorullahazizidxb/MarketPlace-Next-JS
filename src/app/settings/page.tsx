@@ -1,5 +1,5 @@
 "use client";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { ThemeToggle } from "../../theme/theme-toggle";
 
 export default function SettingsPage() {
   return (

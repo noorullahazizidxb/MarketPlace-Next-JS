@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import Image from "next/image";
-import { ImageSlider } from "@/components/image-slider";
+import { ImageSlider } from "@/components/ui/image-slider";
 import { motion } from "framer-motion";
 import { useApiMutation } from "@/lib/api-hooks";
 import { twMerge } from "tailwind-merge";
@@ -9,7 +9,7 @@ import { asset } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 type ContactVisibility = "HIDE_SELLER" | "SHOW_SELLER" | "MASKED";
 

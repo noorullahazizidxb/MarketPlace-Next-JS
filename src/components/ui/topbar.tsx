@@ -20,18 +20,18 @@ import {
   LogIn,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SearchBox } from "@/components/search-box";
-import { ThemeToggle } from "@/components/theme-toggle";
+import { SearchBox } from "@/components/ui/search-box";
+import { ThemeToggle } from "../../theme/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
-import { adminNavItems } from "@/components/admin-nav";
+import { adminNavItems } from "@/components/ui/admin-nav";
 import { useUIStore } from "@/store/ui.store";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
 import { useNotificationsStore } from "@/store/notifications.store";
-import { NotificationsPanel } from "@/components/notifications-panel";
+import { NotificationsPanel } from "@/components/ui/notifications-panel";
 import { asset } from "@/lib/assets";
-import { LanguageDropdown } from "@/components/language-dropdown";
-import { useLanguage } from "@/components/language-provider";
+import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function Topbar() {
   const { user, counts, roles } = useAuth();
@@ -71,11 +71,11 @@ export function Topbar() {
         className="app-navbar fixed top-1  left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
-        <div className="relative  overflow-visible">
+        <div className="relative overflow-visible">
           <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
             <div className="absolute -inset-x-20 -top-32 h-56 bg-gradient-to-r from-primary/30 via-fuchsia-500/20 to-cyan-400/30 blur-3xl" />
           </div>
-          <div className="relative w-full rounded-2xl glass border border-[hsl(var(--border))] bg-[hsl(var(--background))]/85 supports-[backdrop-filter]:bg-[hsl(var(--background))]/70 shadow-[0_0_0_1px_hsl(var(--border))] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),0_0_0_1px_hsl(var(--border)),inset_0_0_0_1px_rgba(0,0,0,0.15)]">
+          <div className="relative w-full rounded-2xl liquid-glass glass-hover">
             <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
               <motion.div
                 whileHover={{ y: -2 }}

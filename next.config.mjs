@@ -1,9 +1,8 @@
 /** @type {import('next').NextConfig} */
+const isProd = process.env.NODE_ENV === 'production';
 const nextConfig = {
   reactStrictMode: true,
-  experimental: {
-    optimizePackageImports: ["lucide-react"],
-  },
+  experimental: isProd ? { optimizePackageImports: ["lucide-react"] } : {},
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/**' },

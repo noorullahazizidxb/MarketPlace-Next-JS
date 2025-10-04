@@ -2,7 +2,7 @@
 import { useState, useMemo } from "react";
 import { usePendingListings } from "@/lib/use-pending-listings";
 import { useApiMutation } from "@/lib/api-hooks";
-import { ApprovalCard } from "@/components/approval-card";
+import { ApprovalCard } from "@/components/ui/approval-card";
 import { Button } from "@/components/ui/button";
 
 export default function PendingsPageClient() {

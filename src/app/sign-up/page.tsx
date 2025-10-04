@@ -12,7 +12,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useApiMutation } from "@/lib/api-hooks";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 const gradientBg =
   "relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_hsl(var(--primary))/0.28,_transparent_58%),radial-gradient(circle_at_bottom,_hsl(var(--accent))/0.22,_transparent_64%)]";
@@ -491,8 +491,8 @@ function FieldMessages({
 
 function PasswordStrength({ score }: { score: number }) {
   // Use dynamic import of language hook to avoid prop drilling
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { t } = require("@/components/language-provider").useLanguage();
+  // reuse the already imported hook from top-level of this module
+  const { t } = useLanguage();
   const labels = [t("tooWeak"), t("weak"), t("fair"), t("good"), t("strong")];
   const pct = (score / 5) * 100;
   const color =

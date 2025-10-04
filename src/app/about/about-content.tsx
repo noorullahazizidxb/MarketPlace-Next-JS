@@ -8,7 +8,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
   const { t, isRtl } = useLanguage();

@@ -19,7 +19,7 @@ import {
   AlertTriangle,
   X,
 } from "lucide-react";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 // --- AutoCompleteUsers component ------------------------------------------------
 function AutoCompleteUsers({

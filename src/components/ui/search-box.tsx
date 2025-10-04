@@ -1,5 +1,13 @@
 "use client";
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import {
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+  useCallback,
+} from "react";
+import { createPortal } from "react-dom";
 import { useSWRGet } from "@/lib/api-hooks";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
@@ -38,6 +46,7 @@ export function SearchBox({
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
+  const [rect, setRect] = useState<DOMRect | null>(null);
   const [recent, setRecent] = useState<string[]>([]);
 
   // Load recent searches
@@ -83,6 +92,33 @@ export function SearchBox({
     document.addEventListener("click", onDocClick);
     return () => document.removeEventListener("click", onDocClick);
   }, []);
+
+  useLayoutEffect(() => {
+    const update = () => {
+      const el = boxRef.current;
+      if (!el) return setRect(null);
+      const r = el.getBoundingClientRect();
+      setRect(r);
+    };
+    update();
+    window.addEventListener("resize", update);
+    window.addEventListener("scroll", update, true);
+    return () => {
+      window.removeEventListener("resize", update);
+      window.removeEventListener("scroll", update, true);
+    };
+  }, []);
+  const popupRef = useRef<HTMLDivElement | null>(null);
+  useLayoutEffect(() => {
+    const el = popupRef.current;
+    if (!el || !rect) return;
+    // set absolute positioning via DOM to avoid JSX inline style lint
+    el.style.position = "fixed";
+    el.style.top = `${Math.round(rect.bottom + 8)}px`;
+    el.style.left = `${Math.round(rect.left)}px`;
+    el.style.width = `${Math.round(rect.width)}px`;
+    el.style.zIndex = "1200";
+  }, [rect, open]);
 
   const hits = data?.hits ?? [];
 
@@ -149,7 +185,7 @@ export function SearchBox({
             if (e.key === "Enter" && onSubmitNavigate) {
               const qp = new URLSearchParams();
               if (q) qp.set("search", q);
-              router.push(`/listings?${qp.toString()}`);
+              router.push(`/listings?${qp.toString()}#listings`);
               pushRecent(q);
               setOpen(false);
               try {
@@ -162,7 +198,7 @@ export function SearchBox({
       </div>
       {/* Inline sheet mode results */}
       {isSheet && open && (
-        <div className="mt-4 flex-1 min-h-0 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]/80 backdrop-blur-sm p-3 flex flex-col shadow-[0_4px_24px_-6px_rgba(0,0,0,0.4)]">
+        <div className="mt-4 flex-1 min-h-0 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]/80 backdrop-blur-sm p-3 flex flex-col shadow-[0_4px_24px_-6px_rgba(0,0,0,0.4)] z-[1200] overflow-visible">
           {recent.length > 0 && q.length === 0 && (
             <div className="mb-2 flex flex-wrap gap-2">
               {recent.map((r) => (
@@ -172,7 +208,7 @@ export function SearchBox({
                     setQ(r);
                     const qp = new URLSearchParams();
                     qp.set("search", r);
-                    router.push(`/listings?${qp.toString()}`);
+                    router.push(`/listings?${qp.toString()}#listings`);
                     pushRecent(r);
                     setOpen(false);
                     try {
@@ -221,7 +257,7 @@ export function SearchBox({
                       } else if (q) {
                         qp.set("search", q);
                       }
-                      router.push(`/listings?${qp.toString()}`);
+                      router.push(`/listings?${qp.toString()}#listings`);
                       setOpen(false);
                       try {
                         onSubmitClose?.();
@@ -244,88 +280,111 @@ export function SearchBox({
         </div>
       )}
       {/* Dropdown mode popover results */}
-      {!isSheet && open && (
-        <div className="absolute left-0 right-0 p-3 mt-2 z-50 rounded-2xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col">
-          {recent.length > 0 && q.length === 0 && (
-            <div className="mb-2 flex flex-wrap gap-2">
-              {recent.map((r) => (
-                <button
-                  key={r}
-                  onClick={() => {
-                    setQ(r);
-                    const qp = new URLSearchParams();
-                    qp.set("search", r);
-                    router.push(`/listings?${qp.toString()}`);
-                    pushRecent(r);
-                    setOpen(false);
-                    try {
-                      onSubmitClose?.();
-                    } catch {}
-                  }}
-                  className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
-                >
-                  {r}
-                </button>
-              ))}
-              <button
-                onClick={() => {
-                  setRecent([]);
-                  try {
-                    localStorage.removeItem("recent-searches");
-                  } catch {}
-                }}
-                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-white/5 hover:bg-white/10"
-              >
-                Clear
-              </button>
-            </div>
-          )}
-          <div className="p-2 text-xs subtle flex items-center justify-between">
-            <span>
-              {isLoading
-                ? "Searching..."
-                : `${hits.length} result${hits.length === 1 ? "" : "s"}`}
-            </span>
-            <span>Press Enter to view all</span>
-          </div>
-          {hits.length > 0 && (
-            <ul className="overflow-auto divide-y divide-[hsl(var(--border))]/60 flex-1 min-h-0">
-              {hits.map((h: any, idx: number) => (
-                <li key={h.id ?? idx} className="hover:bg-[hsl(var(--muted))]">
+      {!isSheet &&
+        open &&
+        (() => {
+          // Build dropdown content
+          const content = (
+            <div
+              ref={popupRef}
+              className="p-3 mt-2 rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col"
+            >
+              {recent.length > 0 && q.length === 0 && (
+                <div className="mb-2 flex flex-wrap gap-2">
+                  {recent.map((r) => (
+                    <button
+                      key={r}
+                      onClick={() => {
+                        setQ(r);
+                        const qp = new URLSearchParams();
+                        qp.set("search", r);
+                        router.push(`/listings?${qp.toString()}#listings`);
+                        pushRecent(r);
+                        setOpen(false);
+                        try {
+                          onSubmitClose?.();
+                        } catch {}
+                      }}
+                      className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
+                    >
+                      {r}
+                    </button>
+                  ))}
                   <button
-                    type="button"
-                    className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
                     onClick={() => {
-                      const qp = new URLSearchParams();
-                      if (h.id) {
-                        qp.set("id", String(h.id));
-                      } else if (h.title) {
-                        qp.set("search", h.title);
-                      } else if (q) {
-                        qp.set("search", q);
-                      }
-                      router.push(`/listings?${qp.toString()}`);
-                      setOpen(false);
+                      setRecent([]);
                       try {
-                        onSubmitClose?.();
+                        localStorage.removeItem("recent-searches");
                       } catch {}
                     }}
+                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-white/5 hover:bg-white/10"
                   >
-                    <div className="font-medium line-clamp-1">
-                      {highlight(h.title ?? "Untitled")}
-                    </div>
-                    {h.description && (
-                      <div className="text-xs subtle line-clamp-1">
-                        {highlight(h.description)}
-                      </div>
-                    )}
+                    Clear
                   </button>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-      )}
+                </div>
+              )}
+              <div className="p-2 text-xs subtle flex items-center justify-between">
+                <span>
+                  {isLoading
+                    ? "Searching..."
+                    : `${hits.length} result${hits.length === 1 ? "" : "s"}`}
+                </span>
+                <span>Press Enter to view all</span>
+              </div>
+              {hits.length > 0 && (
+                <ul className="overflow-auto divide-y divide-[hsl(var(--border))]/60 flex-1 min-h-0">
+                  {hits.map((h: any, idx: number) => (
+                    <li
+                      key={h.id ?? idx}
+                      className="hover:bg-[hsl(var(--muted))]"
+                    >
+                      <button
+                        type="button"
+                        className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
+                        onClick={() => {
+                          const qp = new URLSearchParams();
+                          if (h.id) {
+                            qp.set("id", String(h.id));
+                          } else if (h.title) {
+                            qp.set("search", h.title);
+                          } else if (q) {
+                            qp.set("search", q);
+                          }
+                          router.push(`/listings?${qp.toString()}#listings`);
+                          setOpen(false);
+                          try {
+                            onSubmitClose?.();
+                          } catch {}
+                        }}
+                      >
+                        <div className="font-medium line-clamp-1">
+                          {highlight(h.title ?? "Untitled")}
+                        </div>
+                        {h.description && (
+                          <div className="text-xs subtle line-clamp-1">
+                            {highlight(h.description)}
+                          </div>
+                        )}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          );
+
+          // If we have a rect (client) render via portal with fixed positioning to avoid stacking context clipping
+          if (rect && typeof document !== "undefined") {
+            return createPortal(content, document.body);
+          }
+
+          // Fallback: render inline absolutely positioned (original behavior)
+          return (
+            <div className="absolute left-0 right-0 p-3 mt-2 z-[1200] rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col">
+              {content}
+            </div>
+          );
+        })()}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 "use client";
 import { create } from "zustand";
-import { applyThemeTokens, applyThemeScales, applyThemeComponents } from "@/lib/theme";
+import { applyThemeTokens, applyThemeScales, applyThemeComponents } from "../theme/theme";
 
 export type ThemeMode = "light" | "dark" | "system";
 

@@ -3,7 +3,7 @@ import React from "react";
 import { useAuth } from "@/lib/use-auth";
 import { ShieldCheck } from "lucide-react";
 import UsersDashboard from "@/components/users/users-dashboard";
-import { useLanguage } from "@/components/language-provider";
+import { useLanguage } from "@/components/providers/language-provider";
 
 // Thin access-control wrapper. Logic and UI live in modular components.
 export default function AdminUsersPage() {

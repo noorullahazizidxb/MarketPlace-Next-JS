@@ -9,7 +9,7 @@ import {
   applyThemeScales,
   applyThemeComponents,
   loadLocalPresets,
-} from "@/lib/theme";
+} from "../../theme/theme";
 import { useAppStore } from "@/store/app.store";
 
 export function QueryProvider({ children }: PropsWithChildren) {
