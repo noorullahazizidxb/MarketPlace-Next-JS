@@ -48,6 +48,8 @@ export function Sidebar({
   const items = [
     { href: "/", label: t("dashboard"), Icon: LayoutDashboard },
     { href: "/listings", label: t("listings"), Icon: Layers3 },
+    { href: "/stories", label: "Stories", Icon: Megaphone },
+    { href: "/blogs", label: "Blogs", Icon: Info },
     { href: "/admin/notifications", label: t("notifications"), Icon: Bell },
     { href: "/admin/ads", label: t("advertisements"), Icon: Megaphone },
     { href: "/admin/users", label: t("usersManagement"), Icon: User },

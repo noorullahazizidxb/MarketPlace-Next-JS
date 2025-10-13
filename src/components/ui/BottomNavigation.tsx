@@ -218,6 +218,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
     if (isAdmin) {
       return [
         { key: "home", label: t("home"), href: "/listings", icon: Home },
+        { key: "stories", label: "Stories", href: "/stories", icon: Layers3 },
+        { key: "blogs", label: "Blogs", href: "/blogs", icon: Megaphone },
         {
           key: "search",
           label: t("search"),
@@ -268,6 +270,8 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
     // Normal authed user (non-admin)
     return [
       { key: "home", label: t("home"), href: "/listings", icon: Home },
+      { key: "stories", label: "Stories", href: "/stories", icon: Layers3 },
+      { key: "blogs", label: "Blogs", href: "/blogs", icon: Megaphone },
       { key: "about", label: t("about"), href: "/about", icon: Info },
       {
         key: "search",

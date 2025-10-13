@@ -66,7 +66,9 @@ export function useNotificationsRealtime(enabled: boolean = true) {
     setCachedToken(token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token);
     // clear cached token on cleanup
     const bearer = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-    const socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000", {
+    const socket = io(
+      process.env.NEXT_PUBLIC_WS_URL || process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000",
+      {
       auth: { token: bearer },
       query: { token: bearer },
       transports: ["websocket"],
@@ -74,7 +76,8 @@ export function useNotificationsRealtime(enabled: boolean = true) {
       reconnection: true,
       reconnectionAttempts: 10,
       reconnectionDelay: 1000,
-    });
+      }
+    );
     socketRef.current = socket;
 
     socket.on("connect", () => {

@@ -239,8 +239,8 @@ function InfoPill({
 }
 
 function RepresentativesCard({ reps }: { reps: any[] }) {
-  if (!Array.isArray(reps) || reps.length === 0) return null;
   const { t } = useLanguage();
+  if (!Array.isArray(reps) || reps.length === 0) return null;
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
@@ -301,8 +301,8 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
 }
 
 function SellerCard({ user }: { user?: any }) {
-  if (!user) return null;
   const { t } = useLanguage();
+  if (!user) return null;
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">

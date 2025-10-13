@@ -7,6 +7,12 @@ import { QueryProvider } from "@/components/providers/query-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { AppToaster } from "@/components/ui/toaster";
+import dynamic from "next/dynamic";
+
+const SocialRealtime = dynamic(
+  () => import("@/components/providers/SocialRealtimeClient"),
+  { ssr: false }
+);
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -31,6 +37,7 @@ export default function RootLayout({
           <QueryProvider>
             <LanguageProvider>
               <SkipLink />
+              <SocialRealtime />
               {/** Background now rendered from AppShell to reduce layout.js payload */}
               <AppShell>{children}</AppShell>
               <AppToaster />

@@ -18,11 +18,13 @@ import {
   List,
   X,
   LogIn,
+  PlusCircle,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { SearchBox } from "@/components/ui/search-box";
 import { ThemeToggle } from "../../theme/theme-toggle";
+import { Dialog, DialogTrigger, DialogContent } from "./dialog";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useUIStore } from "@/store/ui.store";
@@ -148,6 +150,30 @@ export function Topbar() {
               </nav>
 
               <div className="flex items-center justify-end gap-2 pr-12 sm:pr-2">
+                {/* Create menu */}
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <button
+                      className="glass size-9 rounded-xl grid place-items-center"
+                      aria-label="Create"
+                    >
+                      <PlusCircle className="size-4" />
+                    </button>
+                  </DialogTrigger>
+                  <DialogContent>
+                    <div className="space-y-3">
+                      <h3 className="text-lg font-semibold">Create</h3>
+                      <div className="flex flex-col gap-2">
+                        <Button asChild>
+                          <Link href="/admin/stories/create">Create Story</Link>
+                        </Button>
+                        <Button asChild>
+                          <Link href="/blogs/create">Create Blog</Link>
+                        </Button>
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
                 <LanguageDropdown className="sm:hidden inline-flex" />
                 <div className="flex items-center gap-2 sm:hidden">
                   <SearchBox className="w-full" placeholder={t("search")} />
