@@ -16,6 +16,7 @@ import SiteFooter from "@/components/ui/site-footer";
 import { Partners } from "@/components/ui/partners";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
+import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
 
 const PUBLIC_PATH_PREFIXES = [
   "/listings",
@@ -26,7 +27,9 @@ const PUBLIC_PATH_PREFIXES = [
 ];
 
 export function AppShell({ children }: PropsWithChildren) {
-  const { isAdmin, user, loading } = useAuth();
+  const { isAdmin, user, loading, token } = useAuth();
+  // Initialize realtime socket listeners (blogs/stories)
+  useRealtimeSocial(token ?? undefined);
   const appReady = useAppStore((s) => s.appReady);
   const pathname = usePathname();
   const router = useRouter();

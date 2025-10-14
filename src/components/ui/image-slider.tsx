@@ -2,6 +2,8 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
+import { useLanguage } from "@/components/providers/language-provider";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Slide = { url?: string | null; alt?: string | null };
 
@@ -9,18 +11,35 @@ export function ImageSlider({
   images,
   className = "",
   aspect = "4/1",
+  heightClass,
 }: {
   images?: Slide[] | null;
   className?: string;
   aspect?: string; // e.g. "16/9" or "16/10"
+  heightClass?: string; // optional fixed height class (e.g., "h-56 md:h-72")
 }) {
+  const getAspectClass = (a: string) => {
+    switch (a) {
+      case "16/9":
+        return "ar-16-9";
+      case "4/1":
+        return "ar-4-1";
+      case "1/1":
+        return "ar-1-1";
+      case "3/2":
+        return "ar-3-2";
+      default:
+        return "ar-16-9";
+    }
+  };
   const slides =
     Array.isArray(images) && images.length > 0
       ? images
       : [{ url: "/images/placeholder-card.jpg", alt: "placeholder" }];
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
-  const containerRef = useRef<HTMLDivElement | null>(null);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const { isRtl } = useLanguage();
 
   useEffect(() => {
     // simple autoplay
@@ -31,43 +50,33 @@ export function ImageSlider({
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
-  }, [slides.length]);
+  }, [slides.length, isRtl]);
 
+  // Scroll to active index when it changes
   useEffect(() => {
-    const el = containerRef.current;
+    const el = scrollerRef.current;
     if (!el) return;
-    let startX = 0;
-    let dx = 0;
-    const onTouchStart = (e: TouchEvent) => {
-      if (e.touches.length === 1) startX = e.touches[0].clientX;
-    };
-    const onTouchMove = (e: TouchEvent) => {
-      if (e.touches.length === 1) dx = e.touches[0].clientX - startX;
-    };
-    const onTouchEnd = () => {
-      if (dx > 50) setIndex((i) => Math.max(0, i - 1));
-      else if (dx < -50) setIndex((i) => Math.min(slides.length - 1, i + 1));
-      dx = 0;
-    };
-    el.addEventListener("touchstart", onTouchStart);
-    el.addEventListener("touchmove", onTouchMove);
-    el.addEventListener("touchend", onTouchEnd);
-    return () => {
-      el.removeEventListener("touchstart", onTouchStart);
-      el.removeEventListener("touchmove", onTouchMove);
-      el.removeEventListener("touchend", onTouchEnd);
-    };
-  }, [slides.length]);
+    const left = index * el.clientWidth;
+    // Flip direction for RTL by scrolling from the right edge
+    const target = isRtl ? el.scrollWidth - el.clientWidth - left : left;
+    el.scrollTo({ left: target, behavior: "smooth" });
+  }, [index, isRtl]);
 
   return (
-    <div ref={containerRef} className={`relative overflow-hidden ${className}`}>
-      <div className={`w-full`} style={{ aspectRatio: aspect }}>
+    <div className={`relative overflow-hidden ${className}`}>
+      <div
+        className={`w-full ${
+          heightClass ? heightClass : getAspectClass(aspect)
+        }`}
+      >
         <div
-          className="h-full flex transition-transform duration-500"
-          style={{ transform: `translateX(-${index * 100}%)` }}
+          ref={scrollerRef}
+          className={`h-full flex overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar ${
+            isRtl ? "flex-row-reverse" : ""
+          }`}
         >
           {slides.map((s, i) => (
-            <div key={i} className="relative min-w-full h-full">
+            <div key={i} className="relative min-w-full h-full snap-start">
               <Image
                 src={asset(s?.url) || "/images/placeholder-card.jpg"}
                 alt={s?.alt || `Slide ${i + 1}`}
@@ -92,18 +101,28 @@ export function ImageSlider({
             onClick={() =>
               setIndex((i) => (i - 1 + slides.length) % slides.length)
             }
-            className="absolute left-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full"
-            style={{ zIndex: 1 }}
+            className={`absolute ${
+              isRtl ? "right-2" : "left-2"
+            } top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
           >
-            ‹
+            {isRtl ? (
+              <ChevronRight className="size-5" />
+            ) : (
+              <ChevronLeft className="size-5" />
+            )}
           </button>
           <button
             aria-label="Next image"
             onClick={() => setIndex((i) => (i + 1) % slides.length)}
-            className="absolute right-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full"
-            style={{ zIndex: 1 }}
+            className={`absolute ${
+              isRtl ? "left-2" : "right-2"
+            } top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
           >
-            ›
+            {isRtl ? (
+              <ChevronLeft className="size-5" />
+            ) : (
+              <ChevronRight className="size-5" />
+            )}
           </button>
           <div className="absolute left-1/2 -translate-x-1/2 bottom-2 flex items-center gap-2 z-30">
             {slides.map((_, i) => (

@@ -2,8 +2,13 @@
 import React from "react";
 import { ImageSlider } from "@/components/ui/image-slider";
 
-export default function ImageCarousel({ images }: { images: string[] }) {
-  const imgs = images.map((u) => ({ url: u, alt: "Story image" }));
+type Img = string | { url?: string | null } | null | undefined;
+
+export default function ImageCarousel({ images }: { images: Img[] }) {
+  const imgs = (images || []).map((u) => ({
+    url: typeof u === "string" ? u : u?.url ?? undefined,
+    alt: "Story image",
+  }));
   return (
     <div className="rounded-xl overflow-hidden">
       <ImageSlider images={imgs} aspect="16/9" />

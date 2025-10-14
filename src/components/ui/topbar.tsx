@@ -18,13 +18,12 @@ import {
   List,
   X,
   LogIn,
-  PlusCircle,
+  Newspaper,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { SearchBox } from "@/components/ui/search-box";
 import { ThemeToggle } from "../../theme/theme-toggle";
-import { Dialog, DialogTrigger, DialogContent } from "./dialog";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useUIStore } from "@/store/ui.store";
@@ -55,6 +54,7 @@ export function Topbar() {
   const mobileMenuItems = useMemo(() => {
     const items = [
       { href: "/listings", label: t("home"), Icon: Home },
+      { href: "/blogs", label: t("blogs"), Icon: Newspaper },
       { href: "/about", label: t("about"), Icon: Info },
       { href: "/contact", label: t("contact"), Icon: Phone },
     ];
@@ -115,6 +115,24 @@ export function Topbar() {
                   whileTap={{ scale: 0.98 }}
                 >
                   <Link
+                    href="/blogs"
+                    className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                  >
+                    <Newspaper className="size-4" />
+                    <span>{t("blogs")}</span>
+                    {isActive("/blogs") && (
+                      <motion.span
+                        layoutId="top-underline"
+                        className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                      />
+                    )}
+                  </Link>
+                </motion.div>
+                <motion.div
+                  whileHover={{ y: -2, scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
+                >
+                  <Link
                     href="/about"
                     className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
                   >
@@ -150,30 +168,6 @@ export function Topbar() {
               </nav>
 
               <div className="flex items-center justify-end gap-2 pr-12 sm:pr-2">
-                {/* Create menu */}
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <button
-                      className="glass size-9 rounded-xl grid place-items-center"
-                      aria-label="Create"
-                    >
-                      <PlusCircle className="size-4" />
-                    </button>
-                  </DialogTrigger>
-                  <DialogContent>
-                    <div className="space-y-3">
-                      <h3 className="text-lg font-semibold">Create</h3>
-                      <div className="flex flex-col gap-2">
-                        <Button asChild>
-                          <Link href="/admin/stories/create">Create Story</Link>
-                        </Button>
-                        <Button asChild>
-                          <Link href="/blogs/create">Create Blog</Link>
-                        </Button>
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
                 <LanguageDropdown className="sm:hidden inline-flex" />
                 <div className="flex items-center gap-2 sm:hidden">
                   <SearchBox className="w-full" placeholder={t("search")} />

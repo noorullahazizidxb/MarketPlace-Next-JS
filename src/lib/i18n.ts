@@ -360,6 +360,20 @@ export const translations = {
   browseNow: "Browse Now",
   listYourProperty: "List Your Property",
   featuredPartners: "Our Trusted Partners",
+  // Blogs
+  blogs: "Blogs",
+  stories: "Stories",
+  createBlog: "Create Blog",
+  noBlogsYet: "No blogs yet.",
+  noResults: "No results found.",
+  step: "Step",
+  media: "Media",
+  title: "Title",
+  catchyHeadline: "A catchy headline…",
+  description: "Description",
+  writeSomethingAmazing: "Write something amazing…",
+  images: "Images",
+  publish: "Publish",
   },
   fa: {
     welcome: "خوش آمدید",
@@ -394,6 +408,7 @@ export const translations = {
   roles: "نقش ها",
   // Newly added general UI / listings keys (fa)
   search: "جستجو",
+  stories: "استوری‌ها",
   marketplace: "بازار",
   contactSeller: "تماس با فروشنده",
     editThemeHint: "قالب را ویرایش کنید. تغییرات به‌صورت زنده اعمال می‌شود؛ ذخیره، بک‌اند را به‌روزرسانی می‌کند.",
@@ -702,6 +717,19 @@ export const translations = {
   browseNow: "اکنون جستجو کنید",
   listYourProperty: "ملک خود را لیست کنید",
   featuredPartners: "شرکای مورد اعتماد ما",
+  // Blogs (fa)
+  blogs: "بلاگ‌ها",
+  createBlog: "ایجاد بلاگ",
+  noBlogsYet: "هنوز بلاگی وجود ندارد.",
+  noResults: "نتیجه‌ای یافت نشد.",
+  step: "مرحله",
+  media: "رسانه",
+  title: "عنوان",
+  catchyHeadline: "یک عنوان جذاب…",
+  description: "توضیحات",
+  writeSomethingAmazing: "چیزی شگفت‌انگیز بنویسید…",
+  images: "تصاویر",
+  publish: "انتشار",
   },
 };
 

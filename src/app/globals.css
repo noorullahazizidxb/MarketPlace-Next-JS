@@ -296,3 +296,13 @@ html, body {
   input, select, textarea { font-size:16px !important; line-height:1.35; }
 }
 
+/* Hide scrollbar utility for horizontal scrollers */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Aspect ratio helpers (used by ImageSlider to avoid inline styles) */
+.ar-16-9 { aspect-ratio: 16 / 9; }
+.ar-4-1 { aspect-ratio: 4 / 1; }
+.ar-1-1 { aspect-ratio: 1 / 1; }
+.ar-3-2 { aspect-ratio: 3 / 2; }
+

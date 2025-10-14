@@ -1,10 +1,10 @@
 import axios, { AxiosError, AxiosResponse, InternalAxiosRequestConfig } from "axios";
 import { useAuthStore } from "@/store/auth.store";
 
-// Prefer NEXT_PUBLIC_API_BASE (constraint), fallback to existing var and a sane local default
+// Prefer NEXT_PUBLIC_API_BASE_URL (public HTTP API), then fallback to NEXT_PUBLIC_API_BASE, then default
 const baseURL =
-  process.env.NEXT_PUBLIC_API_BASE ||
   process.env.NEXT_PUBLIC_API_BASE_URL ||
+  process.env.NEXT_PUBLIC_API_BASE ||
   "http://localhost:3002/api";
 
 export const axiosClient = axios.create({
