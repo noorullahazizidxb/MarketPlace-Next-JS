@@ -361,7 +361,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         )}
       </AnimatePresence>
       {/* Notifications Panel (only non-admin uses panel; admin navigates) */}
-      {isAuthed && !isAdmin && (
+      {isAuthed && (
         <NotificationsPanel
           isOpen={notifOpen}
           onClose={() => setNotifOpen(false)}
@@ -386,7 +386,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <ActionTile
             icon={Bell}
             label={t("notifications")}
-            onClick={() => onNavigate("/admin/notifications")}
+            onClick={() => setNotifOpen(true)}
           />
           <ActionTile
             icon={Megaphone}
@@ -486,7 +486,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <ActionTile
             icon={Bell}
             label={t("notifications")}
-            onClick={() => onNavigate("/notifications")}
+            onClick={() => setNotifOpen(true)}
           />
           <ActionTile
             icon={User2}
