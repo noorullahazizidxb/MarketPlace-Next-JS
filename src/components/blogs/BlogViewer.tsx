@@ -6,6 +6,11 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import CommentsInline from "./CommentsInline";
 import { Portal } from "@/components/ui/portal";
 import { useApiGet } from "@/lib/api-hooks";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { useApiMutation } from "@/lib/api-hooks";
+import { useAuth } from "@/lib/use-auth";
+import { useRouter } from "next/navigation";
 
 export default function BlogViewer({
   open,
@@ -25,6 +30,37 @@ export default function BlogViewer({
     shouldFetch ? `/blogs/${blogId}` : ""
   );
   const source = liveBlog || blog;
+  const { user, roles } = useAuth();
+  const router = useRouter();
+  const isAuthor =
+    !!user &&
+    source &&
+    (source.author?.id === user.id || source.userId === user.id);
+  const canDelete = isAuthor || (roles || []).includes("ADMIN");
+  const del = useApiMutation(
+    "delete",
+    source ? `/blogs/${source.id}` : "/blogs/__noop__"
+  );
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const onEdit = () => {
+    if (!source) return;
+    const params = new URLSearchParams();
+    params.set("id", String(source.id));
+    if (source.title) params.set("title", source.title);
+    if (source.content) params.set("content", source.content);
+    router.push(`/blogs/create?${params.toString()}`);
+  };
+  const onDelete = async () => {
+    if (!source) return;
+    try {
+      await del.mutateAsync({} as any);
+    } catch {}
+    try {
+      const { getSocket } = await import("@/lib/socket");
+      getSocket()?.emit?.("blogDeleted", { id: source.id });
+    } catch {}
+    setConfirmOpen(false);
+  };
   const images = Array.isArray(source?.images)
     ? source?.images.map((u: any) => ({
         url: typeof u === "string" ? u : u?.url,
@@ -76,11 +112,37 @@ export default function BlogViewer({
                     {source.content}
                   </p>
                 )}
+                {isAuthor && (
+                  <div className="flex items-center gap-2 pt-1">
+                    <Button variant="accent" size="sm" onClick={onEdit}>
+                      Edit
+                    </Button>
+                    {canDelete && (
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="text-red-500 hover:text-red-600"
+                        onClick={() => setConfirmOpen(true)}
+                      >
+                        Delete
+                      </Button>
+                    )}
+                  </div>
+                )}
                 <CommentsInline
                   blogId={String(source?.id)}
                   comments={source?.comments}
                 />
               </div>
+              <ConfirmDialog
+                open={confirmOpen}
+                onOpenChange={setConfirmOpen}
+                title="Delete blog?"
+                description="This will permanently remove the blog and its images."
+                confirmLabel="Delete"
+                tone="danger"
+                onConfirm={onDelete}
+              />
             </motion.div>
           </motion.div>
         )}

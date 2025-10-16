@@ -1,63 +1,47 @@
 "use client";
-import React, { useMemo, useState } from "react";
-import { useParams } from "next/navigation";
+import React from "react";
+import { useParams, useRouter } from "next/navigation";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "swr";
 import { useAuth } from "@/lib/use-auth";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 export default function BlogDetailPage() {
   const { id } = useParams<{ id: string }>();
-  const { user } = useAuth();
+  const router = useRouter();
+  const { user, roles } = useAuth();
   const { data: blog, isLoading } = useApiGet(["blogs", id], `/blogs/${id}`);
-  const isAuthor = !!user && blog?.author?.id === user?.id;
-  const [draftTitle, setDraftTitle] = useState("");
-  const [draftContent, setDraftContent] = useState("");
-  const save = useApiMutation("put", `/blogs/${id}`);
+  const isAuthor =
+    !!user && (blog?.author?.id === user?.id || blog?.userId === user?.id);
+  const canDelete = isAuthor || (roles || []).includes("ADMIN");
+  const del = useApiMutation("delete", `/blogs/${id}`);
   const addComment = useApiMutation("post", `/blogs/${id}/comments`);
-
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
   const onEdit = () => {
-    setDraftTitle(blog?.title || "");
-    setDraftContent(blog?.content || "");
+    if (!blog) return;
+    const params = new URLSearchParams();
+    params.set("id", String(blog.id));
+    if (blog.title) params.set("title", blog.title);
+    if (blog.content) params.set("content", blog.content);
+    router.push(`/blogs/create?${params.toString()}`);
   };
-  const onSave = async () => {
-    const payload = { title: draftTitle, content: draftContent } as any;
-    mutate(
-      ["blogs", id],
-      (prev: any) => ({ ...(prev || {}), ...payload }),
-      false
-    );
+  const onDelete = async () => {
     try {
-      await save.mutateAsync(payload);
-      await mutate(["blogs", id]);
+      await del.mutateAsync({} as any);
     } catch {}
+    try {
+      const { getSocket } = await import("@/lib/socket");
+      getSocket()?.emit?.("blogDeleted", { id });
+    } catch {}
+    setConfirmOpen(false);
+    router.push("/blogs");
   };
-
-  const [comment, setComment] = useState("");
+  const [comment, setComment] = React.useState("");
   const onPostComment = async () => {
     if (!comment.trim()) return;
-    const optimistic = {
-      id: `c_${Date.now()}`,
-      blogId: id,
-      body: comment.trim(),
-      author: { id: user?.id, name: user?.name || user?.fullName || "You" },
-      createdAt: new Date().toISOString(),
-    } as any;
-    mutate(
-      ["blogs", id],
-      (prev: any) => {
-        if (!prev) return prev;
-        const next = { ...(prev as any) };
-        next.comments = Array.isArray(next.comments)
-          ? [optimistic, ...next.comments]
-          : [optimistic];
-        return next;
-      },
-      false
-    );
-    setComment("");
     try {
-      await addComment.mutateAsync({ body: optimistic.body });
-      await mutate(["blogs", id]);
+      await addComment.mutateAsync({ body: comment.trim() });
+      setComment("");
     } catch {}
   };
 
@@ -67,35 +51,30 @@ export default function BlogDetailPage() {
   return (
     <div className="space-y-6">
       <header className="space-y-2">
-        {isAuthor ? (
-          <div className="space-y-2">
-            <input
-              className="input text-xl font-bold"
-              value={draftTitle || blog.title}
-              onChange={(e) => setDraftTitle(e.target.value)}
-              aria-label="Title"
-            />
-            <textarea
-              className="input min-h-[200px]"
-              value={draftContent || blog.content}
-              onChange={(e) => setDraftContent(e.target.value)}
-              aria-label="Content"
-            />
-            <div className="flex items-center gap-2">
-              <button className="btn-primary" onClick={onSave}>
-                Save
-              </button>
-              <button className="btn" onClick={onEdit}>
-                Edit
-              </button>
-            </div>
-          </div>
-        ) : (
-          <>
+        <div className="flex items-start justify-between gap-4">
+          <div>
             <h1 className="heading-xl">{blog.title}</h1>
-            <p className="prose prose-invert leading-relaxed">{blog.content}</p>
-          </>
-        )}
+            <p className="prose prose-invert leading-relaxed whitespace-pre-line">
+              {blog.content}
+            </p>
+          </div>
+          {isAuthor && (
+            <div className="flex items-center gap-2">
+              <Button variant="accent" onClick={onEdit}>
+                Edit
+              </Button>
+              {canDelete && (
+                <Button
+                  variant="secondary"
+                  className="text-red-500 hover:text-red-600"
+                  onClick={() => setConfirmOpen(true)}
+                >
+                  Delete
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
       </header>
 
       <section className="space-y-3">
@@ -126,6 +105,15 @@ export default function BlogDetailPage() {
           ))}
         </div>
       </section>
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete blog?"
+        description="This will permanently remove the blog and its images."
+        confirmLabel="Delete"
+        tone="danger"
+        onConfirm={onDelete}
+      />
     </div>
   );
 }

@@ -7,8 +7,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "swr";
+import { useCreateStory, useUpdateStory } from "@/lib/stories-hooks";
 
 const schema = z.object({
   title: z
@@ -25,13 +24,19 @@ type FormVals = z.infer<typeof schema>;
 export default function StoryCreateModal({
   open,
   onClose,
+  storyId,
+  initial,
 }: {
   open: boolean;
   onClose: () => void;
+  storyId?: string;
+  initial?: { title?: string; description?: string; videoUrl?: string };
 }) {
   const [step, setStep] = React.useState(0);
   const [images, setImages] = React.useState<File[]>([]);
-  const post = useApiMutation("post", "/stories");
+  const isEdit = !!storyId;
+  const createMut = useCreateStory();
+  const updateMut = useUpdateStory(storyId || "");
 
   const {
     register,
@@ -42,7 +47,13 @@ export default function StoryCreateModal({
   } = useForm({
     resolver: zodResolver(schema),
     mode: "onChange",
-    defaultValues: { tags: [] },
+    defaultValues: {
+      tags: [],
+      title: initial?.title || "",
+      description: initial?.description || "",
+      videoUrl: initial?.videoUrl || "",
+      mode: initial?.videoUrl ? "video" : undefined,
+    },
   });
   const mode = watch("mode");
 
@@ -66,17 +77,15 @@ export default function StoryCreateModal({
     }
 
     try {
-      await post.mutateAsync(
-        fd as any,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        } as any
-      );
-      await mutate(["stories"]);
+      if (isEdit && storyId) {
+        await updateMut.mutateAsync(fd as any);
+      } else {
+        await createMut.mutateAsync(fd as any);
+      }
       onClose();
       try {
         const { toastSuccess } = await import("@/lib/toast");
-        toastSuccess("Story created");
+        toastSuccess(isEdit ? "Story updated" : "Story created");
       } catch {}
     } catch {}
   };
@@ -97,7 +106,9 @@ export default function StoryCreateModal({
         >
           <div className="px-6 py-4 border-b border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/80">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold">Create Story</h2>
+              <h2 className="text-lg font-semibold">
+                {isEdit ? "Edit Story" : "Create Story"}
+              </h2>
               <div className="text-2xs subtle">Step {step + 1} / 3</div>
             </div>
             <div className="mt-3 h-2 w-full rounded bg-[hsl(var(--muted))/0.35] overflow-hidden">
@@ -299,8 +310,12 @@ export default function StoryCreateModal({
                   Next
                 </Button>
               ) : (
-                <Button type="submit" variant="primary">
-                  Publish
+                <Button
+                  type="submit"
+                  variant="primary"
+                  disabled={createMut.isPending || updateMut.isPending}
+                >
+                  {isEdit ? "Update" : "Publish"}
                 </Button>
               )}
             </div>

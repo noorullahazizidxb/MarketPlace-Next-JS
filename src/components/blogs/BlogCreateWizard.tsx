@@ -11,11 +11,23 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
-export default function BlogCreateWizard({ onClose }: { onClose: () => void }) {
+export default function BlogCreateWizard({
+  onClose,
+  blogId,
+  initial,
+}: {
+  onClose: () => void;
+  blogId?: string;
+  initial?: { title?: string; content?: string } | null;
+}) {
   const { t } = useLanguage();
   const [step, setStep] = useState(0); // 0 details, 1 media
   const [images, setImages] = useState<File[]>([]);
   const create = useApiMutation("post", "/blogs");
+  const update = useApiMutation(
+    "put",
+    blogId ? `/blogs/${blogId}` : "/blogs/__noop__"
+  );
 
   const steps = useMemo(() => [t("details"), t("media")], [t]);
   // Validation schema
@@ -34,7 +46,10 @@ export default function BlogCreateWizard({ onClose }: { onClose: () => void }) {
     formState: { errors },
   } = useForm<FormVals>({
     resolver: zodResolver(schema),
-    defaultValues: { title: "", content: "" },
+    defaultValues: {
+      title: initial?.title || "",
+      content: initial?.content || "",
+    },
     mode: "onChange",
   });
   const title = watch("title");
@@ -69,14 +84,27 @@ export default function BlogCreateWizard({ onClose }: { onClose: () => void }) {
     images.forEach((file) => fd.append("images", file));
 
     try {
-      const created: any = await create.mutateAsync(
-        fd as any,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        } as any
-      );
-      // Do not mutate caches or emit events; rely on server websocket broadcast to update lists
-      onClose();
+      if (blogId && update) {
+        const updated: any = await update.mutateAsync(
+          fd as any,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          } as any
+        );
+        try {
+          const { getSocket } = await import("@/lib/socket");
+          getSocket()?.emit?.("blogUpdated", { id: blogId, blog: updated });
+        } catch {}
+        onClose();
+      } else {
+        await create.mutateAsync(
+          fd as any,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          } as any
+        );
+        onClose();
+      }
     } catch {}
   };
 
@@ -87,7 +115,7 @@ export default function BlogCreateWizard({ onClose }: { onClose: () => void }) {
     >
       <div className="p-4 border-b border-[hsl(var(--border))] flex items-center gap-4 relative">
         <h2 className="text-lg font-semibold flex items-center gap-2">
-          {t("createBlog")}
+          {blogId ? (t("edit") as string) : (t("createBlog") as string)}
         </h2>
         <div className="flex items-center gap-2 text-2xs ml-auto">
           {steps.map((s, i) => (
@@ -263,9 +291,9 @@ export default function BlogCreateWizard({ onClose }: { onClose: () => void }) {
               type="submit"
               variant="primary"
               LeftIcon={Check}
-              disabled={create.isPending}
+              disabled={create.isPending || (blogId ? update.isPending : false)}
             >
-              {t("publish")}
+              {blogId ? (t("updateLabel") as string) : (t("publish") as string)}
             </Button>
           )}
         </div>

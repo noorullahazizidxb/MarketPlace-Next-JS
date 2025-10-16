@@ -1,23 +1,26 @@
 "use client";
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { useApiGet } from "@/lib/api-hooks";
+import {
+  useStories,
+  useStoriesSocket,
+  useDeleteStory,
+} from "@/lib/stories-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import StoryCreateModal from "@/components/ui/StoryCreateModal";
-import { Dialog } from "@/components/ui/dialog";
 import { asset } from "@/lib/assets";
 import { ImageSlider } from "@/components/ui/image-slider";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
 type Story = {
   id: string;
   title: string;
   description?: string;
   images?: Array<{ url?: string | null } | string | null>;
-  videoUrl?: string;
-  user?: { fullName?: string; photo?: string };
+  videoUrl?: string | null;
+  user?: { id?: string; fullName?: string; photo?: string | null };
   createdAt?: string;
   status?: "PUBLISHED" | "DRAFT";
 };
@@ -149,8 +152,10 @@ function useAdminGate() {
 export default function AdminStoriesIndexPage() {
   const isAdmin = useAdminGate();
   const [q, setQ] = React.useState("");
-  const [createOpen, setCreateOpen] = React.useState(false);
-  const { data, isLoading } = useApiGet<Story[]>(["stories"], "/stories");
+  const router = useRouter();
+  // React Query + Socket realtime
+  const { data, isLoading } = useStories();
+  useStoriesSocket(true);
   const items = React.useMemo(() => {
     const list = Array.isArray(data) ? data : [];
     return q.trim()
@@ -162,7 +167,11 @@ export default function AdminStoriesIndexPage() {
 
   return (
     <div className="space-y-6">
-      <Hero q={q} setQ={setQ} onCreate={() => setCreateOpen(true)} />
+      <Hero
+        q={q}
+        setQ={setQ}
+        onCreate={() => router.push("/admin/stories/create")}
+      />
       {isLoading ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
           {Array.from({ length: 6 }).map((_, i) => (
@@ -184,21 +193,49 @@ export default function AdminStoriesIndexPage() {
         >
           <AnimatePresence>
             {items.map((s) => (
-              <StoryCard
-                key={s.id}
-                s={s}
-                onView={() => {}}
-                onEdit={() => {}}
-                onDelete={() => {}}
-              />
+              <StoryRow key={s.id} story={s} />
             ))}
           </AnimatePresence>
         </motion.div>
       )}
-      <StoryCreateModal
-        open={createOpen}
-        onClose={() => setCreateOpen(false)}
-      />
     </div>
+  );
+}
+
+function StoryRow({ story }: { story: Story }) {
+  const router = useRouter();
+  const del = useDeleteStory(story.id);
+  const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const onDelete = () => setConfirmOpen(true);
+  const onEdit = () => {
+    // Navigate to multi-step form with initial values via query params or state
+    const qp = new URLSearchParams();
+    qp.set("id", story.id);
+    if (story.title) qp.set("title", story.title);
+    if (story.description) qp.set("description", story.description);
+    if (story.videoUrl || "") qp.set("videoUrl", String(story.videoUrl || ""));
+    router.push(`/admin/stories/create?${qp.toString()}`);
+  };
+  return (
+    <>
+      <StoryCard
+        s={story}
+        onView={() => {}}
+        onEdit={onEdit}
+        onDelete={onDelete}
+      />
+      <ConfirmDialog
+        open={confirmOpen}
+        onOpenChange={setConfirmOpen}
+        title="Delete story?"
+        description="This will remove the story permanently."
+        confirmLabel="Delete"
+        tone="danger"
+        onConfirm={async () => {
+          await del.mutateAsync({} as any);
+          setConfirmOpen(false);
+        }}
+      />
+    </>
   );
 }

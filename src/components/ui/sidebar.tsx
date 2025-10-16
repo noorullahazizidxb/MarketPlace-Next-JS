@@ -48,7 +48,6 @@ export function Sidebar({
   const items = [
     { href: "/", label: t("dashboard"), Icon: LayoutDashboard },
     { href: "/listings", label: t("listings"), Icon: Layers3 },
-    { href: "/stories", label: "Stories", Icon: Megaphone },
     { href: "/blogs", label: "Blogs", Icon: Info },
     { href: "/admin/notifications", label: t("notifications"), Icon: Bell },
     { href: "/admin/ads", label: t("advertisements"), Icon: Megaphone },
@@ -56,6 +55,7 @@ export function Sidebar({
     { href: "/pendings", label: t("pendingLists"), Icon: List },
     { href: "/listings/create", label: t("newListing"), Icon: PlusCircle }, // keep Settings in the nav but render children below
     { href: "/settings", label: t("settings"), Icon: Settings },
+    { href: "/admin/stories", label: "Stories", Icon: Megaphone },
   ];
 
   return (
@@ -94,7 +94,7 @@ export function Sidebar({
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute left-7 top-[78px] z-[70] w-56 liquid-glass glass-hover rounded-2xl overflow-hidden"
+                className="absolute left-7 top-[78px] z-[70] w-56 rounded-2xl overflow-hidden bg-[hsl(var(--card))] border border-[hsl(var(--card-border, var(--border)))]"
               >
                 <div className="p-5">
                   <Link

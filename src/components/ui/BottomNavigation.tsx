@@ -27,6 +27,7 @@ import {
   Layers,
   Search,
   Palette,
+  Settings,
   LogOut,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
@@ -91,7 +92,7 @@ const BottomNavItem: React.FC<{
       aria-label={item.label}
       onClick={() => onNavigate(item.href, item.onClick)}
       className={
-        "relative flex flex-col items-center hover:bg-[var(--foreground)] justify-center gap-1 min-w-[58px] px-2 py-1.5 rounded-2xl text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 ring-primary/40 " +
+        "relative flex flex-col items-center hover:bg-[var(--foreground)] justify-center gap-0.5 min-w-[40px] px-2 py-2 rounded-2xl text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 ring-primary/40 " +
         (active
           ? "text-[var(--foreground)]"
           : "text-[hsl(var(--muted-foreground,var(--foreground)))] hover:text-[hsl(var(--foreground))]")
@@ -216,15 +217,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
   // Build role-specific nav sets
   const computedItems = useMemo<BottomNavDescriptor[]>(() => {
     if (isAdmin) {
+      // Admin: Bottom nav limited to Home, About, Contact, Search, User Panel
       return [
         { key: "home", label: t("home"), href: "/listings", icon: Home },
-        {
-          key: "stories",
-          label: t("stories"),
-          href: "/stories",
-          icon: Layers3,
-        },
-        { key: "blogs", label: t("blogs"), href: "/blogs", icon: Megaphone },
+        { key: "about", label: t("about"), href: "/about", icon: Info },
+        { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
         {
           key: "search",
           label: t("search"),
@@ -232,59 +229,40 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           onClick: () => setSearchOpen(true),
         },
         {
-          key: "pendings",
-          label: t("pendings"),
-          href: "/pendings",
-          icon: List,
+          key: "user",
+          label: t("you"),
+          icon: User2,
+          onClick: () => setUserOpen(true),
         },
-        {
-          key: "create",
-          label: t("create"),
-          href: "/listings/create",
-          icon: PlusCircle,
-        },
-        {
-          key: "admin",
-          label: t("admin"),
-          icon: LayoutDashboard,
-          onClick: () => setAdminOpen(true),
-        },
-        {
-          key: "notifications",
-          label: t("alerts"),
-          href: "/admin/notifications",
-          icon: Bell,
-        },
-        { key: "ads", label: t("ads"), href: "/admin/ads", icon: Megaphone },
       ];
     }
     if (!isAuthed) {
+      // Guest: Home, Blog, About, Contact, Search, User Panel (opens sign-in)
       return [
         { key: "home", label: t("home"), href: "/listings", icon: Home },
-        {
-          key: "stories",
-          label: t("stories"),
-          href: "/stories",
-          icon: Layers3,
-        },
         { key: "blogs", label: t("blogs"), href: "/blogs", icon: Megaphone },
         { key: "about", label: t("about"), href: "/about", icon: Info },
+        { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
         {
           key: "search",
           label: t("search"),
           icon: Search,
           onClick: () => setSearchOpen(true),
         },
-        { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
-        { key: "sign-in", label: t("signIn"), href: "/sign-in", icon: LogIn },
+        {
+          key: "user",
+          label: t("you"),
+          icon: User2,
+          onClick: () => router.push("/sign-in"),
+        },
       ];
     }
-    // Normal authed user (non-admin)
+    // Normal authed user (non-admin): Home, Blog, About, Contact, Search, User Panel
     return [
       { key: "home", label: t("home"), href: "/listings", icon: Home },
-      { key: "stories", label: t("stories"), href: "/stories", icon: Layers3 },
       { key: "blogs", label: t("blogs"), href: "/blogs", icon: Megaphone },
       { key: "about", label: t("about"), href: "/about", icon: Info },
+      { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
       {
         key: "search",
         label: t("search"),
@@ -292,26 +270,13 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         onClick: () => setSearchOpen(true),
       },
       {
-        key: "create",
-        label: t("create"),
-        href: "/listings/create",
-        icon: PlusCircle,
-      },
-      { key: "contact", label: t("contact"), href: "/contact", icon: Phone },
-      {
         key: "user",
         label: t("you"),
         icon: User2,
         onClick: () => setUserOpen(true),
       },
-      {
-        key: "notifications",
-        label: t("alerts"),
-        icon: Bell,
-        onClick: () => setNotifOpen((v) => !v),
-      },
     ];
-  }, [isAdmin, isAuthed, t]);
+  }, [isAdmin, isAuthed, t, router]);
 
   const onNavigate = useCallback(
     (href?: string, override?: () => void) => {
@@ -417,25 +382,48 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <AdminUserHeader user={user} />
         </div>
         <div className="grid grid-cols-3 gap-4">
+          {/* Requested admin quick actions */}
           <ActionTile
-            icon={Layers3}
-            label={t("listings")}
-            onClick={() => onNavigate("/listings")}
+            icon={Bell}
+            label={t("notifications")}
+            onClick={() => onNavigate("/admin/notifications")}
+          />
+          <ActionTile
+            icon={Megaphone}
+            label={t("advertisements")}
+            onClick={() => onNavigate("/admin/ads")}
+          />
+          <ActionTile
+            icon={User}
+            label={t("usersManagement")}
+            onClick={() => onNavigate("/admin/users")}
           />
           <ActionTile
             icon={List}
-            label={t("pendings")}
+            label={t("pendingLists")}
             onClick={() => onNavigate("/pendings")}
           />
           <ActionTile
             icon={PlusCircle}
-            label={t("create")}
+            label={t("newListing")}
             onClick={() => onNavigate("/listings/create")}
           />
           <ActionTile
+            icon={Settings}
+            label={t("settings")}
+            onClick={() => onNavigate("/settings")}
+          />
+          <ActionTile
             icon={Megaphone}
-            label={t("ads")}
-            onClick={() => onNavigate("/admin/ads")}
+            label={"Stories"}
+            onClick={() => onNavigate("/admin/stories")}
+          />
+
+          {/* Existing tiles (kept for convenience) */}
+          <ActionTile
+            icon={Layers3}
+            label={t("listings")}
+            onClick={() => onNavigate("/listings")}
           />
           <ActionTile
             icon={Layers}
@@ -451,11 +439,6 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             icon={LayoutDashboard}
             label={t("dashboard")}
             onClick={() => onNavigate("/")}
-          />
-          <ActionTile
-            icon={User}
-            label={t("userManagement")}
-            onClick={() => onNavigate("/admin/users")}
           />
           <ActionTile
             icon={List}
@@ -500,6 +483,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <AdminUserHeader user={user} />
         </div>
         <div className="grid grid-cols-3 gap-4">
+          <ActionTile
+            icon={Bell}
+            label={t("notifications")}
+            onClick={() => onNavigate("/notifications")}
+          />
           <ActionTile
             icon={User2}
             label={t("profile")}
