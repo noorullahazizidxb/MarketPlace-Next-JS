@@ -9,6 +9,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
+import Image from "next/image";
 
 export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
   const { t, isRtl } = useLanguage();
@@ -18,10 +19,11 @@ export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
+          <Image
             src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000&auto=format&fit=crop"
             alt="Community background"
             className="h-full w-full rounded-[20px] object-cover opacity-50"
+            fill
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/40 via-[hsl(var(--background))]/40 to-[hsl(var(--background))]" />
         </div>
@@ -147,13 +149,14 @@ export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
               key={m.name}
               className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={`https://images.unsplash.com/photo-15${
                   i + 1
                 }27157730-0d3a42b2c3f4?q=80&w=600&auto=format&fit=crop`}
                 alt={m.name}
                 className="h-24 w-24 rounded-full object-cover"
+                width={96}
+                height={96}
               />
               <h3 className="mt-4 font-semibold">{m.name}</h3>
               <p className="text-sm text-[hsl(var(--foreground))]/70">

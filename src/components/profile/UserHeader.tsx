@@ -116,10 +116,12 @@ export default function UserHeader({ user }: { user: PublicUser }) {
               >
                 {f.photo ? (
                   // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={asset(f.photo)}
                     alt={f.fullName || ""}
                     className="w-full h-full object-cover"
+                    width={32}
+                    height={32}
                   />
                 ) : (
                   <div className="w-full h-full grid place-items-center text-xs font-semibold">

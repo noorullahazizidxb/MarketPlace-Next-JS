@@ -8,6 +8,7 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { Pencil, Trash2, Image as ImageIcon } from "lucide-react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { cn } from "@/lib/cn";
+import Image from "next/image";
 
 type AdPlacement =
   | "HOME_PAGE_1ST"
@@ -99,12 +100,16 @@ export default function AdCard({
     <Card className="relative group overflow-hidden p-0 flex flex-col border border-white/10 hover:border-primary/40 transition-colors">
       <div className="relative h-40 w-full bg-gradient-to-br from-black/30 to-black/60 flex items-center justify-center overflow-hidden">
         {ad.imageUrl ? (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={ad.imageUrl}
-            alt={ad.title}
-            className="absolute inset-0 h-full w-full object-cover"
-          />
+          <div className="absolute inset-0 h-full w-full">
+            <Image
+              src={ad.imageUrl}
+              alt={ad.title}
+              className="object-cover"
+              fill
+              sizes="(max-width: 768px) 100vw, 100vw"
+              priority={false}
+            />
+          </div>
         ) : (
           <ImageIcon className="size-10 text-white/40" />
         )}

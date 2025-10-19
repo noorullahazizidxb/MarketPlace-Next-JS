@@ -31,6 +31,7 @@ export function AppShell({ children }: PropsWithChildren) {
   // Initialize realtime socket listeners (blogs/stories)
   useRealtimeSocial(token ?? undefined);
   const appReady = useAppStore((s) => s.appReady);
+  const hideChromeGlobal = useAppStore((s) => s.hideChrome);
   const pathname = usePathname();
   const router = useRouter();
   const [redirecting, setRedirecting] = useState(false);
@@ -70,18 +71,28 @@ export function AppShell({ children }: PropsWithChildren) {
 
   useEffect(() => {
     if (loading) return;
-    // Don't redirect away from auth pages (sign-in/sign-up etc.)
     if (hideChrome) {
       setRedirecting(false);
       return;
     }
+    // Restrict /admin/* routes to admins only
+    try {
+      if (pathname && pathname.startsWith("/admin") && !isAdmin) {
+        setRedirecting(true);
+        router.replace("/listings");
+        return;
+      }
+    } catch (_) {}
     if (!user && !isPublicRoute) {
       setRedirecting(true);
       router.replace("/sign-in");
-      return;
     }
+  }, [loading, hideChrome, user, isPublicRoute, router, pathname]);
+
+  useEffect(() => {
+    // Reset redirecting state after pathname changes
     setRedirecting(false);
-  }, [user, loading, isPublicRoute, router, hideChrome]);
+  }, [pathname]);
 
   if (loading || redirecting)
     return (
@@ -107,7 +118,7 @@ export function AppShell({ children }: PropsWithChildren) {
     );
   }
 
-  if (hideChrome) {
+  if (hideChrome || hideChromeGlobal) {
     return (
       <main id="main-content" className="flex-1" dir="ltr">
         <PageTransition>{children}</PageTransition>

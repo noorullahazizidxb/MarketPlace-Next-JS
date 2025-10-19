@@ -8,6 +8,7 @@ import { useAuth } from "@/lib/use-auth";
 import { getSocket } from "@/lib/socket";
 import Link from "next/link";
 import { asset } from "@/lib/assets";
+import Image from "next/image";
 
 export default function CommentsInline({
   blogId,
@@ -119,11 +120,12 @@ export default function CommentsInline({
               className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 flex-shrink-0 hover:opacity-90"
             >
               {c.author?.photo ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
+                <Image
                   src={asset(c.author.photo)}
                   alt={c.author?.fullName || "avatar"}
                   className="w-8 h-8 object-cover"
+                  width={32}
+                  height={32}
                 />
               ) : (
                 <div className="w-8 h-8 grid place-items-center text-[hsl(var(--foreground))] text-xs font-semibold">

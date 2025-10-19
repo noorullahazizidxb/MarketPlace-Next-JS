@@ -3,13 +3,21 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useEffect } from "react";
+import { useAppStore } from "@/store/app.store";
 import { Compass, Sparkles, Stars } from "lucide-react";
 
 export default function NotFound() {
   const { t } = useLanguage();
+  const setHideChrome = useAppStore((s) => s.setHideChrome);
+
+  useEffect(() => {
+    setHideChrome(true);
+    return () => setHideChrome(false);
+  }, [setHideChrome]);
 
   return (
-    <section className="relative flex min-h-[70vh] items-center justify-center overflow-hidden">
+    <section className="relative flex min-h-[100dvh] items-center justify-center overflow-hidden">
       {/* Ambient gradient shapes */}
       <motion.div
         aria-hidden

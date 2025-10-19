@@ -144,19 +144,19 @@ export function ApprovalCard({
           </button>
         </div>
 
-        <div className="flex items-center justify-between gap-3">
+        <div className="flex items-center justify-between gap-2">
           <div className="text-xs subtle">
             {createdAt ? `${t("created")} ${createdAt.toLocaleString()}` : null}
           </div>
           <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
-            <div className="min-w-[120px] sm:min-w-[160px]">
+            <div className="min-w-[90px] sm:min-w-[120px]">
               <select
                 aria-label="Contact visibility"
                 value={contactVisibility}
                 onChange={(e) =>
                   setContactVisibility(e.target.value as ContactVisibility)
                 }
-                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full max-w-[220px]"
+                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full max-w-[150px]"
               >
                 <option value="HIDE_SELLER">{t("hideSeller")}</option>
                 <option value="SHOW_SELLER">{t("showSeller")}</option>
@@ -165,7 +165,7 @@ export function ApprovalCard({
             </div>
             <Button
               size="sm"
-              className="w-full sm:w-auto"
+              className="w-full  sm:w-auto"
               onClick={async () => {
                 await approve.mutateAsync({ contactVisibility });
                 onApproved?.(listing.id, contactVisibility);
@@ -176,7 +176,7 @@ export function ApprovalCard({
             </Button>
             <Button
               size="sm"
-              className="w-full sm:w-auto"
+              className="w-full  sm:w-auto"
               onClick={async () => {
                 await reject.mutateAsync({});
                 onRejected?.(listing.id);

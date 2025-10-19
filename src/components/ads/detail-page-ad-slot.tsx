@@ -1,6 +1,7 @@
 "use client";
 import React, { useMemo } from "react";
 import { useApiGet } from "@/lib/api-hooks";
+import Image from "next/image";
 
 export type DetailAdPlacement =
   | "DETAIL_PAGE_1ST"
@@ -57,13 +58,16 @@ export function DetailAdSlot({
       <div className={`w-full ${hClass}`}>
         {ad ? (
           url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={url}
-              alt={ad.title || ad.placement}
-              className="h-full w-full object-cover"
-              loading="lazy"
-            />
+            <div className="relative h-full w-full">
+              <Image
+                src={url}
+                alt={ad.title || ad.placement}
+                className="object-cover"
+                fill
+                sizes="(max-width: 768px) 100vw, 100vw"
+                priority={false}
+              />
+            </div>
           ) : (
             <div className="h-full w-full grid place-items-center bg-gradient-to-br from-white/5 to-white/0 text-xs text-white/40 tracking-wide p-4 text-center">
               {ad.title || ad.placement.replace(/_/g, " ")}

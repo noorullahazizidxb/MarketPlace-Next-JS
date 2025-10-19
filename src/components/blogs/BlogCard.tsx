@@ -16,6 +16,7 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { getSocket } from "@/lib/socket";
 import { asset } from "@/lib/assets";
+import Image from "next/image";
 
 function getCounts(b: any) {
   const likes = b?.counts?.likes ?? b?.likes ?? b?.likeCount ?? 0;
@@ -102,19 +103,27 @@ export default function BlogCard({
           {/* gradient and text overlay */}
           <div className="pointer-events-none absolute inset-0">
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
-            <div className="absolute left-3 right-3 bottom-3 text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-              <h3 className="text-lg mb-10 font-semibold leading-tight line-clamp-2">
-                {blog.title}
-              </h3>
-              {blog.excerpt && (
-                <p className="mt-1 text-sm opacity-90 line-clamp-2">
-                  {blog.excerpt}
-                </p>
-              )}
+            {/* Clickable title/description button that sits above the gradient but below the action controls */}
+            <div className="absolute left-3 bottom-3 z-[50] drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+              <button
+                type="button"
+                onClick={() => onOpen?.(blog)}
+                aria-label={t("openBlog")}
+                className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[hsl(var(--accent)/0.18)] hover:scale-105 transform-gpu transition-all duration-200"
+              >
+                <h3 className="text-lg font-semibold leading-tight line-clamp-2">
+                  {blog.title}
+                </h3>
+                {blog.excerpt && (
+                  <p className="mt-1 text-sm opacity-90 line-clamp-2">
+                    {blog.excerpt}
+                  </p>
+                )}
+              </button>
             </div>
           </div>
           {/* author/meta and actions overlay with interactive controls */}
-          <div className="absolute inset-0 z-10">
+          <div className="absolute inset-0 z-30">
             <div className="flex flex-col justify-between h-full">
               {/* top-left author/meta */}
               <div className="p-3 sm:p-4">
@@ -129,11 +138,12 @@ export default function BlogCard({
                   >
                     <div className="size-6 rounded-full overflow-hidden bg-white/20 grid place-items-center text-white">
                       {blog.author?.photo ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={asset(blog.author.photo)}
                           alt={blog.author?.fullName || "avatar"}
                           className="w-6 h-6 object-cover"
+                          width={24} // Adding width property
+                          height={24} // Adding height property
                         />
                       ) : (
                         <div className="text-[10px] font-semibold">
@@ -257,11 +267,12 @@ export default function BlogCard({
             >
               <div className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 grid place-items-center text-[hsl(var(--foreground))]">
                 {blog.author?.photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
-                  <img
+                  <Image
                     src={asset(blog.author.photo)}
                     alt={blog.author?.fullName || "avatar"}
                     className="w-8 h-8 object-cover"
+                    width={32} // Adding width property
+                    height={32} // Adding height property
                   />
                 ) : (
                   <div className="text-xs font-semibold">

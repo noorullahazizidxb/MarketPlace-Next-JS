@@ -229,19 +229,20 @@ const UsersDashboard: React.FC = () => {
                       )}
                     >
                       <td className="p-3 align-top">
-                        <div className="flex items-center gap-3">
+                        <div className="flex   items-center gap-3">
                           <Link
                             href={u.id ? `/profile/${u.id}` : "#"}
                             onClick={(e) => {
                               if (!u.id) e.preventDefault();
                             }}
-                            className="flex items-center gap-3"
+                            className="flex rounded-full border border-[hsl(var(--border))] p-4 items-center gap-3"
                           >
                             <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))]">
                               <Image
                                 src={avatar}
                                 alt={u.fullName || u.email}
-                                fill
+                                width={40}
+                                height={40}
                                 className="object-cover"
                               />
                             </div>

@@ -18,13 +18,27 @@ export function applyThemeTokens(tokens: ThemeTokens) {
   const applyPrefixed = (prefix: string, obj: Record<string, any>) => {
     for (const [k, v] of Object.entries(obj)) {
       const val = readVal(v);
+      const varBase = `--${prefix}-${toVarName(k)}`;
       if (val) {
-        root.style.setProperty(`--${prefix}-${toVarName(k)}`, val);
-      } else if (v && typeof v === "object") {
+        // write base HSL parts (raw content)
+        root.style.setProperty(varBase, val);
+      }
+      if (v && typeof v === "object") {
+        // if token is an object, additionally expose hex/rgb if present
+        if (v.hex && typeof v.hex === "string") {
+          root.style.setProperty(`${varBase}-hex`, String(v.hex));
+        }
+        if (v.rgb && typeof v.rgb === "string") {
+          root.style.setProperty(`${varBase}-rgb`, String(v.rgb));
+        }
         // nested tokens - flatten by joining keys
         for (const [k2, v2] of Object.entries(v as Record<string, any>)) {
           const v2val = readVal(v2);
           if (v2val) root.style.setProperty(`--${prefix}-${toVarName(k)}-${toVarName(k2)}`, v2val);
+          if (v2 && typeof v2 === "object") {
+            if ((v2 as any).hex) root.style.setProperty(`--${prefix}-${toVarName(k)}-${toVarName(k2)}-hex`, String((v2 as any).hex));
+            if ((v2 as any).rgb) root.style.setProperty(`--${prefix}-${toVarName(k)}-${toVarName(k2)}-rgb`, String((v2 as any).rgb));
+          }
         }
       }
     }
@@ -52,6 +66,12 @@ export function applyThemeTokens(tokens: ThemeTokens) {
   collected.forEach((name) => {
     root.style.removeProperty(`--${name}`);
   });
+
+  // If tokens include a preferredColorMode marker at top-level, write it for CSS/runtime
+  try {
+    const pref = (tokens as any)?.preferredColorMode || (tokens as any)?.preferred_color_mode || null;
+    if (pref) root.style.setProperty("--preferred-color-mode", String(pref));
+  } catch (_) {}
 }
 
 export async function fetchRemoteThemes() {
@@ -159,6 +179,8 @@ export function applyThemeComponents(components: any) {
         setVar("--btn-primary-fg", tokenRef(b.primary.color.token));
       if (b.primary.hoverBackground?.token)
         setVar("--btn-primary-hover-bg", tokenRef(b.primary.hoverBackground.token));
+      if (b.primary.hoverColor?.token)
+        setVar("--btn-primary-hover-fg", tokenRef(b.primary.hoverColor.token));
       if (b.primary.activeBackground?.token)
         setVar("--btn-primary-active-bg", tokenRef(b.primary.activeBackground.token));
       if (b.primary.radius)
@@ -179,6 +201,8 @@ export function applyThemeComponents(components: any) {
         setVar("--btn-accent-fg", tokenRef(b.accent.color.token));
       if (b.accent.hoverBackground?.token)
         setVar("--btn-accent-hover-bg", tokenRef(b.accent.hoverBackground.token));
+      if (b.accent.hoverColor?.token)
+        setVar("--btn-accent-hover-fg", tokenRef(b.accent.hoverColor.token));
       if (b.accent.activeBackground?.token)
         setVar("--btn-accent-active-bg", tokenRef(b.accent.activeBackground.token));
       if (b.accent.shadow)
@@ -197,6 +221,8 @@ export function applyThemeComponents(components: any) {
         setVar("--btn-secondary-fg", tokenRef(b.secondary.color.token));
       if (b.secondary.hoverBackground?.token)
         setVar("--btn-secondary-hover-bg", tokenRef(b.secondary.hoverBackground.token));
+      if (b.secondary.hoverColor?.token)
+        setVar("--btn-secondary-hover-fg", tokenRef(b.secondary.hoverColor.token));
       if (b.secondary.activeBackground?.token)
         setVar("--btn-secondary-active-bg", tokenRef(b.secondary.activeBackground.token));
       if (b.secondary.shadow)

@@ -27,6 +27,9 @@ export function initSocket(token?: string): Socket {
         ? { token: token.startsWith("Bearer ") ? token : `Bearer ${token}` }
         : undefined,
     });
+    socket.on("connect_error", (err) => {
+      console.error("[socket] Connection error:", err.message);
+    });
   } else {
     // Update token on existing socket and reconnect
     (socket as any).auth = token

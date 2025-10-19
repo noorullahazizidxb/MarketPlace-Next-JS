@@ -16,6 +16,7 @@ type ThemeTokensShape = {
 
 type ScalesShape = Record<string, any>;
 type ComponentsShape = Record<string, any>;
+type ColorMode = "HSL" | "RGB" | "HEX";
 
 const toCssString = (v: any): string => {
   if (typeof v === "string") return v;
@@ -25,6 +26,100 @@ const toCssString = (v: any): string => {
 
 const wrapCss = (v: string) => ({ css: v });
 
+// Color conversion helpers used for payload serialization
+const hslCssToHex = (hslCss: string): string => {
+  try {
+    const s = hslCss.trim().replace(/^hsl\(|\)$/g, "");
+    const [hRaw, sRaw, lRaw] = s.split(/\s+/);
+    const h = parseFloat(hRaw);
+    const sv = parseFloat(sRaw);
+    const lv = parseFloat(lRaw);
+    const sPct = isNaN(sv) ? 0 : sv / 100;
+    const lPct = isNaN(lv) ? 0 : lv / 100;
+    const c = (1 - Math.abs(2 * lPct - 1)) * sPct;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = lPct - c / 2;
+    let r = 0,
+      g = 0,
+      b = 0;
+    if (0 <= h && h < 60) [r, g, b] = [c, x, 0];
+    else if (60 <= h && h < 120) [r, g, b] = [x, c, 0];
+    else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
+    else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
+    else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    const toHex = (n: number) => {
+      const v = Math.round((n + m) * 255);
+      return (v < 16 ? "0" : "") + v.toString(16);
+    };
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+  } catch {
+    return "";
+  }
+};
+
+const hslCssToRgb = (hslCss: string): string => {
+  try {
+    const s = hslCss.trim().replace(/^hsl\(|\)$/g, "");
+    const [hRaw, sRaw, lRaw] = s.split(/\s+/);
+    const h = parseFloat(hRaw);
+    const sv = parseFloat(sRaw) / 100;
+    const lv = parseFloat(lRaw) / 100;
+    const c = (1 - Math.abs(2 * lv - 1)) * sv;
+    const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+    const m = lv - c / 2;
+    let r = 0,
+      g = 0,
+      b = 0;
+    if (0 <= h && h < 60) [r, g, b] = [c, x, 0];
+    else if (60 <= h && h < 120) [r, g, b] = [x, c, 0];
+    else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
+    else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
+    else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
+    else [r, g, b] = [c, 0, x];
+    const to255 = (n: number) => Math.round((n + m) * 255);
+    return `rgb(${to255(r)}, ${to255(g)}, ${to255(b)})`;
+  } catch {
+    return "";
+  }
+};
+
+const hexToHslCss = (hex: string): string => {
+  try {
+    const v = hex.replace("#", "");
+    const r = parseInt(v.substring(0, 2), 16) / 255;
+    const g = parseInt(v.substring(2, 4), 16) / 255;
+    const b = parseInt(v.substring(4, 6), 16) / 255;
+    const max = Math.max(r, g, b),
+      min = Math.min(r, g, b);
+    let h = 0,
+      s = 0,
+      l = (max + min) / 2;
+    const d = max - min;
+    if (d !== 0) {
+      s = d / (1 - Math.abs(2 * l - 1));
+      switch (max) {
+        case r:
+          h = ((g - b) / d) % 6;
+          break;
+        case g:
+          h = (b - r) / d + 2;
+          break;
+        default:
+          h = (r - g) / d + 4;
+          break;
+      }
+      h *= 60;
+      if (h < 0) h += 360;
+    }
+    return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(
+      l * 100
+    )}%)`;
+  } catch {
+    return hex;
+  }
+};
+
 export default function ThemeSettingsPage() {
   const setTokensStore = useThemeStore((s) => s.setTokens);
   const setScalesStore = useThemeStore((s) => s.setScales);
@@ -33,6 +128,13 @@ export default function ThemeSettingsPage() {
   const [scales, setScales] = useState<ScalesShape | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [colorMode, setColorMode] = useState<ColorMode>(() => {
+    try {
+      const ls = localStorage.getItem("preferred-color-mode");
+      if (ls === "HEX" || ls === "RGB" || ls === "HSL") return ls as ColorMode;
+    } catch {}
+    return "HSL";
+  });
   const [themeMeta, setThemeMeta] = useState<any | null>(null);
   const [saveMessage, setSaveMessage] = useState<string | null>(null);
   const qc = useQueryClient();
@@ -72,6 +174,7 @@ export default function ThemeSettingsPage() {
       btnActiveToken: b?.primary?.activeBackground?.token || "",
       btnHoverShadow: b?.primary?.hoverShadow || "",
       btnActiveShadow: b?.primary?.activeShadow || "",
+      btnHoverTextToken: b?.primary?.hoverColor?.token || "",
       linkHoverToken: link?.hoverColor?.token || "",
       linkActiveToken: link?.activeColor?.token || "",
       linkBgToken: link?.background?.token || "",
@@ -114,6 +217,17 @@ export default function ThemeSettingsPage() {
     if (normalized) setTokens(normalized);
     if (foundScales) setScales(foundScales);
     if (foundComponents) setComponents(foundComponents);
+    // if payload included preferredColorMode, adopt it
+    const pref =
+      (first as any)?.preferredColorMode ??
+      envelope?.preferredColorMode ??
+      null;
+    if (pref && (pref === "HEX" || pref === "RGB" || pref === "HSL")) {
+      setColorMode(pref as ColorMode);
+      try {
+        localStorage.setItem("preferred-color-mode", pref);
+      } catch {}
+    }
   }, [themesData]);
 
   // apply on load
@@ -194,14 +308,34 @@ export default function ThemeSettingsPage() {
   const parseHsl = (css: string): [number, number, number] | null => {
     try {
       let v = css.trim();
-      if (v.startsWith("hsl(")) v = v.replace(/^hsl\(|\)$/g, "");
-      const parts = v.split(/\s+/);
-      if (parts.length < 3) return null;
-      const h = parseFloat(parts[0]);
-      const s = parseFloat(parts[1]);
-      const l = parseFloat(parts[2]);
-      if ([h, s, l].some((x) => Number.isNaN(x))) return null;
-      return [Math.round(h), Math.round(s), Math.round(l)];
+      if (/^hsl\(/i.test(v)) {
+        v = v.replace(/^hsl\(|\)$/g, "");
+        const parts = v.split(/\s+/);
+        if (parts.length < 3) return null;
+        const h = parseFloat(parts[0]);
+        const s = parseFloat(parts[1]);
+        const l = parseFloat(parts[2]);
+        if ([h, s, l].some((x) => Number.isNaN(x))) return null;
+        return [Math.round(h), Math.round(s), Math.round(l)];
+      }
+      if (/^rgb\(/i.test(v)) {
+        // Convert to HSL CSS first via hex path to reuse one function
+        const m = v.match(/rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i);
+        if (m) {
+          const toHex = (n: number) => (n < 16 ? "0" : "") + n.toString(16);
+          const hex = `#${toHex(parseInt(m[1], 10))}${toHex(
+            parseInt(m[2], 10)
+          )}${toHex(parseInt(m[3], 10))}`;
+          const hslCss = hexToHslCss(hex);
+          return parseHsl(hslCss);
+        }
+        return null;
+      }
+      if (/^#/i.test(v)) {
+        const hslCss = hexToHslCss(v);
+        return parseHsl(hslCss);
+      }
+      return null;
     } catch {
       return null;
     }
@@ -213,9 +347,18 @@ export default function ThemeSettingsPage() {
       if (v && typeof v === "object" && !("css" in v) && !Array.isArray(v)) {
         out[k] = normalizeSide(v as Record<string, any>);
       } else {
-        const css = toCssString(v);
-        const hsl = parseHsl(css) || null;
-        out[k] = { css, ...(hsl ? { hsl } : {}) };
+        const cssHsl = toCssString(v);
+        const hsl = parseHsl(cssHsl) || null;
+        // Always include hsl/css for frontend runtime. Optionally enrich with hex/rgb for backend consumers.
+        const base: Record<string, any> = {
+          css: cssHsl,
+          ...(hsl ? { hsl } : {}),
+        };
+        if (hsl) {
+          if (colorMode === "HEX") base.hex = hslCssToHex(cssHsl);
+          else if (colorMode === "RGB") base.rgb = hslCssToRgb(cssHsl);
+        }
+        out[k] = base;
       }
     }
     return out;
@@ -227,7 +370,10 @@ export default function ThemeSettingsPage() {
       light: normalizeSide(tokens.light || {}),
       dark: normalizeSide(tokens.dark || {}),
     };
-    const envelope: any = { tokens: normalizedTokens };
+    const envelope: any = {
+      tokens: normalizedTokens,
+      preferredColorMode: colorMode,
+    };
     // include only id/name/notes if present; drop other meta fields
     if (themeMeta) {
       if (typeof themeMeta.id !== "undefined") envelope.id = themeMeta.id;
@@ -332,7 +478,19 @@ export default function ThemeSettingsPage() {
         <div className="card">
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-lg font-semibold">{t("colors")}</h2>
-            <div className="flex items-center gap-2" />
+            <div className="flex items-center gap-2">
+              <label className="text-sm">Mode</label>
+              <select
+                className="h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                aria-label="Color input mode"
+                value={colorMode}
+                onChange={(e) => setColorMode(e.target.value as ColorMode)}
+              >
+                <option value="HSL">HSL</option>
+                <option value="RGB">RGB</option>
+                <option value="HEX">HEX</option>
+              </select>
+            </div>
           </div>
           <div className="flex items-center gap-2 mb-3">
             <input
@@ -362,6 +520,7 @@ export default function ThemeSettingsPage() {
                     label={"Light"}
                     value={toCssString((tokens.light as any)[k])}
                     onChange={(v) => handleColorChange("light", k, v)}
+                    colorMode={colorMode}
                   />
                 </div>
                 <div>
@@ -369,6 +528,7 @@ export default function ThemeSettingsPage() {
                     label={"Dark"}
                     value={toCssString((tokens.dark as any)[k])}
                     onChange={(v) => handleColorChange("dark", k, v)}
+                    colorMode={colorMode}
                   />
                 </div>
               </div>
@@ -419,6 +579,43 @@ export default function ThemeSettingsPage() {
             <div className="p-2 rounded-xl border border-[hsl(var(--border))] space-y-2">
               <div className="text-sm font-medium">Quick Options</div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button hover text</span>
+                  <select
+                    aria-label="Button hover text"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnHoverTextToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        const ensureToken = (obj: any) => {
+                          obj = ensure(obj);
+                          obj.hoverColor = ensure(obj.hoverColor);
+                          obj.hoverColor.token = val;
+                          return obj;
+                        };
+                        next.button = ensure(next.button);
+                        next.button.primary = ensureToken(next.button.primary);
+                        next.button.accent = ensureToken(next.button.accent);
+                        next.button.secondary = ensureToken(
+                          next.button.secondary
+                        );
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 <label className="flex items-center gap-3">
                   <span className="text-sm w-44">Link color</span>
                   <select
@@ -491,6 +688,43 @@ export default function ThemeSettingsPage() {
                           obj = ensure(obj);
                           obj.hoverBackground = ensure(obj.hoverBackground);
                           obj.hoverBackground.token = val;
+                          return obj;
+                        };
+                        next.button = ensure(next.button);
+                        next.button.primary = ensureToken(next.button.primary);
+                        next.button.accent = ensureToken(next.button.accent);
+                        next.button.secondary = ensureToken(
+                          next.button.secondary
+                        );
+                        applyThemeComponents(next);
+                        return next;
+                      });
+                    }}
+                  >
+                    <option value="">-- none --</option>
+                    {tokenKeys.map((t) => (
+                      <option key={t} value={t}>
+                        {t}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-44">Button hover text</span>
+                  <select
+                    aria-label="Button hover text"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={quickValues.btnHoverTextToken}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      setComponents((prev) => {
+                        const next = JSON.parse(JSON.stringify(prev || {}));
+                        const ensure = (v: any) =>
+                          v && typeof v === "object" ? v : {};
+                        const ensureToken = (obj: any) => {
+                          obj = ensure(obj);
+                          obj.hoverColor = ensure(obj.hoverColor);
+                          obj.hoverColor.token = val;
                           return obj;
                         };
                         next.button = ensure(next.button);
@@ -802,10 +1036,12 @@ function ColorField({
   label,
   value,
   onChange,
+  colorMode = "HSL",
 }: {
   label: string;
   value: string;
   onChange: (v: string) => void;
+  colorMode?: "HSL" | "RGB" | "HEX";
 }) {
   // Try to convert hsl(…) to hex for the color input; fall back to blank.
   const hslToHex = (hslCss: string): string => {
@@ -875,24 +1111,86 @@ function ColorField({
   };
 
   const hex = useMemo(() => hslToHex(value), [value]);
+  const rgbString = useMemo(() => {
+    try {
+      // parse hsl to rgb string
+      const s = value.trim().replace(/^hsl\(|\)$/g, "");
+      const [hRaw, sRaw, lRaw] = s.split(/\s+/);
+      const h = parseFloat(hRaw);
+      const sv = parseFloat(sRaw) / 100;
+      const lv = parseFloat(lRaw) / 100;
+      const c = (1 - Math.abs(2 * lv - 1)) * sv;
+      const x = c * (1 - Math.abs(((h / 60) % 2) - 1));
+      const m = lv - c / 2;
+      let r = 0,
+        g = 0,
+        b = 0;
+      if (0 <= h && h < 60) [r, g, b] = [c, x, 0];
+      else if (60 <= h && h < 120) [r, g, b] = [x, c, 0];
+      else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
+      else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
+      else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
+      else [r, g, b] = [c, 0, x];
+      const to255 = (n: number) => Math.round((n + m) * 255);
+      return `rgb(${to255(r)}, ${to255(g)}, ${to255(b)})`;
+    } catch {
+      return "";
+    }
+  }, [value]);
 
   return (
     <label className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))]">
       <span className="text-sm w-36 truncate" title={label}>
         {label}
       </span>
-      <input
-        type="color"
-        className="h-9 w-12 rounded-md border border-[hsl(var(--border))]"
-        value={hex}
-        onChange={(e) => onChange(hexToHslCss(e.target.value))}
-      />
+      {colorMode === "HEX" && (
+        <input
+          type="color"
+          className="h-9 w-12 rounded-md border border-[hsl(var(--border))]"
+          value={hex}
+          onChange={(e) => onChange(hexToHslCss(e.target.value))}
+        />
+      )}
       <input
         type="text"
         className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        placeholder="hsl(…)"
+        value={
+          colorMode === "HEX" ? hex : colorMode === "RGB" ? rgbString : value
+        }
+        onChange={(e) => {
+          const v = e.target.value;
+          if (colorMode === "HEX") onChange(hexToHslCss(v));
+          else if (colorMode === "RGB") {
+            // Expect rgb(r,g,b)
+            try {
+              const m = v.match(
+                /rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i
+              );
+              if (m) {
+                const r = parseInt(m[1], 10),
+                  g = parseInt(m[2], 10),
+                  b = parseInt(m[3], 10);
+                // convert to hex then to hsl using existing util
+                const toHex = (n: number) =>
+                  (n < 16 ? "0" : "") + n.toString(16);
+                const hexVal = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+                onChange(hexToHslCss(hexVal));
+                return;
+              }
+            } catch {}
+            // fallback: pass-through
+            onChange(v);
+          } else {
+            onChange(v);
+          }
+        }}
+        placeholder={
+          colorMode === "HEX"
+            ? "#RRGGBB"
+            : colorMode === "RGB"
+            ? "rgb(r, g, b)"
+            : "hsl(h s% l%)"
+        }
       />
     </label>
   );

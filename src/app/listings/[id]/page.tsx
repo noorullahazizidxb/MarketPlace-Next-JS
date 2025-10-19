@@ -590,8 +590,7 @@ function AvatarSmall({ user }: { user?: any }) {
       className="size-8 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--foreground))]/80 grid place-items-center overflow-hidden hover:opacity-90"
     >
       {photo ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
+        <Image
           src={asset(photo)}
           alt={name}
           className="w-full h-full object-cover"
@@ -621,12 +620,9 @@ function AdPlaceholder({ index }: { index: number }) {
   return (
     <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
       <div className="h-[150px] w-full">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={url}
-          alt="Advertisement"
-          className="h-full w-full object-cover"
-        />
+        <div className="relative h-full w-full">
+          <Image src={url} alt="Advertisement" className="object-cover" fill />
+        </div>
       </div>
     </div>
   );
@@ -644,12 +640,9 @@ function LargeAdPlaceholder() {
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
       <div className="w-full h-[800px]">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={url}
-          alt="Advertisement"
-          className="w-full h-full object-cover"
-        />
+        <div className="relative h-full w-full">
+          <Image src={url} alt="Advertisement" className="object-cover" fill />
+        </div>
       </div>
     </div>
   );

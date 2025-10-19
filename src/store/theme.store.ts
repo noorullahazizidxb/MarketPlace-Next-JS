@@ -6,10 +6,12 @@ export type ThemeMode = "light" | "dark" | "system";
 
 type ThemeSlice = {
   mode: ThemeMode;
+  preferredColorMode: "HSL" | "RGB" | "HEX";
   tokens: any | null;
   scales: any | null;
   components: any | null;
   setMode: (m: ThemeMode) => void;
+  setPreferredColorMode: (m: "HSL" | "RGB" | "HEX") => void;
   setTokens: (t: any | null) => void;
   setScales: (s: any | null) => void;
   setComponents: (c: any | null) => void;
@@ -18,6 +20,7 @@ type ThemeSlice = {
 
 export const useThemeStore = create<ThemeSlice>()((set, get) => ({
   mode: "system",
+  preferredColorMode: "HSL",
       tokens: null,
       scales: null,
       components: null,
@@ -33,6 +36,18 @@ export const useThemeStore = create<ThemeSlice>()((set, get) => ({
         } else {
           root.classList.toggle("dark", m === "dark");
         }
+      },
+      setPreferredColorMode: (m) => {
+        set({ preferredColorMode: m });
+        try {
+          localStorage.setItem("preferred-color-mode", m);
+        } catch (_) {}
+        try {
+          document.documentElement.style.setProperty(
+            "--preferred-color-mode",
+            m
+          );
+        } catch (_) {}
       },
       setTokens: (t) => set({ tokens: t }),
       setScales: (s) => set({ scales: s }),
@@ -59,6 +74,13 @@ export function ThemeManager() {
       } else if (!saved && mode === "system") {
         // if nothing saved, default to dark for initial run
         setMode("dark");
+      }
+    } catch (_) {}
+    // read preferred color mode if present
+    try {
+      const pref = localStorage.getItem("preferred-color-mode");
+      if (pref) {
+        useThemeStore.getState().setPreferredColorMode(pref as any);
       }
     } catch (_) {}
     // toggle class based on mode

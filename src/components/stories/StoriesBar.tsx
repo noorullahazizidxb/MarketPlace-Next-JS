@@ -4,6 +4,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { useApiGet } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
 import { StoryViewer } from "@/components/stories/StoryViewer";
+import Image from "next/image";
 
 export default function StoriesBar() {
   const { t } = useLanguage();
@@ -47,8 +48,7 @@ export default function StoriesBar() {
               >
                 <div className="relative size-16 rounded-2xl p-0.5 bg-gradient-to-br from-primary/60 via-fuchsia-500/60 to-cyan-400/60">
                   <div className="size-full rounded-[14px] bg-[hsl(var(--background))] grid place-items-center overflow-hidden">
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img
+                    <Image
                       src={asset(
                         (Array.isArray(s.images) && s.images.length > 0
                           ? typeof s.images[0] === "string"
@@ -58,6 +58,8 @@ export default function StoriesBar() {
                       )}
                       alt={s.title}
                       className="size-full object-cover"
+                      width={64}
+                      height={64}
                     />
                   </div>
                 </div>

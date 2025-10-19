@@ -129,8 +129,8 @@ export function ListingCard({ listing }: { listing: Listing }) {
             </span>
           </div>
         </div>
-        <div className="absolute top-2 left-2 z-[0] flex items-center gap-2">
-          <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--accent))] text-white border border-[hsl(var(--border))] shadow-md">
+        <div className="absolute top-2 left-2 z-[0]">
+          <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass">
             <CreditCard className="size-4 inline-flex mr-2" />
             {listing.price} {listing.currency}
           </span>

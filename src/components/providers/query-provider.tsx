@@ -11,6 +11,7 @@ import {
   loadLocalPresets,
 } from "../../theme/theme";
 import { useAppStore } from "@/store/app.store";
+import { useThemeStore } from "@/store/theme.store";
 
 export function QueryProvider({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -51,6 +52,17 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
       const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
       const scales = (first as any)?.scales ?? rawTokens?.scales;
       const components = (first as any)?.components ?? rawTokens?.components;
+      // read preferred color mode from payload envelope
+      const pref =
+        (first as any)?.tokens?.preferredColorMode ??
+        (first as any)?.preferredColorMode ??
+        rawTokens?.preferredColorMode ??
+        null;
+      if (pref) {
+        try {
+          useThemeStore.getState().setPreferredColorMode(pref);
+        } catch (_) {}
+      }
       if (scales) applyThemeScales(scales);
       if (normalized) applyThemeTokens(normalized);
       if (components) applyThemeComponents(components);

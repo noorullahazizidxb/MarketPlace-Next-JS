@@ -70,14 +70,14 @@ export function Topbar() {
         initial={{ y: -32, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="app-navbar fixed top-1  left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
+        className="app-navbar fixed top-1   left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="relative overflow-visible">
           <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
             <div className="absolute -inset-x-20 -top-32 h-56 bg-gradient-to-r from-primary/30 via-fuchsia-500/20 to-cyan-400/30 blur-3xl" />
           </div>
-          <div className="relative w-full rounded-2xl liquid-glass glass-hover">
+          <div className="relative w-full rounded-2xl  liquid-glass glass-hover">
             <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
               <motion.div
                 whileHover={{ y: -2 }}
