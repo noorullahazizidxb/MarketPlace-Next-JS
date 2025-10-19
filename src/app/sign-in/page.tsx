@@ -119,7 +119,7 @@ export default function SignInPage() {
                 <Input
                   {...register("email")}
                   type="email"
-                  placeholder="you@example.com"
+                  placeholder={t("emailPlaceholder")}
                   className="h-11"
                 />
               </label>
@@ -132,7 +132,7 @@ export default function SignInPage() {
                 <Input
                   {...register("password")}
                   type="password"
-                  placeholder="••••••••"
+                  placeholder={t("passwordPlaceholder")}
                   className="h-11"
                 />
               </label>

@@ -26,6 +26,7 @@ import { useLocalMutation } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
 import { useLanguage } from "@/components/providers/language-provider";
 import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { Layer } from "recharts";
 export function Sidebar({
   isOpen,
   onClose,
@@ -51,11 +52,12 @@ export function Sidebar({
     { href: "/blogs", label: "Blogs", Icon: Info },
     { href: "/admin/notifications", label: t("notifications"), Icon: Bell },
     { href: "/admin/ads", label: t("advertisements"), Icon: Megaphone },
+    { href: "/admin/contacts", label: t("contacts"), Icon: Mail },
     { href: "/admin/users", label: t("usersManagement"), Icon: User },
     { href: "/pendings", label: t("pendingLists"), Icon: List },
     { href: "/listings/create", label: t("newListing"), Icon: PlusCircle }, // keep Settings in the nav but render children below
-    { href: "/settings", label: t("settings"), Icon: Settings },
-    { href: "/admin/stories", label: "Stories", Icon: Megaphone },
+    { href: "/admin/stories", label: t("stories"), Icon: Megaphone },
+    { href: "/settings/themes", label: t("themes"), Icon: Layers },
   ];
 
   return (
@@ -222,36 +224,6 @@ export function Sidebar({
                     <Icon className="size-4" />
                     <span className="text-sm font-medium">{label}</span>
                   </Link>
-                )}
-
-                {label === "Settings" && (
-                  <AnimatePresence>
-                    {settingsOpen && (
-                      <motion.div
-                        initial={{ height: 0, opacity: 0 }}
-                        animate={{ height: "auto", opacity: 1 }}
-                        exit={{ height: 0, opacity: 0 }}
-                        className="pl-8 pr-3 overflow-hidden"
-                      >
-                        <Link
-                          href="/settings/themes"
-                          onClick={() => onClose?.()}
-                          className="flex items-center gap-3 h-10 text-sm"
-                        >
-                          <Layers className="size-4" />
-                          <span>{t("configureThemes")}</span>
-                        </Link>
-                        <Link
-                          href="/admin/notifications"
-                          onClick={() => onClose?.()}
-                          className="flex items-center gap-3 h-10 text-sm"
-                        >
-                          <Bell className="size-4" />
-                          <span>{t("notifications")}</span>
-                        </Link>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
                 )}
               </div>
             ))}

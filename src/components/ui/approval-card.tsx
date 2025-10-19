@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
+import Link from "next/link";
 
 type ContactVisibility = "HIDE_SELLER" | "SHOW_SELLER" | "MASKED";
 
@@ -70,17 +71,31 @@ export function ApprovalCard({
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
-          <Image
-            src={asset(author?.avatarUrl || author?.photo) || "/favicon.svg"}
-            alt={author?.fullName || author?.name || author?.email || "User"}
-            width={40}
-            height={40}
-            className="rounded-full border border-[hsl(var(--border))]"
-          />
+          <Link
+            href={author?.id ? `/profile/${author.id}` : "#"}
+            onClick={(e) => {
+              if (!author?.id) e.preventDefault();
+            }}
+            className="rounded-full border border-[hsl(var(--border))] overflow-hidden hover:opacity-90"
+          >
+            <Image
+              src={asset(author?.avatarUrl || author?.photo) || "/favicon.svg"}
+              alt={author?.fullName || author?.name || author?.email || "User"}
+              width={40}
+              height={40}
+              className="rounded-full"
+            />
+          </Link>
           <div className="min-w-0">
-            <div className="text-white/90 font-medium truncate">
+            <Link
+              href={author?.id ? `/profile/${author.id}` : "#"}
+              onClick={(e) => {
+                if (!author?.id) e.preventDefault();
+              }}
+              className="text-white/90 font-medium truncate hover:underline"
+            >
               {author?.fullName || author?.name || author?.email}
-            </div>
+            </Link>
             <div className="text-white/70 text-xs truncate">
               {listing?.category?.name || listing?.categoryName || "Category"}
             </div>

@@ -11,6 +11,8 @@ import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function BlogViewer({
   open,
@@ -32,6 +34,7 @@ export default function BlogViewer({
   const source = liveBlog || blog;
   const { user, roles } = useAuth();
   const router = useRouter();
+  const { t } = useLanguage();
   const isAuthor =
     !!user &&
     source &&
@@ -115,7 +118,7 @@ export default function BlogViewer({
                 {isAuthor && (
                   <div className="flex items-center gap-2 pt-1">
                     <Button variant="accent" size="sm" onClick={onEdit}>
-                      Edit
+                      {t("edit")}
                     </Button>
                     {canDelete && (
                       <Button
@@ -124,7 +127,7 @@ export default function BlogViewer({
                         className="text-red-500 hover:text-red-600"
                         onClick={() => setConfirmOpen(true)}
                       >
-                        Delete
+                        {t("delete")}
                       </Button>
                     )}
                   </div>
@@ -134,19 +137,22 @@ export default function BlogViewer({
                   comments={source?.comments}
                 />
               </div>
-              <ConfirmDialog
-                open={confirmOpen}
-                onOpenChange={setConfirmOpen}
-                title="Delete blog?"
-                description="This will permanently remove the blog and its images."
-                confirmLabel="Delete"
-                tone="danger"
-                onConfirm={onDelete}
-              />
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
+      {/* Render confirm dialog in a top-level Portal to escape the BlogViewer stacking context */}
+      <Portal>
+        <ConfirmDialog
+          open={confirmOpen}
+          onOpenChange={setConfirmOpen}
+          title={t("blogDeleteConfirmTitle")}
+          description={t("blogDeleteConfirmBody")}
+          confirmLabel={t("delete")}
+          tone="danger"
+          onConfirm={onDelete}
+        />
+      </Portal>
     </Portal>
   );
 }

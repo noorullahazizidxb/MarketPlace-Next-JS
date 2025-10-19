@@ -4,7 +4,8 @@ export interface Story {
   description?: string;
   images?: string[];
   videoUrl?: string | null;
-  author?: { id: string; name?: string; avatarUrl?: string | null };
+  author?: { id: string; name?: string; avatarUrl?: string | null,photo?:string | null };
+  user?: { id: string; name?: string; avatarUrl?: string | null,photo?:string | null };
   createdAt?: string;
 }
 

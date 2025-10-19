@@ -1,5 +1,4 @@
-import React from "react";
-import ReactCountryFlag from "react-country-flag";
+// Keep this module lightweight and SSR-safe: avoid importing UI libs here.
 export const translations = {
   en: {
     welcome: "Welcome",
@@ -102,6 +101,7 @@ export const translations = {
   sendMessageError: "Something went wrong. Please try again.",
   // About page
   futureFlexible: "The Future of Ownership is Flexible",
+  communityBackgroundAlt: "Community background",
   missionHeading: "Our Mission",
   missionText: "To empower people to make smarter, more sustainable choices by providing a single, trusted platform for renting and selling.",
   visionHeading: "Our Vision",
@@ -117,6 +117,12 @@ export const translations = {
   enjoyFlexibilityDesc: "Rent when you need, sell when you're done — simple.",
   storyBehind: "The Story Behind",
   meetTheTeam: "Meet the Team",
+  teamAlexName: "Alex Kim",
+  teamAlexTitle: "Founder & CEO",
+  teamSamiraName: "Samira Patel",
+  teamSamiraTitle: "Co‑Founder & CPO",
+  teamDiegoName: "Diego Rivera",
+  teamDiegoTitle: "Co‑Founder & CTO",
   joinCommunity: "Join Our Growing Community",
   joinCommunityText: "Find what you need, when you need it — or help someone else do the same.",
   browseListings: "Browse Listings",
@@ -129,10 +135,111 @@ export const translations = {
   aboutStoryPara1: "We noticed people owned expensive equipment that sat unused for months — cameras on shelves, tents in closets, tools in garages. Meanwhile, others in the same community needed access to those exact items — but didn’t want the full commitment of buying.",
   aboutStoryPara2: "{marketplaceName} was born from a simple idea: what if accessing great gear could be as easy as borrowing from a friend — and selling could be as simple as telling your community? By blending rentals and sales into a single trusted platform, we help people get more value from the things they own, and reduce waste along the way.",
 
+  // Generic pages & not-found
+  notFoundTitle: "Page not found",
+  notFoundDescription: "The page you requested doesn't exist or has been moved.",
+  notFoundGoHome: "Go home",
+
+  // Blog detail / comments
+  blogNotFound: "Not found",
+  blogCommentsTitle: "Comments",
+  blogCommentsPlaceholder: "Write a comment",
+
+  blogDeleteConfirmTitle: "Delete blog?",
+  blogDeleteConfirmBody: "This will permanently remove the blog and its images.",
+
+  // Sign up / validation placeholders and messages
+  signUpPlaceholderFullName: "Jane Doe",
+  signUpPlaceholderPhone: "+93 700 000 000",
+  signUpValidationFullNameMin: "Full name must be at least 3 characters",
+  signUpValidationFullNameMax: "Full name is too long",
+  signUpValidationEmailInvalid: "Enter a valid email address",
+  signUpValidationPhoneInvalid: "Phone must be digits, may start with +, 8-15 chars",
+  signUpValidationPasswordMin: "Minimum 8 characters",
+  signUpValidationPasswordUpper: "At least one uppercase letter required",
+  signUpValidationPasswordLower: "At least one lowercase letter required",
+  signUpValidationPasswordNumber: "At least one number required",
+  signUpValidationPasswordSymbol: "At least one symbol required",
+  signUpValidationPasswordsMismatch: "Passwords do not match",
+
+  // Profile validation messages
+  tooShort: "Too short",
+  profileValidationBioMax: "Max 260 chars",
+  profileValidationPasswordMin: "Password must be at least 8 characters",
+  profileValidationPasswordUpper: "Include at least one uppercase letter",
+  profileValidationPasswordNumber: "Include at least one number",
+  profileValidationPasswordSymbol: "Include at least one special character",
+  profileValidationPasswordConfirmRequired: "Please confirm your password",
+  profileValidationPasswordsMismatch: "Passwords do not match",
+
+  // Listings create flow
+  listingsCreateStep1Title: "What are you doing?",
+  listingsCreateOptionRent: "Renting",
+  listingsCreateOptionSale: "Selling",
+  listingsCreateStep2Title: "Choose a category",
+  listingsCreateStep3Title: "Add images",
+  listingsCreateImagesDragDrop: "Drag & drop images here",
+  listingsCreateImagesBrowse: "Browse files",
+  listingsCreateImagesRemove: "Remove",
+  listingsCreateValidationImagesRequired: "Add at least one image",
+  listingsCreateErrorFailed: "Failed to create listing",
+  listingsCreateErrorValidationFailed: "Validation failed",
+
+  // My listings / actions
+  myListingsLoadingSession: "Loading session…",
+  myListingsEmpty: "You have no listings yet.",
+  listingRenewNoTokens: "No renew tokens available for this listing.",
+  listingRenewNoValidToken: "No valid token found.",
+  listingRenewSuccess: "Listing renewed successfully",
+  listingRenewFailedPrefix: "Renew failed: ",
+  renew: "Renew",
+  listingDeleteSuccess: "Listing deleted",
+  listingDeleteFailed: "Failed to delete listing",
+  listingDeleteConfirmTitle: "Delete listing",
+  listingDeleteConfirmBody: "This action cannot be undone. The listing will be permanently removed.",
+
+  // Profile page
+  profileLoadFailedCached: "Failed to load latest profile. Showing cached data.",
+  profileAvatarAlt: "Avatar",
+  profileAvatarChange: "Change",
+  profileNameAnonymous: "Anonymous",
+  profileRepresentativeBadge: "Representative",
+  profileUpdateFailed: "Failed to update profile",
+
+  // Pendings
+  pendingsHeading: "Pending Approvals",
+  pendingsSocketConnected: "Socket: connected",
+  pendingsSocketDisconnected: "Socket: disconnected",
+  pendingsRefresh: "Refresh",
+  pendingsEmitAll: "Emit All",
+  pendingsEmitAllTitle: "Admin-only manual broadcast trigger",
+  pendingsSearchPlaceholder: "Search pending listings...",
+  pendingsFilterAllCategories: "All categories",
+  pendingsLoading: "Loading pending listings…",
+  pendingsLoadFailed: "Failed to load pending listings",
+  pendingsEmpty: "No pending listings at the moment.",
+
+  // Settings
+  settingsAppearanceTitle: "Appearance",
+  settingsAppearanceDescription: "Toggle light and dark themes.",
+
+  // Stories controls
+  storiesAriaLabel: "Stories",
+  storiesScrollLeft: "Scroll left",
+  storiesScrollRight: "Scroll right",
+
   // Listing details misc
   listingRepresentatives: "Listing Representatives",
   quickActions: "Quick Actions",
   follow: "Follow",
+  openBlog: "Open blog",
+  like: "Like",
+  bottomNavigationAria: "Bottom navigation",
+  share: "Share",
+  facebook: "Facebook",
+  instagram: "Instagram",
+  whatsapp: "WhatsApp",
+  commentsLabel: "Comments",
   noFeedbacksYet: "No feedbacks yet.",
   phone: "Phone",
   region: "Region",
@@ -261,6 +368,7 @@ export const translations = {
   role: "Role",
   listing: "Listing",
   emailPlaceholder: "you@domain.com",
+  passwordPlaceholder: "••••••••",
   leaveFeedback: "Leave a feedback",
   signInToPostFeedback: "Please sign in to post feedback.",
   selectRating: "Select rating",
@@ -374,6 +482,29 @@ export const translations = {
   writeSomethingAmazing: "Write something amazing…",
   images: "Images",
   publish: "Publish",
+  // Contacts admin
+  contacts: "Contacts",
+  contactMessages: "Contact Messages",
+  contactInboxSubtitle: "View and manage contact submissions from the site",
+  contactDetail: "Contact Detail",
+  fromLabel: "From",
+  subjectLabel: "Subject",
+  submittedAt: "Submitted",
+  handled: "Handled",
+  unhandled: "Unhandled",
+  markHandled: "Mark handled",
+  markUnhandled: "Mark unhandled",
+  viewDetails: "View details",
+  reply: "Reply",
+  backToInbox: "Back to inbox",
+  noContactsYet: "No contact messages yet.",
+  searchContactsPlaceholder: "Search name, email, subject...",
+  copyEmail: "Copy email",
+  copyPhone: "Copy phone",
+  copied: "Copied",
+  openEmailClient: "Open email",
+  callNow: "Call now",
+  filterAllSubjects: "All subjects",
   },
   fa: {
     welcome: "خوش آمدید",
@@ -493,6 +624,12 @@ export const translations = {
   enjoyFlexibilityDesc: "زمان نیاز کرایه کنید، بعد از پایان بفروشید – ساده است.",
   storyBehind: "داستان پشت",
   meetTheTeam: "تیم را ملاقات کنید",
+  teamAlexName: "الکس کیم",
+  teamAlexTitle: "بنیان‌گذار و مدیرعامل",
+  teamSamiraName: "سمیرا پاتل",
+  teamSamiraTitle: "هم‌بنیان‌گذار و مدیر محصول",
+  teamDiegoName: "دیگو ریورا",
+  teamDiegoTitle: "هم‌بنیان‌گذار و مدیر فناوری",
   joinCommunity: "به جامعه در حال رشد ما بپیوندید",
   joinCommunityText: "آنچه نیاز دارید پیدا کنید یا به دیگران کمک کنید.",
   browseListings: "مشاهده لیست ها",
@@ -503,6 +640,92 @@ export const translations = {
   aboutHero: "در {marketplaceName}، ماموریت ما ساخت یک جامعه پایدار است که هرکس بتواند وقتی لازم است اجناس را کرایه کند یا زمانی که می‌خواهد بفروشد به‌راحتی به آن‌ها دسترسی داشته باشد.",
   aboutStoryPara1: "ما دیدیم که افراد تجهیزات گران‌قیمتی دارند که ماه‌ها بلااستفاده می‌ماند — دوربین‌ها روی قفسه، چادرها در کمد، ابزارها در گاراژ. در همین حال، دیگران در همان جامعه به همان اقلام نیاز داشتند اما تمایلی به خرید کامل نداشتند.",
   aboutStoryPara2: "{marketplaceName} از یک ایده ساده متولد شد: اگر دسترسی به تجهیزات عالی به سادگی قرض گرفتن از یک دوست باشد — و فروش به سادگی گفتن به جامعه شما؟ با ترکیب کرایه و فروش در یک پلتفرم مورد اعتماد، به مردم کمک می‌کنیم از چیزهایی که دارند ارزش بیشتری بگیرند و ضایعات را کاهش دهند.",
+
+  // Generic pages & not-found (fa)
+  notFoundTitle: "صفحه یافت نشد",
+  notFoundDescription: "صفحه‌ای که درخواست کرده‌اید وجود ندارد یا منتقل شده است.",
+  notFoundGoHome: "بازگشت به خانه",
+
+  // Blog detail / comments (fa)
+  blogNotFound: "یافت نشد",
+  blogCommentsTitle: "نظرات",
+  blogCommentsPlaceholder: "نوشتن نظر",
+  share: "اشتراک‌گذاری",
+  facebook: "فیسبوک",
+  instagram: "اینستاگرام",
+  whatsapp: "واتس‌اپ",
+  commentsLabel: "نظرات",
+
+  // Sign up placeholders & validation (fa)
+  signUpPlaceholderFullName: "علی رضایی",
+  signUpPlaceholderPhone: "+93 700 000 000",
+  signUpValidationFullNameMin: "نام کامل باید حداقل ۳ کاراکتر باشد",
+  signUpValidationFullNameMax: "نام کامل خیلی طولانی است",
+  signUpValidationEmailInvalid: "لطفاً یک آدرس ایمیل معتبر وارد کنید",
+  signUpValidationPhoneInvalid: "شماره تلفن باید فقط شامل اعداد باشد و ممکن است با + شروع شود؛ ۸ تا ۱۵ رقم",
+  signUpValidationPasswordMin: "حداقل ۸ کاراکتر",
+  signUpValidationPasswordUpper: "حداقل یک حرف بزرگ لازم است",
+  signUpValidationPasswordLower: "حداقل یک حرف کوچک لازم است",
+  signUpValidationPasswordNumber: "حداقل یک عدد لازم است",
+  signUpValidationPasswordSymbol: "حداقل یک نماد ویژه لازم است",
+  signUpValidationPasswordsMismatch: "رمزهای عبور مطابقت ندارند",
+
+  // Listings create flow (fa)
+  listingsCreateStep1Title: "چه کاری انجام می‌دهید؟",
+  listingsCreateOptionRent: "کرایه دادن",
+  listingsCreateOptionSale: "فروش",
+  listingsCreateStep2Title: "دسته‌بندی را انتخاب کنید",
+  listingsCreateStep3Title: "افزودن تصاویر",
+  listingsCreateImagesDragDrop: "تصاویر را اینجا بکشید و رها کنید",
+  listingsCreateImagesBrowse: "انتخاب فایل‌ها",
+  listingsCreateImagesRemove: "حذف",
+  listingsCreateValidationImagesRequired: "حداقل یک تصویر اضافه کنید",
+  listingsCreateErrorFailed: "ایجاد لیست ناموفق بود",
+  listingsCreateErrorValidationFailed: "اعتبارسنجی ناموفق بود",
+
+  // My listings / actions (fa)
+  myListingsLoadingSession: "در حال بارگذاری جلسه…",
+  myListingsEmpty: "هنوز لیستی ندارید.",
+  listingRenewNoTokens: "برای این لیست توکن تمدید موجود نیست.",
+  listingRenewNoValidToken: "توکن معتبری یافت نشد.",
+  listingRenewSuccess: "لیست با موفقیت تمدید شد",
+  listingRenewFailedPrefix: "تمدید ناموفق: ",
+  renew: "تمدید",
+  listingDeleteSuccess: "لیست حذف شد",
+  listingDeleteFailed: "حذف لیست ناموفق بود",
+  listingDeleteConfirmTitle: "حذف لیست",
+  listingDeleteConfirmBody: "این عملیات قابل بازگشت نیست. لیست به‌طور دائمی حذف خواهد شد.",
+
+  // Profile page (fa)
+  profileLoadFailedCached: "بارگذاری آخرین پروفایل ناموفق بود. داده‌های کش‌شده نمایش داده می‌شوند.",
+  profileAvatarAlt: "آواتار",
+  profileAvatarChange: "تغییر",
+  profileNameAnonymous: "ناشناس",
+  profileRepresentativeBadge: "نماینده",
+  profileUpdateFailed: "به‌روزرسانی پروفایل ناموفق بود",
+
+  // Pendings (fa)
+  pendingsHeading: "تأییدهای در انتظار",
+  pendingsSocketConnected: "سوکت: متصل",
+  pendingsSocketDisconnected: "سوکت: قطع‌شده",
+  pendingsRefresh: "به‌روزرسانی",
+  pendingsEmitAll: "ارسال همه",
+  pendingsEmitAllTitle: "فقط ادمین: فعال‌سازی ارسال دستی",
+  pendingsSearchPlaceholder: "جستجوی لیست‌های در انتظار...",
+  pendingsFilterAllCategories: "همه دسته‌ها",
+  pendingsLoading: "در حال بارگذاری لیست‌های در انتظار…",
+  pendingsLoadFailed: "بارگذاری لیست‌های در انتظار ناموفق بود",
+  pendingsEmpty: "در حال حاضر لیستی برای تأیید وجود ندارد.",
+
+  // Settings (fa)
+  settingsAppearanceTitle: "ظاهر",
+  settingsAppearanceDescription: "تم روشن و تیره را تغییر دهید.",
+  passwordPlaceholder: "••••••••",
+
+  // Stories controls (fa)
+  storiesAriaLabel: "استوری‌ها",
+  storiesScrollLeft: "اسکرول به چپ",
+  storiesScrollRight: "اسکرول به راست",
 
   // Listing details misc (fa)
   listingRepresentatives: "نمایندگان لیست",
@@ -730,6 +953,29 @@ export const translations = {
   writeSomethingAmazing: "چیزی شگفت‌انگیز بنویسید…",
   images: "تصاویر",
   publish: "انتشار",
+  // Contacts admin (fa)
+  contacts: "پیام‌های تماس",
+  contactMessages: "پیام‌های تماس",
+  contactInboxSubtitle: "مشاهده و مدیریت پیام‌های تماس سایت",
+  contactDetail: "جزئیات تماس",
+  fromLabel: "از",
+  subjectLabel: "موضوع",
+  submittedAt: "زمان ارسال",
+  handled: "رسیدگی شده",
+  unhandled: "رسیدگی نشده",
+  markHandled: "علامت رسیدگی شد",
+  markUnhandled: "علامت رسیدگی نشده",
+  viewDetails: "مشاهده جزئیات",
+  reply: "پاسخ",
+  backToInbox: "بازگشت به صندوق",
+  noContactsYet: "هنوز پیامی وجود ندارد.",
+  searchContactsPlaceholder: "جستجوی نام، ایمیل، موضوع...",
+  copyEmail: "کپی ایمیل",
+  copyPhone: "کپی تلفن",
+  copied: "کپی شد",
+  openEmailClient: "باز کردن ایمیل",
+  callNow: "تماس",
+  filterAllSubjects: "همه موضوعات",
   },
 };
 
@@ -749,9 +995,9 @@ export function getTranslation(
 export function isRtl(locale: Locale): boolean {
   return locale === "fa"; // Expand if more RTL languages added
 }
-export const supportedLocales: { code: Locale; label: string; flag: React.ReactNode }[] = [
-  { code: "en", label: "English", flag: React.createElement(ReactCountryFlag, { countryCode: "US", svg: true, style: { width: "1.5em", height: "1.5em" } }) },
-  { code: "fa", label: "دری", flag: React.createElement(ReactCountryFlag, { countryCode: "AF", svg: true, style: { width: "1.5em", height: "1.5em" } }) },
+export const supportedLocales: { code: Locale; label: string; country?: string }[] = [
+  { code: "en", label: "English", country: "us" },
+  { code: "fa", label: "دری", country: "af" },
 ];
 
 

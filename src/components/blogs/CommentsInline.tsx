@@ -6,6 +6,8 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/lib/use-auth";
 import { getSocket } from "@/lib/socket";
+import Link from "next/link";
+import { asset } from "@/lib/assets";
 
 export default function CommentsInline({
   blogId,
@@ -109,11 +111,17 @@ export default function CommentsInline({
             key={c.id}
             className="px-3 py-2 rounded-xl bg-[hsl(var(--muted))]/10 flex items-start gap-3"
           >
-            <div className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 flex-shrink-0">
+            <Link
+              href={c.author?.id ? `/profile/${c.author.id}` : "#"}
+              onClick={(e) => {
+                if (!c.author?.id) e.preventDefault();
+              }}
+              className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 flex-shrink-0 hover:opacity-90"
+            >
               {c.author?.photo ? (
                 // eslint-disable-next-line @next/next/no-img-element
                 <img
-                  src={c.author.photo}
+                  src={asset(c.author.photo)}
                   alt={c.author?.fullName || "avatar"}
                   className="w-8 h-8 object-cover"
                 />
@@ -124,11 +132,17 @@ export default function CommentsInline({
                     .toUpperCase()}
                 </div>
               )}
-            </div>
+            </Link>
             <div className="flex-1">
-              <div className="text-xs font-semibold">
+              <Link
+                href={c.author?.id ? `/profile/${c.author.id}` : "#"}
+                onClick={(e) => {
+                  if (!c.author?.id) e.preventDefault();
+                }}
+                className="text-xs font-semibold hover:underline"
+              >
                 {c.author?.fullName || c.author?.name || t("anonymous")}
-              </div>
+              </Link>
               <div className="text-sm leading-relaxed">{c.body}</div>
             </div>
           </div>

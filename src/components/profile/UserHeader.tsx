@@ -13,7 +13,10 @@ export default function UserHeader({ user }: { user: PublicUser }) {
     user.fullName ||
     [user.firstName, user.lastName].filter(Boolean).join(" ") ||
     "User";
-  const roles = (user.roles || []).join(" · ");
+  const roles = ((user.roles || []) as Array<{ role: string } | string>)
+    .map((r) => (typeof r === "object" && "role" in r ? r.role : String(r)))
+    .join(" · ");
+  console.log("UserHeader user:", user.roles);
   const isMeFollower = (user.followers || []).some(
     (f) => String(f.id) === String(me?.id)
   );
@@ -61,7 +64,22 @@ export default function UserHeader({ user }: { user: PublicUser }) {
               <BadgeCheck className="size-5 text-primary" />
             )}
           </h1>
-          <div className="mt-1 text-sm subtle">{roles || "Member"}</div>
+          <div className="mt-2 flex flex-wrap gap-2">
+            {((user.roles || []) as Array<{ role: string } | string>).map(
+              (r, idx) => {
+                const role =
+                  typeof r === "object" && "role" in r ? r.role : String(r);
+                return (
+                  <span
+                    key={idx}
+                    className="inline-flex items-center gap-1.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.2] px-3 py-1 text-xs font-medium text-foreground/80"
+                  >
+                    {role}
+                  </span>
+                );
+              }
+            )}
+          </div>
           {user.address && (
             <div className="mt-1 text-sm text-foreground/80">
               {typeof user.address === "string"
@@ -89,6 +107,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
               )}
             </div>
           )}
+
           <div className="mt-3 flex items-center -space-x-2">
             {(user.followers || []).slice(0, 3).map((f: Follower) => (
               <div

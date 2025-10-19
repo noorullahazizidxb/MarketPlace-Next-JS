@@ -3,6 +3,7 @@ import React from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
+import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 
@@ -45,8 +46,9 @@ export default function BlogDetailPage() {
     } catch {}
   };
 
-  if (isLoading) return <div className="p-6">Loading…</div>;
-  if (!blog) return <div className="p-6">Not found</div>;
+  const { t } = useLanguage();
+  if (isLoading) return <div className="p-6">{t("loading")}</div>;
+  if (!blog) return <div className="p-6">{t("blogNotFound")}</div>;
 
   return (
     <div className="space-y-6">
@@ -61,7 +63,7 @@ export default function BlogDetailPage() {
           {isAuthor && (
             <div className="flex items-center gap-2">
               <Button variant="accent" onClick={onEdit}>
-                Edit
+                {t("edit")}
               </Button>
               {canDelete && (
                 <Button
@@ -69,7 +71,7 @@ export default function BlogDetailPage() {
                   className="text-red-500 hover:text-red-600"
                   onClick={() => setConfirmOpen(true)}
                 >
-                  Delete
+                  {t("delete")}
                 </Button>
               )}
             </div>
@@ -78,17 +80,17 @@ export default function BlogDetailPage() {
       </header>
 
       <section className="space-y-3">
-        <h3 className="font-semibold">Comments</h3>
+        <h3 className="font-semibold">{t("blogCommentsTitle")}</h3>
         <div className="flex items-center gap-2">
           <input
             className="input flex-1"
             value={comment}
             onChange={(e) => setComment(e.target.value)}
-            placeholder="Write a comment"
-            aria-label="Comment"
+            placeholder={t("blogCommentsPlaceholder")}
+            aria-label={t("blogCommentsPlaceholder")}
           />
           <button className="btn" onClick={onPostComment}>
-            Post
+            {t("post")}
           </button>
         </div>
         <div className="space-y-2">
@@ -108,9 +110,9 @@ export default function BlogDetailPage() {
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete blog?"
-        description="This will permanently remove the blog and its images."
-        confirmLabel="Delete"
+        title={t("blogDeleteConfirmTitle")}
+        description={t("blogDeleteConfirmBody")}
+        confirmLabel={t("delete")}
         tone="danger"
         onConfirm={onDelete}
       />

@@ -196,7 +196,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                     </h3>
                     <DialogClose asChild>
                       <button
-                        aria-label="Close"
+                        aria-label={t("close")}
                         className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
                       >
                         ×
@@ -256,7 +256,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                     </h3>
                     <DialogClose asChild>
                       <button
-                        aria-label="Close"
+                        aria-label={t("close")}
                         className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
                       >
                         ×

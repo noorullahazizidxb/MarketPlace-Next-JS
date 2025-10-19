@@ -37,16 +37,20 @@ import { ProfileSkeleton } from "@/components/skeletons/ProfileSkeleton";
 // ---------------- Schema ----------------
 const schema = z
   .object({
-    firstName: z.string().min(1, "Required"),
-    lastName: z.string().min(1, "Required"),
-    fullName: z.string().min(2, "Too short"),
+    firstName: z.string().min(1, "required"),
+    lastName: z.string().min(1, "required"),
+    fullName: z.string().min(2, "tooShort"),
     email: z.string().email().optional().or(z.literal("")),
     phone: z.string().min(5, "Too short").optional().or(z.literal("")),
     whatsapp: z.string().optional().or(z.literal("")),
     city: z.string().optional().or(z.literal("")),
     country: z.string().optional().or(z.literal("")),
     street: z.string().optional().or(z.literal("")),
-    bio: z.string().max(260, "Max 260 chars").optional().or(z.literal("")),
+    bio: z
+      .string()
+      .max(260, "profileValidationBioMax")
+      .optional()
+      .or(z.literal("")),
     website: z.string().url().optional().or(z.literal("")),
     linkedin: z.string().url().optional().or(z.literal("")),
     facebook: z.string().url().optional().or(z.literal("")),
@@ -62,37 +66,37 @@ const schema = z
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["password"],
-          message: "Password must be at least 8 characters",
+          message: "profileValidationPasswordMin",
         });
       if (!/[A-Z]/.test(pw))
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["password"],
-          message: "Include at least one uppercase letter",
+          message: "profileValidationPasswordUpper",
         });
       if (!/[0-9]/.test(pw))
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["password"],
-          message: "Include at least one number",
+          message: "profileValidationPasswordNumber",
         });
       if (!/[^A-Za-z0-9]/.test(pw))
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["password"],
-          message: "Include at least one special character",
+          message: "profileValidationPasswordSymbol",
         });
       if (!cpw)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["confirmPassword"],
-          message: "Please confirm your password",
+          message: "profileValidationPasswordConfirmRequired",
         });
       if (cpw && pw !== cpw)
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ["confirmPassword"],
-          message: "Passwords do not match",
+          message: "profileValidationPasswordsMismatch",
         });
     } else if (cpw) {
       ctx.addIssue({
@@ -285,9 +289,9 @@ export default function ProfilePage() {
 
   // Derived counts / stats mock (replace with real if available)
   const stats = [
-    { label: "Listings", value: (user?.listings?.length ?? 0).toString() },
-    { label: "Feedbacks", value: (user?.feedbacks?.length ?? 0).toString() },
-    { label: "Roles", value: (user?.roles?.length ?? 0).toString() },
+    { label: t("listings"), value: (user?.listings?.length ?? 0).toString() },
+    { label: t("feedbacks"), value: (user?.feedbacks?.length ?? 0).toString() },
+    { label: t("roles"), value: (user?.roles?.length ?? 0).toString() },
   ];
 
   if (profileLoading && !user) {
@@ -299,7 +303,7 @@ export default function ProfilePage() {
       {profileError && (
         <div className="container-padded mt-4">
           <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-2 text-sm">
-            Failed to load latest profile. Showing cached data.
+            {t("profileLoadFailedCached")}
           </div>
         </div>
       )}
@@ -327,16 +331,16 @@ export default function ProfilePage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 src={avatarUrl}
-                alt="Avatar"
+                alt={t("profileAvatarAlt")}
                 className="w-full h-full object-cover rounded-2xl border-4 border-[hsl(var(--background))] shadow-xl group-hover:shadow-2xl transition-shadow"
               />
               <button
                 type="button"
-                aria-label={t("change") || "Change avatar"}
+                aria-label={t("profileAvatarChange")}
                 onClick={openFile}
                 className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-medium backdrop-blur-sm transition-opacity"
               >
-                <ImageIcon className="size-5 mr-1" /> {t("change") || "Change"}
+                <ImageIcon className="size-5 mr-1" /> {t("profileAvatarChange")}
               </button>
               <input
                 ref={fileRef}
@@ -352,15 +356,16 @@ export default function ProfilePage() {
             </div>
             <div className="flex-1 min-w-0">
               <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
-                {user?.fullName || user?.firstName || "Anonymous"}
+                {user?.fullName || user?.firstName || t("profileNameAnonymous")}
                 {user?.roles?.some((r: any) => r.role === "REPRESENTATIVE") && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-2xs border border-emerald-500/30">
-                    <ShieldCheck className="size-3" /> Representative
+                    <ShieldCheck className="size-3" />{" "}
+                    {t("profileRepresentativeBadge")}
                   </span>
                 )}
               </h1>
               <p className="mt-1 text-sm subtle line-clamp-2 max-w-xl">
-                {watch("bio") || "Add a short bio to introduce yourself."}
+                {watch("bio") || t("shortBioPlaceholder")}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {stats.map((s) => (
@@ -391,7 +396,7 @@ export default function ProfilePage() {
                   <Edit3 className="size-4" />
                 )}
                 <span className="ml-2 text-sm font-medium">
-                  {editing ? "Cancel" : "Edit"}
+                  {editing ? t("cancel") : t("edit")}
                 </span>
               </Button>
             </div>

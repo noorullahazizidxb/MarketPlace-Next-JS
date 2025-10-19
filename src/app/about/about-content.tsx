@@ -139,9 +139,9 @@ export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
         <h2 className="text-2xl font-semibold">{t("meetTheTeam")}</h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
-            { name: "Alex Kim", title: "Founder & CEO" },
-            { name: "Samira Patel", title: "Co‑Founder & CPO" },
-            { name: "Diego Rivera", title: "Co‑Founder & CTO" },
+            { name: t("teamAlexName"), title: t("teamAlexTitle") },
+            { name: t("teamSamiraName"), title: t("teamSamiraTitle") },
+            { name: t("teamDiegoName"), title: t("teamDiegoTitle") },
           ].map((m, i) => (
             <article
               key={m.name}

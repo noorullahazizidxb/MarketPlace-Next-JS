@@ -309,7 +309,13 @@ function SellerCard({ user }: { user?: any }) {
         <User className="size-4" /> {t("seller")}
       </h3>
       <div className="flex items-center gap-3">
-        <div className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
+        <Link
+          href={user?.id ? `/profile/${user.id}` : "#"}
+          onClick={(e) => {
+            if (!user?.id) e.preventDefault();
+          }}
+          className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center overflow-hidden hover:opacity-90"
+        >
           <Image
             src={asset(user.photo) || "/default-avatar.png"}
             alt={user.fullName || "User Avatar"}
@@ -317,14 +323,20 @@ function SellerCard({ user }: { user?: any }) {
             width={40}
             height={40}
           />
-        </div>
+        </Link>
         <div>
-          <div className="text-sm font-medium">
+          <Link
+            href={user?.id ? `/profile/${user.id}` : "#"}
+            onClick={(e) => {
+              if (!user?.id) e.preventDefault();
+            }}
+            className="text-sm font-medium hover:underline"
+          >
             {user.firstName ||
               user.fullName ||
               user.email ||
               `User ${user.id?.slice?.(0, 6)}`}
-          </div>
+          </Link>
           <div className="text-xs subtle">ID: {user.id}</div>
           {user.contacts?.phone && (
             <div className="text-xs subtle">
@@ -397,7 +409,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <Share2 className="size-4" /> Quick Actions
+        <Share2 className="size-4" /> {t("quickActions")}
       </h3>
       <div className="grid grid-cols-2 gap-2">
         <Button
@@ -570,7 +582,13 @@ function AvatarSmall({ user }: { user?: any }) {
   const photo: string | null | undefined = user?.photo;
   const initials = getInitials(name);
   return (
-    <div className="size-8 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--foreground))]/80 grid place-items-center overflow-hidden">
+    <Link
+      href={user?.id ? `/profile/${user.id}` : "#"}
+      onClick={(e) => {
+        if (!user?.id) e.preventDefault();
+      }}
+      className="size-8 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--foreground))]/80 grid place-items-center overflow-hidden hover:opacity-90"
+    >
       {photo ? (
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -581,7 +599,7 @@ function AvatarSmall({ user }: { user?: any }) {
       ) : (
         <span className="text-[11px] font-medium">{initials}</span>
       )}
-    </div>
+    </Link>
   );
 }
 

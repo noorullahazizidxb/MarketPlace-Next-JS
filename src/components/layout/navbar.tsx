@@ -1,7 +1,7 @@
 "use client";
 import { motion } from "framer-motion";
 import { ThemeToggle } from "../../theme/theme-toggle";
-import { SearchBox } from "./search-box";
+import { SearchBox } from "../ui/search-box";
 import { Search, Menu, Bell as BellIcon } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
 import { useUIStore } from "@/store/ui.store";

@@ -4,12 +4,14 @@ import { usePendingListings } from "@/lib/use-pending-listings";
 import { useApiMutation } from "@/lib/api-hooks";
 import { ApprovalCard } from "@/components/ui/approval-card";
 import { Button } from "@/components/ui/button";
+import { useLanguage } from "@/components/providers/language-provider";
 
 export default function PendingsPageClient() {
   const { listings, loading, error, refresh, connected } = usePendingListings();
   const emitAll = useApiMutation("post", "/listings/for-approval/emit-all");
   const [q, setQ] = useState("");
   const [category, setCategory] = useState<string | "all">("all");
+  const { t } = useLanguage();
 
   const filtered = useMemo(() => {
     const ql = q.trim().toLowerCase();
@@ -37,20 +39,22 @@ export default function PendingsPageClient() {
     <div className="min-h-screen p-6">
       <div className="glass rounded-2xl p-6 border border-[hsl(var(--border))] w-full max-w-8xl mx-auto">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-semibold">Pending Approvals</h1>
+          <h1 className="text-2xl font-semibold">{t("pendingsHeading")}</h1>
           <div className="flex items-center gap-2">
             <span className="text-xs subtle mr-3">
-              Socket: {connected ? "connected" : "disconnected"}
+              {connected
+                ? t("pendingsSocketConnected")
+                : t("pendingsSocketDisconnected")}
             </span>
             <Button onClick={refresh} className="mr-2">
-              Refresh
+              {t("pendingsRefresh")}
             </Button>
             <Button
               onClick={() => emitAll.mutate({})}
               disabled={emitAll.isPending}
-              title="Admin-only manual broadcast trigger"
+              title={t("pendingsEmitAllTitle")}
             >
-              Emit All
+              {t("pendingsEmitAll")}
             </Button>
           </div>
         </div>
@@ -59,16 +63,16 @@ export default function PendingsPageClient() {
           <input
             value={q}
             onChange={(e) => setQ(e.target.value)}
-            placeholder="Search pending listings..."
+            placeholder={t("pendingsSearchPlaceholder")}
             className="h-10 rounded-xl px-3 bg-[hsl(var(--muted))] border border-[hsl(var(--border))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent))]/30"
           />
           <select
-            aria-label="Filter by category"
+            aria-label={t("pendingsFilterAllCategories")}
             value={category}
             onChange={(e) => setCategory(e.target.value as any)}
             className="h-10 rounded-xl px-3 bg-[hsl(var(--muted))] border border-[hsl(var(--border))]"
           >
-            <option value="all">All categories</option>
+            <option value="all">{t("pendingsFilterAllCategories")}</option>
             {Array.from(
               new Set(
                 listings.map((l: any) => l.category?.name).filter(Boolean)

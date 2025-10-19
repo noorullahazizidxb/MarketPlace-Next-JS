@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { useLanguage } from "@/components/providers/language-provider";
 import { useAuthStore } from "@/store/auth.store";
 import { useListingsStore } from "@/store/listings.store";
 import { useApiMutation } from "@/lib/api-hooks";
@@ -16,20 +17,22 @@ function cn(...classes: (string | false | null | undefined)[]) {
 
 export default function MyListingsPage() {
   const session = useAuthStore((s) => s.session);
+  const { t } = useLanguage();
 
   const items: Listing[] = useMemo(() => {
     const u = session?.user ?? {};
     return Array.isArray(u.listings) ? u.listings : [];
   }, [session?.user]);
 
-  if (!session) return <p className="subtle">Loading session…</p>;
+  if (!session)
+    return <p className="subtle">{t("myListingsLoadingSession")}</p>;
 
   return (
     <div className="space-y-4">
-      <h2 className="heading-xl">My listings</h2>
+      <h2 className="heading-xl">{t("myListings")}</h2>
       <div className="card p-4">
         {items.length === 0 ? (
-          <p className="subtle">You have no listings yet.</p>
+          <p className="subtle">{t("myListingsEmpty")}</p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {items.map((item) => (
@@ -43,6 +46,7 @@ export default function MyListingsPage() {
 }
 
 function ListingWithActions({ listing }: { listing: Listing }) {
+  const { t } = useLanguage();
   const setUser = useAuthStore((s) => s.setUser);
   const setListings = useListingsStore((s) => s.set);
   const profileFetch = useApiMutation<any>("get", "/auth/profile");
@@ -125,7 +129,7 @@ function ListingWithActions({ listing }: { listing: Listing }) {
         <ActionButton
           onClick={onRenew}
           icon={RefreshCw}
-          label="Renew"
+          label={t("renew")}
           loading={renewMutation.isPending}
           variant="accent"
         />
@@ -139,12 +143,12 @@ function ListingWithActions({ listing }: { listing: Listing }) {
             } catch {}
           }}
           icon={PencilLine}
-          label="Edit"
+          label={t("edit")}
         />
         <ActionButton
           onClick={onDelete}
           icon={Trash2}
-          label="Delete"
+          label={t("delete")}
           loading={deleteMutation.isPending}
           variant="destructive"
         />
@@ -155,10 +159,10 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       <ConfirmDialog
         open={confirmOpen}
         onOpenChange={setConfirmOpen}
-        title="Delete listing"
-        description="This action cannot be undone. The listing will be permanently removed."
+        title={t("listingDeleteConfirmTitle")}
+        description={t("listingDeleteConfirmBody")}
         tone="danger"
-        confirmLabel="Delete"
+        confirmLabel={t("delete")}
         loading={deleteMutation.isPending}
         onConfirm={async () => {
           await confirmDelete();

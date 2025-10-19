@@ -11,6 +11,7 @@ import { useApiGet } from "@/lib/api-hooks";
 import { BaseUser } from "./types";
 import { cn } from "@/lib/cn";
 import Image from "next/image";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import ExpandedUserRow from "./expanded-user-row";
@@ -229,25 +230,33 @@ const UsersDashboard: React.FC = () => {
                     >
                       <td className="p-3 align-top">
                         <div className="flex items-center gap-3">
-                          <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))]">
-                            <Image
-                              src={avatar}
-                              alt={u.fullName || u.email}
-                              fill
-                              className="object-cover"
-                            />
-                          </div>
-                          <div className="min-w-0">
-                            <div className="text-sm font-medium truncate">
-                              {u.fullName || u.firstName || u.email}
+                          <Link
+                            href={u.id ? `/profile/${u.id}` : "#"}
+                            onClick={(e) => {
+                              if (!u.id) e.preventDefault();
+                            }}
+                            className="flex items-center gap-3"
+                          >
+                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))]">
+                              <Image
+                                src={avatar}
+                                alt={u.fullName || u.email}
+                                fill
+                                className="object-cover"
+                              />
                             </div>
-                            <div className="text-2xs subtle truncate">
-                              {u.email}
+                            <div className="min-w-0">
+                              <div className="text-sm font-medium truncate">
+                                {u.fullName || u.firstName || u.email}
+                              </div>
+                              <div className="text-2xs subtle truncate">
+                                {u.email}
+                              </div>
+                              <div className="text-2xs subtle truncate">
+                                {u.phone || "—"}
+                              </div>
                             </div>
-                            <div className="text-2xs subtle truncate">
-                              {u.phone || "—"}
-                            </div>
-                          </div>
+                          </Link>
                         </div>
                       </td>
                       <td className="p-3 align-top whitespace-nowrap">

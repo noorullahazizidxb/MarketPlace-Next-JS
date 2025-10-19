@@ -24,9 +24,11 @@ export default function PublicProfilePage() {
   const parsed = React.useMemo(() => {
     if (!data) return null;
     try {
+      // Ensure the data matches the schema, but fallback to raw data if parsing fails
       return PublicUserSchema.parse(data) as PublicUser;
-    } catch {
-      return null;
+    } catch (error) {
+      console.error("Failed to parse user data:", error);
+      return data; // Fallback to raw data
     }
   }, [data]);
 
@@ -89,12 +91,39 @@ export default function PublicProfilePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.08 }}
-          className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5"
+          className="rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--card))/80] p-6 shadow-lg"
         >
-          <h3 className="text-base font-semibold">About</h3>
-          <div className="mt-2 text-sm text-foreground/80 space-y-1">
-            {typeof user.metadata === "string" && <p>{user.metadata}</p>}
-            {typeof user.contacts === "string" && <p>{user.contacts}</p>}
+          <h3 className="text-lg font-bold text-[hsl(var(--accent))] mb-4">
+            About
+          </h3>
+          <div className="space-y-4 text-sm text-foreground/80">
+            {user.metadata && (
+              <div className="p-4 bg-[hsl(var(--muted))/0.2] rounded-lg border border-[hsl(var(--border))]">
+                <h4 className="font-semibold text-[hsl(var(--primary))] mb-2">
+                  Metadata
+                </h4>
+                <p>{user.metadata}</p>
+              </div>
+            )}
+            {user.contacts && (
+              <div className="p-4 bg-[hsl(var(--muted))/0.2] rounded-lg border border-[hsl(var(--border))]">
+                <h4 className="font-semibold text-[hsl(var(--primary))] mb-2">
+                  Contacts
+                </h4>
+                <ul className="space-y-1">
+                  {user.contacts.phone && (
+                    <li>
+                      <strong>Phone:</strong> {user.contacts.phone}
+                    </li>
+                  )}
+                  {user.contacts.whatsapp && (
+                    <li>
+                      <strong>WhatsApp:</strong> {user.contacts.whatsapp}
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
           </div>
         </motion.section>
       )}

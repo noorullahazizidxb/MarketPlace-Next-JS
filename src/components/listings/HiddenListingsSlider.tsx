@@ -19,6 +19,30 @@ export function HiddenListingsSlider({
   autoplayInterval?: number; // ms
   pauseOnHover?: boolean;
 }) {
+  const rootRef = useRef<HTMLElement | null>(null);
+  const [inView, setInView] = useState(true);
+  const prefersReducedMotion =
+    typeof window !== "undefined" &&
+    window.matchMedia &&
+    window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        setInView(!!e?.isIntersecting);
+      },
+      { root: null, rootMargin: "0px", threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => {
+      try {
+        obs.disconnect();
+      } catch {}
+    };
+  }, []);
   // Accept HIDDEN explicitly, plus support older HIDE_SELLER for safety
   const hidden = useMemo(() => {
     return (items || []).filter((it) => {
@@ -82,6 +106,8 @@ export function HiddenListingsSlider({
     }
 
     if (isPaused) return;
+    if (prefersReducedMotion) return;
+    if (!inView) return;
 
     if (slides.length <= 1) return;
 
@@ -98,7 +124,7 @@ export function HiddenListingsSlider({
         intervalRef.current = null;
       }
     };
-  }, [autoplayInterval, isPaused, slides.length]);
+  }, [autoplayInterval, isPaused, slides.length, inView, prefersReducedMotion]);
 
   const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${
     slides.length
@@ -108,6 +134,8 @@ export function HiddenListingsSlider({
 
   return (
     <section
+      ref={rootRef as any}
+      dir="ltr"
       className="relative mt-8"
       onMouseEnter={() => pauseOnHover && setIsPaused(true)}
       onMouseLeave={() => pauseOnHover && setIsPaused(false)}

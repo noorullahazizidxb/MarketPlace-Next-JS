@@ -5,6 +5,40 @@ import { supportedLocales } from "@/lib/i18n";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
+import Image from "next/image";
+
+function Flag({
+  country,
+  className,
+  alt,
+}: {
+  country?: string;
+  className?: string;
+  alt?: string;
+}) {
+  if (!country)
+    return (
+      <span
+        className={cn(
+          "inline-block w-5 h-4 rounded-sm bg-muted text-center text-xs",
+          className
+        )}
+      >
+        {alt?.slice(0, 2) ?? ""}
+      </span>
+    );
+  const src = `https://flagcdn.com/w40/${country.toLowerCase()}.png`;
+  return (
+    <Image
+      src={src}
+      alt={alt || country}
+      width={20}
+      height={14}
+      className={cn("rounded-sm object-cover", className)}
+      priority={false}
+    />
+  );
+}
 
 export function LanguageDropdown({ className }: { className?: string }) {
   const { locale, setLocale } = useLanguage();
@@ -22,8 +56,9 @@ export function LanguageDropdown({ className }: { className?: string }) {
             className
           )}
         >
-          <span className="text-base leading-none">{current.flag}</span>
-          <span className="hidden sm:inline-block">{current.label}</span>
+          <span className="text-base leading-none">
+            <Flag country={current.country} alt={current.label} />
+          </span>
         </button>
       </DropdownMenu.Trigger>
       <DropdownMenu.Portal forceMount>
@@ -35,7 +70,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.96 }}
                 transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-                className="z-[1000] w-44 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]/95 backdrop-blur-md shadow-xl p-1 focus:outline-none"
+                className="z-[1000] w-18 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]/95 backdrop-blur-md shadow-xl p-1 focus:outline-none"
               >
                 {supportedLocales.map((l) => {
                   const active = l.code === locale;
@@ -51,13 +86,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
                         active && "bg-white/10"
                       )}
                     >
-                      <span className="text-base leading-none">{l.flag}</span>
-                      <span className="flex-1 text-left">{l.label}</span>
-                      {active && (
-                        <span className="text-[10px] uppercase tracking-wide opacity-60">
-                          Active
-                        </span>
-                      )}
+                      <Flag country={l.country} alt={l.label} />
                     </DropdownMenu.Item>
                   );
                 })}

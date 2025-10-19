@@ -24,28 +24,28 @@ const signUpSchema = z
   .object({
     fullName: z
       .string()
-      .min(3, "Full name must be at least 3 characters")
-      .max(80, "Full name is too long"),
-    email: z.string().email("Enter a valid email address"),
+      .min(3, "signUpValidationFullNameMin")
+      .max(80, "signUpValidationFullNameMax"),
+    email: z.string().email("signUpValidationEmailInvalid"),
     phone: z
       .string()
       .optional()
       .refine(
         (v) => !v || /^\+?[0-9]{8,15}$/.test(v.replace(/\s+/g, "")),
-        "Phone must be digits, may start with +, 8-15 chars"
+        "signUpValidationPhoneInvalid"
       ),
     password: z
       .string()
-      .min(8, "Min 8 chars")
-      .regex(/[A-Z]/, "1 uppercase required")
-      .regex(/[a-z]/, "1 lowercase required")
-      .regex(/[0-9]/, "1 number required")
-      .regex(/[^A-Za-z0-9]/, "1 symbol required"),
+      .min(8, "signUpValidationPasswordMin")
+      .regex(/[A-Z]/, "signUpValidationPasswordUpper")
+      .regex(/[a-z]/, "signUpValidationPasswordLower")
+      .regex(/[0-9]/, "signUpValidationPasswordNumber")
+      .regex(/[^A-Za-z0-9]/, "signUpValidationPasswordSymbol"),
     confirmPassword: z.string(),
   })
   .refine((d) => d.password === d.confirmPassword, {
     path: ["confirmPassword"],
-    message: "Passwords do not match",
+    message: "signUpValidationPasswordsMismatch",
   });
 
 type SignUpValues = z.infer<typeof signUpSchema>;
@@ -224,7 +224,7 @@ export default function SignUpPage() {
                 <Input
                   id="fullName"
                   type="text"
-                  placeholder="Jane Doe"
+                  placeholder={t("signUpPlaceholderFullName")}
                   autoComplete="name"
                   {...register("fullName")}
                   onFocus={handleFocus("fullName")}
@@ -264,7 +264,7 @@ export default function SignUpPage() {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="name@example.com"
+                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
                   {...register("email")}
                   onFocus={handleFocus("email")}
@@ -304,7 +304,7 @@ export default function SignUpPage() {
                 <Input
                   id="phone"
                   type="tel"
-                  placeholder="+93 700 000 000"
+                  placeholder={t("signUpPlaceholderPhone")}
                   autoComplete="tel"
                   {...register("phone")}
                   onFocus={handleFocus("phone")}
@@ -472,6 +472,7 @@ function FieldMessages({
   fieldError?: string;
   touched?: boolean;
 }) {
+  const { t } = useLanguage();
   return (
     <AnimatePresence initial={false} mode="wait">
       {fieldError && touched ? (
@@ -482,7 +483,9 @@ function FieldMessages({
           exit={{ opacity: 0, y: -4 }}
           className="mt-1 text-xs font-medium text-red-400"
         >
-          {fieldError}
+          {typeof fieldError === "string"
+            ? (t as any)(fieldError) || fieldError
+            : fieldError}
         </motion.div>
       ) : null}
     </AnimatePresence>

@@ -6,6 +6,8 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import { asset } from "@/lib/assets";
 import type { Story } from "../../types/social";
 import { Portal } from "@/components/ui/portal";
+import Image from "next/image";
+import Link from "next/link";
 
 type Img = string | { url?: string | null } | null | undefined;
 
@@ -63,13 +65,33 @@ export function StoryViewer({
             >
               <div className="flex items-center justify-between p-4 md:p-5 border-b border-[hsl(var(--border))]">
                 <div className="flex items-center gap-2">
-                  <div className="size-8 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center text-[hsl(var(--primary))]">
-                    {story.author?.name?.[0] || "A"}
-                  </div>
+                  <Link
+                    href={
+                      story?.author?.id ? `/profile/${story.author.id}` : "#"
+                    }
+                    onClick={(e) => {
+                      if (!story?.user?.id) e.preventDefault();
+                    }}
+                    className="size-8 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center text-[hsl(var(--primary))] overflow-hidden hover:opacity-90"
+                  >
+                    <Image
+                      src={asset(story.user?.photo)}
+                      alt="author"
+                      className="w-7 h-7 object-cover rounded-full"
+                      width={28}
+                      height={28}
+                    />
+                  </Link>
                   <div>
-                    <div className="font-medium line-clamp-1">
+                    <Link
+                      href={story?.user?.id ? `/profile/${story.user.id}` : "#"}
+                      onClick={(e) => {
+                        if (!story?.user?.id) e.preventDefault();
+                      }}
+                      className="font-medium line-clamp-1 hover:underline"
+                    >
                       {story.title}
-                    </div>
+                    </Link>
                     {story.createdAt && (
                       <div className="text-xs subtle">
                         {new Date(story.createdAt).toLocaleString()}
@@ -98,7 +120,7 @@ export function StoryViewer({
                     <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 to-black/0" />
                   </div>
                 ) : (
-                  <ImageSlider images={slides} aspect="16/9" />
+                  <ImageSlider images={slides} aspect="16/11" />
                 )}
                 {story.description && (
                   <p className="mt-3 text-sm text-[hsl(var(--foreground))]/85 whitespace-pre-line">

@@ -22,6 +22,7 @@ import {
   ChevronDown,
 } from "lucide-react";
 import { asset } from "@/lib/assets";
+import { useLanguage } from "@/components/providers/language-provider";
 
 const schema = z.object({
   title: z.string().min(3),
@@ -43,6 +44,7 @@ type FormData = z.infer<typeof schema>;
 
 export default function CreateListingPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+  const { t } = useLanguage();
   const [pickedType, setPickedType] = useState<"RENT" | "SALE" | null>(null);
   const [pickedCategory, setPickedCategory] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -236,25 +238,27 @@ export default function CreateListingPage() {
 
   const Step1 = () => (
     <div className="space-y-4 transition-opacity duration-300">
-      <h2 className="text-lg font-semibold">What are you doing?</h2>
+      <h2 className="text-lg font-semibold">{t("listingsCreateStep1Title")}</h2>
       <div className="grid grid-cols-2 gap-3">
-        {(["RENT", "SALE"] as const).map((t) => (
+        {(["RENT", "SALE"] as const).map((typeKey) => (
           <motion.button
-            key={t}
+            key={typeKey}
             whileTap={{ scale: 0.98 }}
             className={`h-20 rounded-2xl border bg-[hsl(var(--card))]/70 backdrop-blur hover:bg-[hsl(var(--muted))]/40 transition-all shadow-sm ${
-              pickedType === t
+              pickedType === typeKey
                 ? "ring-2 ring-[hsl(var(--accent))]/50 border-[hsl(var(--accent))]/40"
                 : "border-[hsl(var(--border))]"
             }`}
             onClick={() => {
-              setPickedType(t);
-              setValue("listingType", t);
+              setPickedType(typeKey);
+              setValue("listingType", typeKey);
               setStep(2);
             }}
           >
             <span className="font-semibold">
-              {t === "RENT" ? "Renting" : "Selling"}
+              {typeKey === "RENT"
+                ? t("listingsCreateOptionRent")
+                : t("listingsCreateOptionSale")}
             </span>
           </motion.button>
         ))}
@@ -264,7 +268,7 @@ export default function CreateListingPage() {
 
   const Step2 = () => (
     <div className="space-y-4 transition-opacity duration-300">
-      <h2 className="text-lg font-semibold">Choose a category</h2>
+      <h2 className="text-lg font-semibold">{t("listingsCreateStep2Title")}</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
         {cats.slice(0, 12).map((c) => (
           <motion.button
@@ -299,7 +303,7 @@ export default function CreateListingPage() {
 
   const Step3 = () => (
     <div className="space-y-4 transition-opacity duration-300">
-      <h2 className="text-lg font-semibold">Add images</h2>
+      <h2 className="text-lg font-semibold">{t("listingsCreateStep3Title")}</h2>
       <div
         className={`p-6 rounded-2xl border-2 border-dashed bg-[hsl(var(--card))]/70 backdrop-blur shadow-sm transition-colors ${
           imagesLocalError ? "border-red-500" : ""
@@ -329,7 +333,7 @@ export default function CreateListingPage() {
       >
         <div className="text-center space-y-2">
           <p className="text-sm text-[hsl(var(--muted-foreground))]">
-            Drag & drop images here
+            {t("listingsCreateImagesDragDrop")}
           </p>
           <div>
             <Button
@@ -338,7 +342,7 @@ export default function CreateListingPage() {
               className="border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]"
               onClick={() => fileInputRef.current?.click()}
             >
-              Browse files
+              {t("listingsCreateImagesBrowse")}
             </Button>
             <input
               ref={fileInputRef}
@@ -393,7 +397,7 @@ export default function CreateListingPage() {
                       setValue("images", next as any, { shouldValidate: true });
                     }}
                   >
-                    Remove
+                    {t("listingsCreateImagesRemove")}
                   </button>
                 </div>
               );

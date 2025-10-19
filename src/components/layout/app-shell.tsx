@@ -5,14 +5,14 @@ import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
 import { usePathname, useRouter } from "next/navigation";
-import { Sidebar } from "@/components/ui/sidebar";
-import { Navbar } from "@/components/ui/navbar";
-import { Topbar } from "@/components/ui/topbar";
+import { Sidebar } from "@/components/layout/sidebar";
+import { Navbar } from "@/components/layout/navbar";
+import { Topbar } from "@/components/layout/topbar";
 import BottomNavigation from "@/components/ui/BottomNavigation";
 import { PageTransition } from "@/components/ui/page-transition";
 import Loading from "@/components/ui/loading";
 import { useAppStore } from "@/store/app.store";
-import SiteFooter from "@/components/ui/site-footer";
+import SiteFooter from "@/components/layout/site-footer";
 import { Partners } from "@/components/ui/partners";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
@@ -94,22 +94,8 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
     );
 
-  // Render public routes even if theme bootstrap hasn't finished yet
-  if (!appReady && isPublicRoute) {
-    // Show a home page skeleton while the theme is loading; do NOT render Partners/Footer yet
-    if (isHome) {
-      return (
-        <div className="min-h-screen flex flex-col bg-[hsl(var(--background))]">
-          <div className="hidden md:block">
-            <Topbar />
-          </div>
-          <main id="main-content" className="flex-1" dir="ltr">
-            <HomeSkeleton />
-          </main>
-        </div>
-      );
-    }
-    // Non-home public routes: keep a minimal loading view
+  // Do not render the app until the theme has loaded (appReady). Show a blocking loader for all routes.
+  if (!appReady) {
     return (
       <div
         className="fixed inset-0 grid place-items-center overflow-hidden bg-[hsl(var(--background))]"

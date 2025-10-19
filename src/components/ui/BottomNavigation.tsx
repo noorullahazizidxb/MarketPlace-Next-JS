@@ -147,43 +147,46 @@ const CenterOverlay: React.FC<CenterOverlayProps> = ({
   title,
   children,
   className = "",
-}) => (
-  <AnimatePresence>
-    {open && (
-      <motion.div
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        className="fixed inset-0 z-[850] flex items-center justify-center p-4"
-        onClick={onClose}
-      >
+}) => {
+  const { t } = useLanguage();
+  return (
+    <AnimatePresence>
+      {open && (
         <motion.div
-          initial={{ scale: 0.85, opacity: 0, y: 20 }}
-          animate={{ scale: 1, opacity: 1, y: 0 }}
-          exit={{ scale: 0.9, opacity: 0, y: 20 }}
-          transition={{ type: "spring", stiffness: 300, damping: 28 }}
-          onClick={(e) => e.stopPropagation()}
-          className={
-            "relative w-full max-w-md rounded-3xl bg-[hsl(var(--background))]/85 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_8px_50px_-10px_rgba(0,0,0,0.55),0_0_0_1px_hsl(var(--border))] p-5 flex flex-col gap-4 " +
-            className
-          }
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-[850] flex items-center justify-center p-4"
+          onClick={onClose}
         >
-          <div className="flex items-center justify-between">
-            <p className="text-sm font-semibold tracking-wide">{title}</p>
-            <button
-              onClick={onClose}
-              className="size-8 rounded-xl bg-white/5 hover:bg-white/10 grid place-items-center"
-              aria-label="Close"
-            >
-              <X className="size-4" />
-            </button>
-          </div>
-          {children}
+          <motion.div
+            initial={{ scale: 0.85, opacity: 0, y: 20 }}
+            animate={{ scale: 1, opacity: 1, y: 0 }}
+            exit={{ scale: 0.9, opacity: 0, y: 20 }}
+            transition={{ type: "spring", stiffness: 300, damping: 28 }}
+            onClick={(e) => e.stopPropagation()}
+            className={
+              "relative w-full max-w-md rounded-3xl bg-[hsl(var(--background))]/85 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_8px_50px_-10px_rgba(0,0,0,0.55),0_0_0_1px_hsl(var(--border))] p-5 flex flex-col gap-4 " +
+              className
+            }
+          >
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-semibold tracking-wide">{title}</p>
+              <button
+                onClick={onClose}
+                className="size-8 rounded-xl bg-white/5 hover:bg-white/10 grid place-items-center"
+                aria-label={t("close")}
+              >
+                <X className="size-4" />
+              </button>
+            </div>
+            {children}
+          </motion.div>
         </motion.div>
-      </motion.div>
-    )}
-  </AnimatePresence>
-);
+      )}
+    </AnimatePresence>
+  );
+};
 
 /**
  * BottomNavigation – a gorgeous animated mobile-only navigation bar.
@@ -325,7 +328,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               "md:hidden fixed bottom-3 left-0 right-0 z-[700] flex justify-center pointer-events-none " +
               className
             }
-            aria-label="Bottom navigation"
+            aria-label={t("bottomNavigationAria")}
           >
             <div className="pointer-events-auto w-[min(94%,640px)] mx-auto relative">
               {/* Ambient blurred blob */}
@@ -415,7 +418,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           />
           <ActionTile
             icon={Megaphone}
-            label={"Stories"}
+            label={t("stories")}
             onClick={() => onNavigate("/admin/stories")}
           />
 

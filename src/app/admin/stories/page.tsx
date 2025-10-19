@@ -8,6 +8,7 @@ import {
 } from "@/lib/stories-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { asset } from "@/lib/assets";
@@ -92,21 +93,29 @@ const StoryCard: React.FC<{
     </button>
     <div className="p-4">
       <div className="flex items-center gap-2 text-xs subtle">
-        <div className="size-7 rounded-full overflow-hidden bg-[hsl(var(--muted))/0.2] grid place-items-center">
-          {s.user?.photo ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={asset(s.user.photo)}
-              alt={s.user.fullName || "avatar"}
-              className="w-7 h-7 object-cover"
-            />
-          ) : (
-            <div className="text-[10px] font-semibold">
-              {(s.user?.fullName || "S").slice(0, 1)}
-            </div>
-          )}
-        </div>
-        <span className="font-medium">{s.user?.fullName || "System"}</span>
+        <Link
+          href={s.user?.id ? `/profile/${s.user.id}` : "#"}
+          onClick={(e) => {
+            if (!s.user?.id) e.preventDefault();
+          }}
+          className="flex items-center gap-2"
+        >
+          <div className="size-7 rounded-full overflow-hidden bg-[hsl(var(--muted))/0.2] grid place-items-center">
+            {s.user?.photo ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={asset(s.user.photo)}
+                alt={s.user.fullName || "avatar"}
+                className="w-7 h-7 object-cover"
+              />
+            ) : (
+              <div className="text-[10px] font-semibold">
+                {(s.user?.fullName || "S").slice(0, 1)}
+              </div>
+            )}
+          </div>
+          <span className="font-medium">{s.user?.fullName || "System"}</span>
+        </Link>
         {s.createdAt && <span aria-hidden>·</span>}
         {s.createdAt && (
           <time dateTime={s.createdAt}>

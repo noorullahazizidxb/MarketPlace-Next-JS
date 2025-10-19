@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useLocalMutation } from "@/lib/api-hooks";
 
 export default function ContactForm() {
   const { t } = useLanguage();
@@ -11,12 +12,20 @@ export default function ContactForm() {
   >("idle");
   const [message, setMessage] = useState<string>("");
 
+  const createContact = useLocalMutation<any>("post", "/api/contacts");
+
   async function onSubmit(formData: FormData) {
     setStatus("loading");
     setMessage("");
     try {
-      // Mock API delay
-      await new Promise((r) => setTimeout(r, 900));
+      const body = {
+        name: formData.get("name") as string,
+        email: formData.get("email") as string,
+        subject: formData.get("subject") as string,
+        phone: (formData.get("phone") as string) || undefined,
+        message: formData.get("message") as string,
+      };
+      await createContact.mutateAsync(body);
       setStatus("success");
       setMessage(t("sendMessageSuccess"));
     } catch (e) {
@@ -41,7 +50,7 @@ export default function ContactForm() {
               required
               name="name"
               type="text"
-              placeholder="Jane Doe"
+              placeholder={t("signUpPlaceholderFullName")}
               className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
             />
           </div>
@@ -51,7 +60,7 @@ export default function ContactForm() {
               required
               name="email"
               type="email"
-              placeholder="jane@example.com"
+              placeholder={t("emailPlaceholder")}
               className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
             />
           </div>
@@ -69,10 +78,13 @@ export default function ContactForm() {
               <option value="" disabled>
                 {t("chooseSubject")}
               </option>
-              <option>{t("generalQuestion")}</option>
-              <option>{t("listingSupport")}</option>
-              <option>{t("accountIssue")}</option>
-              <option>{t("partnershipInquiry")}</option>
+
+              <option value="generalQuestion">{t("generalQuestion")}</option>
+              <option value="listingSupport">{t("listingSupport")}</option>
+              <option value="accountIssue">{t("accountIssue")}</option>
+              <option value="partnershipInquiry">
+                {t("partnershipInquiry")}
+              </option>
             </select>
           </div>
           <div>
@@ -80,7 +92,7 @@ export default function ContactForm() {
             <input
               name="phone"
               type="tel"
-              placeholder="+1 555-123-4567"
+              placeholder={t("signUpPlaceholderPhone")}
               className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
             />
           </div>
