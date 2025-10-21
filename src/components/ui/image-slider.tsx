@@ -152,8 +152,10 @@ export function ImageSlider({
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}
                 onClick={() => setIndex(i)}
-                className={`w-2 h-2 rounded-full ${
-                  i === index ? "bg-white" : "bg-white/40"
+                className={`w-2 h-2 rounded-full go-to-slide ${
+                  i === index
+                    ? "bg-[hsl(var(--accent))]"
+                    : "bg-[hsl(var(--foreground))/0.4]"
                 }`}
               />
             ))}

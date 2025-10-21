@@ -227,7 +227,7 @@ export function SearchBox({
                     localStorage.removeItem("recent-searches");
                   } catch {}
                 }}
-                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-white/5 hover:bg-white/10"
+                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
               >
                 Clear
               </button>
@@ -317,7 +317,7 @@ export function SearchBox({
                         localStorage.removeItem("recent-searches");
                       } catch {}
                     }}
-                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-white/5 hover:bg-white/10"
+                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
                   >
                     Clear
                   </button>

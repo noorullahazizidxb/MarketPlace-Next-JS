@@ -110,8 +110,7 @@ const BottomNavItem: React.FC<{
         {active && (
           <motion.span
             layoutId="bottom-nav-active"
-            className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-br from-primary/25 to-transparent"
-            style={{ filter: "blur(4px)" }}
+            className="absolute inset-0 -z-10 rounded-xl bg-gradient-to-br from-primary/25 to-transparent blur-4"
           />
         )}
       </span>
@@ -333,7 +332,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <div className="pointer-events-auto w-[min(94%,640px)] mx-auto relative">
               {/* Ambient blurred blob */}
               <div className="absolute -inset-6 -z-10">
-                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-primary/25 via-fuchsia-500/15 to-cyan-400/25 blur-2xl opacity-70" />
+                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-[hsl(var(--primary))/0.25] via-[hsl(var(--secondary))/0.15] to-[hsl(var(--accent))/0.25] blur-2xl opacity-70" />
               </div>
               <motion.div
                 layout
@@ -351,7 +350,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         index={i}
                       />
                       {item.key === "notifications" && unreadCount > 0 && (
-                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center badge-pop">
+                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-[hsl(var(--accent))/0.9] text-[hsl(var(--accent-foreground),white)] text-[10px] font-semibold grid place-items-center badge-pop">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
@@ -465,7 +464,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <div className="flex flex-col gap-2 items-center justify-center">
             <button
               onClick={toggleDensity}
-              className="size-10 grid place-items-center rounded-xl bg-white/5 hover:bg-white/10 text-[10px]"
+              className="size-10 grid place-items-center rounded-xl bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08] text-[10px]"
             >
               {density === "comfort" ? "Co" : "Cm"}
             </button>

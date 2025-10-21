@@ -332,13 +332,13 @@ export function NotificationsPanel({
               )}
             >
               {(markOneMutation.isPending || markAllMutation.isPending) && (
-                <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-black/10 grid place-items-center">
+                <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-[hsl(var(--background))/0.08] grid place-items-center">
                   <div className="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                 </div>
               )}
               <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
                 <div className="flex items-center gap-2">
-                  <div className="size-8 rounded-xl bg-gradient-to-br from-primary/60 to-fuchsia-500/50 grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
+                  <div className="size-8 rounded-xl bg-gradient-to-br from-[hsl(var(--primary))/0.6] to-[hsl(var(--secondary))/0.5] grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
                     <Bell className="size-4" />
                   </div>
                   <div>

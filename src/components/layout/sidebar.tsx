@@ -47,7 +47,7 @@ export function Sidebar({
 
   const { t, locale, isRtl } = useLanguage();
   const items = [
-    { href: "/", label: t("dashboard"), Icon: LayoutDashboard },
+    { href: "/admin", label: t("dashboard"), Icon: LayoutDashboard },
     { href: "/listings", label: t("listings"), Icon: Layers3 },
     { href: "/blogs", label: "Blogs", Icon: Info },
     { href: "/admin/notifications", label: t("notifications"), Icon: Bell },

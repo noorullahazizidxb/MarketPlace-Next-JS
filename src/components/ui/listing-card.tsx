@@ -70,7 +70,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, amount: 0.4 }}
-      className="group hover-ambient relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-all duration-300 hover:-translate-y-0.5 hover:shadow-md"
+      className="group hover-ambient relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
     >
       <div className="relative overflow-hidden rounded-t-2xl">
         {listing.images && listing.images.length > 0 ? (
@@ -80,10 +80,25 @@ export function ListingCard({ listing }: { listing: Listing }) {
             aspect="1/1"
           />
         ) : (
-          <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-white/10 via-white/5 to-transparent" />
+          <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-[hsl(var(--card))/0.08] via-[hsl(var(--card))/0.04] to-transparent" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-background/10 to-transparent pointer-events-none" />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.8] via-[hsl(var(--background))/0.1] to-transparent pointer-events-none" />
+        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light" />
+        {/* Hover CTA */}
+        <div className="absolute inset-0 flex items-end justify-center p-4 pointer-events-none">
+          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto w-full flex justify-between items-center">
+            <a
+              className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white px-4 py-2 rounded-2xl shadow-md"
+              href="#"
+            >
+              View
+              <ArrowRight className="size-4" />
+            </a>
+            <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--background))]/70 border border-[hsl(var(--border))]">
+              {listing.price} {listing.currency}
+            </span>
+          </div>
+        </div>
         {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
         <div className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none">
           {/* Rating badge - default to 0.0 */}
@@ -130,9 +145,11 @@ export function ListingCard({ listing }: { listing: Listing }) {
           </div>
         </div>
         <div className="absolute top-2 left-2 z-[0]">
-          <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass">
-            <CreditCard className="size-4 inline-flex mr-2" />
-            {listing.price} {listing.currency}
+          <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
+            <CreditCard className="size-4 inline-flex" />
+            <span className="font-medium tabular-nums">
+              {listing.price} {listing.currency}
+            </span>
           </span>
         </div>
 

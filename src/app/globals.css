@@ -291,6 +291,22 @@ html, body {
   .link-underline { text-decoration: underline; }
 }
 
+/* Accent button utilities: used by sliders, pagination, filters, hero CTAs */
+.go-to-slide,
+button[aria-label^="Go to slide"],
+.accent-btn {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+  border-color: hsl(var(--accent) / 0.85);
+}
+.go-to-slide:hover,
+.accent-btn:hover,
+button[aria-label^="Go to slide"]:hover {
+  filter: brightness(0.98);
+  transform: translateY(-1px);
+}
+
+
 /* Prevent mobile browsers (iOS Safari) from zooming when focusing inputs with <16px font-size */
 @media (max-width: 640px) {
   input, select, textarea { font-size:16px !important; line-height:1.35; }
@@ -305,4 +321,100 @@ html, body {
 .ar-4-1 { aspect-ratio: 4 / 1; }
 .ar-1-1 { aspect-ratio: 1 / 1; }
 .ar-3-2 { aspect-ratio: 3 / 2; }
+
+/* Conic gradient for primary/secondary theme tokens */
+.bg-conic-primary-secondary {
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    hsl(var(--primary) / 0.12),
+    transparent 30%,
+    hsl(var(--secondary) / 0.12),
+    transparent 70%,
+    hsl(var(--primary) / 0.12)
+  );
+}
+
+/* Radial gradient for accent token */
+.bg-radial-accent {
+  background: radial-gradient(
+    closest-side,
+    hsl(var(--accent) / 0.18),
+    transparent 70%
+  );
+}
+
+/* Radial gradient for secondary token */
+.bg-radial-secondary {
+  background: radial-gradient(
+    closest-side,
+    hsl(var(--secondary) / 0.18),
+    transparent 70%
+  );
+}
+
+/* Ensure all 'Go to slide' controls use accent as background for visibility */
+.go-to-slide,
+button[aria-label^="Go to slide"] {
+  background-color: hsl(var(--accent));
+  color: hsl(var(--accent-foreground));
+}
+.go-to-slide:hover,
+button[aria-label^="Go to slide"]:hover,
+.go-to-slide:focus,
+button[aria-label^="Go to slide"]:focus {
+  filter: brightness(0.95);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.18);
+}
+
+/* Bottom sheet dynamic height helper: uses --sheet-height set by JS */
+.sheet-dynamic-height { height: var(--sheet-height, 60vh); bottom: 0; }
+
+/* Blur utility classes */
+.blur-18 {
+  filter: blur(18px);
+}
+.blur-40 {
+  filter: blur(40px);
+}
+.blur-42 {
+  filter: blur(42px);
+}
+
+/* Utility class for auto dimensions */
+.auto-dimensions {
+  width: auto;
+  height: auto;
+}
+
+/* Blur utility class for BottomNavigation */
+.blur-4 {
+  filter: blur(4px);
+}
+
+/* Utility class for hidden overflow */
+.overflow-hidden {
+  overflow: hidden;
+}
+
+/* Gradient background for sign-up page */
+.gradient-bg {
+  min-height: 100vh;
+  overflow: hidden;
+  background: radial-gradient(circle at top, hsl(var(--primary)) / 0.28, transparent 58%),
+              radial-gradient(circle at bottom, hsl(var(--accent)) / 0.22, transparent 64%);
+}
+
+/* Small helpers added during inline-style refactor */
+.will-change { will-change: opacity, transform; }
+
+.dropdown-card { background-color: hsl(var(--card-bg, var(--card))); }
+
+.chart-tooltip { outline: none !important; }
+
+/* Target the recharts legend wrapper to tune font-size */
+.recharts-legend-wrapper, .chart-legend { font-size: 12px; }
+
+/* Password strength bar color utilities that map to theme tokens */
+/* Removed small bg- utility classes; components should use token-based classes like bg-[hsl(var(--primary))] */
+
 

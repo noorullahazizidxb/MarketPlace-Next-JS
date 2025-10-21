@@ -62,7 +62,7 @@ export function FiltersBar() {
       className={cn(
         "px-3 h-9 rounded-xl border text-sm inline-flex items-center gap-2",
         active
-          ? "bg-primary/15 border-primary/40 text-foreground"
+          ? "bg-[hsl(var(--accent))/0.15] border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]"
           : "glass border-white/10 hover:bg-white/10"
       )}
     >

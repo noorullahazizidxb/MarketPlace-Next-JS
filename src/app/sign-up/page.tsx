@@ -13,9 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useApiMutation } from "@/lib/api-hooks";
 import { useLanguage } from "@/components/providers/language-provider";
-
-const gradientBg =
-  "relative min-h-screen overflow-hidden bg-[radial-gradient(circle_at_top,_hsl(var(--primary))/0.28,_transparent_58%),radial-gradient(circle_at_bottom,_hsl(var(--accent))/0.22,_transparent_64%)]";
+const gradientBgClass = "gradient-bg";
 const inputClasses =
   "h-11 rounded-2xl border border-[hsl(var(--border))/0.35] bg-[hsl(var(--card-bg,var(--card)))/0.55] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))/0.55] transition-all focus:border-transparent focus:bg-[hsl(var(--card-bg,var(--card)))/0.75] focus:ring-2 focus:ring-[hsl(var(--accent))] disabled:opacity-50";
 
@@ -139,7 +137,7 @@ export default function SignUpPage() {
     <div
       dir={isRtl ? "rtl" : "ltr"}
       className={cn(
-        gradientBg,
+        gradientBgClass,
         "flex items-center justify-center p-4 sm:p-6 lg:p-10"
       )}
     >
@@ -498,20 +496,19 @@ function PasswordStrength({ score }: { score: number }) {
   const { t } = useLanguage();
   const labels = [t("tooWeak"), t("weak"), t("fair"), t("good"), t("strong")];
   const pct = (score / 5) * 100;
-  const color =
+  const colorClass =
     score <= 1
-      ? "hsl(var(--accent))"
+      ? "bg-[hsl(var(--accent))]"
       : score === 2
-      ? "hsl(var(--primary))"
+      ? "bg-[hsl(var(--primary))]"
       : score === 3
-      ? "hsl(var(--secondary))"
-      : "hsl(var(--btn-primary-bg,var(--primary)))";
+      ? "bg-[hsl(var(--secondary))]"
+      : "bg-[hsl(var(--btn-primary-bg,var(--primary)))]";
   return (
     <div className="mt-2 space-y-1">
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[hsl(var(--border))/0.4]">
         <motion.div
-          className="h-full rounded-full"
-          style={{ background: color }}
+          className={`h-full rounded-full ${colorClass}`}
           initial={false}
           animate={{ width: `${pct}%` }}
           transition={{ type: "spring", stiffness: 180, damping: 22 }}

@@ -16,7 +16,7 @@ export function ListingsSkeleton() {
               key={i}
               className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden"
             >
-              <div className="h-40 bg-white/5 animate-pulse" />
+              <div className="h-40 bg-[hsl(var(--foreground))/0.06] animate-pulse" />
               <div className="p-4 space-y-2">
                 <Skeleton className="h-5 w-3/4" />
                 <Skeleton className="h-4 w-2/3" />

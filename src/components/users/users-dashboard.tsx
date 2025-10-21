@@ -49,7 +49,7 @@ const ExpandedRowWrapper: React.FC<{
             },
           },
         }}
-        style={{ overflow: "hidden" }}
+        className="overflow-hidden"
         layout
       >
         {children}
@@ -337,18 +337,18 @@ const UsersDashboard: React.FC = () => {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="accent"
             size="sm"
             disabled={page === 1}
             onClick={() => setPage((p) => Math.max(1, p - 1))}
           >
             Prev
           </Button>
-          <div className="px-3 py-1 rounded-xl border text-sm">
+          <div className="px-3 py-1 rounded-xl border text-sm bg-[hsl(var(--accent))/0.12] border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]">
             {page} / {pages}
           </div>
           <Button
-            variant="ghost"
+            variant="accent"
             size="sm"
             disabled={page === pages}
             onClick={() => setPage((p) => Math.min(pages, p + 1))}

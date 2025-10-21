@@ -165,14 +165,14 @@ export function HiddenListingsSlider({
           <button
             aria-label="Previous"
             onClick={prev}
-            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-white/10"
+            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
           >
             <ChevronLeft className="size-4" />
           </button>
           <button
             aria-label="Next"
             onClick={next}
-            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-white/10"
+            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
           >
             <ChevronRight className="size-4" />
           </button>
@@ -232,11 +232,19 @@ export function HiddenListingsSlider({
 
       <div className="mt-2 flex items-center justify-center gap-2">
         {slides.map((_, i) => (
-          <span
+          <button
             key={i}
-            className={`size-1.5 rounded-full ${
-              i === idx ? "bg-primary" : "bg-foreground/30"
-            }`}
+            aria-label={`Go to slide ${i + 1}`}
+            onClick={() => {
+              if (i === idx) return;
+              setDir(i > idx ? 1 : -1);
+              setIdx(i);
+            }}
+            className={
+              i === idx
+                ? "go-to-slide size-1.5 rounded-full"
+                : "size-1.5 rounded-full bg-[hsl(var(--foreground))/0.3] hover:opacity-90"
+            }
           />
         ))}
       </div>

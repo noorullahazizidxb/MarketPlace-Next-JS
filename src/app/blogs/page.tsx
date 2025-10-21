@@ -9,6 +9,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { BlogHero } from "@/components/blogs/BlogHero";
 import StoriesBar from "@/components/stories/StoriesBar";
 import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
+import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { useApiGet as useListingsGet } from "@/lib/api-hooks";
 
 export default function BlogsPage() {
@@ -145,6 +146,11 @@ export default function BlogsPage() {
           </div>
         )}
       </div>
+      {/* Related listings slider (placed before the partners section in layout) */}
+      {Array.isArray(listingsData) && listingsData.length > 0 && (
+        <RelatedListingsSlider currentId={0} />
+      )}
+
       <BlogViewer open={open} blog={active} onClose={() => setOpen(false)} />
     </div>
   );

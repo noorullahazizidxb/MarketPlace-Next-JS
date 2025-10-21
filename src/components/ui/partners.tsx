@@ -44,15 +44,14 @@ export function Partners() {
             {items.map((l, idx) => (
               <div
                 key={idx}
-                className="group shrink-0 h-20 w-28 grid place-items-center rounded-xl bg-white/50 border border-[hsl(var(--border))] backdrop-blur-sm grayscale hover:grayscale-0 transition-all"
+                className="bg-[hsl(var(--accent))]/50 group p-5 shrink-0 h-40 w-40 grid place-items-center rounded-xl border border-[hsl(var(--border))] backdrop-blur-sm transition-all"
               >
                 <Image
                   src={l.src}
                   alt={l.alt}
                   width={56}
                   height={56}
-                  className="opacity-80"
-                  style={{ width: "auto", height: "auto" }}
+                  className="opacity-80 auto-dimensions"
                 />
               </div>
             ))}

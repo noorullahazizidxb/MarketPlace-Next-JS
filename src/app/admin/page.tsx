@@ -98,14 +98,14 @@ function ChartTooltip({ active, payload, label }: any) {
       <div className="space-y-0.5">
         {payload.map((p: any) => {
           const colorMap: Record<string, string> = {
-            "#2563eb": "bg-blue-600",
-            "#16a34a": "bg-emerald-600",
-            "#6366f1": "bg-indigo-500",
-            "#06b6d4": "bg-cyan-500",
-            "#10b981": "bg-emerald-500",
-            "#f43f5e": "bg-rose-500",
-            "#f59e0b": "bg-amber-500",
-            "#0ea5e9": "bg-sky-500",
+            "#2563eb": "bg-[hsl(var(--primary))]",
+            "#16a34a": "bg-[hsl(var(--accent))]",
+            "#6366f1": "bg-[hsl(var(--secondary))]",
+            "#06b6d4": "bg-[hsl(var(--accent))]",
+            "#10b981": "bg-[hsl(var(--accent))]",
+            "#f43f5e": "bg-[hsl(var(--primary))]",
+            "#f59e0b": "bg-[hsl(var(--secondary))]",
+            "#0ea5e9": "bg-[hsl(var(--primary))]",
           };
           const swatch = colorMap[p.color] || "bg-[hsl(var(--primary))]";
           return (
@@ -221,11 +221,11 @@ export default function AdminDashboardPage() {
         <div className="space-y-6">
           <Card className="p-5 space-y-3 shadow-sm border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/90 backdrop-blur-sm">
             <h3 className="text-sm font-semibold tracking-wide flex items-center gap-2">
-              <span className="inline-block size-2 rounded-full bg-emerald-500" />
+              <span className="inline-block size-2 rounded-full bg-[hsl(var(--accent))]" />
               {t("retention")}
             </h3>
             <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-emerald-500/10 to-transparent p-3">
+              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-[hsl(var(--accent))/0.1] to-transparent p-3">
                 <p className="subtle text-[10px] uppercase tracking-wide">
                   {t("unapprovedDays")}
                 </p>
@@ -233,7 +233,7 @@ export default function AdminDashboardPage() {
                   {retention?.unapprovedDays ?? "—"}
                 </p>
               </div>
-              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-sky-500/10 to-transparent p-3">
+              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-[hsl(var(--primary))/0.1] to-transparent p-3">
                 <p className="subtle text-[10px] uppercase tracking-wide">
                   {t("renewWindowDays")}
                 </p>
@@ -245,7 +245,7 @@ export default function AdminDashboardPage() {
           </Card>
           <Card className="p-5 space-y-3 shadow-sm border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/90 backdrop-blur-sm">
             <h3 className="text-sm font-semibold tracking-wide flex items-center gap-2">
-              <span className="inline-block size-2 rounded-full bg-indigo-500" />
+              <span className="inline-block size-2 rounded-full bg-[hsl(var(--secondary))]" />
               {t("schedules")}
             </h3>
             <div className="space-y-2 text-xs">
@@ -353,9 +353,9 @@ export default function AdminDashboardPage() {
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
-                  <Legend wrapperStyle={{ fontSize: 12 }} />
+                  <Legend />
                   <Line
                     type="monotone"
                     dataKey="created"
@@ -401,7 +401,7 @@ export default function AdminDashboardPage() {
                   <YAxis />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Bar dataKey="created" fill="#2563eb" radius={[4, 4, 0, 0]} />
                 </BarChart>
@@ -432,7 +432,7 @@ export default function AdminDashboardPage() {
                 <YAxis />
                 <Tooltip
                   content={<ChartTooltip />}
-                  wrapperStyle={{ outline: "none" }}
+                  wrapperClassName="chart-tooltip"
                 />
                 <Bar
                   dataKey="registered"
@@ -468,7 +468,7 @@ export default function AdminDashboardPage() {
                   <YAxis />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Line
                     type="monotone"
@@ -508,7 +508,7 @@ export default function AdminDashboardPage() {
                   <YAxis />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Line
                     type="monotone"
@@ -556,7 +556,7 @@ export default function AdminDashboardPage() {
                   <YAxis />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Line
                     type="monotone"
@@ -625,7 +625,7 @@ export default function AdminDashboardPage() {
                   <YAxis />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Line
                     type="monotone"
@@ -664,7 +664,7 @@ export default function AdminDashboardPage() {
                   <YAxis domain={[0, 5]} />
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Line
                     type="monotone"
@@ -697,7 +697,7 @@ export default function AdminDashboardPage() {
                 <PieChart>
                   <Tooltip
                     content={<ChartTooltip />}
-                    wrapperStyle={{ outline: "none" }}
+                    wrapperClassName="chart-tooltip"
                   />
                   <Pie
                     data={charts.representativesByRegion}
@@ -794,7 +794,7 @@ function ListingsTypeStatusCharts({
             className={
               "px-3 py-1.5 rounded-full border text-[11px] font-medium transition-colors " +
               (mode === m
-                ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))]"
+                ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-[hsl(var(--accent))]"
                 : "bg-[hsl(var(--muted))]/20 hover:bg-[hsl(var(--muted))]/30 border-[hsl(var(--border))]")
             }
           >
@@ -818,13 +818,15 @@ function ListingsTypeStatusCharts({
               <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} />
               <Tooltip
                 content={<ChartTooltip />}
-                wrapperStyle={{ outline: "none" }}
+                wrapperClassName="chart-tooltip"
                 formatter={(value: any, name: string) => [
                   `${(Number(value) * 100).toFixed(1)}%`,
                   (t as any)(name.toLowerCase()) || name,
                 ]}
               />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
+              <div className="recharts-legend-wrapper chart-legend">
+                <Legend />
+              </div>
               {statusKeys.map((k) => (
                 <Bar
                   key={k}
@@ -855,7 +857,7 @@ function ListingsTypeStatusCharts({
               EXPIRED: "bg-zinc-500",
               DRAFT: "bg-emerald-400",
               HIDDEN: "bg-slate-500",
-            }[k] || "bg-primary";
+            }[k] || "bg-[hsl(var(--primary))]";
           return (
             <span key={k} className="flex items-center gap-1">
               <span className={`inline-block size-2 rounded-sm ${swatch}`} />

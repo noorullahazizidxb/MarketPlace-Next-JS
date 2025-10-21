@@ -219,11 +219,11 @@ function ListingsContent() {
                 className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden"
               >
                 <div className="animate-pulse">
-                  <div className="h-40 bg-white/10" />
+                  <div className="h-40 bg-[hsl(var(--foreground))/0.08]" />
                   <div className="p-4 space-y-2">
-                    <div className="h-5 bg-white/10 rounded" />
-                    <div className="h-4 bg-white/10 rounded w-2/3" />
-                    <div className="h-4 bg-white/10 rounded w-1/3" />
+                    <div className="h-5 bg-[hsl(var(--foreground))/0.08] rounded" />
+                    <div className="h-4 bg-[hsl(var(--foreground))/0.08] rounded w-2/3" />
+                    <div className="h-4 bg-[hsl(var(--foreground))/0.08] rounded w-1/3" />
                   </div>
                 </div>
               </div>
@@ -295,7 +295,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
     <div className="mt-4 flex items-center justify-center gap-2">
       <button
         onClick={() => page > 1 && set(page - 1)}
-        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-white/20 disabled:opacity-50"
+        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-[hsl(var(--border))/0.2] disabled:opacity-50 accent-btn"
         disabled={page <= 1}
       >
         {t("prev")}
@@ -314,8 +314,8 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
                 onClick={() => set(p)}
                 className={
                   p === page
-                    ? "px-3 h-9 rounded-xl bg-primary/20 border border-primary/40"
-                    : "px-3 h-9 rounded-xl glass border border-white/10 hover:bg-white/10"
+                    ? "px-3 h-9 rounded-xl bg-[hsl(var(--accent))/0.18] border border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]"
+                    : "px-3 h-9 rounded-xl glass border border-[hsl(var(--border))/0.12] hover:bg-[hsl(var(--foreground))/0.08]"
                 }
               >
                 {p}
@@ -326,7 +326,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
       </div>
       <button
         onClick={() => page < pageCount && set(page + 1)}
-        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-white/20 disabled:opacity-50"
+        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-[hsl(var(--border))/0.2] disabled:opacity-50 accent-btn"
         disabled={page >= pageCount}
       >
         {t("next")}

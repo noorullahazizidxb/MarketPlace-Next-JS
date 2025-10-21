@@ -34,8 +34,8 @@ export default function StoriesBar() {
           {isLoading &&
             Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="w-20 flex-shrink-0">
-                <div className="size-16 rounded-2xl bg-white/10 animate-pulse" />
-                <div className="mt-2 h-3 rounded bg-white/10" />
+                <div className="size-16 rounded-2xl bg-[hsl(var(--foreground))/0.08] animate-pulse" />
+                <div className="mt-2 h-3 rounded bg-[hsl(var(--foreground))/0.08]" />
               </div>
             ))}
           {!isLoading &&
@@ -46,7 +46,7 @@ export default function StoriesBar() {
                 aria-label={s.title}
                 onClick={() => openAt(i)}
               >
-                <div className="relative size-16 rounded-2xl p-0.5 bg-gradient-to-br from-primary/60 via-fuchsia-500/60 to-cyan-400/60">
+                <div className="relative size-16 rounded-2xl p-0.5 bg-gradient-to-br from-[hsl(var(--primary))/0.6] via-[hsl(var(--secondary))/0.6] to-[hsl(var(--accent))/0.6]">
                   <div className="size-full rounded-[14px] bg-[hsl(var(--background))] grid place-items-center overflow-hidden">
                     <Image
                       src={asset(

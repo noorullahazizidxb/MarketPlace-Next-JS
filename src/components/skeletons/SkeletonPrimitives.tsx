@@ -6,7 +6,15 @@ export const shimmer =
   "animate-pulse bg-[linear-gradient(110deg,rgba(255,255,255,0.06),rgba(255,255,255,0.18),rgba(255,255,255,0.06))] bg-[length:200%_100%]";
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div className={cn("rounded-md bg-white/5", shimmer, className)} />;
+  return (
+    <div
+      className={cn(
+        "rounded-md bg-[hsl(var(--foreground))/0.06]",
+        shimmer,
+        className
+      )}
+    />
+  );
 }
 
 export function Block({ lines = 3 }: { lines?: number }) {

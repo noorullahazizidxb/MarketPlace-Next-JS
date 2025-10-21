@@ -40,7 +40,7 @@ export const Switch: React.FC<SwitchProps> = ({
       <span
         className={cn(
           "block rounded-full transition-colors peer-focus-visible:outline-none peer-focus-visible:ring-2 peer-focus-visible:ring-primary/50",
-          checked ? "bg-primary/80" : "bg-white/15",
+          checked ? "bg-[hsl(var(--primary))/0.8]" : "bg-white/15",
           size === "md" ? "h-6 w-11" : "h-5 w-9"
         )}
       >

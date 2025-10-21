@@ -303,7 +303,7 @@ export default function AdsManagementPage() {
               aria-label="Filter by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40"
+              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--accent))/0.4]"
             >
               <option value="all">{(t as any)("adsAllStatuses")}</option>
               <option value="active">{(t as any)("active")}</option>
@@ -313,7 +313,7 @@ export default function AdsManagementPage() {
               aria-label="Filter by placement"
               value={placementFilter}
               onChange={(e) => setPlacementFilter(e.target.value)}
-              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-primary/40 min-w-[180px]"
+              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--accent))/0.4] min-w-[180px]"
             >
               <option value="all">{(t as any)("adsAllPlacements")}</option>
               {AD_PLACEMENTS.map((p) => (

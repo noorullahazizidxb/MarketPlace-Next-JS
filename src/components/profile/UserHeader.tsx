@@ -26,7 +26,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
       {/* animated accent blob */}
       <motion.div
         aria-hidden
-        className="absolute -z-10 right-[-10%] top-[-20%] h-72 w-72 rounded-full bg-primary/15 blur-3xl"
+        className="absolute -z-10 right-[-10%] top-[-20%] h-72 w-72 rounded-full bg-[hsl(var(--primary))/0.15] blur-3xl"
         initial={{ opacity: 0.3, scale: 0.9 }}
         animate={{ opacity: 0.6, scale: 1 }}
         transition={{ duration: 1.2 }}

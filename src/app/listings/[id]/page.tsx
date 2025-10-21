@@ -32,6 +32,7 @@ import { asset } from "@/lib/assets";
 import { setCachedToken } from "@/lib/axiosClient";
 import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
+import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 
 export default function ListingDetailsPage() {
   return (
@@ -214,6 +215,14 @@ function ListingDetailsContent() {
             <DetailAdSlot placement="DETAIL_PAGE_SIDEBAR" />
           </div>
         </div>
+      )}
+      {/* Related listings by category */}
+      {!!listing?.category?.id && (
+        <RelatedListingsSlider
+          categoryId={(listing as any).categoryId ?? listing.category.id}
+          currentId={String(id)}
+          title={"Related Listings"}
+        />
       )}
     </div>
   );

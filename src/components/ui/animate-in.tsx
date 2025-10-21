@@ -44,11 +44,10 @@ export const AnimateIn: React.FC<AnimateInProps> = ({
   return (
     <motion.div
       ref={ref}
-      className={className}
       variants={variant}
       initial="initial"
       animate={visible ? "animate" : "initial"}
-      style={{ willChange: "opacity, transform" }}
+      className={`${className ?? ""} will-change`}
       transition={{ ...variant.animate?.transition, delay }}
     >
       <Tag>{children}</Tag>

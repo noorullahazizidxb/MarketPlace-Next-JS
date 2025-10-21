@@ -101,7 +101,12 @@ export default function AdminContactsPage() {
               />
               <select
                 aria-label={t("subjectLabel")}
-                className="h-9 rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 text-sm"
+                className={
+                  "h-9 rounded-xl border px-3 text-sm " +
+                  (subjectFilter
+                    ? "accent-btn border-[hsl(var(--accent))/0.5] text-[hsl(var(--accent-foreground))]"
+                    : "border-[hsl(var(--border))] bg-transparent")
+                }
                 value={subjectFilter}
                 onChange={(e) => setSubjectFilter(e.target.value)}
               >

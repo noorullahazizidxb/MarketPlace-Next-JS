@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 type Props = {
@@ -15,7 +16,7 @@ export function BlogHero({ value, onChange, onCreate, canCreate }: Props) {
   const { t } = useLanguage();
   return (
     <section className="relative overflow-visible mt-5 rounded-3xl border border-[hsl(var(--border))] bg-[radial-gradient(1200px_600px_at_90%_-10%,hsl(var(--primary)/0.15),transparent_60%),_linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)]">
-      <div className="pointer-events-none absolute -top-24 -right-24 size-[380px] rounded-full bg-primary/20 blur-3xl" />
+      <div className="pointer-events-none absolute -top-24 -right-24 size-[380px] rounded-full bg-[hsl(var(--primary))/0.2] blur-3xl" />
       <div className="pointer-events-none absolute -bottom-24 -left-24 size-[420px] rounded-full bg-fuchsia-500/20 blur-3xl" />
 
       <div className="relative overflow-visible px-5 sm:px-8 md:px-12 py-12 sm:py-16 md:py-20 grid lg:grid-cols-2 items-center gap-8 z-[1]">
@@ -66,13 +67,9 @@ export function BlogHero({ value, onChange, onCreate, canCreate }: Props) {
                 />
               </div>
               {canCreate && onCreate && (
-                <button
-                  type="button"
-                  onClick={onCreate}
-                  className="inline-flex items-center rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] px-4 h-12 hover:opacity-90 transition whitespace-nowrap"
-                >
+                <Button type="button" onClick={onCreate} variant="accent" size="md">
                   {t("createBlog")}
-                </button>
+                </Button>
               )}
             </div>
           </motion.div>

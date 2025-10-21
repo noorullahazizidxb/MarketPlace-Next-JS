@@ -100,7 +100,7 @@ export default function NotFound() {
       >
         <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)] p-8 sm:p-12 shadow-2xl">
           {/* Decorative sparkle */}
-          <div className="pointer-events-none absolute -top-6 -left-6 flex size-20 items-center justify-center rounded-2xl bg-primary/10 backdrop-blur-xl">
+          <div className="pointer-events-none absolute -top-6 -left-6 flex size-20 items-center justify-center rounded-2xl bg-[hsl(var(--primary))/0.1] backdrop-blur-xl">
             <Sparkles className="size-6 text-[hsl(var(--primary))]" />
           </div>
 
@@ -109,7 +109,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-[hsl(var(--muted-foreground))] backdrop-blur"
+              className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))/0.12] bg-[hsl(var(--background))/0.06] px-3 py-1 text-xs text-[hsl(var(--muted-foreground))] backdrop-blur"
             >
               <Stars className="size-3" />
               {t("notFoundTitle")}
@@ -123,7 +123,7 @@ export default function NotFound() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="mt-4 text-7xl sm:text-8xl md:text-9xl font-black tracking-[-0.02em] bg-gradient-to-br from-[hsl(var(--primary))] via-fuchsia-500 to-cyan-400 bg-clip-text text-transparent drop-shadow"
+              className="mt-4 text-7xl sm:text-8xl md:text-9xl font-black tracking-[-0.02em] bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--accent))] bg-clip-text text-transparent drop-shadow"
             >
               404
             </motion.h1>
@@ -155,7 +155,7 @@ export default function NotFound() {
           </div>
 
           {/* Subtle corner highlight */}
-          <div className="pointer-events-none absolute -bottom-8 -right-8 size-40 rounded-full bg-primary/20 blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-8 -right-8 size-40 rounded-full bg-[hsl(var(--primary))/0.2] blur-3xl" />
         </div>
       </motion.div>
     </section>

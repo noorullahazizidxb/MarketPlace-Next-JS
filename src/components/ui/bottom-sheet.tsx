@@ -46,6 +46,17 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
 
   const close = useCallback(() => onOpenChange(false), [onOpenChange]);
 
+  // Sync dynamic height to CSS variable to avoid inline styles
+  useEffect(() => {
+    const node = sheetRef.current;
+    if (!node) return;
+    const height = `calc(${(activeHeight * 100).toFixed(
+      2
+    )}vh - var(--safe-bottom))`;
+    // set as CSS var on element
+    (node as HTMLElement).style.setProperty("--sheet-height", height);
+  }, [activeHeight]);
+
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => {
@@ -172,16 +183,8 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
             ref={sheetRef}
             className={
               "fixed left-0 right-0 z-[960] mx-auto flex flex-col rounded-t-[32px] bg-[hsl(var(--background))]/90 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
-              className
-            }
-            style={
-              {
-                height: `calc(${(activeHeight * 100).toFixed(
-                  2
-                )}vh - var(--safe-bottom))`,
-                bottom: 0,
-                y: 0,
-              } as any
+              className +
+              " sheet-dynamic-height"
             }
             initial={
               prefersReducedMotion ? { y: 0, opacity: 0 } : { y: "100%" }
@@ -219,7 +222,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               {closable && (
                 <button
                   onClick={close}
-                  className="size-9 shrink-0 rounded-xl bg-white/5 hover:bg-white/10 grid place-items-center"
+                  className="size-9 shrink-0 rounded-xl bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08] grid place-items-center"
                   aria-label="Close"
                 >
                   <X className="size-4" />

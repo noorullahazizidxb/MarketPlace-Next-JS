@@ -670,17 +670,17 @@ export default function NotificationsAdminPage() {
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="ghost"
+            variant="accent"
             size="sm"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
           >
             Prev
           </Button>
-          <div className="px-3 py-1 rounded-xl border">
+          <div className="px-3 py-1 rounded-xl border bg-[hsl(var(--accent))/0.12] text-[hsl(var(--accent))]">
             {page} / {pages}
           </div>
           <Button
-            variant="ghost"
+            variant="accent"
             size="sm"
             onClick={() => setPage((p) => Math.min(pages, p + 1))}
           >

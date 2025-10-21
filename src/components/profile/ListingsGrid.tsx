@@ -13,7 +13,7 @@ export default function ListingsGrid({ listings }: { listings: Listing[] }) {
           whileHover={{ y: -3 }}
           className="rounded-2xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
         >
-          <div className="relative h-44 overflow-hidden">
+          <div className="relative h-100 overflow-hidden">
             {l.images?.[0]?.url ? (
               <ImageSlider
                 images={l.images.map((img) => ({
