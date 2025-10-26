@@ -88,7 +88,7 @@ const StoryCard: React.FC<{
       <ImageSlider
         images={(s.images ?? []).filter(Boolean) as any}
         aspect="16/9"
-        heightClass="h-40"
+        heightClass="h-80"
       />
     </button>
     <div className="p-4">

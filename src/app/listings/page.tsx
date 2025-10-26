@@ -21,6 +21,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { useSocialRealtime } from "@/lib/use-social-realtime";
 import { asset } from "@/lib/assets";
 import StoriesBar from "@/components/stories/StoriesBar";
+import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 
 export default function ListingsPage() {
   return (
@@ -170,6 +171,8 @@ function ListingsContent() {
       <StoriesBar />
       {/* Hidden listings slider */}
       <HiddenListingsSlider items={allItems} />
+      {/* Promo banner placed in listings page (before global Partners section) */}
+      <ListingsPromoBanner />
       {(() => {
         // Map dynamic distance to a discrete height class to avoid inline style lint issue
         const h = pulling ? Math.round(distance / 10) * 10 : 0; // nearest 10

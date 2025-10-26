@@ -15,7 +15,9 @@
 .bg-aurora-two {
   background: radial-gradient(closest-side, #a78bfa, transparent 70%);
 }
-
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
+}
 /* Local font faces */
 @font-face { font-family: 'Popppins'; src: url('../english_font/Poppins-Regular.woff2') format('woff2'); font-display: swap; }
 @font-face { font-family: 'Coolvetica'; src: url('../english_font/Coolvetica Rg.otf') format('truetype'); font-display: swap; }
@@ -136,7 +138,7 @@ html, body {
 
 @layer components {
   /* Liquid glass gradient border panel */
-  .liquid-glass { position: relative; 
+  .liquid-glass { position: relative;
     border-radius: var(--radius-lg, 1rem);
     background: hsl(var(--background) / 0.18);
     -webkit-backdrop-filter: saturate(160%) blur(16px);

@@ -10,6 +10,7 @@ const nextConfig = {
       { protocol: 'http', hostname: '192.168.11.11', port: '4000', pathname: '/**' },
       { protocol: 'http', hostname: '192.168.11.205', port: '4000', pathname: '/**' },
       { protocol: 'http', hostname: '192.168.11.205', port: '3002', pathname: '/**' },
+      { protocol: 'http', hostname: '180.222.140.40', port: '4000', pathname: '/**' },
       { protocol: 'http', hostname: 'cdn.4imprint.com', pathname: '/**' },
       { protocol: 'https', hostname: '**', pathname: '/**' },
     ],

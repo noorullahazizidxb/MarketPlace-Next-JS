@@ -6,6 +6,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
 import { useState } from "react";
 import Image from "next/image";
+import React from "react";
 
 function Flag({
   country,
@@ -40,7 +41,16 @@ function Flag({
   );
 }
 
-export function LanguageDropdown({ className }: { className?: string }) {
+const ForwardedMotionDiv = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<typeof motion.div>
+>((props, ref) => <motion.div ref={ref} {...props} />);
+ForwardedMotionDiv.displayName = "ForwardedMotionDiv";
+
+export const LanguageDropdown = React.forwardRef<
+  HTMLButtonElement,
+  { className?: string }
+>(({ className }, ref) => {
   const { locale, setLocale } = useLanguage();
   const [open, setOpen] = useState(false);
   const current = supportedLocales.find((l) => l.code === locale)!;
@@ -49,6 +59,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
     <DropdownMenu.Root open={open} onOpenChange={setOpen}>
       <DropdownMenu.Trigger asChild>
         <button
+          ref={ref}
           aria-haspopup="menu"
           aria-label="Change language"
           className={cn(
@@ -65,7 +76,7 @@ export function LanguageDropdown({ className }: { className?: string }) {
         <AnimatePresence>
           {open && (
             <DropdownMenu.Content sideOffset={8} align="end" asChild>
-              <motion.div
+              <ForwardedMotionDiv
                 initial={{ opacity: 0, y: -4, scale: 0.96 }}
                 animate={{ opacity: 1, y: 0, scale: 1 }}
                 exit={{ opacity: 0, y: -4, scale: 0.96 }}
@@ -90,12 +101,13 @@ export function LanguageDropdown({ className }: { className?: string }) {
                     </DropdownMenu.Item>
                   );
                 })}
-              </motion.div>
+              </ForwardedMotionDiv>
             </DropdownMenu.Content>
           )}
         </AnimatePresence>
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
-}
-<span className="text-[10px] uppercase tracking-wide opacity-60">Active</span>;
+});
+
+LanguageDropdown.displayName = "LanguageDropdown";

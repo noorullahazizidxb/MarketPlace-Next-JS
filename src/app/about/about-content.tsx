@@ -11,7 +11,11 @@ import {
 import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
 
-export function AboutContent({ marketplaceName }: { marketplaceName: string }) {
+export function AboutContent({
+  marketplaceName,
+}: {
+  readonly marketplaceName: string;
+}) {
   const { t, isRtl } = useLanguage();
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="pb-20">

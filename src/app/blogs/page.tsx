@@ -9,15 +9,12 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { BlogHero } from "@/components/blogs/BlogHero";
 import StoriesBar from "@/components/stories/StoriesBar";
 import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
+import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
-import { useApiGet as useListingsGet } from "@/lib/api-hooks";
 
 export default function BlogsPage() {
   const { data: blogs, isLoading } = useApiGet(["blogs"], "/blogs");
-  const { data: listingsData } = useListingsGet(
-    ["listings", "all"],
-    "/listings"
-  );
+  const { data: listingsData } = useApiGet(["listings", "all"], "/listings");
   const { user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
@@ -57,6 +54,8 @@ export default function BlogsPage() {
       {Array.isArray(listingsData) && listingsData.length > 0 && (
         <HiddenListingsSlider items={listingsData as any} />
       )}
+      {/* Promotional banners inserted for blogs page */}
+      <ListingsPromoBanner />
       {isLoading && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {Array.from({ length: 6 }).map((_, i) => (

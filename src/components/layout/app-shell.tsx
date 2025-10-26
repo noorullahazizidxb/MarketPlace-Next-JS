@@ -19,6 +19,12 @@ import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
 
+/* --------------  NEW SKELETON IMPORTS  -------------- */
+import { HomePromoBannerSkeleton } from "@/components/skeletons/HomePromoBannerSkeleton";
+import { ListingsPromoBannerSkeleton } from "@/components/skeletons/ListingsPromoBannerSkeleton";
+import { PartnersSkeleton } from "@/components/skeletons/PartnersSkeleton";
+/* ---------------------------------------------------- */
+
 const PUBLIC_PATH_PREFIXES = [
   "/listings",
   "/about",
@@ -29,7 +35,6 @@ const PUBLIC_PATH_PREFIXES = [
 
 export function AppShell({ children }: PropsWithChildren) {
   const { isAdmin, user, loading, token } = useAuth();
-  // Initialize realtime socket listeners (blogs/stories)
   useRealtimeSocial(token ?? undefined);
   const appReady = useAppStore((s) => s.appReady);
   const hideChromeGlobal = useAppStore((s) => s.hideChrome);
@@ -39,11 +44,11 @@ export function AppShell({ children }: PropsWithChildren) {
   const density = useUIStore((s) => s.density);
 
   useEffect(() => {
-    // reflect density as data attribute for global CSS hooks
     if (typeof document !== "undefined") {
       document.documentElement.dataset.density = density;
     }
   }, [density]);
+
   usePrefetchOnIdle(
     ["/listings/create", "/my-listings", "/profile", "/pendings", "/about"],
     true
@@ -56,10 +61,7 @@ export function AppShell({ children }: PropsWithChildren) {
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     );
   })();
-  const isHome =
-    pathname === "/" || (pathname ? pathname.startsWith("/listings") : false);
 
-  // If we're on an auth-related page, do not render Topbar/Sidebar/footer-like chrome
   const hideChrome =
     pathname &&
     [
@@ -76,25 +78,38 @@ export function AppShell({ children }: PropsWithChildren) {
       setRedirecting(false);
       return;
     }
-    // Restrict /admin/* routes to admins only
     try {
       if (pathname && pathname.startsWith("/admin") && !isAdmin) {
         setRedirecting(true);
         router.replace("/listings");
         return;
       }
-    } catch (_) {}
+    } catch {}
     if (!user && !isPublicRoute) {
       setRedirecting(true);
       router.replace("/sign-in");
     }
-  }, [loading, hideChrome, user, isPublicRoute, router, pathname]);
+  }, [loading, hideChrome, user, isPublicRoute, router, pathname, isAdmin]);
 
   useEffect(() => {
-    // Reset redirecting state after pathname changes
     setRedirecting(false);
   }, [pathname]);
 
+  useEffect(() => {
+    if (pathname === "/") {
+      if (loading || redirecting) return;
+      setRedirecting(true);
+      setTimeout(() => {
+        if (user) {
+          router.replace(isAdmin ? "/admin" : "/listings");
+        } else {
+          router.replace("/listings");
+        }
+      }, 0);
+    }
+  }, [pathname, loading, user, isAdmin, router, redirecting]);
+
+  /* ----------  FULL-SCREEN LOADER  ---------- */
   if (loading || redirecting)
     return (
       <div
@@ -106,7 +121,7 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
     );
 
-  // Do not render the app until the theme has loaded (appReady). Show a blocking loader for all routes.
+  /* ----------  THEME NOT READY  ---------- */
   if (!appReady) {
     return (
       <div
@@ -119,6 +134,7 @@ export function AppShell({ children }: PropsWithChildren) {
     );
   }
 
+  /* ----------  AUTH PAGES  ---------- */
   if (hideChrome || hideChromeGlobal) {
     return (
       <main id="main-content" className="flex-1" dir="ltr">
@@ -126,10 +142,12 @@ export function AppShell({ children }: PropsWithChildren) {
       </main>
     );
   }
+
+  /* ----------  ADMIN LAYOUT  ---------- */
   if (isAdmin) {
     return (
       <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
-        {appReady && <AnimatedBg />}
+        <AnimatedBg />
         <Sidebar />
         <div className="flex flex-col min-h-screen min-w-0 w-full">
           <Navbar className="hidden md:block" />
@@ -140,21 +158,21 @@ export function AppShell({ children }: PropsWithChildren) {
           >
             <PageTransition>{children}</PageTransition>
           </main>
-          {appReady && (
-            <>
-              <Partners />
-              <SiteFooter />
-            </>
-          )}
+          <>
+            {/* skeleton while assets load */}
+            {!appReady ? <PartnersSkeleton /> : <Partners />}
+            <SiteFooter />
+          </>
         </div>
-        {appReady && <BottomNavigation />}
+        <BottomNavigation />
       </div>
     );
   }
 
+  /* ----------  NORMAL USER LAYOUT  ---------- */
   return (
     <div className="min-h-screen flex flex-col">
-      {appReady && <AnimatedBg />}
+      <AnimatedBg />
       <div className="hidden md:block">
         <Topbar />
       </div>
@@ -165,14 +183,23 @@ export function AppShell({ children }: PropsWithChildren) {
       >
         <PageTransition>{children}</PageTransition>
       </main>
-      {appReady && (
+
+      {/*  SAME ORDER AS BEFORE – swap skeletons while !appReady  */}
+      {!appReady ? (
         <>
-          {isHome && <HomePromoBanner />}
+          <HomePromoBannerSkeleton />
+          <PartnersSkeleton />
+          <SiteFooter />
+        </>
+      ) : (
+        <>
+          <HomePromoBanner />
           <Partners />
           <SiteFooter />
         </>
       )}
-      {appReady && <BottomNavigation />}
+
+      <BottomNavigation />
     </div>
   );
 }
