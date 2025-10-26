@@ -15,6 +15,7 @@ import { HomeHero } from "@/components/listings/HomeHero";
 import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
+import { Button } from "@/components/ui/button";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSocialRealtime } from "@/lib/use-social-realtime";
@@ -293,13 +294,14 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
 
   return (
     <div className="mt-4 flex items-center justify-center gap-2">
-      <button
+      <Button
+        variant="accent"
+        size="sm"
         onClick={() => page > 1 && set(page - 1)}
-        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-[hsl(var(--border))/0.2] disabled:opacity-50 accent-btn"
         disabled={page <= 1}
       >
         {t("prev")}
-      </button>
+      </Button>
       <div className="flex items-center gap-1">
         {visible.map((p, idx) => {
           const prev = visible[idx - 1];
@@ -314,9 +316,10 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
                 onClick={() => set(p)}
                 className={
                   p === page
-                    ? "px-3 h-9 rounded-xl bg-[hsl(var(--accent))/0.18] border border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]"
-                    : "px-3 h-9 rounded-xl glass border border-[hsl(var(--border))/0.12] hover:bg-[hsl(var(--foreground))/0.08]"
+                    ? "px-3 h-9 rounded-xl bg-[hsl(var(--primary))] border border-[hsl(var(--primary))/0.35] text-[hsl(var(--primary-foreground))]"
+                    : "px-3 h-9 rounded-xl bg-[hsl(var(--accent))] border border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))] focus:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))]"
                 }
+                aria-current={p === page ? "page" : undefined}
               >
                 {p}
               </motion.button>
@@ -324,13 +327,14 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
           );
         })}
       </div>
-      <button
+      <Button
+        variant="accent"
+        size="sm"
         onClick={() => page < pageCount && set(page + 1)}
-        className="px-3 h-9 rounded-xl glass hover:ring-1 ring-[hsl(var(--border))/0.2] disabled:opacity-50 accent-btn"
         disabled={page >= pageCount}
       >
         {t("next")}
-      </button>
+      </Button>
     </div>
   );
 }

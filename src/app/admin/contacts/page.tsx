@@ -104,7 +104,7 @@ export default function AdminContactsPage() {
                 className={
                   "h-9 rounded-xl border px-3 text-sm " +
                   (subjectFilter
-                    ? "accent-btn border-[hsl(var(--accent))/0.5] text-[hsl(var(--accent-foreground))]"
+                    ? "bg-[hsl(var(--accent))] border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
                     : "border-[hsl(var(--border))] bg-transparent")
                 }
                 value={subjectFilter}

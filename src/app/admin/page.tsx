@@ -794,7 +794,7 @@ function ListingsTypeStatusCharts({
             className={
               "px-3 py-1.5 rounded-full border text-[11px] font-medium transition-colors " +
               (mode === m
-                ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-[hsl(var(--accent))]"
+                ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-[hsl(var(--border))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
                 : "bg-[hsl(var(--muted))]/20 hover:bg-[hsl(var(--muted))]/30 border-[hsl(var(--border))]")
             }
           >

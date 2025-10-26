@@ -18,7 +18,7 @@ export default async function AdminCategoriesPage() {
         </p>
         <a
           href="/"
-          className="inline-flex items-center justify-center h-11 px-6 rounded-xl bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] font-medium"
+          className="inline-flex items-center justify-center h-11 px-6 rounded-xl bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] font-medium border-[hsl(var(--border))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
         >
           Go Home
         </a>

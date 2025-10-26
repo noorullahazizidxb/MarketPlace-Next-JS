@@ -14,6 +14,7 @@ import Loading from "@/components/ui/loading";
 import { useAppStore } from "@/store/app.store";
 import SiteFooter from "@/components/layout/site-footer";
 import { Partners } from "@/components/ui/partners";
+import HomePromoBanner from "@/components/ui/home-promo-banner";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
@@ -166,6 +167,7 @@ export function AppShell({ children }: PropsWithChildren) {
       </main>
       {appReady && (
         <>
+          {isHome && <HomePromoBanner />}
           <Partners />
           <SiteFooter />
         </>

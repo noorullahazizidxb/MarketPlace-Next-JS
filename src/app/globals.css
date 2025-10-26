@@ -202,12 +202,14 @@ html, body {
   [role="button"]:hover {
     box-shadow: var(--btn-primary-hover-shadow, var(--shadow-sm, none));
     background-color: hsl(var(--btn-primary-hover-bg, var(--accent)));
+    color: hsl(var(--btn-primary-hover-fg, var(--accent-foreground)));
   }
   button:active,
   .btn:active,
   [role="button"]:active {
     box-shadow: var(--btn-primary-active-shadow, var(--shadow-sm, none));
     background-color: hsl(var(--btn-primary-active-bg, var(--primary)));
+    color: hsl(var(--btn-primary-active-fg, var(--primary-foreground)));
   }
   select,
   .select,

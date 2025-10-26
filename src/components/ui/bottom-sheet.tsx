@@ -1,5 +1,6 @@
 "use client";
 import React, { useCallback, useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { AnimatePresence, motion, PanInfo } from "framer-motion";
 import { X } from "lucide-react";
 
@@ -167,13 +168,15 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     setDragY(0);
   };
 
-  return (
+  // Render the sheet into document.body to avoid being trapped in any parent stacking context
+  const content = (
     <AnimatePresence>
       {open && (
         <>
           <motion.div
             ref={backdropRef}
-            className="fixed inset-0 z-[950] bg-black/40 backdrop-blur-sm"
+            // extremely high z-index so the sheet is always on top
+            className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -182,7 +185,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <motion.div
             ref={sheetRef}
             className={
-              "fixed left-0 right-0 z-[960] mx-auto flex flex-col rounded-t-[32px] bg-[hsl(var(--background))]/90 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
+              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[hsl(var(--background))]/90 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
               className +
               " sheet-dynamic-height"
             }
@@ -238,6 +241,10 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
       )}
     </AnimatePresence>
   );
+
+  // Guard for SSR (shouldn't run on server since this is a client component)
+  if (typeof document === "undefined") return null;
+  return createPortal(content, document.body);
 };
 
 // Hook for reduced motion preference
