@@ -233,7 +233,7 @@ function TabbedHeroCarousel({
                 : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
             }`}
           >
-            <TagIcon className="size-4" />
+            <TagIcon className="size-5" />
             Related
           </button>
 
