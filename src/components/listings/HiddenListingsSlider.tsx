@@ -3,6 +3,7 @@ import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ListingCard, type Listing } from "../ui/listing-card";
+import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -25,6 +26,7 @@ export function HiddenListingsSlider({
     typeof window !== "undefined" &&
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const { isEngaged, setIsEngaged, engagementProps } = useEngagedAutoplay();
 
   useEffect(() => {
     const el = rootRef.current;
@@ -34,7 +36,7 @@ export function HiddenListingsSlider({
         const e = entries[0];
         setInView(!!e?.isIntersecting);
       },
-      { root: null, rootMargin: "0px", threshold: 0.1 }
+      { root: null, rootMargin: "0px", threshold: 0.1 },
     );
     obs.observe(el);
     return () => {
@@ -70,7 +72,6 @@ export function HiddenListingsSlider({
 
   const slides = useMemo(() => chunk(hidden, chunkSize), [hidden, chunkSize]);
   const [idx, setIdx] = useState(0);
-  const [isPaused, setIsPaused] = useState(false);
   const intervalRef = useRef<number | null>(null);
   const [dir, setDir] = useState<1 | -1>(1);
   const next = () => {
@@ -83,7 +84,7 @@ export function HiddenListingsSlider({
     setIdx(
       (i) =>
         (i - 1 + Math.max(slides.length || 1, 1)) %
-        Math.max(slides.length || 1, 1)
+        Math.max(slides.length || 1, 1),
     );
   };
 
@@ -105,18 +106,22 @@ export function HiddenListingsSlider({
       intervalRef.current = null;
     }
 
-    if (isPaused) return;
+    const autoplayEnabled = pauseOnHover ? isEngaged : true;
+    if (!autoplayEnabled) return;
     if (prefersReducedMotion) return;
     if (!inView) return;
 
     if (slides.length <= 1) return;
 
     // window.setInterval returns number in browsers
-    intervalRef.current = window.setInterval(() => {
-      // autoplay moves forward
-      setDir(1);
-      setIdx((i) => (i + 1) % slides.length);
-    }, Math.max(500, autoplayInterval));
+    intervalRef.current = window.setInterval(
+      () => {
+        // autoplay moves forward
+        setDir(1);
+        setIdx((i) => (i + 1) % slides.length);
+      },
+      Math.max(500, autoplayInterval),
+    );
 
     return () => {
       if (intervalRef.current) {
@@ -124,7 +129,14 @@ export function HiddenListingsSlider({
         intervalRef.current = null;
       }
     };
-  }, [autoplayInterval, isPaused, slides.length, inView, prefersReducedMotion]);
+  }, [
+    autoplayInterval,
+    isEngaged,
+    pauseOnHover,
+    slides.length,
+    inView,
+    prefersReducedMotion,
+  ]);
 
   const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${
     slides.length
@@ -137,12 +149,7 @@ export function HiddenListingsSlider({
       ref={rootRef as any}
       dir="ltr"
       className="relative mt-8"
-      onMouseEnter={() => pauseOnHover && setIsPaused(true)}
-      onMouseLeave={() => pauseOnHover && setIsPaused(false)}
-      onFocus={() => pauseOnHover && setIsPaused(true)}
-      onBlur={() => pauseOnHover && setIsPaused(false)}
-      onTouchStart={() => pauseOnHover && setIsPaused(true)}
-      onTouchEnd={() => pauseOnHover && setIsPaused(false)}
+      {...engagementProps}
       tabIndex={0}
       role="region"
       aria-roledescription="carousel"
@@ -193,10 +200,10 @@ export function HiddenListingsSlider({
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.16}
-              onDragStart={() => setIsPaused(true)}
+              onDragStart={() => setIsEngaged(true)}
               onDragEnd={(
                 _e: PointerEvent | MouseEvent | TouchEvent,
-                info: PanInfo
+                info: PanInfo,
               ) => {
                 // determine swipe direction by offset or velocity
                 const offset = info.offset.x;
@@ -212,15 +219,17 @@ export function HiddenListingsSlider({
                   setIdx(
                     (i) =>
                       (i - 1 + Math.max(slides.length || 1, 1)) %
-                      Math.max(slides.length || 1, 1)
+                      Math.max(slides.length || 1, 1),
                   );
                 }
-                // resume autoplay if not hovered
-                setTimeout(() => setIsPaused(false), 300);
               }}
             >
               {slides[idx]?.map((it) => (
-                <ListingCard key={it.id} listing={it} />
+                <ListingCard
+                  key={it.id}
+                  listing={it}
+                  cleanImageOverlayOnEngage
+                />
               ))}
             </motion.div>
           </AnimatePresence>

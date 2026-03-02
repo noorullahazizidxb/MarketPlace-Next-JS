@@ -6,20 +6,60 @@ import { useMutation, UseMutationOptions } from "@tanstack/react-query";
 import type { AxiosError, AxiosRequestConfig } from "axios";
 import { api, HttpMethod } from "./axiosClient";
 import { toastSuccess, toastError } from "./toast";
+import { config as appConfig } from "./config";
+import { resolveMockMutation, resolveMockRequest } from "../mock/api-mocks";
 
 type ErrorType = AxiosError<{ message?: string } | string> | Error;
+const SUCCESS_VERBS: Record<Exclude<HttpMethod, "get">, string> = {
+  post: "created",
+  put: "updated",
+  patch: "updated",
+  delete: "deleted",
+};
+
+function toEntityName(payload: any) {
+  return payload?.entity || payload?.data?.entity || "Resource";
+}
+
+function notifyMutationSuccess(method: HttpMethod, payload: any) {
+  if (method === "get") return;
+  const verb = SUCCESS_VERBS[method as Exclude<HttpMethod, "get">];
+  if (!verb) return;
+  toastSuccess(`${String(toEntityName(payload))} ${verb} successfully`);
+}
+
+async function runExternalRequest<TData>(
+  method: HttpMethod,
+  url: string,
+  body?: any,
+  config?: AxiosRequestConfig
+) {
+  if (appConfig.useMockData) {
+    if (method === "get") {
+      return (await resolveMockRequest(url, config?.params)) as TData;
+    }
+    return (await resolveMockMutation(method, url, body, config?.params)) as TData;
+  }
+
+  switch (method) {
+    case "post":
+      return (await api.post<TData>(url, body, config?.headers)) as TData;
+    case "put":
+      return (await api.put<TData>(url, body, config?.headers)) as TData;
+    case "patch":
+      return (await api.patch<TData>(url, body, config?.headers)) as TData;
+    case "delete":
+      return (await api.delete<TData>(url, config?.headers)) as TData;
+    case "get":
+    default:
+      return (await api.get<TData>(url, config?.params, config?.headers)) as TData;
+  }
+}
 
 // Axios-backed SWR fetcher for external API routes
 async function axiosGet<T>(url: string, params?: Record<string, any>): Promise<T> {
   try {
-    const res = await api.get<T>(url, params);
-    try {
-      const entity = (res as any)?.entity || (res as any)?.data?.entity || "Resource";
-      if(!url.includes("/users") && !url.includes("/listings") && !url.includes("/me") && !url.includes("/profile") && !url.includes('/categories')) { // avoid too many toasts on common endpoints
-        toastSuccess(`${String(entity)} fetched successfully`);
-      }
-    } catch {}
-    return res;
+    return await runExternalRequest<T>("get", url, undefined, { params });
   } catch (err: any) {
     toastError(err?.message || "Request failed");
     throw err;
@@ -36,15 +76,7 @@ async function localFetch<T>(url: string, init?: RequestInit): Promise<T> {
       toastError(err.message || "Request failed");
       throw err;
     }
-    const body = (await res.json()) as T;
-    // try to infer entity and show fetch success for GET
-    if (!init || init.method === "GET") {
-      try {
-        const entity = (body as any)?.entity || (body as any)?.data?.entity || "Resource";
-        toastSuccess(`${String(entity)} fetched successfully`);
-      } catch {}
-    }
-    return body;
+    return (await res.json()) as T;
   } catch (err: any) {
     toastError(err?.message || "Request failed");
     throw err;
@@ -113,68 +145,13 @@ export function useApiMutation<TData = any>(
 ) {
   return useMutation<TData, ErrorType, MutationBody>({
     mutationFn: async (body: MutationBody) => {
-      switch (method) {
-        case "post":
-          try {
-            const r = await api.post<TData>(url, body, config?.headers);
-            try {
-              const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-              toastSuccess(`${String(entity)} created successfully`);
-            } catch {}
-            return r;
-          } catch (err: any) {
-            toastError(err?.message || "Request failed");
-            throw err;
-          }
-        case "put":
-          try {
-            const r = await api.put<TData>(url, body, config?.headers);
-            try {
-              const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-              toastSuccess(`${String(entity)} updated successfully`);
-            } catch {}
-            return r;
-          } catch (err: any) {
-            toastError(err?.message || "Request failed");
-            throw err;
-          }
-        case "patch":
-          try {
-            const r = await api.patch<TData>(url, body, config?.headers);
-            try {
-              const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-              toastSuccess(`${String(entity)} updated successfully`);
-            } catch {}
-            return r;
-          } catch (err: any) {
-            toastError(err?.message || "Request failed");
-            throw err;
-          }
-        case "delete":
-          try {
-            const r = await api.delete<TData>(url, config?.headers);
-            try {
-              const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-              toastSuccess(`${String(entity)} deleted successfully`);
-            } catch {}
-            return r;
-          } catch (err: any) {
-            toastError(err?.message || "Request failed");
-            throw err;
-          }
-        case "get":
-        default:
-          try {
-            const r = await api.get<TData>(url, config?.params, config?.headers);
-            try {
-              const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-              toastSuccess(`${String(entity)} fetched successfully`);
-            } catch {}
-            return r;
-          } catch (err: any) {
-            toastError(err?.message || "Request failed");
-            throw err;
-          }
+      try {
+        const response = await runExternalRequest<TData>(method, url, body, config);
+        notifyMutationSuccess(method, response);
+        return response;
+      } catch (err: any) {
+        toastError(err?.message || "Request failed");
+        throw err;
       }
     },
     ...options,
@@ -189,68 +166,13 @@ export function useApiMutationDynamic<TData = any>(
   return useMutation<TData, ErrorType, { url: string; body?: any; config?: AxiosRequestConfig }>(
     {
       mutationFn: async ({ url, body, config }) => {
-        switch (method) {
-          case "post":
-            try {
-              const r = await api.post<TData>(url, body, config?.headers);
-              try {
-                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-                toastSuccess(`${String(entity)} created successfully`);
-              } catch {}
-              return r;
-            } catch (err: any) {
-              toastError(err?.message || "Request failed");
-              throw err;
-            }
-          case "put":
-            try {
-              const r = await api.put<TData>(url, body, config?.headers);
-              try {
-                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-                toastSuccess(`${String(entity)} updated successfully`);
-              } catch {}
-              return r;
-            } catch (err: any) {
-              toastError(err?.message || "Request failed");
-              throw err;
-            }
-          case "patch":
-            try {
-              const r = await api.patch<TData>(url, body, config?.headers);
-              try {
-                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-                toastSuccess(`${String(entity)} updated successfully`);
-              } catch {}
-              return r;
-            } catch (err: any) {
-              toastError(err?.message || "Request failed");
-              throw err;
-            }
-          case "delete":
-            try {
-              const r = await api.delete<TData>(url, config?.headers);
-              try {
-                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-                toastSuccess(`${String(entity)} deleted successfully`);
-              } catch {}
-              return r;
-            } catch (err: any) {
-              toastError(err?.message || "Request failed");
-              throw err;
-            }
-          case "get":
-          default:
-            try {
-              const r = await api.get<TData>(url, config?.params, config?.headers);
-              try {
-                const entity = (r as any)?.entity || (r as any)?.data?.entity || "Resource";
-                toastSuccess(`${String(entity)} fetched successfully`);
-              } catch {}
-              return r;
-            } catch (err: any) {
-              toastError(err?.message || "Request failed");
-              throw err;
-            }
+        try {
+          const response = await runExternalRequest<TData>(method, url, body, config);
+          notifyMutationSuccess(method, response);
+          return response;
+        } catch (err: any) {
+          toastError(err?.message || "Request failed");
+          throw err;
         }
       },
       ...options,
@@ -277,8 +199,8 @@ export function useLocalMutation<TData = any>(
           const entity = (res as any)?.entity || (res as any)?.data?.entity || "Resource";
           if (method === "post") toastSuccess(`${String(entity)} created successfully`);
           else if (method === "put") toastSuccess(`${String(entity)} updated successfully`);
+          else if (method === "patch") toastSuccess(`${String(entity)} updated successfully`);
           else if (method === "delete") toastSuccess(`${String(entity)} deleted successfully`);
-          else toastSuccess(`${String(entity)} fetched successfully`);
         } catch {}
         return res;
       } catch (err: any) {

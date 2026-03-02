@@ -14,7 +14,7 @@ import { Switch } from "../../../components/ads/switch"; // relative to avoid pa
 import { PlacementSelect } from "../../../components/ads/placement-select";
 import { Plus, Search, Loader2 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApiMutation, useApiGet } from "@/lib/api-hooks";
@@ -117,6 +117,14 @@ export default function AdsManagementPage() {
       placement: AD_PLACEMENTS[0],
       isActive: true,
     },
+  });
+  const placementValue = useWatch({
+    control: form.control,
+    name: "placement",
+  });
+  const isActiveValue = useWatch({
+    control: form.control,
+    name: "isActive",
   });
 
   const onSubmit = async (values: AdFormValues) => {
@@ -237,7 +245,7 @@ export default function AdsManagementPage() {
                   {t("placementLabel")}
                 </label>
                 <PlacementSelect
-                  value={form.watch("placement")}
+                  value={placementValue || AD_PLACEMENTS[0]}
                   onChange={(p: AdPlacement) => form.setValue("placement", p)}
                 />
                 {form.formState.errors.placement && (
@@ -254,7 +262,7 @@ export default function AdsManagementPage() {
                   </p>
                 </div>
                 <Switch
-                  checked={form.watch("isActive")}
+                  checked={!!isActiveValue}
                   onCheckedChange={(v: boolean) => form.setValue("isActive", v)}
                   aria-label="Ad Active"
                 />

@@ -8,7 +8,7 @@ import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useApiMutation } from "@/lib/api-hooks";
@@ -60,7 +60,7 @@ export default function SignUpPage() {
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors, isValid, isSubmitting, touchedFields, dirtyFields },
     setError,
   } = useForm<SignUpValues>({
@@ -76,7 +76,7 @@ export default function SignUpPage() {
     },
   });
 
-  const passwordValue = watch("password");
+  const passwordValue = useWatch({ control, name: "password" }) || "";
 
   // Simple password strength scoring (0-5)
   const passwordScore = (() => {

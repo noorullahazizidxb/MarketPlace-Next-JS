@@ -2,22 +2,18 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   Phone,
   ShieldCheck,
   ArrowRight,
   Star,
   MessageSquare,
-  Tag,
   TagIcon,
-  Banknote,
   CreditCard,
 } from "lucide-react";
-import { asset } from "@/lib/assets";
 import { ImageSlider } from "@/components/ui/image-slider";
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom"; // legacy; will remove after dialog refactor if unused
+import { useState } from "react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useLanguage } from "@/components/providers/language-provider";
 
@@ -54,16 +50,20 @@ export type Listing = {
   reviewCount?: number | null;
 };
 
-export function ListingCard({ listing }: { listing: Listing }) {
+export function ListingCard({
+  listing,
+  cleanImageOverlayOnEngage = false,
+}: {
+  listing: Listing;
+  cleanImageOverlayOnEngage?: boolean;
+}) {
   const { t } = useLanguage();
   const [contactOpen, setContactOpen] = useState(false);
   const [repOpen, setRepOpen] = useState(false);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-  const img = listing.images?.[0]?.url
-    ? asset(listing.images[0].url)
-    : "/favicon.svg";
+  const [isImageEngaged, setIsImageEngaged] = useState(false);
   const showSeller = listing.contactVisibility === "SHOW_SELLER";
+  const hideImageOverlays = cleanImageOverlayOnEngage && isImageEngaged;
+  const showHoverCta = isImageEngaged;
 
   return (
     <motion.article
@@ -72,35 +72,90 @@ export function ListingCard({ listing }: { listing: Listing }) {
       viewport={{ once: true, amount: 0.4 }}
       className="group hover-ambient relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
     >
-      <div className="relative overflow-hidden rounded-t-2xl">
+      <div
+        className="relative overflow-hidden rounded-t-2xl"
+        onMouseEnter={() => setIsImageEngaged(true)}
+        onMouseLeave={() => setIsImageEngaged(false)}
+        onFocus={() => setIsImageEngaged(true)}
+        onBlur={(event) => {
+          const next = event.relatedTarget as Node | null;
+          if (!next || !event.currentTarget.contains(next)) {
+            setIsImageEngaged(false);
+          }
+        }}
+        onTouchStart={() => setIsImageEngaged(true)}
+        onTouchEnd={() => setIsImageEngaged(false)}
+        onTouchCancel={() => setIsImageEngaged(false)}
+      >
         {listing.images && listing.images.length > 0 ? (
           <ImageSlider
             images={listing.images}
+            autoPlay
+            forceEngaged={isImageEngaged}
             className="transition-transform duration-500 group-hover:scale-103"
             aspect="1/1"
           />
         ) : (
           <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-[hsl(var(--card))/0.08] via-[hsl(var(--card))/0.04] to-transparent" />
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.8] via-[hsl(var(--background))/0.1] to-transparent pointer-events-none" />
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-400 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light" />
-        {/* Hover CTA */}
-        <div className="absolute inset-0 flex items-end justify-center p-4 pointer-events-none">
-          <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto w-full flex justify-between items-center">
-            <a
-              className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white px-4 py-2 rounded-2xl shadow-md"
-              href="#"
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.8] via-[hsl(var(--background))/0.1] to-transparent pointer-events-none"
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light pointer-events-none"
+            />
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {showHoverCta && (
+            <motion.div
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.2 }}
+              className="absolute inset-0 flex items-end justify-center p-4 pointer-events-none z-10"
             >
-              View
-              <ArrowRight className="size-4" />
-            </a>
-            <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--background))]/70 border border-[hsl(var(--border))]">
-              {listing.price} {listing.currency}
-            </span>
-          </div>
-        </div>
-        {/* Top-right badges: rating and reviews (always shown with fallbacks) */}
-        <div className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none">
+              <div className="pointer-events-auto w-full flex justify-between items-center">
+                <a
+                  className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white px-4 py-2 rounded-2xl shadow-md"
+                  href="#"
+                >
+                  View
+                  <ArrowRight className="size-4" />
+                </a>
+                <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--background))]/70 border border-[hsl(var(--border))]">
+                  {listing.price} {listing.currency}
+                </span>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none"
+            >
           {/* Rating badge - default to 0.0 */}
           <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
             <div className="flex items-center -ml-1">
@@ -120,8 +175,8 @@ export function ListingCard({ listing }: { listing: Listing }) {
                       (filled
                         ? "text-amber-400 fill-amber-400"
                         : half
-                        ? "text-amber-300"
-                        : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
+                          ? "text-amber-300"
+                          : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
                     }
                   />
                 );
@@ -143,17 +198,38 @@ export function ListingCard({ listing }: { listing: Listing }) {
                 : 0}
             </span>
           </div>
-        </div>
-        <div className="absolute top-2 left-2 z-[0]">
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0, y: -6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2 }}
+              className="absolute top-2 left-2 z-[0]"
+            >
           <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
             <CreditCard className="size-4 inline-flex" />
             <span className="font-medium tabular-nums">
               {listing.price} {listing.currency}
             </span>
           </span>
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
-        <div className="absolute bottom-2 left-2 z-[0] flex items-center gap-2">
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-2 left-2 z-[0] flex items-center gap-2"
+            >
           {showSeller ? (
             <span
               onClick={() => setContactOpen(true)}
@@ -166,14 +242,27 @@ export function ListingCard({ listing }: { listing: Listing }) {
               <ShieldCheck className="size-3" /> {t("promoted")}
             </span>
           )}
-        </div>
-        <div className="absolute bottom-2 right-2 z-[0] flex items-center gap-2">
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence initial={false}>
+          {!hideImageOverlays && (
+            <motion.div
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 6 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-2 right-2 z-[0] flex items-center gap-2"
+            >
           {listing.category?.name && (
             <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
               <TagIcon className="size-3" /> {listing.category?.name}
             </span>
           )}
-        </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
 
       <div className="p-2">
@@ -237,7 +326,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                     {listing.user?.contacts?.whatsapp && (
                       <a
                         href={`https://wa.me/${String(
-                          listing.user.contacts.whatsapp
+                          listing.user.contacts.whatsapp,
                         ).replace(/[+\s]/g, "")}`}
                         target="_blank"
                         rel="noreferrer"
@@ -307,7 +396,7 @@ export function ListingCard({ listing }: { listing: Listing }) {
                               <a
                                 href={`https://wa.me/${String(phone).replace(
                                   /[+\s]/g,
-                                  ""
+                                  "",
                                 )}`}
                                 target="_blank"
                                 rel="noreferrer"

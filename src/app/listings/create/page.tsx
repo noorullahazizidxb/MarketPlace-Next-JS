@@ -41,6 +41,7 @@ const schema = z.object({
 });
 
 type FormData = z.infer<typeof schema>;
+type ExistingImage = { id?: string; url: string };
 
 export default function CreateListingPage() {
   const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
@@ -97,10 +98,26 @@ export default function CreateListingPage() {
     editId ? `/listings/${editId}` : "/listings/0"
   );
 
-  const [existingImages, setExistingImages] = useState<
-    { id?: string; url: string }[]
-  >([]);
   const [removedExisting, setRemovedExisting] = useState<string[]>([]);
+  const initialExistingImages = useMemo<ExistingImage[]>(() => {
+    if (!editId) return [];
+    const d = editListingFetch.data;
+    const L = Array.isArray(d) ? d[0] : d;
+    const imgs: ExistingImage[] = Array.isArray(L?.images)
+      ? L.images.map((i: any) => ({
+          id: i?.id != null ? String(i.id) : i?.key != null ? String(i.key) : undefined,
+          url: i?.url ?? i,
+        }))
+      : [];
+    return imgs.filter((x: any) => x?.url);
+  }, [editId, editListingFetch.data]);
+
+  const existingImages = useMemo(() => {
+    return initialExistingImages.filter((img) => {
+      if (img.id) return !removedExisting.includes(String(img.id));
+      return !removedExisting.includes(`url:${img.url}`);
+    });
+  }, [initialExistingImages, removedExisting]);
   const profileFetch = useApiMutation<any>("get", "/auth/profile");
 
   const setUser = useAuthStore((s) => s.setUser);
@@ -133,9 +150,10 @@ export default function CreateListingPage() {
         }
       }
       imagesPreview.forEach((f) => fd.append("images", f));
-      if (editId && removedExisting.length > 0) {
+      const removedById = removedExisting.filter((x) => !x.startsWith("url:"));
+      if (editId && removedById.length > 0) {
         // Only send a single JSON array of removed image IDs
-        fd.append("removeImages", JSON.stringify(removedExisting));
+        fd.append("removeImages", JSON.stringify(removedById));
       }
       if (process.env.NODE_ENV !== "production") {
         // Debug: log FormData keys (cannot directly inspect values of files easily)
@@ -184,6 +202,7 @@ export default function CreateListingPage() {
       setImagesPreview([]);
       setPickedType(null);
       setPickedCategory(null);
+      setRemovedExisting([]);
       setStep(1);
     } catch (e: any) {
       setError(e?.message || "Failed to create listing");
@@ -218,25 +237,13 @@ export default function CreateListingPage() {
       setValue("address", L.address || "");
       setValue("categoryId", L.categoryId ?? L.category?.id ?? null);
       setValue("listingType", L.listingType || "RENT");
-      setPickedType(L.listingType || null);
-      setPickedCategory(L.categoryId ?? L.category?.id ?? null);
-      // existing images
-      const imgs = Array.isArray(L.images)
-        ? L.images.map((i: any) => ({
-            id: i?.id ?? i?.key ?? undefined,
-            url: i?.url ?? i,
-          }))
-        : [];
-      setExistingImages(imgs.filter((x: any) => x?.url));
-      setRemovedExisting([]);
-      // jump to step 4 to let user edit fields directly
-      setStep(4);
+      // Keep current step; user can continue through guided flow.
     } catch (e) {
       console.warn("Failed to prefill edit listing", e);
     }
   }, [editId, editListingFetch.data, setValue]);
 
-  const Step1 = () => (
+  const renderStep1 = () => (
     <div className="space-y-4 transition-opacity duration-300">
       <h2 className="text-lg font-semibold">{t("listingsCreateStep1Title")}</h2>
       <div className="grid grid-cols-2 gap-3">
@@ -266,7 +273,7 @@ export default function CreateListingPage() {
     </div>
   );
 
-  const Step2 = () => (
+  const renderStep2 = () => (
     <div className="space-y-4 transition-opacity duration-300">
       <h2 className="text-lg font-semibold">{t("listingsCreateStep2Title")}</h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -301,7 +308,7 @@ export default function CreateListingPage() {
     </div>
   );
 
-  const Step3 = () => (
+  const renderStep3 = () => (
     <div className="space-y-4 transition-opacity duration-300">
       <h2 className="text-lg font-semibold">{t("listingsCreateStep3Title")}</h2>
       <div
@@ -406,7 +413,7 @@ export default function CreateListingPage() {
         )}
         {existingImages.length > 0 && (
           <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
-            {existingImages.map((img, i) => (
+            {existingImages.map((img: ExistingImage, i: number) => (
               <div
                 key={img.url + i}
                 className="relative rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-sm"
@@ -421,13 +428,9 @@ export default function CreateListingPage() {
                   type="button"
                   className="absolute top-2 right-2 text-2xs px-2 py-1 rounded-lg bg-[hsl(var(--background))]/70 backdrop-blur border border-[hsl(var(--border))]"
                   onClick={() => {
-                    if (img.id)
-                      setRemovedExisting((s) => [...s, String(img.id)]);
-                    setExistingImages((s) =>
-                      s.filter((x) => {
-                        if (img.id) return x.id !== img.id; // remove by id if present
-                        return x.url !== img.url; // fallback to url match
-                      })
+                    const marker = img.id ? String(img.id) : `url:${img.url}`;
+                    setRemovedExisting((s) =>
+                      s.includes(marker) ? s : [...s, marker]
                     );
                   }}
                 >
@@ -468,7 +471,7 @@ export default function CreateListingPage() {
     </div>
   );
 
-  const Step4 = () => (
+  const renderStep4 = () => (
     <form
       onSubmit={handleSubmit(onSubmit, onFormErrors)}
       className="grid grid-cols-1 md:grid-cols-2 gap-4 transition-opacity duration-300"
@@ -619,10 +622,10 @@ export default function CreateListingPage() {
           </div>
 
           <div className="space-y-4">
-            {step === 1 && <Step1 />}
-            {step === 2 && <Step2 />}
-            {step === 3 && <Step3 />}
-            {step === 4 && <Step4 />}
+            {step === 1 && renderStep1()}
+            {step === 2 && renderStep2()}
+            {step === 3 && renderStep3()}
+            {step === 4 && renderStep4()}
           </div>
         </Card>
       </div>

@@ -45,7 +45,8 @@ async function decrypt(token: string): Promise<any | null> {
 
 export async function setSession(data: any) {
 	const value = await encrypt(data);
-	cookies().set(COOKIE_NAME, value, {
+	const cookieStore = await cookies();
+	cookieStore.set(COOKIE_NAME, value, {
 		httpOnly: true,
 		sameSite: "lax",
 		secure: true,
@@ -68,7 +69,8 @@ export async function setUserInfo(user: any) {
 				: [],
 		};
 		const val = await encrypt(minimal);
-		cookies().set(USER_INFO_COOKIE, val, {
+		const cookieStore = await cookies();
+		cookieStore.set(USER_INFO_COOKIE, val, {
 			httpOnly: true,
 			sameSite: "lax",
 			secure: true,
@@ -81,19 +83,22 @@ export async function setUserInfo(user: any) {
 }
 
 export async function getUserInfo<T = any>(): Promise<T | null> {
-	const c = cookies().get(USER_INFO_COOKIE)?.value;
+	const cookieStore = await cookies();
+	const c = cookieStore.get(USER_INFO_COOKIE)?.value;
 	if (!c) return null;
 	return (await decrypt(c)) as T | null;
 }
 
 export async function getSession<T = any>(): Promise<T | null> {
-	const c = cookies().get(COOKIE_NAME)?.value;
+	const cookieStore = await cookies();
+	const c = cookieStore.get(COOKIE_NAME)?.value;
 	if (!c) return null;
 	return (await decrypt(c)) as T | null;
 }
 
 export async function clearSession() {
-	cookies().delete(COOKIE_NAME);
+	const cookieStore = await cookies();
+	cookieStore.delete(COOKIE_NAME);
 }
 
 export type SessionData = {

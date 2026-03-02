@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useId } from "react";
+import { useEffect, useMemo, useState, useId } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
@@ -20,6 +20,8 @@ import {
   X,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
+import { config as appConfig } from "@/lib/config";
+import { adminNotificationsPageFallback } from "@/mock";
 
 // --- AutoCompleteUsers component ------------------------------------------------
 function AutoCompleteUsers({
@@ -283,7 +285,30 @@ function ChannelIcon({ channel }: { channel?: string }) {
 
 export default function NotificationsAdminPage() {
   const { t } = useLanguage();
-  const [items, setItems] = useState<Notification[]>(MOCK);
+  const { data: notificationsData } = useApiGet<Notification[]>(
+    ["admin", "notifications"],
+    "/notifications"
+  );
+  const [items, setItems] = useState<Notification[]>(
+    appConfig.useMockData
+      ? ((adminNotificationsPageFallback.notifications?.length
+          ? adminNotificationsPageFallback.notifications
+          : MOCK) as Notification[])
+      : []
+  );
+  useEffect(() => {
+    if (appConfig.useMockData) {
+      setItems(
+        (adminNotificationsPageFallback.notifications?.length
+          ? adminNotificationsPageFallback.notifications
+          : MOCK) as Notification[]
+      );
+      return;
+    }
+    if (Array.isArray(notificationsData)) {
+      setItems(notificationsData);
+    }
+  }, [notificationsData]);
   const [query, setQuery] = useState("");
   const [channelFilter, setChannelFilter] = useState<string | null>(null);
   const [targetFilter, setTargetFilter] = useState<string | null>(null);

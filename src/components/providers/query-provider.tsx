@@ -4,14 +4,33 @@ import React, { PropsWithChildren, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
-  fetchRemoteThemes,
+  loadFileThemes,
   applyThemeTokens,
   applyThemeScales,
   applyThemeComponents,
-  loadLocalPresets,
+  loadBundledThemeFallback,
 } from "../../theme/theme";
 import { useAppStore } from "@/store/app.store";
 import { useThemeStore } from "@/store/theme.store";
+
+const isPlainObject = (value: any) =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+
+const deepMerge = (base: any, override: any): any => {
+  if (!isPlainObject(base)) return override;
+  if (!isPlainObject(override)) return base;
+  const merged: Record<string, any> = { ...base };
+  Object.keys(override).forEach((key) => {
+    const left = merged[key];
+    const right = override[key];
+    if (isPlainObject(left) && isPlainObject(right)) {
+      merged[key] = deepMerge(left, right);
+      return;
+    }
+    merged[key] = right;
+  });
+  return merged;
+};
 
 export function QueryProvider({ children }: PropsWithChildren) {
   const [client] = useState(
@@ -24,7 +43,7 @@ export function QueryProvider({ children }: PropsWithChildren) {
             refetchOnWindowFocus: false,
           },
         },
-      })
+      }),
   );
 
   return (
@@ -50,22 +69,29 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
       if (!first) return;
       const rawTokens = (first as any)?.tokens;
       const normalized = rawTokens?.tokens ? rawTokens.tokens : rawTokens;
-      const scales = (first as any)?.scales ?? rawTokens?.scales;
-      const components = (first as any)?.components ?? rawTokens?.components;
+      const scales = deepMerge(
+        (first as any)?.scales || {},
+        rawTokens?.scales || {},
+      );
+      const components = deepMerge(
+        (first as any)?.components || {},
+        rawTokens?.components || {},
+      );
       // read preferred color mode from payload envelope
       const pref =
+        rawTokens?.preferredColorMode ??
         (first as any)?.tokens?.preferredColorMode ??
         (first as any)?.preferredColorMode ??
-        rawTokens?.preferredColorMode ??
         null;
       if (pref) {
         try {
           useThemeStore.getState().setPreferredColorMode(pref);
         } catch (_) {}
       }
-      if (scales) applyThemeScales(scales);
+      if (Object.keys(scales || {}).length > 0) applyThemeScales(scales);
       if (normalized) applyThemeTokens(normalized);
-      if (components) applyThemeComponents(components);
+      if (Object.keys(components || {}).length > 0)
+        applyThemeComponents(components);
     };
 
     const finalize = () => {
@@ -78,7 +104,7 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
       if (!mounted || completed) return;
       void (async () => {
         try {
-          const local = await loadLocalPresets();
+          const local = await loadBundledThemeFallback();
           applyThemePayload(local);
         } catch (_) {
           // ignore, we'll still mark the app ready
@@ -90,19 +116,19 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
 
     (async () => {
       try {
-        // Always fetch from /themes and apply, but don't block forever — use timeout
+        // Load from file-based route and apply, but don't block forever.
         const raceProms: Promise<any>[] = [
-          fetchRemoteThemes(),
+          loadFileThemes(),
           new Promise((_, rej) =>
-            setTimeout(() => rej(new Error("theme-fetch-timeout")), 5000)
+            setTimeout(() => rej(new Error("theme-fetch-timeout")), 5000),
           ),
         ];
         const remote = await Promise.race(raceProms);
         applyThemePayload(remote);
       } catch (e) {
-        // Try local presets as fallback so app doesn't block forever
+        // Try bundled fallback so app doesn't block forever
         try {
-          const local = await loadLocalPresets();
+          const local = await loadBundledThemeFallback();
           applyThemePayload(local);
         } catch (_) {
           // ignore

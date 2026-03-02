@@ -5,11 +5,8 @@ import { motion } from "framer-motion";
 import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 
-export default function ListingsPromoBanner() {
-  const { t, isRtl } = useLanguage();
-
-  /* ----------  inline triangle prism  ---------- */
-  const Prism = (props: any) => (
+function Prism(props: React.SVGProps<SVGSVGElement>) {
+  return (
     <svg viewBox="0 0 200 200" {...props}>
       <path
         fill="currentColor"
@@ -18,6 +15,10 @@ export default function ListingsPromoBanner() {
       />
     </svg>
   );
+}
+
+export default function ListingsPromoBanner() {
+  const { t, isRtl } = useLanguage();
 
   return (
     <section

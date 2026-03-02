@@ -1,6 +1,7 @@
 // NOTE: Place this file at: app/admin/categories/page.tsx
 // Requires auth: only ADMIN role should access. Adjust useAuth hook if roles naming differs.
 import { redirect } from "next/navigation";
+import Link from "next/link";
 import { getSession } from "@/lib/session";
 import { CategoriesTable } from "@/components/categories/CategoriesTable";
 // server-side page: keep static strings or use server translation helper if available
@@ -16,12 +17,12 @@ export default async function AdminCategoriesPage() {
         <p className="subtle max-w-md mx-auto">
           You need administrator privileges to manage categories.
         </p>
-        <a
+        <Link
           href="/"
           className="inline-flex items-center justify-center h-11 px-6 rounded-xl bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] font-medium border-[hsl(var(--border))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
         >
           Go Home
-        </a>
+        </Link>
       </div>
     );
   }

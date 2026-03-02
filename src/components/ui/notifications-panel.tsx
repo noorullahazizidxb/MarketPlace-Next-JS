@@ -133,11 +133,11 @@ export function NotificationsPanel({
     return Array.isArray(data.data) ? data.data : [];
   }, [data]);
 
-  const [local, setLocal] = useState<Notification[]>(list);
-  useEffect(() => setLocal(list), [list]);
+  const [local, setLocal] = useState<Notification[]>([]);
 
   const displayList: Notification[] = useMemo(() => {
     const map = new Map<string, Notification>();
+    for (const n of list || []) map.set(n.id, n);
     for (const n of local || []) map.set(n.id, n);
     for (const s of storeItems || []) {
       if (!map.has(s.id)) {
@@ -165,7 +165,7 @@ export function NotificationsPanel({
       const tb = new Date(b.createdAt).getTime();
       return tb - ta;
     });
-  }, [local, storeItems, uid]);
+  }, [list, local, storeItems, uid]);
 
   const withUnread = useMemo(() => {
     return (displayList || []).map((n) => {
@@ -205,7 +205,7 @@ export function NotificationsPanel({
 
   const markOne = async (id: string) => {
     setLocal((prev) =>
-      prev.map((n) => {
+      (prev.length ? prev : list).map((n) => {
         if (n.id !== id) return n;
         const recipients = (n.recipients || []).map((r) =>
           !uid || r.userId !== uid || r.readAt
@@ -233,7 +233,7 @@ export function NotificationsPanel({
   const markAll = async () => {
     const ids = withUnread.filter((x) => x.unread).map((x) => x.n.id);
     setLocal((prev) =>
-      prev.map((n) => {
+      (prev.length ? prev : list).map((n) => {
         const recipients = (n.recipients || []).map((r) =>
           !uid || r.userId !== uid || r.readAt
             ? r

@@ -24,6 +24,18 @@ type Props = {
   mode?: "dropdown" | "sheet"; // sheet = inline results occupy vertical space
 };
 
+function readRecentSearches(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = localStorage.getItem("recent-searches");
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
 function useDebounced<T>(value: T, delay = 300) {
   const [v, setV] = useState(value);
   useEffect(() => {
@@ -47,15 +59,7 @@ export function SearchBox({
   const [open, setOpen] = useState(false);
   const boxRef = useRef<HTMLDivElement | null>(null);
   const [rect, setRect] = useState<DOMRect | null>(null);
-  const [recent, setRecent] = useState<string[]>([]);
-
-  // Load recent searches
-  useEffect(() => {
-    try {
-      const raw = localStorage.getItem("recent-searches");
-      if (raw) setRecent(JSON.parse(raw));
-    } catch {}
-  }, []);
+  const [recent, setRecent] = useState<string[]>(() => readRecentSearches());
 
   const pushRecent = useCallback((term: string) => {
     if (!term.trim()) return;
@@ -122,7 +126,7 @@ export function SearchBox({
 
   const hits = data?.hits ?? [];
 
-  const highlight = (text: string): JSX.Element => {
+  const highlight = (text: string) => {
     if (!debounced || debounced.length < 2) return <>{text}</>;
     try {
       const parts = text.split(

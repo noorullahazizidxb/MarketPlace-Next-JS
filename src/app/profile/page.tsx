@@ -3,7 +3,7 @@
 import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, useWatch, type Resolver } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -188,13 +188,30 @@ export default function ProfilePage() {
   const {
     register,
     handleSubmit,
+    control,
     formState: { errors, isSubmitting, dirtyFields },
     reset,
-    watch,
   } = useForm<FormData>({
     resolver: zodResolver(schema) as Resolver<FormData>,
     defaultValues,
   });
+
+  const firstNameValue = useWatch({ control, name: "firstName" }) || "";
+  const lastNameValue = useWatch({ control, name: "lastName" }) || "";
+  const emailValue = useWatch({ control, name: "email" }) || "";
+  const phoneValue = useWatch({ control, name: "phone" }) || "";
+  const whatsappValue = useWatch({ control, name: "whatsapp" }) || "";
+  const cityValue = useWatch({ control, name: "city" }) || "";
+  const countryValue = useWatch({ control, name: "country" }) || "";
+  const streetValue = useWatch({ control, name: "street" }) || "";
+  const websiteValue = useWatch({ control, name: "website" }) || "";
+  const linkedinValue = useWatch({ control, name: "linkedin" }) || "";
+  const facebookValue = useWatch({ control, name: "facebook" }) || "";
+  const instagramValue = useWatch({ control, name: "instagram" }) || "";
+  const bioValue = useWatch({ control, name: "bio" }) || "";
+  const passwordValue = useWatch({ control, name: "password" }) || "";
+  const confirmPasswordValue =
+    useWatch({ control, name: "confirmPassword" }) || "";
 
   useEffect(() => {
     reset(defaultValues);
@@ -365,7 +382,7 @@ export default function ProfilePage() {
                 )}
               </h1>
               <p className="mt-1 text-sm subtle line-clamp-2 max-w-xl">
-                {watch("bio") || t("shortBioPlaceholder")}
+                {bioValue || t("shortBioPlaceholder")}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {stats.map((s) => (
@@ -420,32 +437,32 @@ export default function ProfilePage() {
             <div className="grid sm:grid-cols-2 gap-6">
               <DetailField
                 label="First Name"
-                value={watch("firstName")}
+                value={firstNameValue}
                 icon={User2}
               />
               <DetailField
                 label="Last Name"
-                value={watch("lastName")}
+                value={lastNameValue}
                 icon={User2}
               />
               <DetailField
                 label="Email"
-                value={watch("email") || "—"}
+                value={emailValue || "—"}
                 icon={Mail}
               />
               <DetailField
                 label="Phone"
-                value={watch("phone") || "—"}
+                value={phoneValue || "—"}
                 icon={Phone}
               />
               <DetailField
                 label="WhatsApp"
-                value={watch("whatsapp") || "—"}
+                value={whatsappValue || "—"}
                 icon={Phone}
               />
               <DetailField
                 label="Website"
-                value={watch("website") || "—"}
+                value={websiteValue || "—"}
                 icon={Globe2}
               />
             </div>
@@ -464,17 +481,17 @@ export default function ProfilePage() {
             <div className="grid sm:grid-cols-3 gap-6">
               <DetailField
                 label="City"
-                value={watch("city") || "—"}
+                value={cityValue || "—"}
                 icon={MapPin}
               />
               <DetailField
                 label="Country"
-                value={watch("country") || "—"}
+                value={countryValue || "—"}
                 icon={MapPin}
               />
               <DetailField
                 label="Street"
-                value={watch("street") || "—"}
+                value={streetValue || "—"}
                 icon={MapPin}
               />
             </div>
@@ -493,17 +510,17 @@ export default function ProfilePage() {
             <div className="grid sm:grid-cols-3 gap-6">
               <DetailField
                 label="LinkedIn"
-                value={watch("linkedin") || "—"}
+                value={linkedinValue || "—"}
                 icon={Linkedin}
               />
               <DetailField
                 label="Facebook"
-                value={watch("facebook") || "—"}
+                value={facebookValue || "—"}
                 icon={Facebook}
               />
               <DetailField
                 label="Instagram"
-                value={watch("instagram") || "—"}
+                value={instagramValue || "—"}
                 icon={Instagram}
               />
             </div>
@@ -529,7 +546,7 @@ export default function ProfilePage() {
               className="rounded-xl w-full resize-y min-h-[140px] p-3 border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm leading-relaxed placeholder:text-[hsl(var(--muted-foreground))]"
             />
             <p className="mt-2 text-2xs subtle text-right">
-              {watch("bio")?.length || 0}/260
+              {bioValue.length || 0}/260
             </p>
             <Button
               type="button"
@@ -646,7 +663,7 @@ export default function ProfilePage() {
               <PasswordField
                 register={register}
                 error={errors.password?.message as any}
-                watchPassword={watch("password")}
+                watchPassword={passwordValue}
               />
             </div>
             <div className="sm:col-span-2">
@@ -657,8 +674,8 @@ export default function ProfilePage() {
               <ConfirmPasswordField
                 register={register}
                 error={errors.confirmPassword?.message as any}
-                passwordValue={watch("password")}
-                confirmValue={watch("confirmPassword")}
+                passwordValue={passwordValue}
+                confirmValue={confirmPasswordValue}
               />
             </div>
             <div className="sm:col-span-2">
@@ -671,7 +688,7 @@ export default function ProfilePage() {
                 placeholder="Short bio (max 260 chars)"
               />
               <p className="mt-1 text-2xs text-right subtle">
-                {watch("bio")?.length || 0}/260
+                {bioValue.length || 0}/260
               </p>
             </div>
             {error && (

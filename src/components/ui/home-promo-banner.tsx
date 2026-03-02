@@ -5,15 +5,16 @@ import { motion } from "framer-motion";
 import { ShoppingCart, ArrowLeft, ArrowRight } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 
-export default function HomePromoBanner() {
-  const { t, isRtl } = useLanguage();
-
-  /* ----------  inline SVG shapes  ---------- */
-  const Hexagon = (props: any) => (
+function Hexagon(props: React.SVGProps<SVGSVGElement>) {
+  return (
     <svg viewBox="0 0 100 100" {...props}>
       <path d="M50 0L93.3 25v50L50 100L6.7 75V25L50 0z" fill="currentColor" />
     </svg>
   );
+}
+
+export default function HomePromoBanner() {
+  const { t, isRtl } = useLanguage();
 
   return (
     <section

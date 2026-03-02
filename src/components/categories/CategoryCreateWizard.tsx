@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
@@ -75,7 +75,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
   } = useForm<FormValues>({
@@ -91,8 +91,11 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
   const create = useCreateCategory(() => {
     onCreated();
   });
-  const name = watch("name");
-  const isSub = watch("isSub");
+  const name = useWatch({ control, name: "name" }) || "";
+  const slug = useWatch({ control, name: "slug" }) || "";
+  const isSub = useWatch({ control, name: "isSub" }) ?? false;
+  const isActive = useWatch({ control, name: "isActive" }) ?? true;
+  const parentId = useWatch({ control, name: "parentId" }) ?? null;
 
   React.useEffect(() => {
     if (autoSlug)
@@ -119,9 +122,9 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
 
   const nextAllowed = () => {
     if (step === 0) return !!name && !errors.name;
-    if (step === 1) return !!watch("slug") && !errors.slug;
+    if (step === 1) return !!slug && !errors.slug;
     if (step === 2) return true; // activation step always valid
-    if (isSub && step === 3) return watch("parentId") != null; // parent required if sub
+    if (isSub && step === 3) return parentId != null; // parent required if sub
     return true;
   };
 
@@ -249,7 +252,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                 <div className="flex items-center gap-2 text-2xs font-medium">
                   <Switch
                     {...register("isActive")}
-                    checked={watch("isActive")}
+                    checked={isActive}
                     onCheckedChange={(v: boolean) => setValue("isActive", v)}
                     id="active"
                   />
@@ -258,7 +261,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                 <div className="flex items-center gap-2 text-2xs font-medium">
                   <Switch
                     {...register("isSub")}
-                    checked={watch("isSub")}
+                    checked={isSub}
                     onCheckedChange={(v: boolean) => setValue("isSub", v)}
                     id="isSub"
                   />
@@ -280,10 +283,10 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                 Parent *
               </label>
               <ParentAutocomplete
-                value={watch("parentId") ?? null}
+                value={parentId}
                 onChange={(v) => setValue("parentId", v)}
               />
-              {watch("parentId") == null && (
+              {parentId == null && (
                 <p className="text-2xs text-amber-500">
                   Select a parent to continue.
                 </p>
@@ -302,24 +305,24 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
               <Card className="p-4 space-y-2 text-xs">
                 <div className="flex justify-between">
                   <span className="font-medium">Name</span>
-                  <span>{watch("name") || "—"}</span>
+                  <span>{name || "—"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Slug</span>
-                  <span>{watch("slug") || "—"}</span>
+                  <span>{slug || "—"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Active</span>
-                  <span>{watch("isActive") ? "Yes" : "No"}</span>
+                  <span>{isActive ? "Yes" : "No"}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="font-medium">Is Sub</span>
-                  <span>{watch("isSub") ? "Yes" : "No"}</span>
+                  <span>{isSub ? "Yes" : "No"}</span>
                 </div>
-                {watch("isSub") && (
+                {isSub && (
                   <div className="flex justify-between">
                     <span className="font-medium">Parent</span>
-                    <span>{watch("parentId") || "—"}</span>
+                    <span>{parentId || "—"}</span>
                   </div>
                 )}
               </Card>

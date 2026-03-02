@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, useMemo } from "react";
 import { io, Socket } from "socket.io-client";
 import { useAuth } from "./use-auth";
 import { useApiGet } from "./api-hooks";
@@ -9,7 +9,7 @@ type Listing = any;
 
 export function usePendingListings() {
   const { token, isAdmin, loading } = useAuth();
-  const [listings, setListings] = useState<Listing[]>([]);
+  const [liveListings, setLiveListings] = useState<Listing[] | null>(null);
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState(false);
 
@@ -17,10 +17,15 @@ export function usePendingListings() {
     token && isAdmin ? ["pending-listings"] : null,
     "/listings/for-approval"
   );
+  const baseListings = useMemo(
+    () => (Array.isArray(data) ? (data as Listing[]) : []),
+    [data]
+  );
+  const baseListingsRef = useRef<Listing[]>(baseListings);
 
   useEffect(() => {
-    if (data && Array.isArray(data)) setListings(data as Listing[]);
-  }, [data]);
+    baseListingsRef.current = baseListings;
+  }, [baseListings]);
 
   useEffect(() => {
     if (loading) return;
@@ -54,16 +59,17 @@ export function usePendingListings() {
     });
 
     socket.on("pending-listings", (payload: Listing[]) => {
-      setListings(payload || []);
+      setLiveListings(payload || []);
       // keep SWR cache in sync
       mutate(payload, false);
     });
 
     socket.on("pending-listing:new", (item: Listing) => {
-      setListings((prev) => {
-        const exists = prev.some((p: any) => p.id === (item as any)?.id);
-        if (exists) return prev;
-        const next = [item, ...prev];
+      setLiveListings((prev) => {
+        const source = prev ?? baseListingsRef.current;
+        const exists = source.some((p: any) => p.id === (item as any)?.id);
+        if (exists) return source;
+        const next = [item, ...source];
         mutate(next, false);
         return next;
       });
@@ -84,6 +90,8 @@ export function usePendingListings() {
     if (!isAdmin) return;
     await mutate();
   }, [isAdmin, mutate]);
+
+  const listings = liveListings ?? baseListings;
 
   return {
     listings,

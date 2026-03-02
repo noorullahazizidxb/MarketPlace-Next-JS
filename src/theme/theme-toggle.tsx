@@ -1,7 +1,7 @@
 "use client";
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 import { useThemeStore } from "@/store/theme.store";
 
 type Props = {
@@ -9,11 +9,14 @@ type Props = {
   className?: string;
 };
 
+function subscribe() {
+  return () => {};
+}
+
 export function ThemeToggle({ iconOnly = false, className }: Props) {
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const mounted = useSyncExternalStore(subscribe, () => true, () => false);
   const isDark = mode === "dark";
 
   if (!mounted) {

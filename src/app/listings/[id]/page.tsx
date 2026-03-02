@@ -644,8 +644,7 @@ function LargeAdPlaceholder() {
     "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
     "https://images.unsplash.com/photo-1526403224741-5a0d0fb7f7b9?q=80&w=2000&auto=format&fit=crop",
   ];
-  const idx = Math.floor(Math.random() * urls.length);
-  const url = urls[idx];
+  const url = urls[0];
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
       <div className="w-full h-[800px]">

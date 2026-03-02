@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 
 type Slide = { url?: string | null; alt?: string | null };
 
@@ -12,7 +13,8 @@ export function ImageSlider({
   aspect = "4/1",
   heightClass,
   sizes = "(max-width: 768px) 100vw, 33vw",
-  autoPlay = true,
+  autoPlay = false,
+  forceEngaged = false,
   intervalMs = 5000,
 }: {
   images?: Slide[] | null;
@@ -21,6 +23,7 @@ export function ImageSlider({
   heightClass?: string; // optional fixed height class (e.g., "h-56 md:h-72")
   sizes?: string; // next/image sizes attribute override
   autoPlay?: boolean; // enable/disable autoplay
+  forceEngaged?: boolean; // parent-driven engagement (e.g., wrapper hover/focus)
   intervalMs?: number; // autoplay interval
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
@@ -45,6 +48,8 @@ export function ImageSlider({
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const { isEngaged, engagementProps } = useEngagedAutoplay();
+  const prevActiveRef = useRef(false);
   // Respect reduced motion preferences
   const prefersReducedMotion =
     typeof window !== "undefined" &&
@@ -61,7 +66,7 @@ export function ImageSlider({
         const e = entries[0];
         setInView(!!e?.isIntersecting);
       },
-      { root: null, rootMargin: "0px", threshold: 0.1 }
+      { root: null, rootMargin: "0px", threshold: 0.1 },
     );
     obs.observe(el);
     return () => {
@@ -72,9 +77,22 @@ export function ImageSlider({
   }, []);
 
   useEffect(() => {
+    const activeNow = autoPlay && (isEngaged || forceEngaged);
+    const justActivated = activeNow && !prevActiveRef.current;
+    prevActiveRef.current = activeNow;
+
     // simple autoplay
     if (timer.current) window.clearInterval(timer.current);
-    if (autoPlay && !prefersReducedMotion && inView && slides.length > 1) {
+    if (
+      autoPlay &&
+      (isEngaged || forceEngaged) &&
+      !prefersReducedMotion &&
+      inView &&
+      slides.length > 1
+    ) {
+      if (justActivated) {
+        setIndex((i) => (i + 1) % slides.length);
+      }
       timer.current = window.setInterval(() => {
         setIndex((i) => (i + 1) % slides.length);
       }, intervalMs);
@@ -82,7 +100,15 @@ export function ImageSlider({
     return () => {
       if (timer.current) window.clearInterval(timer.current);
     };
-  }, [slides.length, autoPlay, prefersReducedMotion, intervalMs, inView]);
+  }, [
+    slides.length,
+    autoPlay,
+    isEngaged,
+    forceEngaged,
+    prefersReducedMotion,
+    intervalMs,
+    inView,
+  ]);
 
   // Scroll to active index when it changes
   useEffect(() => {
@@ -93,7 +119,12 @@ export function ImageSlider({
   }, [index]);
 
   return (
-    <div ref={rootRef} className={`relative overflow-hidden ${className}`}>
+    <div
+      ref={rootRef}
+      className={`relative overflow-hidden ${className}`}
+      tabIndex={0}
+      {...engagementProps}
+    >
       <div
         className={`w-full ${
           heightClass ? heightClass : getAspectClass(aspect)

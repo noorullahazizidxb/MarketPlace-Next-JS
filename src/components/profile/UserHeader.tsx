@@ -115,7 +115,6 @@ export default function UserHeader({ user }: { user: PublicUser }) {
                 className="size-8 rounded-full overflow-hidden border border-white/10 bg-[hsl(var(--muted))/0.2]"
               >
                 {f.photo ? (
-                  // eslint-disable-next-line @next/next/no-img-element
                   <Image
                     src={asset(f.photo)}
                     alt={f.fullName || ""}

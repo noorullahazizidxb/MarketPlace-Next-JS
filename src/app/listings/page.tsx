@@ -99,11 +99,11 @@ function ListingsContent() {
   const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
     "/listings",
-    undefined
+    undefined,
   );
   const allItems: Listing[] = useMemo(
     () => (Array.isArray(data) ? data : data ? [data] : []),
-    [data]
+    [data],
   );
 
   const items: Listing[] = useMemo(() => {
@@ -130,7 +130,7 @@ function ListingsContent() {
   const current = Math.min(Math.max(1, page), pageCount);
   const pageItems = useMemo(
     () => items.slice((current - 1) * pageSize, current * pageSize),
-    [items, current]
+    [items, current],
   );
   const {
     ref: ptrRef,
@@ -180,26 +180,26 @@ function ListingsContent() {
           h >= 110
             ? "h-[110px]"
             : h >= 100
-            ? "h-[100px]"
-            : h >= 90
-            ? "h-[90px]"
-            : h >= 80
-            ? "h-[80px]"
-            : h >= 70
-            ? "h-[70px]"
-            : h >= 60
-            ? "h-[60px]"
-            : h >= 50
-            ? "h-[50px]"
-            : h >= 40
-            ? "h-[40px]"
-            : h >= 30
-            ? "h-[30px]"
-            : h >= 20
-            ? "h-[20px]"
-            : h >= 10
-            ? "h-[10px]"
-            : "h-0";
+              ? "h-[100px]"
+              : h >= 90
+                ? "h-[90px]"
+                : h >= 80
+                  ? "h-[80px]"
+                  : h >= 70
+                    ? "h-[70px]"
+                    : h >= 60
+                      ? "h-[60px]"
+                      : h >= 50
+                        ? "h-[50px]"
+                        : h >= 40
+                          ? "h-[40px]"
+                          : h >= 30
+                            ? "h-[30px]"
+                            : h >= 20
+                              ? "h-[20px]"
+                              : h >= 10
+                                ? "h-[10px]"
+                                : "h-0";
         return (
           <div
             className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${
@@ -248,7 +248,11 @@ function ListingsContent() {
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                 {pageItems.map((item, idx) => (
                   <Fragment key={item.id}>
-                    <ListingCard key={item.id} listing={item} />
+                    <ListingCard
+                      key={item.id}
+                      listing={item}
+                      cleanImageOverlayOnEngage
+                    />
                     {/* Insert an ad after finishing each row */}
                     {((idx + 1) % 4 === 0 ||
                       (idx === pageItems.length - 1 &&

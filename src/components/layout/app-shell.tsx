@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useEffect, useState } from "react";
+import { PropsWithChildren, useEffect } from "react";
 import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
@@ -40,7 +40,6 @@ export function AppShell({ children }: PropsWithChildren) {
   const hideChromeGlobal = useAppStore((s) => s.hideChrome);
   const pathname = usePathname();
   const router = useRouter();
-  const [redirecting, setRedirecting] = useState(false);
   const density = useUIStore((s) => s.density);
 
   useEffect(() => {
@@ -72,42 +71,41 @@ export function AppShell({ children }: PropsWithChildren) {
       "/verify-email",
     ].includes(pathname);
 
+  const shouldRedirectAdmin =
+    !loading && !!pathname && pathname.startsWith("/admin") && !isAdmin;
+  const shouldRedirectAuth =
+    !loading && !hideChrome && !user && !isPublicRoute;
+  const shouldRedirectRoot = !loading && pathname === "/";
+  const redirecting =
+    shouldRedirectAdmin || shouldRedirectAuth || shouldRedirectRoot;
+
   useEffect(() => {
     if (loading) return;
-    if (hideChrome) {
-      setRedirecting(false);
-      return;
-    }
+    if (hideChrome) return;
     try {
       if (pathname && pathname.startsWith("/admin") && !isAdmin) {
-        setRedirecting(true);
         router.replace("/listings");
         return;
       }
     } catch {}
     if (!user && !isPublicRoute) {
-      setRedirecting(true);
       router.replace("/sign-in");
     }
   }, [loading, hideChrome, user, isPublicRoute, router, pathname, isAdmin]);
 
   useEffect(() => {
-    setRedirecting(false);
-  }, [pathname]);
-
-  useEffect(() => {
     if (pathname === "/") {
-      if (loading || redirecting) return;
-      setRedirecting(true);
-      setTimeout(() => {
+      if (loading) return;
+      const timeoutId = window.setTimeout(() => {
         if (user) {
           router.replace(isAdmin ? "/admin" : "/listings");
         } else {
           router.replace("/listings");
         }
       }, 0);
+      return () => window.clearTimeout(timeoutId);
     }
-  }, [pathname, loading, user, isAdmin, router, redirecting]);
+  }, [pathname, loading, user, isAdmin, router]);
 
   /* ----------  FULL-SCREEN LOADER  ---------- */
   if (loading || redirecting)

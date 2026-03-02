@@ -399,8 +399,8 @@ const UserCreateWizard: React.FC<{
       metadata: { preferredLanguage: "en", company: "", tags: [] },
     },
   });
-  const { handleSubmit, watch, control } = methods;
-  const role = watch("role") as RoleOption | "";
+  const { handleSubmit, control } = methods;
+  const role = (useWatch({ control, name: "role" }) as RoleOption | "") || "";
   const repInfoArray = useFieldArray({ control, name: "representativeInfo" });
   const [step, setStep] = useState(0);
   const isRepresentative = role === "REPRESENTATIVE";
@@ -418,16 +418,17 @@ const UserCreateWizard: React.FC<{
   const steps = isRepresentative ? [...stepsBase, ...repStepsExtra] : stepsBase;
 
   // Reactive field subscriptions for validation (fix disabling bug)
-  const firstName = watch("firstName");
-  const lastName = watch("lastName");
-  const emailVal = watch("email");
-  const pw = watch("password");
-  const cpw = watch("confirmPassword");
-  const contactsPhone = watch("contacts.phone");
-  const contactsEmail = watch("contacts.email");
-  const contactsWhatsapp = watch("contacts.whatsapp");
-  const addressCity = watch("address.city");
-  const addressCountry = watch("address.country");
+  const firstName = useWatch({ control, name: "firstName" }) || "";
+  const lastName = useWatch({ control, name: "lastName" }) || "";
+  const emailVal = useWatch({ control, name: "email" }) || "";
+  const pw = useWatch({ control, name: "password" }) || "";
+  const cpw = useWatch({ control, name: "confirmPassword" }) || "";
+  const contactsPhone = useWatch({ control, name: "contacts.phone" }) || "";
+  const contactsEmail = useWatch({ control, name: "contacts.email" }) || "";
+  const contactsWhatsapp =
+    useWatch({ control, name: "contacts.whatsapp" }) || "";
+  const addressCity = useWatch({ control, name: "address.city" }) || "";
+  const addressCountry = useWatch({ control, name: "address.country" }) || "";
 
   const canNext = (() => {
     switch (step) {
@@ -537,7 +538,7 @@ const UserCreateWizard: React.FC<{
     }
   };
 
-  const photoFile = watch("photoFile");
+  const photoFile = useWatch({ control, name: "photoFile" });
   const preview = photoFile ? URL.createObjectURL(photoFile) : undefined;
   const progress = ((step + 1) / steps.length) * 100;
 

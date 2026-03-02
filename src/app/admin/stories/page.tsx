@@ -83,8 +83,12 @@ const StoryCard: React.FC<{
     transition={{ duration: 0.25 }}
     className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))] shadow-[0_6px_24px_-10px_rgba(0,0,0,0.45)]"
   >
-    <button type="button" onClick={onView} className="block w-full">
-      {/* eslint-disable-next-line @next/next/no-img-element */}
+    <button
+      type="button"
+      onClick={onView}
+      className="block w-full"
+      aria-label={`View story ${s.title}`}
+    >
       <ImageSlider
         images={(s.images ?? []).filter(Boolean) as any}
         aspect="16/9"

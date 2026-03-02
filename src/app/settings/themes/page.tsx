@@ -2,12 +2,13 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useThemeStore } from "@/store/theme.store";
 import { useQueryClient } from "@tanstack/react-query";
-import { useApiGet, useApiMutation } from "@/lib/api-hooks";
+import { useLocalGet, useLocalMutation } from "@/lib/api-hooks";
 import { applyThemeScales, applyThemeTokens } from "../../../theme/theme";
 import { Button } from "@/components/ui/button";
 import { applyThemeComponents } from "../../../theme/theme";
 import { ThemeToggle } from "../../../theme/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
+import { config } from "@/lib/config";
 
 type ThemeTokensShape = {
   light: Record<string, any>;
@@ -25,6 +26,94 @@ const toCssString = (v: any): string => {
 };
 
 const wrapCss = (v: string) => ({ css: v });
+
+const ENGLISH_FONT_OPTIONS = [
+  "Inter",
+  "Poppins",
+  "Roboto",
+  "Open Sans",
+  "Lato",
+  "Coolvetica",
+  "Arial",
+  "Helvetica",
+  "Georgia",
+  "Times New Roman",
+];
+
+const PERSIAN_FONT_OPTIONS = [
+  "Vazirmatn",
+  "Yekan",
+  "HSDream",
+  "Tahoma",
+  "Noto Sans Arabic",
+  "Arial",
+];
+
+const toRemNumber = (value: any, fallback: number) => {
+  const raw = String(value ?? "").trim();
+  if (!raw) return fallback;
+  const parsed = Number.parseFloat(raw.replace(/rem|px/gi, ""));
+  if (!Number.isFinite(parsed)) return fallback;
+  if (/px$/i.test(raw)) {
+    return Number((parsed / 16).toFixed(3));
+  }
+  return parsed;
+};
+
+const toRemString = (value: any, fallback: number) => {
+  const next = toRemNumber(value, fallback);
+  const compact = next.toFixed(3).replace(/0+$/, "").replace(/\.$/, "");
+  return `${compact}rem`;
+};
+
+const isPlainObject = (value: any) =>
+  !!value && typeof value === "object" && !Array.isArray(value);
+
+const deepMerge = (base: any, override: any): any => {
+  if (!isPlainObject(base)) return override;
+  if (!isPlainObject(override)) return base;
+  const merged: Record<string, any> = { ...base };
+  Object.keys(override).forEach((key) => {
+    const left = merged[key];
+    const right = override[key];
+    if (isPlainObject(left) && isPlainObject(right)) {
+      merged[key] = deepMerge(left, right);
+      return;
+    }
+    merged[key] = right;
+  });
+  return merged;
+};
+
+const normalizeScalesPayload = (incoming: ScalesShape | null) => {
+  if (!incoming || typeof incoming !== "object") return incoming;
+  const next: any = JSON.parse(JSON.stringify(incoming));
+  if (!next.font || typeof next.font !== "object") return next;
+
+  const font = next.font;
+  if (!font.families || typeof font.families !== "object") {
+    font.families = {};
+  }
+  if (font.family && !font.families.english) {
+    font.families.english = font.family;
+  }
+  if (!font.families.english) font.families.english = "Inter";
+  if (!font.families.persian) font.families.persian = "Vazirmatn";
+  if (!font.families.heading) font.families.heading = "Poppins";
+  delete font.family;
+
+  if (!font.sizes || typeof font.sizes !== "object") font.sizes = {};
+  if (!font.elements || typeof font.elements !== "object") font.elements = {};
+
+  font.sizes.base = toRemString(font.sizes.base ?? font.elements.body, 1);
+  font.elements.body = toRemString(font.elements.body ?? font.sizes.base, 1);
+  font.elements.heading = toRemString(
+    font.elements.heading ?? font.sizes.xl,
+    1.25,
+  );
+
+  return next as ScalesShape;
+};
 
 // Color conversion helpers used for payload serialization
 const hslCssToHex = (hslCss: string): string => {
@@ -113,7 +202,7 @@ const hexToHslCss = (hex: string): string => {
       if (h < 0) h += 360;
     }
     return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(
-      l * 100
+      l * 100,
     )}%)`;
   } catch {
     return hex;
@@ -145,23 +234,37 @@ export default function ThemeSettingsPage() {
   const [tokenQuery, setTokenQuery] = useState("");
   const radiiKeys = useMemo(
     () => Object.keys((scales as any)?.radii || {}),
-    [scales]
+    [scales],
   );
   const shadowKeys = useMemo(
     () => Object.keys((scales as any)?.shadow || {}),
-    [scales]
+    [scales],
   );
   const borderWidthKeys = useMemo(
     () => Object.keys((scales as any)?.borderWidth || {}),
-    [scales]
+    [scales],
   );
   const transitionKeys = useMemo(
     () =>
       Object.keys((scales as any)?.transitions || {}).filter(
-        (k) => k !== "spring"
+        (k) => k !== "spring",
       ),
-    [scales]
+    [scales],
   );
+  const scalesEditorData = useMemo(() => {
+    if (!scales || typeof scales !== "object") return null;
+    const next: any = JSON.parse(JSON.stringify(scales));
+    if (next.font && typeof next.font === "object") {
+      delete next.font.sizes;
+      delete next.font.elements;
+      delete next.font.families;
+      delete next.font.family;
+      if (Object.keys(next.font).length === 0) {
+        delete next.font;
+      }
+    }
+    return next as ScalesShape;
+  }, [scales]);
 
   // Derive current Quick Option values from components for controlled inputs
   const quickValues = useMemo(() => {
@@ -189,7 +292,7 @@ export default function ThemeSettingsPage() {
     isLoading: isThemesLoading,
     error: themesError,
     mutate: refetchThemes,
-  } = useApiGet<any[]>(["themes"], "/themes");
+  } = useLocalGet<any[]>(["themes-file"], config.themeFileRoute);
 
   // Drive local UI state from SWR
   useEffect(() => {
@@ -207,20 +310,30 @@ export default function ThemeSettingsPage() {
     const normalized: ThemeTokensShape | null = rawTokens?.tokens
       ? rawTokens.tokens
       : rawTokens;
-    let foundScales: ScalesShape | null = (first?.scales as any) || null;
-    let foundComponents: ComponentsShape | null =
-      (first?.components as any) || null;
-    if (!foundScales && envelope?.scales) foundScales = envelope.scales;
-    if (!foundComponents && envelope?.components)
-      foundComponents = envelope.components;
-    if (envelope) setThemeMeta(envelope);
+    const mergedScales = deepMerge(
+      (first?.scales as any) || {},
+      envelope?.scales || {},
+    );
+    const mergedComponents = deepMerge(
+      (first?.components as any) || {},
+      envelope?.components || {},
+    );
+
+    const foundScales: ScalesShape | null =
+      Object.keys(mergedScales || {}).length > 0
+        ? normalizeScalesPayload(mergedScales)
+        : null;
+    const foundComponents: ComponentsShape | null =
+      Object.keys(mergedComponents || {}).length > 0 ? mergedComponents : null;
+
+    if (first) setThemeMeta(first);
     if (normalized) setTokens(normalized);
     if (foundScales) setScales(foundScales);
     if (foundComponents) setComponents(foundComponents);
     // if payload included preferredColorMode, adopt it
     const pref =
-      (first as any)?.preferredColorMode ??
       envelope?.preferredColorMode ??
+      (first as any)?.preferredColorMode ??
       null;
     if (pref && (pref === "HEX" || pref === "RGB" || pref === "HSL")) {
       setColorMode(pref as ColorMode);
@@ -262,7 +375,7 @@ export default function ThemeSettingsPage() {
   const handleColorChange = (
     mode: "light" | "dark",
     key: string,
-    value: string
+    value: string,
   ) => {
     setTokens((prev) => {
       if (!prev) return prev;
@@ -298,7 +411,7 @@ export default function ThemeSettingsPage() {
     try {
       await refetchThemes();
     } catch (e: any) {
-      setError(e?.message || "Failed to reload /themes");
+      setError(e?.message || "Failed to reload theme file");
     } finally {
       setLoading(false);
     }
@@ -324,7 +437,7 @@ export default function ThemeSettingsPage() {
         if (m) {
           const toHex = (n: number) => (n < 16 ? "0" : "") + n.toString(16);
           const hex = `#${toHex(parseInt(m[1], 10))}${toHex(
-            parseInt(m[2], 10)
+            parseInt(m[2], 10),
           )}${toHex(parseInt(m[3], 10))}`;
           const hslCss = hexToHslCss(hex);
           return parseHsl(hslCss);
@@ -370,23 +483,23 @@ export default function ThemeSettingsPage() {
       light: normalizeSide(tokens.light || {}),
       dark: normalizeSide(tokens.dark || {}),
     };
-    const envelope: any = {
+    const payload: any = {
       tokens: normalizedTokens,
       preferredColorMode: colorMode,
     };
     // include only id/name/notes if present; drop other meta fields
     if (themeMeta) {
-      if (typeof themeMeta.id !== "undefined") envelope.id = themeMeta.id;
-      if (typeof themeMeta.name !== "undefined") envelope.name = themeMeta.name;
+      if (typeof themeMeta.id !== "undefined") payload.id = themeMeta.id;
+      if (typeof themeMeta.name !== "undefined") payload.name = themeMeta.name;
       if (typeof themeMeta.notes !== "undefined")
-        envelope.notes = themeMeta.notes;
+        payload.notes = themeMeta.notes;
     }
-    if (scales) envelope.scales = scales;
-    if (components) envelope.components = components;
-    return { tokens: envelope };
+    if (scales) payload.scales = normalizeScalesPayload(scales);
+    if (components) payload.components = components;
+    return payload;
   };
 
-  const saveMutation = useApiMutation<any>("put", "/themes", undefined, {
+  const saveMutation = useLocalMutation<any>("put", config.themeFileRoute, {
     onSuccess: (data: any) => {
       setSaveMessage("Saved");
       setTimeout(() => setSaveMessage(null), 1500);
@@ -540,31 +653,111 @@ export default function ThemeSettingsPage() {
       {!loading && scales && activeTab === "scales" && (
         <div className="card">
           <h2 className="text-lg font-semibold mb-3">Scales</h2>
-          {/* Quick Option: Font base size */}
-          {scales?.font?.sizes && (
-            <div className="flex items-center gap-3 p-2 rounded-xl border border-[hsl(var(--border))] mb-4">
-              <span className="text-sm w-44">Font base size</span>
-              <select
-                aria-label="Font base size"
-                className="h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-                value={String(scales.font.sizes.base ?? "")}
-                onChange={(e) =>
-                  handleScaleChange("font.sizes.base", e.target.value)
-                }
-              >
-                {Object.values(scales.font.sizes).map((v: any) => (
-                  <option key={String(v)} value={String(v)}>
-                    {String(v)}
-                  </option>
-                ))}
-              </select>
+          {scales?.font && (
+            <div className="rounded-2xl border border-[hsl(var(--border))] p-4 mb-4 space-y-4">
+              <div className="text-sm font-medium">Typography</div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-36">English font</span>
+                  <select
+                    aria-label="English font family"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={String(scales?.font?.families?.english ?? "Inter")}
+                    onChange={(e) =>
+                      handleScaleChange("font.families.english", e.target.value)
+                    }
+                  >
+                    {ENGLISH_FONT_OPTIONS.map((font) => (
+                      <option key={font} value={font}>
+                        {font}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-36">Persian font</span>
+                  <select
+                    aria-label="Persian font family"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={String(
+                      scales?.font?.families?.persian ?? "Vazirmatn",
+                    )}
+                    onChange={(e) =>
+                      handleScaleChange("font.families.persian", e.target.value)
+                    }
+                  >
+                    {PERSIAN_FONT_OPTIONS.map((font) => (
+                      <option key={font} value={font}>
+                        {font}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-36">Heading font</span>
+                  <select
+                    aria-label="Heading font family"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={String(scales?.font?.families?.heading ?? "Poppins")}
+                    onChange={(e) =>
+                      handleScaleChange("font.families.heading", e.target.value)
+                    }
+                  >
+                    {ENGLISH_FONT_OPTIONS.map((font) => (
+                      <option key={font} value={font}>
+                        {font}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <ThemeRange
+                  label="Base size"
+                  min={0.625}
+                  max={1.5}
+                  step={0.01}
+                  value={toRemNumber(scales?.font?.sizes?.base, 1)}
+                  onChange={(next) =>
+                    handleScaleChange("font.sizes.base", `${next}rem`)
+                  }
+                />
+                <ThemeRange
+                  label="Body size"
+                  min={0.625}
+                  max={1.375}
+                  step={0.01}
+                  value={toRemNumber(
+                    scales?.font?.elements?.body ?? scales?.font?.sizes?.base,
+                    1,
+                  )}
+                  onChange={(next) =>
+                    handleScaleChange("font.elements.body", `${next}rem`)
+                  }
+                />
+                <ThemeRange
+                  label="Heading size"
+                  min={0.75}
+                  max={2.25}
+                  step={0.01}
+                  value={toRemNumber(
+                    scales?.font?.elements?.heading ?? scales?.font?.sizes?.xl,
+                    1.25,
+                  )}
+                  onChange={(next) =>
+                    handleScaleChange("font.elements.heading", `${next}rem`)
+                  }
+                />
+              </div>
             </div>
           )}
-          <ScalesEditor
-            basePath=""
-            data={scales}
-            onChange={handleScaleChange}
-          />
+          {scalesEditorData && (
+            <ScalesEditor
+              basePath=""
+              data={scalesEditorData}
+              onChange={handleScaleChange}
+            />
+          )}
         </div>
       )}
 
@@ -601,7 +794,7 @@ export default function ThemeSettingsPage() {
                         next.button.primary = ensureToken(next.button.primary);
                         next.button.accent = ensureToken(next.button.accent);
                         next.button.secondary = ensureToken(
-                          next.button.secondary
+                          next.button.secondary,
                         );
                         applyThemeComponents(next);
                         return next;
@@ -694,44 +887,7 @@ export default function ThemeSettingsPage() {
                         next.button.primary = ensureToken(next.button.primary);
                         next.button.accent = ensureToken(next.button.accent);
                         next.button.secondary = ensureToken(
-                          next.button.secondary
-                        );
-                        applyThemeComponents(next);
-                        return next;
-                      });
-                    }}
-                  >
-                    <option value="">-- none --</option>
-                    {tokenKeys.map((t) => (
-                      <option key={t} value={t}>
-                        {t}
-                      </option>
-                    ))}
-                  </select>
-                </label>
-                <label className="flex items-center gap-3">
-                  <span className="text-sm w-44">Button hover text</span>
-                  <select
-                    aria-label="Button hover text"
-                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
-                    value={quickValues.btnHoverTextToken}
-                    onChange={(e) => {
-                      const val = e.target.value;
-                      setComponents((prev) => {
-                        const next = JSON.parse(JSON.stringify(prev || {}));
-                        const ensure = (v: any) =>
-                          v && typeof v === "object" ? v : {};
-                        const ensureToken = (obj: any) => {
-                          obj = ensure(obj);
-                          obj.hoverColor = ensure(obj.hoverColor);
-                          obj.hoverColor.token = val;
-                          return obj;
-                        };
-                        next.button = ensure(next.button);
-                        next.button.primary = ensureToken(next.button.primary);
-                        next.button.accent = ensureToken(next.button.accent);
-                        next.button.secondary = ensureToken(
-                          next.button.secondary
+                          next.button.secondary,
                         );
                         applyThemeComponents(next);
                         return next;
@@ -768,7 +924,7 @@ export default function ThemeSettingsPage() {
                         next.button.primary = ensureToken(next.button.primary);
                         next.button.accent = ensureToken(next.button.accent);
                         next.button.secondary = ensureToken(
-                          next.button.secondary
+                          next.button.secondary,
                         );
                         applyThemeComponents(next);
                         return next;
@@ -945,7 +1101,7 @@ export default function ThemeSettingsPage() {
                           v && typeof v === "object" ? v : {};
                         next.link = ensure(next.link);
                         next.link.hoverBackground = ensure(
-                          next.link.hoverBackground
+                          next.link.hoverBackground,
                         );
                         next.link.hoverBackground.token = val;
                         applyThemeComponents(next);
@@ -1103,7 +1259,7 @@ function ColorField({
         if (h < 0) h += 360;
       }
       return `hsl(${Math.round(h)} ${Math.round(s * 100)}% ${Math.round(
-        l * 100
+        l * 100,
       )}%)`;
     } catch {
       return value;
@@ -1164,7 +1320,7 @@ function ColorField({
             // Expect rgb(r,g,b)
             try {
               const m = v.match(
-                /rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i
+                /rgb\s*\(\s*(\d+)\s*,\s*(\d+)\s*,\s*(\d+)\s*\)/i,
               );
               if (m) {
                 const r = parseInt(m[1], 10),
@@ -1188,8 +1344,8 @@ function ColorField({
           colorMode === "HEX"
             ? "#RRGGBB"
             : colorMode === "RGB"
-            ? "rgb(r, g, b)"
-            : "hsl(h s% l%)"
+              ? "rgb(r, g, b)"
+              : "hsl(h s% l%)"
         }
       />
     </label>
@@ -1247,6 +1403,44 @@ function ScaleFieldSelect({
   );
 }
 
+function ThemeRange({
+  label,
+  value,
+  min,
+  max,
+  step,
+  onChange,
+}: {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  onChange: (next: number) => void;
+}) {
+  const display = Number.isFinite(value)
+    ? value.toFixed(3).replace(/0+$/, "").replace(/\.$/, "")
+    : "1";
+  return (
+    <label className="rounded-xl border border-[hsl(var(--border))] p-3 flex flex-col gap-2">
+      <div className="flex items-center justify-between gap-2 text-sm">
+        <span>{label}</span>
+        <span className="text-xs subtle">{display}rem</span>
+      </div>
+      <input
+        type="range"
+        className="theme-range"
+        min={min}
+        max={max}
+        step={step}
+        value={Number.isFinite(value) ? value : min}
+        onChange={(e) => onChange(Number.parseFloat(e.target.value))}
+        aria-label={`${label} range`}
+      />
+    </label>
+  );
+}
+
 function ScalesEditor({
   basePath,
   data,
@@ -1276,21 +1470,21 @@ function ScalesEditor({
         case "font": {
           if (path.includes("sizes"))
             return Object.values(
-              ((data as any).font || {}).sizes || {}
+              ((data as any).font || {}).sizes || {},
             ) as string[];
           if (path.includes("weights"))
             return Object.values(((data as any).font || {}).weights || {}).map(
-              String
+              String,
             );
           if (path.includes("lineHeights"))
             return Object.values(
-              ((data as any).font || {}).lineHeights || {}
+              ((data as any).font || {}).lineHeights || {},
             ).map(String);
           return [];
         }
         case "transitions":
           return Object.values((data as any).transitions || {}).filter(
-            (v) => typeof v === "string"
+            (v) => typeof v === "string",
           ) as string[];
         default:
           return [];
@@ -1324,7 +1518,7 @@ function ScalesEditor({
                       options={getOptions(`${path}.${k2}`, v2)}
                       onChange={(v) => onChange(`${path}.${k2}`, v)}
                     />
-                  )
+                  ),
                 )}
               </div>
             </div>

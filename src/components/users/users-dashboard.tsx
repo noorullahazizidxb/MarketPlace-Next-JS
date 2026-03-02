@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import {
   Users,
   Search as SearchIcon,
@@ -118,11 +118,11 @@ const UsersDashboard: React.FC = () => {
 
   const total = filtered.length;
   const pages = Math.max(1, Math.ceil(total / perPage));
-  const current = filtered.slice((page - 1) * perPage, page * perPage);
-
-  useEffect(() => {
-    if (page > pages) setPage(1);
-  }, [pages, page]);
+  const currentPage = Math.min(page, pages);
+  const current = filtered.slice(
+    (currentPage - 1) * perPage,
+    currentPage * perPage
+  );
 
   return (
     <div className="container-padded py-8 space-y-8">
@@ -140,7 +140,10 @@ const UsersDashboard: React.FC = () => {
           <div className="relative">
             <input
               value={query}
-              onChange={(e) => setQuery(e.target.value)}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setPage(1);
+              }}
               placeholder="Search users, listings, notifications…"
               className="h-11 w-72 max-w-[80vw] rounded-xl border bg-[hsl(var(--card))] pl-4 pr-11 text-sm"
               aria-label="Search users"
@@ -150,7 +153,10 @@ const UsersDashboard: React.FC = () => {
           <select
             aria-label="Filter by role"
             value={roleFilter ?? ""}
-            onChange={(e) => setRoleFilter(e.target.value || null)}
+            onChange={(e) => {
+              setRoleFilter(e.target.value || null);
+              setPage(1);
+            }}
             className="h-11 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm"
           >
             <option value="">All roles</option>
@@ -333,25 +339,25 @@ const UsersDashboard: React.FC = () => {
       </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="text-sm subtle">
-          Showing {Math.min(page * perPage, total)} of {total} users
+          Showing {Math.min(currentPage * perPage, total)} of {total} users
         </div>
         <div className="flex items-center gap-2">
           <Button
             variant="accent"
             size="sm"
-            disabled={page === 1}
-            onClick={() => setPage((p) => Math.max(1, p - 1))}
+            disabled={currentPage === 1}
+            onClick={() => setPage(Math.max(1, currentPage - 1))}
           >
             Prev
           </Button>
           <div className="px-3 py-1 rounded-xl border text-sm bg-[hsl(var(--accent))/0.12] border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]">
-            {page} / {pages}
+            {currentPage} / {pages}
           </div>
           <Button
             variant="accent"
             size="sm"
-            disabled={page === pages}
-            onClick={() => setPage((p) => Math.min(pages, p + 1))}
+            disabled={currentPage === pages}
+            onClick={() => setPage(Math.min(pages, currentPage + 1))}
           >
             Next
           </Button>

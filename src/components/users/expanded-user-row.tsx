@@ -1,5 +1,5 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/cn";
 import {
   ClipboardList,
@@ -225,8 +225,8 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
   const [active, setActive] = useState(sections[0]?.key || "listings");
   const [subQuery, setSubQuery] = useState("");
 
-  const activeSection = sections.find((s) => s.key === active)!;
-  const filteredData = useMemo(() => {
+  const activeSection = sections.find((s) => s.key === active) ?? sections[0];
+  const filteredData = (() => {
     const q = subQuery.toLowerCase().trim();
     if (!q) return activeSection.data;
     return (activeSection.data || []).filter((row: any) =>
@@ -235,7 +235,7 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
         .toLowerCase()
         .includes(q)
     );
-  }, [subQuery, activeSection]);
+  })();
 
   const [showBind, setShowBind] = useState(false);
 

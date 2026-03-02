@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useApiGet } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
+import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 
 type ListingLite = {
   id: string | number;
@@ -110,9 +111,9 @@ function HeroCarousel({
   title: string;
 }) {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [dir, setDir] = useState<1 | -1>(1);
   const intervalRef = useRef<number | null>(null);
+  const { isEngaged, engagementProps } = useEngagedAutoplay();
   const prefersReducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
@@ -133,20 +134,18 @@ function HeroCarousel({
       clearInterval(intervalRef.current);
       intervalRef.current = null;
     }
-    if (paused || prefersReducedMotion || visible.length <= 1) return;
+    if (!isEngaged || prefersReducedMotion || visible.length <= 1) return;
     intervalRef.current = window.setInterval(next, 4500);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [paused, prefersReducedMotion, visible.length, next]);
+  }, [isEngaged, prefersReducedMotion, visible.length, next]);
 
   return (
     <section
       className="relative mt-10"
-      onMouseEnter={() => setPaused(true)}
-      onMouseLeave={() => setPaused(false)}
-      onFocus={() => setPaused(true)}
-      onBlur={() => setPaused(false)}
+      {...engagementProps}
+      tabIndex={0}
       aria-label={title}
       role="region"
     >

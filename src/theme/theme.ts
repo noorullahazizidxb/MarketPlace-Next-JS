@@ -1,5 +1,5 @@
-import { api } from "../lib/axiosClient";
 import presets from "./presets.json";
+import { config } from "@/lib/config";
 
 type ThemeTokens = any;
 
@@ -74,18 +74,34 @@ export function applyThemeTokens(tokens: ThemeTokens) {
   } catch (_) {}
 }
 
-export async function fetchRemoteThemes() {
-  try {
-    const res = await api.get<any[]>("/themes");
-    return res;
-  } catch (e) {
-    throw e;
-  }
+const asTokenObject = (obj: Record<string, any>) =>
+  Object.fromEntries(
+    Object.entries(obj || {}).map(([k, v]) => [
+      k,
+      typeof v === "string" ? { css: `hsl(${v})` } : v,
+    ])
+  );
+
+export async function loadFileThemes() {
+  const res = await fetch(config.themeFileRoute, { cache: "no-store" });
+  if (!res.ok) throw new Error(`Failed to load theme file: ${res.status}`);
+  return (await res.json()) as any[];
 }
 
-export async function loadLocalPresets() {
-  // return bundled presets.json so dev server doesn't need to serve static JSON
-  return presets;
+export async function loadBundledThemeFallback() {
+  return [
+    {
+      id: "bundled-fallback",
+      name: "Bundled Fallback",
+      tokens: {
+        tokens: {
+          light: asTokenObject((presets as any).light || {}),
+          dark: asTokenObject((presets as any).dark || {}),
+        },
+        preferredColorMode: "HSL",
+      },
+    },
+  ];
 }
 
 export function applyThemeScales(scales: any) {
@@ -105,6 +121,36 @@ export function applyThemeScales(scales: any) {
     setGroup("font-size", scales.font.sizes);
     if (scales.font.family)
       root.style.setProperty("--font-family", String(scales.font.family));
+    if (scales.font.families?.english) {
+      root.style.setProperty(
+        "--font-family-english",
+        String(scales.font.families.english)
+      );
+    }
+    if (scales.font.families?.persian) {
+      root.style.setProperty(
+        "--font-family-persian",
+        String(scales.font.families.persian)
+      );
+    }
+    if (scales.font.families?.heading) {
+      root.style.setProperty(
+        "--font-family-heading",
+        String(scales.font.families.heading)
+      );
+    }
+    if (scales.font.elements?.body) {
+      root.style.setProperty("--font-size-body", String(scales.font.elements.body));
+    }
+    if (scales.font.elements?.heading) {
+      root.style.setProperty(
+        "--font-size-heading",
+        String(scales.font.elements.heading)
+      );
+    }
+    if (scales.font.elements?.ui) {
+      root.style.setProperty("--font-size-ui", String(scales.font.elements.ui));
+    }
     setGroup("font-weight", scales.font.weights);
     setGroup("line-height", scales.font.lineHeights);
   }
