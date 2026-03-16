@@ -1,0 +1,115 @@
+.market-loader {
+  --loader-size: 4.2rem;
+  --loader-text-size: clamp(1.4rem, 3vw, 3.1rem);
+  --loader-fill: hsl(var(--accent));
+  --loader-stroke: hsl(var(--accent));
+  --loader-shape-start: hsl(var(--accent));
+  --loader-shape-end: hsl(var(--primary));
+  --loader-glow: hsl(var(--accent) / 0.42);
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+
+.market-loader__shape {
+  width: var(--loader-size);
+  aspect-ratio: 1.154;
+  position: relative;
+  background: conic-gradient(from 120deg at 50% 64%, transparent, var(--loader-shape-start) 1deg 95deg, var(--loader-shape-end) 96deg 120deg, transparent 121deg);
+  animation: market-loader-shape-spin 1.8s infinite cubic-bezier(0.3, 1, 0, 1);
+  filter: drop-shadow(0 0 14px var(--loader-glow));
+}
+
+.market-loader__shape::before,
+.market-loader__shape::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: inherit;
+  transform-origin: 50% 66%;
+  animation: market-loader-shape-bob 1.8s infinite;
+}
+
+.market-loader__shape::after {
+  --s: -1;
+}
+
+.market-loader__text {
+  width: fit-content;
+  font-size: var(--loader-text-size);
+  font-family: inherit;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: transparent;
+  -webkit-text-stroke: 1px var(--loader-stroke);
+  background:
+    linear-gradient(90deg, var(--loader-fill), var(--loader-shape-end), var(--loader-fill)) 0 0/220% 100% text;
+  animation:
+    market-loader-text-shift-x 1.2s linear infinite alternate,
+    market-loader-text-breathe 2.6s ease-in-out infinite;
+}
+
+@keyframes market-loader-text-shift-x {
+  to {
+    background-position-x: 50%, calc(50% + 1em);
+  }
+}
+
+@keyframes market-loader-shape-spin {
+
+  0%,
+  30% {
+    transform: rotate(0deg);
+  }
+
+  70% {
+    transform: rotate(120deg);
+  }
+
+  70.01%,
+  100% {
+    transform: rotate(360deg) scale(1.02);
+  }
+}
+
+@keyframes market-loader-shape-bob {
+  0% {
+    transform: rotate(calc(var(--s, 1) * 120deg)) translate(0, 0);
+  }
+
+  30%,
+  70% {
+    transform: rotate(calc(var(--s, 1) * 120deg)) translate(calc(var(--s, 1) * -6px), 11px);
+  }
+
+  100% {
+    transform: rotate(calc(var(--s, 1) * 120deg)) translate(0, 0);
+  }
+}
+
+@keyframes market-loader-text-breathe {
+
+  0%,
+  100% {
+    opacity: 0.82;
+    transform: translateY(0);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translateY(-1px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+  .market-loader__shape,
+  .market-loader__shape::before,
+  .market-loader__shape::after,
+  .market-loader__text {
+    animation: none;
+  }
+}

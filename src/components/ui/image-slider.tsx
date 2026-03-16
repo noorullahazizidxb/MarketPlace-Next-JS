@@ -47,6 +47,7 @@ export function ImageSlider({
       : [{ url: "/images/placeholder-card.jpg", alt: "placeholder" }];
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
+  const immediateTimer = useRef<number | null>(null);
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const { isEngaged, engagementProps } = useEngagedAutoplay();
   const prevActiveRef = useRef(false);
@@ -72,7 +73,7 @@ export function ImageSlider({
     return () => {
       try {
         obs.disconnect();
-      } catch {}
+      } catch { }
     };
   }, []);
 
@@ -83,6 +84,7 @@ export function ImageSlider({
 
     // simple autoplay
     if (timer.current) window.clearInterval(timer.current);
+    if (immediateTimer.current) window.clearTimeout(immediateTimer.current);
     if (
       autoPlay &&
       (isEngaged || forceEngaged) &&
@@ -91,7 +93,9 @@ export function ImageSlider({
       slides.length > 1
     ) {
       if (justActivated) {
-        setIndex((i) => (i + 1) % slides.length);
+        immediateTimer.current = window.setTimeout(() => {
+          setIndex((i) => (i + 1) % slides.length);
+        }, 120);
       }
       timer.current = window.setInterval(() => {
         setIndex((i) => (i + 1) % slides.length);
@@ -99,6 +103,7 @@ export function ImageSlider({
     }
     return () => {
       if (timer.current) window.clearInterval(timer.current);
+      if (immediateTimer.current) window.clearTimeout(immediateTimer.current);
     };
   }, [
     slides.length,
@@ -126,9 +131,8 @@ export function ImageSlider({
       {...engagementProps}
     >
       <div
-        className={`w-full ${
-          heightClass ? heightClass : getAspectClass(aspect)
-        }`}
+        className={`w-full ${heightClass ? heightClass : getAspectClass(aspect)
+          }`}
       >
         <div
           ref={scrollerRef}
@@ -162,17 +166,25 @@ export function ImageSlider({
       {slides.length > 1 && (
         <>
           <button
+            type="button"
             aria-label="Previous image"
-            onClick={() =>
-              setIndex((i) => (i - 1 + slides.length) % slides.length)
-            }
+            data-slider-control="true"
+            onClick={(event) => {
+              event.stopPropagation();
+              setIndex((i) => (i - 1 + slides.length) % slides.length);
+            }}
             className={`absolute left-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
           >
             <ChevronLeft className="size-5" />
           </button>
           <button
+            type="button"
             aria-label="Next image"
-            onClick={() => setIndex((i) => (i + 1) % slides.length)}
+            data-slider-control="true"
+            onClick={(event) => {
+              event.stopPropagation();
+              setIndex((i) => (i + 1) % slides.length);
+            }}
             className={`absolute right-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
           >
             <ChevronRight className="size-5" />
@@ -180,14 +192,18 @@ export function ImageSlider({
           <div className="absolute left-1/2 -translate-x-1/2 bottom-2 flex items-center gap-2 z-30">
             {slides.map((_, i) => (
               <button
+                type="button"
                 key={i}
                 aria-label={`Go to slide ${i + 1}`}
-                onClick={() => setIndex(i)}
-                className={`w-2 h-2 rounded-full go-to-slide ${
-                  i === index
-                    ? "bg-[hsl(var(--accent))]"
-                    : "bg-[hsl(var(--foreground))/0.4]"
-                }`}
+                data-slider-control="true"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIndex(i);
+                }}
+                className={`w-2 h-2 rounded-full go-to-slide ${i === index
+                  ? "bg-[hsl(var(--accent))]"
+                  : "bg-[hsl(var(--foreground))/0.4]"
+                  }`}
               />
             ))}
           </div>

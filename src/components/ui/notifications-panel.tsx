@@ -144,12 +144,12 @@ export function NotificationsPanel({
         const createdAt = (s as any).createdAt || new Date().toISOString();
         const recipients: Recipient[] = uid
           ? [
-              {
-                id: 0,
-                userId: uid,
-                readAt: (s as any).read ? new Date().toISOString() : null,
-              },
-            ]
+            {
+              id: 0,
+              userId: uid,
+              readAt: (s as any).read ? new Date().toISOString() : null,
+            },
+          ]
           : [];
         map.set(s.id, {
           id: s.id,
@@ -217,7 +217,7 @@ export function NotificationsPanel({
     );
     try {
       markReadInStore(id);
-    } catch {}
+    } catch { }
     try {
       if (onMarkRead) {
         await onMarkRead(id);
@@ -227,7 +227,7 @@ export function NotificationsPanel({
           body: { readAt: new Date().toISOString() },
         });
       }
-    } catch {}
+    } catch { }
   };
 
   const markAll = async () => {
@@ -244,7 +244,7 @@ export function NotificationsPanel({
     );
     try {
       ids.forEach((id) => markReadInStore(id));
-    } catch {}
+    } catch { }
     try {
       if (onMarkAllRead) {
         await onMarkAllRead(ids);
@@ -252,7 +252,7 @@ export function NotificationsPanel({
         const payload = { ids, readAt: new Date().toISOString() };
         await markAllMutation.mutateAsync(payload as any);
       }
-    } catch {}
+    } catch { }
   };
 
   useEffect(() => {
@@ -300,24 +300,24 @@ export function NotificationsPanel({
               anchor === "center"
                 ? "fixed inset-0 z-[1200] flex items-center justify-center p-4"
                 : anchor === "bottom-center"
-                ? "fixed bottom-[110px] left-1/2 -translate-x-1/2 z-[1200] w-[min(96vw,440px)] origin-bottom"
-                : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
+                  ? "fixed bottom-[110px] left-1/2 -translate-x-1/2 z-[1200] w-[min(96vw,440px)] origin-bottom"
+                  : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
               className
             )}
             initial={
               anchor === "bottom-center"
                 ? { opacity: 0, y: 12, scale: 0.96 }
                 : anchor === "center"
-                ? { opacity: 0, scale: 0.98 }
-                : { opacity: 0, y: -8, scale: 0.98 }
+                  ? { opacity: 0, scale: 0.98 }
+                  : { opacity: 0, y: -8, scale: 0.98 }
             }
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={
               anchor === "bottom-center"
                 ? { opacity: 0, y: 12, scale: 0.96 }
                 : anchor === "center"
-                ? { opacity: 0, scale: 0.98 }
-                : { opacity: 0, y: -8, scale: 0.98 }
+                  ? { opacity: 0, scale: 0.98 }
+                  : { opacity: 0, y: -8, scale: 0.98 }
             }
             transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
           >
@@ -372,112 +372,114 @@ export function NotificationsPanel({
                     {t("noNotifications")}
                   </div>
                 ) : (
-                  <ul className="space-y-4">
+                  <div className="space-y-4">
                     {groupOrder.map((g) => {
                       if (!grouped[g]?.length) return null;
                       return (
-                        <li key={g} className="space-y-2">
+                        <section key={g} className="space-y-2" aria-label={g}>
                           <div className="px-2 text-[10px] font-semibold tracking-wide uppercase text-foreground/60">
                             {g === "Today"
                               ? t("today")
                               : g === "Yesterday"
-                              ? t("yesterday")
-                              : g === "This Week"
-                              ? t("thisWeek")
-                              : g === "Earlier"
-                              ? t("earlier")
-                              : g}
+                                ? t("yesterday")
+                                : g === "This Week"
+                                  ? t("thisWeek")
+                                  : g === "Earlier"
+                                    ? t("earlier")
+                                    : g}
                           </div>
-                          {grouped[g].map(({ n, unread }) => {
-                            const Icon = channelIcon(n.channel);
-                            return (
-                              <motion.li
-                                key={n.id}
-                                layout
-                                initial={{ opacity: 0, y: 6 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -6 }}
-                                className="relative"
-                              >
-                                <motion.div
-                                  drag="x"
-                                  dragConstraints={{ left: 0, right: 0 }}
-                                  dragElastic={0.4}
-                                  onDragEnd={(e, info) => {
-                                    if (info.offset.x < -90) {
-                                      if (unread) markOne(n.id);
-                                    }
-                                  }}
-                                  className={cn(
-                                    "group relative rounded-2xl border p-3 pr-4 transition-colors overflow-hidden",
-                                    "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
-                                    unread &&
-                                      "ring-1 ring-[hsl(var(--accent))]/40"
-                                  )}
+                          <ul className="space-y-2" role="list">
+                            {grouped[g].map(({ n, unread }) => {
+                              const Icon = channelIcon(n.channel);
+                              return (
+                                <motion.li
+                                  key={n.id}
+                                  layout
+                                  initial={{ opacity: 0, y: 6 }}
+                                  animate={{ opacity: 1, y: 0 }}
+                                  exit={{ opacity: 0, y: -6 }}
+                                  className="relative"
                                 >
-                                  <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[hsl(var(--accent))/0.12] opacity-0 group-active:opacity-100 pointer-events-none">
-                                    <span className="text-[10px] font-semibold text-[hsl(var(--accent))] rotate-6">
-                                      {t("swipe")}
-                                    </span>
-                                  </div>
-                                  <div className="flex items-start gap-3">
-                                    <div
-                                      className={cn(
-                                        "mt-0.5 size-9 rounded-xl grid place-items-center shadow-sm",
-                                        unread
-                                          ? "bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))]"
-                                          : "bg-[hsl(var(--muted))] subtle"
-                                      )}
-                                    >
-                                      <Icon className="size-5" />
+                                  <motion.div
+                                    drag="x"
+                                    dragConstraints={{ left: 0, right: 0 }}
+                                    dragElastic={0.4}
+                                    onDragEnd={(e, info) => {
+                                      if (info.offset.x < -90) {
+                                        if (unread) markOne(n.id);
+                                      }
+                                    }}
+                                    className={cn(
+                                      "group relative rounded-2xl border p-3 pr-4 transition-colors overflow-hidden",
+                                      "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
+                                      unread &&
+                                      "ring-1 ring-[hsl(var(--accent))]/40"
+                                    )}
+                                  >
+                                    <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[hsl(var(--accent))/0.12] opacity-0 group-active:opacity-100 pointer-events-none">
+                                      <span className="text-[10px] font-semibold text-[hsl(var(--accent))] rotate-6">
+                                        {t("swipe")}
+                                      </span>
                                     </div>
-                                    <div className="min-w-0 flex-1">
-                                      <div className="flex items-start justify-between gap-3">
-                                        <div>
-                                          <div className="text-sm font-semibold line-clamp-1">
-                                            {n.title ||
-                                              t("notificationSingular")}
-                                          </div>
-                                          {(() => {
-                                            const msg = getMessage(n as any);
-                                            return msg ? (
-                                              <div className="text-sm subtle line-clamp-2">
-                                                {msg}
-                                              </div>
-                                            ) : null;
-                                          })()}
-                                        </div>
-                                        <div className="text-2xs subtle whitespace-nowrap">
-                                          {formatTimeAgo(n.createdAt)}
-                                        </div>
-                                      </div>
-                                      <div className="mt-2 flex items-center gap-2">
-                                        {unread ? (
-                                          <button
-                                            onClick={() => markOne(n.id)}
-                                            className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
-                                          >
-                                            <CheckCircle2 className="size-4" />
-                                            {t("markAsRead")}
-                                          </button>
-                                        ) : (
-                                          <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
-                                            <CheckCircle2 className="size-4" />
-                                            {t("read")}
-                                          </span>
+                                    <div className="flex items-start gap-3">
+                                      <div
+                                        className={cn(
+                                          "mt-0.5 size-9 rounded-xl grid place-items-center shadow-sm",
+                                          unread
+                                            ? "bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))]"
+                                            : "bg-[hsl(var(--muted))] subtle"
                                         )}
+                                      >
+                                        <Icon className="size-5" />
+                                      </div>
+                                      <div className="min-w-0 flex-1">
+                                        <div className="flex items-start justify-between gap-3">
+                                          <div>
+                                            <div className="text-sm font-semibold line-clamp-1">
+                                              {n.title ||
+                                                t("notificationSingular")}
+                                            </div>
+                                            {(() => {
+                                              const msg = getMessage(n as any);
+                                              return msg ? (
+                                                <div className="text-sm subtle line-clamp-2">
+                                                  {msg}
+                                                </div>
+                                              ) : null;
+                                            })()}
+                                          </div>
+                                          <div className="text-2xs subtle whitespace-nowrap">
+                                            {formatTimeAgo(n.createdAt)}
+                                          </div>
+                                        </div>
+                                        <div className="mt-2 flex items-center gap-2">
+                                          {unread ? (
+                                            <button
+                                              onClick={() => markOne(n.id)}
+                                              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
+                                            >
+                                              <CheckCircle2 className="size-4" />
+                                              {t("markAsRead")}
+                                            </button>
+                                          ) : (
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
+                                              <CheckCircle2 className="size-4" />
+                                              {t("read")}
+                                            </span>
+                                          )}
+                                        </div>
                                       </div>
                                     </div>
-                                  </div>
-                                  <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_12px_40px_rgba(0,0,0,0.25)]" />
-                                </motion.div>
-                              </motion.li>
-                            );
-                          })}
-                        </li>
+                                    <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_12px_40px_rgba(0,0,0,0.25)]" />
+                                  </motion.div>
+                                </motion.li>
+                              );
+                            })}
+                          </ul>
+                        </section>
                       );
                     })}
-                  </ul>
+                  </div>
                 )}
               </div>
             </div>

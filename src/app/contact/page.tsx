@@ -1,4 +1,3 @@
-import ContactForm from "@/components/ui/contact-form";
 import { ContactContent } from "./contact-content";
 
 export const metadata = {
@@ -9,7 +8,6 @@ export default function ContactPage() {
   return (
     <main className="pb-20">
       <ContactContent />
-      <ContactForm />
     </main>
   );
 }

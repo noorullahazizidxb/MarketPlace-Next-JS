@@ -404,13 +404,13 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(pageUrl);
-    } catch {}
+    } catch { }
   };
   const share = async () => {
     if ((navigator as any).share) {
       try {
         await (navigator as any).share({ url: pageUrl });
-      } catch {}
+      } catch { }
     } else {
       copy();
     }
@@ -538,11 +538,10 @@ function Stars({ count }: { count: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`size-4 ${
-            i < count
+          className={`size-4 ${i < count
               ? "fill-yellow-400 text-yellow-400"
               : "text-[hsl(var(--primary))]/20"
-          }`}
+            }`}
         />
       ))}
     </div>
@@ -602,6 +601,8 @@ function AvatarSmall({ user }: { user?: any }) {
         <Image
           src={asset(photo)}
           alt={name}
+          width={40}
+          height={40}
           className="w-full h-full object-cover"
         />
       ) : (
@@ -782,9 +783,8 @@ function StarRatingInput({
             className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 rounded-md`}
           >
             <Star
-              className={`size-6 ${
-                active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
-              }`}
+              className={`size-6 ${active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
+                }`}
             />
           </button>
         );

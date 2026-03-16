@@ -33,6 +33,9 @@ const ENGLISH_FONT_OPTIONS = [
   "Roboto",
   "Open Sans",
   "Lato",
+  "Montserrat",
+  "Nunito",
+  "Work Sans",
   "Coolvetica",
   "Arial",
   "Helvetica",
@@ -42,10 +45,12 @@ const ENGLISH_FONT_OPTIONS = [
 
 const PERSIAN_FONT_OPTIONS = [
   "Vazirmatn",
+  "Noto Sans Arabic",
+  "Noto Naskh Arabic",
+  "Cairo",
   "Yekan",
   "HSDream",
   "Tahoma",
-  "Noto Sans Arabic",
   "Arial",
 ];
 
@@ -136,7 +141,7 @@ const hslCssToHex = (hslCss: string): string => {
     else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
     else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
     else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
-    else [r, g, b] = [c, 0, x];
+    else[r, g, b] = [c, 0, x];
     const toHex = (n: number) => {
       const v = Math.round((n + m) * 255);
       return (v < 16 ? "0" : "") + v.toString(16);
@@ -165,7 +170,7 @@ const hslCssToRgb = (hslCss: string): string => {
     else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
     else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
     else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
-    else [r, g, b] = [c, 0, x];
+    else[r, g, b] = [c, 0, x];
     const to255 = (n: number) => Math.round((n + m) * 255);
     return `rgb(${to255(r)}, ${to255(g)}, ${to255(b)})`;
   } catch {
@@ -221,7 +226,7 @@ export default function ThemeSettingsPage() {
     try {
       const ls = localStorage.getItem("preferred-color-mode");
       if (ls === "HEX" || ls === "RGB" || ls === "HSL") return ls as ColorMode;
-    } catch {}
+    } catch { }
     return "HSL";
   });
   const [themeMeta, setThemeMeta] = useState<any | null>(null);
@@ -339,7 +344,7 @@ export default function ThemeSettingsPage() {
       setColorMode(pref as ColorMode);
       try {
         localStorage.setItem("preferred-color-mode", pref);
-      } catch {}
+      } catch { }
     }
   }, [themesData]);
 
@@ -550,31 +555,28 @@ export default function ThemeSettingsPage() {
       {/* Section tabs */}
       <div className="flex items-center gap-2">
         <button
-          className={`px-3 py-1.5 rounded-full border ${
-            activeTab === "colors"
+          className={`px-3 py-1.5 rounded-full border ${activeTab === "colors"
               ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
               : "border-[hsl(var(--border))]"
-          }`}
+            }`}
           onClick={() => setActiveTab("colors")}
         >
           {t("colors")}
         </button>
         <button
-          className={`px-3 py-1.5 rounded-full border ${
-            activeTab === "scales"
+          className={`px-3 py-1.5 rounded-full border ${activeTab === "scales"
               ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
               : "border-[hsl(var(--border))]"
-          }`}
+            }`}
           onClick={() => setActiveTab("scales")}
         >
           {t("scales")}
         </button>
         <button
-          className={`px-3 py-1.5 rounded-full border ${
-            activeTab === "components"
+          className={`px-3 py-1.5 rounded-full border ${activeTab === "components"
               ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
               : "border-[hsl(var(--border))]"
-          }`}
+            }`}
           onClick={() => setActiveTab("components")}
         >
           {t("components")}
@@ -1220,7 +1222,7 @@ function ColorField({
       else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
       else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
       else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
-      else [r, g, b] = [c, 0, x];
+      else[r, g, b] = [c, 0, x];
       const toHex = (n: number) => {
         const v = Math.round((n + m) * 255);
         return (v < 16 ? "0" : "") + v.toString(16);
@@ -1286,7 +1288,7 @@ function ColorField({
       else if (120 <= h && h < 180) [r, g, b] = [0, c, x];
       else if (180 <= h && h < 240) [r, g, b] = [0, x, c];
       else if (240 <= h && h < 300) [r, g, b] = [x, 0, c];
-      else [r, g, b] = [c, 0, x];
+      else[r, g, b] = [c, 0, x];
       const to255 = (n: number) => Math.round((n + m) * 255);
       return `rgb(${to255(r)}, ${to255(g)}, ${to255(b)})`;
     } catch {
@@ -1333,7 +1335,7 @@ function ColorField({
                 onChange(hexToHslCss(hexVal));
                 return;
               }
-            } catch {}
+            } catch { }
             // fallback: pass-through
             onChange(v);
           } else {

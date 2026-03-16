@@ -11,6 +11,15 @@ export function useRealtimeSocial(token?: string) {
   useEffect(() => {
     const sock = initSocket(token);
 
+    const mutateBlogLists = (updater: (prev: any[] | undefined) => any[]) => {
+      swrMutate(
+        (key) => Array.isArray(key) && key[0] === "blogs" && key.length >= 3,
+        (prev: any) => updater(Array.isArray(prev) ? prev : []),
+        false
+      );
+      swrMutate(["blogs"], (prev: any[] = []) => updater(prev), false);
+    };
+
     const normalizeComment = (raw: any) => {
       const authorRaw = raw?.author || raw?.user || {};
       const authorId = raw?.authorId || raw?.userId || authorRaw?.id;
@@ -42,7 +51,7 @@ export function useRealtimeSocial(token?: string) {
         if (!document.getElementById("aria-live-region"))
           document.body.appendChild(region);
         setTimeout(() => (region.textContent = ""), 1200);
-      } catch {}
+      } catch { }
     };
 
     sock.on("storyCreated", (s: any) => {
@@ -57,14 +66,12 @@ export function useRealtimeSocial(token?: string) {
       const b = (p as any).blog || (p as any);
       if (!b?.id) return;
       // Update list: replace if exists, otherwise prepend
-      swrMutate(
-        ["blogs"],
+      mutateBlogLists(
         (prev: any[] = []) => {
           const idx = prev.findIndex((x) => String(x.id) === String(b.id));
           if (idx >= 0) return prev.map((x) => (String(x.id) === String(b.id) ? { ...x, ...b } : x));
           return [b, ...prev];
         },
-        false
       );
       // Update detail cache
       swrMutate(["blogs", b.id], (prev: any) => ({ ...(prev || {}), ...b }), false);
@@ -74,8 +81,7 @@ export function useRealtimeSocial(token?: string) {
     sock.on("blogCreated", (payload: any) => {
       const b = payload?.data || payload || {};
       if (!b?.id) return;
-      swrMutate(
-        ["blogs"],
+      mutateBlogLists(
         (prev: any[] = []) => {
           // If a temporary entry exists (id starts with tmp_), replace it by matching title/content or remove it
           const tmpIdx = prev.findIndex((x) => String(x.id).startsWith("tmp_") && (String(x.title) === String(b.title) || String(x.content) === String(b.content)));
@@ -88,7 +94,6 @@ export function useRealtimeSocial(token?: string) {
           if (!prev.find((x) => String(x.id) === String(b.id))) return [b, ...prev];
           return prev;
         },
-        false
       );
       // update detail cache
       swrMutate(["blogs", b.id], b, false);
@@ -113,8 +118,7 @@ export function useRealtimeSocial(token?: string) {
         },
         false
       );
-      swrMutate(
-        ["blogs"],
+      mutateBlogLists(
         (prev: any[] = []) => {
           // update the list item so BlogViewer gets fresh blog object with new comment
           return prev.map((x) => {
@@ -129,22 +133,19 @@ export function useRealtimeSocial(token?: string) {
             };
           });
         },
-        false
       );
     });
 
     sock.on("newLike", (p: CountPayload) => {
       if (!p?.blogId) return;
       if (typeof p.likes === "number") {
-        swrMutate(
-          ["blogs"],
+        mutateBlogLists(
           (prev: any[] = []) =>
             prev.map((x) =>
               String(x.id) === String(p.blogId)
                 ? { ...x, counts: { ...(x.counts || {}), likes: p.likes } }
                 : x
             ),
-          false
         );
         swrMutate(
           ["blogs", p.blogId],
@@ -161,15 +162,13 @@ export function useRealtimeSocial(token?: string) {
     sock.on("newShare", (p: CountPayload) => {
       if (!p?.blogId) return;
       if (typeof p.shares === "number") {
-        swrMutate(
-          ["blogs"],
+        mutateBlogLists(
           (prev: any[] = []) =>
             prev.map((x) =>
               String(x.id) === String(p.blogId)
                 ? { ...x, counts: { ...(x.counts || {}), shares: p.shares } }
                 : x
             ),
-          false
         );
         swrMutate(
           ["blogs", p.blogId],
@@ -189,7 +188,7 @@ export function useRealtimeSocial(token?: string) {
         getSocket()?.off("newComment");
         getSocket()?.off("newLike");
         getSocket()?.off("newShare");
-      } catch {}
+      } catch { }
     };
   }, [token]);
 }

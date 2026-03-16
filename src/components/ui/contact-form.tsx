@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2, Mail, MessageSquareText, PhoneCall } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useLocalMutation } from "@/lib/api-hooks";
 
 export default function ContactForm() {
-  const { t } = useLanguage();
-  const { isRtl } = useLanguage();
+  const { t, isRtl } = useLanguage();
   const [status, setStatus] = useState<
     "idle" | "loading" | "success" | "error"
   >("idle");
@@ -37,41 +37,74 @@ export default function ContactForm() {
   return (
     <section
       dir={isRtl ? "rtl" : "ltr"}
-      className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 mt-12"
+      className="w-full"
     >
       <form
-        className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 space-y-4"
+        className="space-y-5 rounded-[2rem] border border-[hsl(var(--border))] bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--background)))] p-6 shadow-[0_24px_60px_-32px_rgba(0,0,0,0.45)] sm:p-8"
         action={onSubmit}
       >
+        <div className="space-y-2">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[hsl(var(--accent))]">
+            {t("sendMessage")}
+          </p>
+          <h2 className="text-2xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+            {t("contactFormTitle")}
+          </h2>
+          <p className="text-sm leading-7 text-[hsl(var(--foreground))/0.74]">
+            {t("contactFormSubtitle")}
+          </p>
+        </div>
+
+        <div className="grid gap-3 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.68] p-4 sm:grid-cols-3">
+          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
+            <Mail className="size-4 text-[hsl(var(--accent))]" />
+            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+              {t("contactEmailValue")}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
+            <PhoneCall className="size-4 text-[hsl(var(--accent))]" />
+            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+              {t("contactPhoneValue")}
+            </span>
+          </div>
+          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
+            <MessageSquareText className="size-4 text-[hsl(var(--accent))]" />
+            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+              {t("contactResponseTime")}
+            </span>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm mb-1">{t("fullName")}</label>
+            <label className="mb-1 block text-sm font-medium">{t("fullName")}</label>
             <input
               required
               name="name"
               type="text"
               placeholder={t("signUpPlaceholderFullName")}
-              className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
+              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
             />
           </div>
           <div>
-            <label className="block text-sm mb-1">{t("emailAddress")}</label>
+            <label className="mb-1 block text-sm font-medium">{t("emailAddress")}</label>
             <input
               required
               name="email"
               type="email"
               placeholder={t("emailPlaceholder")}
-              className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
+              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
             />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm mb-1">{t("subject")}</label>
+            <label className="mb-1 block text-sm font-medium">{t("subject")}</label>
             <select
               name="subject"
               required
-              className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
+              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
               defaultValue=""
               aria-label="Subject"
             >
@@ -88,27 +121,27 @@ export default function ContactForm() {
             </select>
           </div>
           <div>
-            <label className="block text-sm mb-1">{t("phoneOptional")}</label>
+            <label className="mb-1 block text-sm font-medium">{t("phoneOptional")}</label>
             <input
               name="phone"
               type="tel"
               placeholder={t("signUpPlaceholderPhone")}
-              className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
+              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
             />
           </div>
         </div>
         <div>
-          <label className="block text-sm mb-1">{t("message")}</label>
+          <label className="mb-1 block text-sm font-medium">{t("message")}</label>
           <textarea
             required
             name="message"
-            rows={5}
+            rows={6}
             placeholder={t("messagePlaceholder")}
-            className="w-full rounded-xl border border-[hsl(var(--border))] bg-transparent px-3 py-2 outline-none focus:ring-2 ring-[hsl(var(--primary))]/40"
+            className="w-full rounded-[1.5rem] border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
           />
         </div>
-        <div className="flex items-center justify-between gap-3 pt-2">
-          <div className="text-sm">
+        <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-h-5 text-sm">
             {status === "success" && (
               <span className="text-[hsl(140 60% 60%)]">{message}</span>
             )}
@@ -119,8 +152,9 @@ export default function ContactForm() {
           <button
             type="submit"
             disabled={status === "loading"}
-            className="inline-flex items-center rounded-xl bg-[hsl(var(--primary))] px-5 py-2.5 text-sm font-medium text-[hsl(var(--primary-foreground))] shadow-sm transition hover:bg-[hsl(var(--primary))]/90 disabled:opacity-60"
+            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] px-6 py-3 text-sm font-semibold text-[hsl(var(--primary-foreground))] shadow-lg transition-all duration-200 hover:bg-[hsl(var(--primary))] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
           >
+            {status === "loading" && <Loader2 className="size-4 animate-spin" />}
             {status === "loading" ? t("sending") : t("sendMessage")}
           </button>
         </div>

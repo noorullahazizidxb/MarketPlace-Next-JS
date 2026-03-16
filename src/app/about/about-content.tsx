@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
+import { motion } from "framer-motion";
+import AboutCtaBanner from "@/components/ui/about-cta-banner";
 
 export function AboutContent({
   marketplaceName,
@@ -29,9 +31,19 @@ export function AboutContent({
             fill
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[hsl(var(--background))]/40 via-[hsl(var(--background))]/40 to-[hsl(var(--background))]" />
+          <motion.div
+            className="absolute -left-10 top-8 h-36 w-36 rounded-3xl border border-white/20 bg-[hsl(var(--accent))/0.14] backdrop-blur-xl"
+            animate={{ rotate: [10, 24, 10], y: [0, 10, 0] }}
+            transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
+          />
+          <motion.div
+            className="absolute right-8 bottom-10 h-28 w-28 rounded-full border-2 border-[hsl(var(--accent)/0.45)]"
+            animate={{ scale: [1, 1.14, 1], opacity: [0.6, 1, 0.6] }}
+            transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
+          />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="max-w-3xl">
+          <div className={`max-w-3xl ${isRtl ? "text-right" : "text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
             <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[hsl(var(--foreground))]">
               {t("futureFlexible")}
             </h1>
@@ -44,7 +56,7 @@ export function AboutContent({
                   href="/listings"
                   className="inline-flex items-center gap-2 px-5 py-3 h-auto"
                 >
-                  {t("browseListings")} <ArrowRight className="h-4 w-4" />
+                  {t("browseListings")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
                 </Link>
               </Button>
               <Button asChild variant="secondary">
@@ -52,7 +64,7 @@ export function AboutContent({
                   href="/sign-in"
                   className="inline-flex items-center gap-2 px-5 py-3 h-auto"
                 >
-                  {t("becomeSeller")} <ArrowRight className="h-4 w-4" />
+                  {t("becomeSeller")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
                 </Link>
               </Button>
             </div>
@@ -153,9 +165,8 @@ export function AboutContent({
               className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"
             >
               <Image
-                src={`https://images.unsplash.com/photo-15${
-                  i + 1
-                }27157730-0d3a42b2c3f4?q=80&w=600&auto=format&fit=crop`}
+                src={`https://images.unsplash.com/photo-15${i + 1
+                  }27157730-0d3a42b2c3f4?q=80&w=600&auto=format&fit=crop`}
                 alt={m.name}
                 className="h-24 w-24 rounded-full object-cover"
                 width={96}
@@ -175,22 +186,7 @@ export function AboutContent({
 
       {/* CTA */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-        <div className="rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-r from-[hsl(var(--primary))]/15 via-[hsl(var(--primary))]/10 to-[hsl(var(--primary))]/15 p-8 text-center">
-          <h2 className="text-2xl font-semibold">{t("joinCommunity")}</h2>
-          <p className="mt-2 text-foreground/80">{t("joinCommunityText")}</p>
-          <div className="mt-6 flex flex-wrap items-center justify-center gap-3">
-            <Button asChild variant="primary">
-              <Link href="/listings" className="px-5 py-3 h-auto">
-                {t("browseListings")}
-              </Link>
-            </Button>
-            <Button asChild variant="secondary">
-              <Link href="/sign-in" className="px-5 py-3 h-auto">
-                {t("becomeSeller")}
-              </Link>
-            </Button>
-          </div>
-        </div>
+        <AboutCtaBanner />
       </section>
     </main>
   );

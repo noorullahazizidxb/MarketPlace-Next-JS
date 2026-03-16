@@ -10,12 +10,19 @@ import Link from "next/link";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
 
+function deferCountSync(callback?: () => void) {
+  if (!callback) return;
+  queueMicrotask(callback);
+}
+
 export default function CommentsInline({
   blogId,
   comments,
+  onCommentCountChange,
 }: {
   blogId: string;
   comments?: any[];
+  onCommentCountChange?: (nextCount: number) => void;
 }) {
   const [value, setValue] = useState("");
   const [localComments, setLocalComments] = useState<any[]>(
@@ -70,42 +77,68 @@ export default function CommentsInline({
               (c.body === p.comment?.body && c.authorId === p.comment?.authorId)
           );
         if (exists) return prev;
-        return [p.comment, ...(prev || [])];
+        const next = [p.comment, ...(prev || [])];
+        deferCountSync(() => onCommentCountChange?.(next.length));
+        return next;
       });
     };
     sock.on("newComment", handler);
     return () => {
       try {
         sock.off("newComment", handler as any);
-      } catch {}
+      } catch { }
     };
-  }, [blogId]);
+  }, [blogId, onCommentCountChange]);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!value.trim()) return;
     const body = value.trim();
     try {
-      await post.mutateAsync({ body });
-      // Clear input on success; rely on websocket event to update UI
+      const created = await post.mutateAsync({ body });
+      const normalized = created && typeof created === "object"
+        ? {
+          ...(created as any),
+          author: (created as any).author || {
+            id: user?.id ? String(user.id) : undefined,
+            fullName: (user as any)?.fullName || (user as any)?.name || "",
+            photo: (user as any)?.photo || null,
+          },
+        }
+        : null;
+      if (normalized) {
+        setLocalComments((prev) => {
+          const exists = prev.some((comment: any) => String(comment.id) === String((normalized as any).id));
+          if (exists) return prev;
+          const next = [normalized, ...prev];
+          deferCountSync(() => onCommentCountChange?.(next.length));
+          return next;
+        });
+      }
       setValue("");
-    } catch {}
+    } catch { }
   };
 
   return (
     <div className="mt-3">
-      <form onSubmit={onSubmit} className="flex items-center gap-2">
-        <Input
-          className="flex-1 h-10 rounded-xl bg-[hsl(var(--input))]/20 border-[hsl(var(--border))]/60"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          placeholder={t("messagePlaceholder") as string}
-          aria-label={t("message")}
-        />
-        <button className="btn" type="submit" disabled={post.isPending}>
-          {t("post")}
-        </button>
-      </form>
+      {user ? (
+        <form onSubmit={onSubmit} className="flex items-center gap-2">
+          <Input
+            className="flex-1 h-10 rounded-xl bg-[hsl(var(--input))]/20 border-[hsl(var(--border))]/60"
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={t("messagePlaceholder") as string}
+            aria-label={t("message")}
+          />
+          <button className="btn" type="submit" disabled={post.isPending}>
+            {t("post")}
+          </button>
+        </form>
+      ) : (
+        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--foreground))/0.76]">
+          {t("signInToComment")}
+        </div>
+      )}
       <div className="mt-2 space-y-2">
         {localComments?.map((c: any) => (
           <div

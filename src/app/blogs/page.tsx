@@ -11,43 +11,112 @@ import StoriesBar from "@/components/stories/StoriesBar";
 import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
 import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
+import { config as appConfig } from "@/lib/config";
+import { filterBlogsByQuery } from "@/lib/search-utils";
 
 export default function BlogsPage() {
-  const { data: blogs, isLoading } = useApiGet(["blogs"], "/blogs");
+  const [q, setQ] = React.useState("");
+  const [submittedQuery, setSubmittedQuery] = React.useState("");
+  const [currentPage, setCurrentPage] = React.useState(1);
+  const [pageSize, setPageSize] = React.useState(9);
+  const [countOverrides, setCountOverrides] = React.useState<
+    Record<string, { likes?: number; shares?: number; comments?: number }>
+  >({});
+  const elasticSearchEnabled = appConfig.elasticSearchEnabled;
+  const effectiveQuery = elasticSearchEnabled ? submittedQuery.trim() : q.trim();
+  const deferredQuery = React.useDeferredValue(effectiveQuery);
+  const { data: blogs, isLoading } = useApiGet(
+    ["blogs", deferredQuery, elasticSearchEnabled ? "elastic" : "local"],
+    "/blogs",
+    elasticSearchEnabled && deferredQuery ? { q: deferredQuery } : undefined
+  );
   const { data: listingsData } = useApiGet(["listings", "all"], "/listings");
   const { user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [active, setActive] = React.useState<any | null>(null);
-  const [q, setQ] = React.useState("");
   const onOpen = (blog: any) => {
     setActive(blog);
     setOpen(true);
   };
-  const norm = (s: any) => (typeof s === "string" ? s.toLocaleLowerCase() : "");
   const filtered = React.useMemo(() => {
-    const term = norm(q.trim());
-    if (!term) return blogs || [];
     const list = blogs || [];
-    return list.filter((b: any) => {
-      const title = norm(b?.title);
-      const desc = norm(b?.excerpt || b?.description || b?.content);
-      const author = norm(
-        b?.author?.fullName || b?.author?.username || b?.author?.name
-      );
-      return (
-        title.includes(term) || desc.includes(term) || author.includes(term)
-      );
-    });
+    if (elasticSearchEnabled) return list;
+    return filterBlogsByQuery(list, submittedQuery || q);
+  }, [blogs, elasticSearchEnabled, q, submittedQuery]);
+
+  const suggestions = React.useMemo(() => {
+    if (!Array.isArray(blogs)) return [];
+    const term = q.trim().toLowerCase();
+    const pool = blogs
+      .map((b: any) => String(b?.title || "").trim())
+      .filter(Boolean);
+    const unique = Array.from(new Set(pool));
+    const filteredTitles = term
+      ? unique.filter((title) => title.toLowerCase().includes(term))
+      : unique;
+    return filteredTitles.slice(0, 5);
   }, [blogs, q]);
+
+  const updateBlogCounts = React.useCallback(
+    (
+      blogId: string,
+      patch: { likes?: number; shares?: number; comments?: number }
+    ) => {
+      setCountOverrides((prev) => {
+        const current = prev[blogId] || {};
+        const nextForBlog = {
+          ...current,
+          ...patch,
+        };
+        if (
+          current.likes === nextForBlog.likes &&
+          current.shares === nextForBlog.shares &&
+          current.comments === nextForBlog.comments
+        ) {
+          return prev;
+        }
+        return {
+          ...prev,
+          [blogId]: nextForBlog,
+        };
+      });
+    },
+    []
+  );
+
+  const runSearch = React.useCallback(() => {
+    setSubmittedQuery(q.trim());
+    setCurrentPage(1);
+  }, [q]);
+
+  const totalPages = Math.max(1, Math.ceil((filtered?.length ?? 0) / pageSize));
+
+  React.useEffect(() => {
+    setCurrentPage((prev) => Math.min(prev, totalPages));
+  }, [totalPages]);
+
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [pageSize, deferredQuery]);
+
+  const pagedBlogs = React.useMemo(() => {
+    const list = filtered || [];
+    const start = (currentPage - 1) * pageSize;
+    return list.slice(start, start + pageSize);
+  }, [filtered, currentPage, pageSize]);
+
   return (
     <div className="space-y-6">
       <BlogHero
         value={q}
         onChange={setQ}
+        onSubmit={runSearch}
+        suggestions={suggestions}
         canCreate={!!user}
         onCreate={() => router.push("/blogs/create")}
+        resultCount={filtered?.length ?? 0}
       />
       {/* Reused components from listings page */}
       <StoriesBar />
@@ -70,7 +139,7 @@ export default function BlogsPage() {
       <div className="space-y-6">
         {(() => {
           const rows: { type: "two" | "three" | "wide"; items: any[] }[] = [];
-          const list = filtered || [];
+          const list = pagedBlogs || [];
           let i = 0;
           let patternIdx = 0; // 0 -> two, 1 -> three, 2 -> wide
           while (i < list.length) {
@@ -96,6 +165,8 @@ export default function BlogsPage() {
                         onOpen={onOpen}
                         variant="overlay"
                         imageHeightClass="h-64 md:h-80 lg:h-96"
+                        countOverride={countOverrides[String(b.id)]}
+                        onCountsChange={updateBlogCounts}
                       />
                     </div>
                   ))}
@@ -111,7 +182,12 @@ export default function BlogsPage() {
                 >
                   {row.items.map((b: any) => (
                     <div key={b.id} className="">
-                      <BlogCard blog={b} onOpen={onOpen} />
+                      <BlogCard
+                        blog={b}
+                        onOpen={onOpen}
+                        countOverride={countOverrides[String(b.id)]}
+                        onCountsChange={updateBlogCounts}
+                      />
                     </div>
                   ))}
                 </div>
@@ -132,6 +208,8 @@ export default function BlogsPage() {
                       imageHeightClass={
                         j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
                       }
+                      countOverride={countOverrides[String(b.id)]}
+                      onCountsChange={updateBlogCounts}
                     />
                   </div>
                 ))}
@@ -144,13 +222,90 @@ export default function BlogsPage() {
             {q.trim() ? t("noResults") || "No results" : t("noBlogsYet")}
           </div>
         )}
+
+        {!isLoading && (filtered?.length ?? 0) > 0 && (
+          <div className="mt-2 flex flex-col gap-4 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/60 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="subtle">{t("pageSizeLabel") || "Page size"}</span>
+              <div className="relative">
+                <select
+                  value={pageSize}
+                  onChange={(event) => setPageSize(Number(event.target.value))}
+                  className="h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
+                  aria-label="Blog page size"
+                >
+                  {[6, 9, 12, 18].map((size) => (
+                    <option key={size} value={size}>
+                      {size} {t("perPage") || "per page"}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                disabled={currentPage === 1}
+                className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+              >
+                {t("prev") || "Previous"}
+              </button>
+
+              {Array.from({ length: totalPages }).map((_, index) => {
+                const pageNumber = index + 1;
+                const active = currentPage === pageNumber;
+                return (
+                  <button
+                    type="button"
+                    key={pageNumber}
+                    onClick={() => setCurrentPage(pageNumber)}
+                    className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${active
+                      ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))/0.2] text-[hsl(var(--accent))]"
+                      : "border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]"
+                      }`}
+                  >
+                    {pageNumber}
+                  </button>
+                );
+              })}
+
+              <button
+                type="button"
+                onClick={() =>
+                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                }
+                disabled={currentPage === totalPages}
+                className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+              >
+                {t("next") || "Next"}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
       {/* Related listings slider (placed before the partners section in layout) */}
       {Array.isArray(listingsData) && listingsData.length > 0 && (
         <RelatedListingsSlider currentId={0} />
       )}
 
-      <BlogViewer open={open} blog={active} onClose={() => setOpen(false)} />
+      <BlogViewer
+        open={open}
+        blog={
+          active
+            ? {
+              ...active,
+              counts: {
+                ...(active.counts || {}),
+                ...(countOverrides[String(active.id)] || {}),
+              },
+            }
+            : active
+        }
+        onClose={() => setOpen(false)}
+        onCountsChange={updateBlogCounts}
+      />
     </div>
   );
 }

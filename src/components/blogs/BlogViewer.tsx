@@ -18,10 +18,15 @@ export default function BlogViewer({
   open,
   blog,
   onClose,
+  onCountsChange,
 }: {
   open: boolean;
   blog: any | null;
   onClose: () => void;
+  onCountsChange?: (
+    blogId: string,
+    patch: { likes?: number; shares?: number; comments?: number }
+  ) => void;
 }) {
   const blogId = blog ? String(blog.id) : "";
   // Fetch detail if we don't already have comments; avoids redundant GET immediately after local socket update
@@ -45,6 +50,15 @@ export default function BlogViewer({
     source ? `/blogs/${source.id}` : "/blogs/__noop__"
   );
   const [confirmOpen, setConfirmOpen] = React.useState(false);
+  const handleCommentCountChange = React.useCallback(
+    (nextCount: number) => {
+      if (!source?.id) return;
+      queueMicrotask(() => {
+        onCountsChange?.(String(source.id), { comments: nextCount });
+      });
+    },
+    [onCountsChange, source?.id]
+  );
   const onEdit = () => {
     if (!source) return;
     const params = new URLSearchParams();
@@ -57,21 +71,21 @@ export default function BlogViewer({
     if (!source) return;
     try {
       await del.mutateAsync({} as any);
-    } catch {}
+    } catch { }
     try {
       const { getSocket } = await import("@/lib/socket");
       getSocket()?.emit?.("blogDeleted", { id: source.id });
-    } catch {}
+    } catch { }
     setConfirmOpen(false);
   };
   const images = Array.isArray(source?.images)
     ? source?.images.map((u: any) => ({
-        url: typeof u === "string" ? u : u?.url,
-        alt: source?.title,
-      }))
+      url: typeof u === "string" ? u : u?.url,
+      alt: source?.title,
+    }))
     : source?.image
-    ? [{ url: source.image, alt: source?.title }]
-    : [];
+      ? [{ url: source.image, alt: source?.title }]
+      : [];
   return (
     <Portal>
       <AnimatePresence>
@@ -135,6 +149,7 @@ export default function BlogViewer({
                 <CommentsInline
                   blogId={String(source?.id)}
                   comments={source?.comments}
+                  onCommentCountChange={handleCommentCountChange}
                 />
               </div>
             </motion.div>

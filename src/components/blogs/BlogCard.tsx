@@ -13,10 +13,16 @@ import {
 } from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
 import { ImageSlider } from "@/components/ui/image-slider";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { getSocket } from "@/lib/socket";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
+import { useAuth } from "@/lib/use-auth";
+
+function deferCountSync(callback?: () => void) {
+  if (!callback) return;
+  queueMicrotask(callback);
+}
 
 function getCounts(b: any) {
   const likes = b?.counts?.likes ?? b?.likes ?? b?.likeCount ?? 0;
@@ -34,6 +40,11 @@ type Props = {
   onOpen?: (blog: any) => void;
   variant?: "default" | "overlay";
   imageHeightClass?: string;
+  countOverride?: { likes?: number; shares?: number; comments?: number };
+  onCountsChange?: (
+    blogId: string,
+    patch: { likes?: number; shares?: number; comments?: number }
+  ) => void;
 };
 
 export default function BlogCard({
@@ -41,61 +52,182 @@ export default function BlogCard({
   onOpen,
   variant = "default",
   imageHeightClass,
+  countOverride,
+  onCountsChange,
 }: Props) {
   const router = useRouter();
   const likeMut = useApiMutation("post", `/blogs/${blog.id}/likes`);
   const shareMut = useApiMutation("post", `/blogs/${blog.id}/shares`);
   const [shareOpen, setShareOpen] = React.useState(false);
+  const [isImageEngaged, setIsImageEngaged] = React.useState(false);
+  const [localCounts, setLocalCounts] = React.useState(() => getCounts(blog));
   const { t } = useLanguage();
+  const { user } = useAuth();
+  const canInteract = Boolean(user);
+
+  React.useEffect(() => {
+    setLocalCounts({ ...getCounts(blog), ...(countOverride || {}) });
+  }, [blog, countOverride]);
+
+  React.useEffect(() => {
+    const sock = getSocket();
+    if (!sock || !blog?.id) return;
+
+    const handleLike = (payload: { blogId: string; likes?: number }) => {
+      if (String(payload.blogId) !== String(blog.id)) return;
+      if (typeof payload.likes === "number") {
+        setLocalCounts((prev) => ({ ...prev, likes: payload.likes }));
+        deferCountSync(() =>
+          onCountsChange?.(String(blog.id), { likes: payload.likes })
+        );
+      }
+    };
+
+    const handleShare = (payload: { blogId: string; shares?: number }) => {
+      if (String(payload.blogId) !== String(blog.id)) return;
+      if (typeof payload.shares === "number") {
+        setLocalCounts((prev) => ({ ...prev, shares: payload.shares }));
+        deferCountSync(() =>
+          onCountsChange?.(String(blog.id), { shares: payload.shares })
+        );
+      }
+    };
+
+    const handleComment = (payload: { blogId: string }) => {
+      if (String(payload.blogId) !== String(blog.id)) return;
+      let nextComments = 0;
+      setLocalCounts((prev) => {
+        nextComments = (prev.comments ?? 0) + 1;
+        return { ...prev, comments: nextComments };
+      });
+      deferCountSync(() =>
+        onCountsChange?.(String(blog.id), { comments: nextComments })
+      );
+    };
+
+    sock.on("newLike", handleLike);
+    sock.on("newShare", handleShare);
+    sock.on("newComment", handleComment);
+
+    return () => {
+      try {
+        sock.off("newLike", handleLike as any);
+        sock.off("newShare", handleShare as any);
+        sock.off("newComment", handleComment as any);
+      } catch { }
+    };
+  }, [blog?.id, onCountsChange]);
 
   const onLike = async () => {
+    if (!canInteract) return;
+    const optimisticLikes = (localCounts.likes ?? 0) + 1;
+    setLocalCounts((prev) => ({ ...prev, likes: optimisticLikes }));
+    deferCountSync(() =>
+      onCountsChange?.(String(blog.id), { likes: optimisticLikes })
+    );
     try {
       await likeMut.mutateAsync({});
-      // No local increments; websocket event from the server will update counts
     } catch {
+      setLocalCounts((prev) => ({ ...prev, likes: Math.max(0, optimisticLikes - 1) }));
+      deferCountSync(() =>
+        onCountsChange?.(String(blog.id), {
+          likes: Math.max(0, optimisticLikes - 1),
+        })
+      );
       // ignore; consider toast handled by api-hooks
     }
   };
   const doShare = async () => {
+    if (!canInteract) return;
+    const optimisticShares = (localCounts.shares ?? 0) + 1;
+    setLocalCounts((prev) => ({ ...prev, shares: optimisticShares }));
+    deferCountSync(() =>
+      onCountsChange?.(String(blog.id), { shares: optimisticShares })
+    );
     try {
       await shareMut.mutateAsync({});
-      // No local increments; websocket event from the server will update counts
     } catch {
+      setLocalCounts((prev) => ({ ...prev, shares: Math.max(0, optimisticShares - 1) }));
+      deferCountSync(() =>
+        onCountsChange?.(String(blog.id), {
+          shares: Math.max(0, optimisticShares - 1),
+        })
+      );
       // ignore
     }
   };
 
   const images = Array.isArray(blog.images)
     ? blog.images.map((u: any) => ({
-        url: typeof u === "string" ? u : u?.url,
-        alt: blog.title,
-      }))
+      url: typeof u === "string" ? u : u?.url,
+      alt: blog.title,
+    }))
     : blog.image
-    ? [{ url: blog.image, alt: blog.title }]
-    : [];
-  const counts = getCounts(blog);
-  const likeCount = counts.likes ?? 0;
-  const shareCount = counts.shares ?? 0;
-  const commentCount = counts.comments ?? 0;
+      ? [{ url: blog.image, alt: blog.title }]
+      : [];
+  const likeCount = localCounts.likes ?? 0;
+  const shareCount = localCounts.shares ?? 0;
+  const commentCount = localCounts.comments ?? 0;
   const authorId = blog?.author?.id || blog?.authorId || blog?.userId;
   const sliderHeight = imageHeightClass || "h-52 md:h-64 lg:h-72";
+
+  const onMediaActivate = (
+    event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>
+  ) => {
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('[data-slider-control="true"]')) {
+      return;
+    }
+    onOpen?.(blog);
+  };
+
   return (
     <article className="relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition-shadow duration-200">
       {/* Top: media clickable */}
-      <button
-        type="button"
+      <div
+        role="button"
+        tabIndex={0}
         aria-label={t("openBlog")}
-        onClick={() => onOpen?.(blog)}
+        onClick={onMediaActivate}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            onMediaActivate(event);
+          }
+        }}
         className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
+        onMouseEnter={() => setIsImageEngaged(true)}
+        onMouseLeave={() => setIsImageEngaged(false)}
+        onFocus={() => setIsImageEngaged(true)}
+        onBlur={(event) => {
+          const next = event.relatedTarget as Node | null;
+          if (!next || !event.currentTarget.contains(next)) {
+            setIsImageEngaged(false);
+          }
+        }}
       >
-        <div className="relative">
+        <div
+          className="relative"
+          onMouseEnter={() => setIsImageEngaged(true)}
+          onMouseLeave={() => setIsImageEngaged(false)}
+          onFocus={() => setIsImageEngaged(true)}
+          onBlur={(event) => {
+            const next = event.relatedTarget as Node | null;
+            if (!next || !event.currentTarget.contains(next)) {
+              setIsImageEngaged(false);
+            }
+          }}
+        >
           <ImageSlider
             images={images}
             aspect="16/9"
             heightClass={sliderHeight}
+            autoPlay
+            forceEngaged={isImageEngaged}
+            intervalMs={2200}
           />
         </div>
-      </button>
+      </div>
 
       {/* Overlay variant: move all info and actions on top of the image */}
       {variant === "overlay" ? (
@@ -123,10 +255,10 @@ export default function BlogCard({
             </div>
           </div>
           {/* author/meta and actions overlay with interactive controls */}
-          <div className="absolute inset-0 z-30">
+          <div className="pointer-events-none absolute inset-0 z-10">
             <div className="flex flex-col justify-between h-full">
               {/* top-left author/meta */}
-              <div className="p-3 sm:p-4">
+              <div className="p-3 sm:p-4 pointer-events-auto">
                 <div className="inline-flex items-center gap-2 text-[11px] text-white/90 bg-black/20 backdrop-blur rounded-full px-2 py-1 pointer-events-auto">
                   <Link
                     href={authorId ? `/profile/${authorId}` : "#"}
@@ -168,7 +300,7 @@ export default function BlogCard({
                 </div>
               </div>
               {/* bottom-left actions */}
-              <div className="p-3 sm:p-4">
+              <div className="p-3 sm:p-4 pointer-events-auto">
                 <div className="flex items-center gap-3 text-sm pointer-events-auto">
                   <button
                     onClick={(e) => {
@@ -177,7 +309,8 @@ export default function BlogCard({
                     }}
                     className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
                     aria-label={t("like")}
-                    disabled={likeMut.isPending}
+                    disabled={!canInteract || likeMut.isPending}
+                    title={!canInteract ? t("signInToInteract") : undefined}
                   >
                     <Heart className="size-4" /> {likeCount || 0}
                   </button>
@@ -190,15 +323,16 @@ export default function BlogCard({
                         }}
                         className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
                         aria-label="Share"
-                        disabled={shareMut.isPending}
+                        disabled={!canInteract || shareMut.isPending}
+                        title={!canInteract ? t("signInToInteract") : undefined}
                       >
                         <Share2 className="size-4" /> {shareCount || 0}
                       </button>
                     </DialogTrigger>
                     <DialogContent className="w-[min(92vw,420px)]">
-                      <h3 className="text-lg font-semibold mb-3">
+                      <DialogTitle className="mb-3 text-lg font-semibold">
                         {t("share")}
-                      </h3>
+                      </DialogTitle>
                       <div className="grid grid-cols-1 gap-2">
                         <button
                           type="button"
@@ -310,7 +444,8 @@ export default function BlogCard({
               onClick={onLike}
               className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
               aria-label={t("like")}
-              disabled={likeMut.isPending}
+              disabled={!canInteract || likeMut.isPending}
+              title={!canInteract ? t("signInToInteract") : undefined}
             >
               <Heart className="size-4" /> {likeCount || 0}
             </button>
@@ -320,13 +455,14 @@ export default function BlogCard({
                   onClick={() => setShareOpen(true)}
                   className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
                   aria-label="Share"
-                  disabled={shareMut.isPending}
+                  disabled={!canInteract || shareMut.isPending}
+                  title={!canInteract ? t("signInToInteract") : undefined}
                 >
                   <Share2 className="size-4" /> {shareCount || 0}
                 </button>
               </DialogTrigger>
               <DialogContent className="w-[min(92vw,420px)]">
-                <h3 className="text-lg font-semibold mb-3">{t("share")}</h3>
+                <DialogTitle className="mb-3 text-lg font-semibold">{t("share")}</DialogTitle>
                 <div className="grid grid-cols-1 gap-2">
                   <button
                     type="button"

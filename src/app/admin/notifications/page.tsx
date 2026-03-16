@@ -22,6 +22,7 @@ import {
 import { useLanguage } from "@/components/providers/language-provider";
 import { config as appConfig } from "@/lib/config";
 import { adminNotificationsPageFallback } from "@/mock";
+import { buildSuggestions, filterListingsByQuery, filterUsersByQuery } from "@/lib/search-utils";
 
 // --- AutoCompleteUsers component ------------------------------------------------
 function AutoCompleteUsers({
@@ -38,33 +39,59 @@ function AutoCompleteUsers({
   placeholder?: string;
 }) {
   const [q, setQ] = useState("");
+  const elasticSearchEnabled = appConfig.elasticSearchEnabled;
   const key = q.trim() ? (["users", q, "autocomplete"] as const) : null;
   // call autocomplete endpoint on every keystroke
   const { data, isLoading } = useApiGet<any | null>(
-    key,
+    elasticSearchEnabled ? key : null,
     q ? `/users?q=${encodeURIComponent(q)}&autocomplete=true` : "/users"
+  );
+  const { data: allUsers } = useApiGet<any[]>(
+    elasticSearchEnabled ? null : ["users", "fallback", "all"],
+    "/users"
   );
 
   // backend may return an envelope with data.autocomplete.suggestions (string[])
-  const suggestionStrings: string[] =
-    data &&
-    (data as any).autocomplete &&
-    Array.isArray((data as any).autocomplete.suggestions)
+  const localUsers = filterUsersByQuery(Array.isArray(allUsers) ? allUsers : [], q, 12);
+  const suggestionStrings: string[] = elasticSearchEnabled
+    ? data &&
+      (data as any).autocomplete &&
+      Array.isArray((data as any).autocomplete.suggestions)
       ? (data as any).autocomplete.suggestions
-      : [];
+      : []
+    : buildSuggestions(localUsers.map((user) => user.fullName || user.email || user.phone), 8);
 
   // fallback when endpoint returns full user objects or hits
-  const suggestionUsers: any[] = Array.isArray(data)
-    ? data
-    : data && Array.isArray((data as any).hits)
-    ? (data as any).hits
-    : data && Array.isArray((data as any).data)
-    ? (data as any).data
-    : [];
+  const suggestionUsers: any[] = elasticSearchEnabled
+    ? Array.isArray(data)
+      ? data
+      : data && Array.isArray((data as any).hits)
+        ? (data as any).hits
+        : data && Array.isArray((data as any).data)
+          ? (data as any).data
+          : []
+    : localUsers;
 
   async function addUser(u: any) {
     // if suggestion is a string, resolve it to full user via api.get
     if (typeof u === "string") {
+      if (!elasticSearchEnabled) {
+        const found = localUsers.find((candidate) => (candidate.fullName || candidate.email || candidate.phone) === u) || { id: u, fullName: u, email: "" };
+        if (
+          selected.find(
+            (s) =>
+              String(s.id) === String(found.id) ||
+              String(s.userId) === String(found.id)
+          )
+        ) {
+          setQ("");
+          return;
+        }
+        onChange([...selected, found]);
+        setQ("");
+        return;
+      }
+
       try {
         const res = await api.get<any>(`/users?q=${encodeURIComponent(u)}`);
         let users: any[] = [];
@@ -292,8 +319,8 @@ export default function NotificationsAdminPage() {
   const [items, setItems] = useState<Notification[]>(
     appConfig.useMockData
       ? ((adminNotificationsPageFallback.notifications?.length
-          ? adminNotificationsPageFallback.notifications
-          : MOCK) as Notification[])
+        ? adminNotificationsPageFallback.notifications
+        : MOCK) as Notification[])
       : []
   );
   useEffect(() => {
@@ -634,8 +661,8 @@ export default function NotificationsAdminPage() {
                                       <td className="p-2 align-top">
                                         {r.deliveredAt
                                           ? new Date(
-                                              r.deliveredAt
-                                            ).toLocaleString()
+                                            r.deliveredAt
+                                          ).toLocaleString()
                                           : "—"}
                                       </td>
                                       <td className="p-2 align-top text-sm text-red-600">
@@ -1167,29 +1194,49 @@ function AutoCompleteListings({
   placeholder?: string;
 }) {
   const [q, setQ] = useState("");
+  const elasticSearchEnabled = appConfig.elasticSearchEnabled;
   const key = q.trim() ? (["listings", q, "autocomplete"] as const) : null;
   const { data, isLoading } = useApiGet<any | null>(
-    key,
+    elasticSearchEnabled ? key : null,
     q ? `/listings?q=${encodeURIComponent(q)}&autocomplete=true` : "/listings"
   );
+  const { data: allListings } = useApiGet<any[]>(
+    elasticSearchEnabled ? null : ["listings", "fallback", "all"],
+    "/listings"
+  );
 
-  const suggestionStrings: string[] =
-    data &&
-    (data as any).autocomplete &&
-    Array.isArray((data as any).autocomplete.suggestions)
+  const localListings = filterListingsByQuery(Array.isArray(allListings) ? allListings : [], q, 12);
+  const suggestionStrings: string[] = elasticSearchEnabled
+    ? data &&
+      (data as any).autocomplete &&
+      Array.isArray((data as any).autocomplete.suggestions)
       ? (data as any).autocomplete.suggestions
-      : [];
+      : []
+    : buildSuggestions(localListings.map((listing) => listing.title), 8);
 
-  const suggestionListings: any[] = Array.isArray(data)
-    ? data
-    : data && Array.isArray((data as any).hits)
-    ? (data as any).hits
-    : data && Array.isArray((data as any).data)
-    ? (data as any).data
-    : [];
+  const suggestionListings: any[] = elasticSearchEnabled
+    ? Array.isArray(data)
+      ? data
+      : data && Array.isArray((data as any).hits)
+        ? (data as any).hits
+        : data && Array.isArray((data as any).data)
+          ? (data as any).data
+          : []
+    : localListings;
 
   async function addListing(l: any) {
     if (typeof l === "string") {
+      if (!elasticSearchEnabled) {
+        const found = localListings.find((candidate) => candidate.title === l) || { id: l, title: l };
+        if (selected.find((s) => String(s.id) === String(found.id))) {
+          setQ("");
+          return;
+        }
+        onChange([...selected, found]);
+        setQ("");
+        return;
+      }
+
       try {
         const res = await api.get<any>(`/listings?q=${encodeURIComponent(l)}`);
         let listings: any[] = [];

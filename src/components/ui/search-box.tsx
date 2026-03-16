@@ -11,6 +11,8 @@ import { createPortal } from "react-dom";
 import { useSWRGet } from "@/lib/api-hooks";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
+import { config as appConfig } from "@/lib/config";
+import { filterListingsByQuery } from "@/lib/search-utils";
 
 type SearchHit = any;
 type SearchResponse = { total: number; hits: SearchHit[] };
@@ -70,7 +72,7 @@ export function SearchBox({
       ].slice(0, 8);
       try {
         localStorage.setItem("recent-searches", JSON.stringify(next));
-      } catch {}
+      } catch { }
       return next;
     });
   }, []);
@@ -78,13 +80,19 @@ export function SearchBox({
   // Construct absolute URL to ensure requests go to backend, not Next.js local API
   const apiBase = process.env.NEXT_PUBLIC_API_BASE_URL || "";
   const searchURL = (apiBase ? apiBase.replace(/\/$/, "") : "") + "/search";
+  const elasticSearchEnabled = appConfig.elasticSearchEnabled;
 
-  // Always send the request to backend (requirement), even if q is empty
   const page = 1;
   const { data, isLoading } = useSWRGet<SearchResponse>(
-    ["search", debounced, page, perPage],
+    elasticSearchEnabled ? ["search", debounced, page, perPage] : null,
     searchURL,
     { q: debounced, page, perPage },
+    { revalidateOnFocus: false }
+  );
+  const { data: fallbackListings, isLoading: isFallbackLoading } = useSWRGet<any[]>(
+    elasticSearchEnabled ? null : ["listings", "search-fallback"],
+    "/listings",
+    undefined,
     { revalidateOnFocus: false }
   );
 
@@ -124,7 +132,15 @@ export function SearchBox({
     el.style.zIndex = "1200";
   }, [rect, open]);
 
-  const hits = data?.hits ?? [];
+  const hits = useMemo(() => {
+    if (elasticSearchEnabled) return data?.hits ?? [];
+    return filterListingsByQuery(
+      Array.isArray(fallbackListings) ? fallbackListings : [],
+      debounced,
+      perPage
+    );
+  }, [data?.hits, debounced, elasticSearchEnabled, fallbackListings, perPage]);
+  const isSearching = elasticSearchEnabled ? isLoading : isFallbackLoading;
 
   const highlight = (text: string) => {
     if (!debounced || debounced.length < 2) return <>{text}</>;
@@ -194,7 +210,7 @@ export function SearchBox({
               setOpen(false);
               try {
                 onSubmitClose?.();
-              } catch {}
+              } catch { }
             }
           }}
           aria-label="Search"
@@ -217,7 +233,7 @@ export function SearchBox({
                     setOpen(false);
                     try {
                       onSubmitClose?.();
-                    } catch {}
+                    } catch { }
                   }}
                   className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
                 >
@@ -229,7 +245,7 @@ export function SearchBox({
                   setRecent([]);
                   try {
                     localStorage.removeItem("recent-searches");
-                  } catch {}
+                  } catch { }
                 }}
                 className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
               >
@@ -239,7 +255,7 @@ export function SearchBox({
           )}
           <div className="p-2 text-xs subtle flex items-center justify-between">
             <span>
-              {isLoading
+              {isSearching
                 ? "Searching..."
                 : `${hits.length} result${hits.length === 1 ? "" : "s"}`}
             </span>
@@ -265,7 +281,7 @@ export function SearchBox({
                       setOpen(false);
                       try {
                         onSubmitClose?.();
-                      } catch {}
+                      } catch { }
                     }}
                   >
                     <div className="font-medium line-clamp-1">
@@ -307,7 +323,7 @@ export function SearchBox({
                         setOpen(false);
                         try {
                           onSubmitClose?.();
-                        } catch {}
+                        } catch { }
                       }}
                       className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
                     >
@@ -319,7 +335,7 @@ export function SearchBox({
                       setRecent([]);
                       try {
                         localStorage.removeItem("recent-searches");
-                      } catch {}
+                      } catch { }
                     }}
                     className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
                   >
@@ -329,7 +345,7 @@ export function SearchBox({
               )}
               <div className="p-2 text-xs subtle flex items-center justify-between">
                 <span>
-                  {isLoading
+                  {isSearching
                     ? "Searching..."
                     : `${hits.length} result${hits.length === 1 ? "" : "s"}`}
                 </span>
@@ -358,7 +374,7 @@ export function SearchBox({
                           setOpen(false);
                           try {
                             onSubmitClose?.();
-                          } catch {}
+                          } catch { }
                         }}
                       >
                         <div className="font-medium line-clamp-1">

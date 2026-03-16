@@ -7,6 +7,9 @@ Modern, futuristic UI with Next.js App Router, TailwindCSS, shadcn-style primiti
 1. Copy `.env.example` to `.env` and set `DATABASE_URL` if using Prisma.
 2. Install deps and run dev server.
 
+Set `NEXT_PUBLIC_ENABLE-ELASTIC-SEARCH=true` to use backend Elasticsearch-powered search.
+Set it to `false` to switch the UI to local filter/autocomplete fallbacks.
+
 Try it:
 
 ```
@@ -14,7 +17,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:3000
+Open <http://localhost:3000>
 
 If a build gets stuck on old assets, clear the cache and rebuild:
 

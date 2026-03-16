@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
+import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone, Chrome, Facebook } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/cn";
@@ -13,6 +13,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { useApiMutation } from "@/lib/api-hooks";
 import { useLanguage } from "@/components/providers/language-provider";
+import { config } from "@/lib/config";
 const gradientBgClass = "gradient-bg";
 const inputClasses =
   "h-11 rounded-2xl border border-[hsl(var(--border))/0.35] bg-[hsl(var(--card-bg,var(--card)))/0.55] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))/0.55] transition-all focus:border-transparent focus:bg-[hsl(var(--card-bg,var(--card)))/0.75] focus:ring-2 focus:ring-[hsl(var(--accent))] disabled:opacity-50";
@@ -52,6 +53,7 @@ export default function SignUpPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const { isRtl } = useLanguage();
+  const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
   const [focusedField, setFocusedField] = useState<keyof SignUpValues | null>(
     null
   );
@@ -194,6 +196,35 @@ export default function SignUpPage() {
               {t("joinCommunityText")}
             </motion.p>
           </div>
+
+          {hasSocialAuth && (
+            <div className="mb-6 space-y-3">
+              <div className="grid gap-3 sm:grid-cols-2">
+                {config.googleAuthUrl && (
+                  <Button asChild variant="secondary" className="w-full justify-center">
+                    <Link href={config.googleAuthUrl} className="inline-flex items-center gap-2">
+                      <Chrome className="size-4" />
+                      {t("continueWithGoogle")}
+                    </Link>
+                  </Button>
+                )}
+                {config.facebookAuthUrl && (
+                  <Button asChild variant="secondary" className="w-full justify-center">
+                    <Link href={config.facebookAuthUrl} className="inline-flex items-center gap-2">
+                      <Facebook className="size-4" />
+                      {t("continueWithFacebook")}
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              <div className="relative text-center text-xs text-[hsl(var(--foreground))/0.6]">
+                <span className="relative z-10 bg-[hsl(var(--card-bg,var(--card)))/0.95] px-3">
+                  {t("orContinueWithEmail")}
+                </span>
+                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
+              </div>
+            </div>
+          )}
 
           <motion.form
             className="space-y-5"
@@ -500,10 +531,10 @@ function PasswordStrength({ score }: { score: number }) {
     score <= 1
       ? "bg-[hsl(var(--accent))]"
       : score === 2
-      ? "bg-[hsl(var(--primary))]"
-      : score === 3
-      ? "bg-[hsl(var(--secondary))]"
-      : "bg-[hsl(var(--btn-primary-bg,var(--primary)))]";
+        ? "bg-[hsl(var(--primary))]"
+        : score === 3
+          ? "bg-[hsl(var(--secondary))]"
+          : "bg-[hsl(var(--btn-primary-bg,var(--primary)))]";
   return (
     <div className="mt-2 space-y-1">
       <div className="h-1.5 w-full overflow-hidden rounded-full bg-[hsl(var(--border))/0.4]">

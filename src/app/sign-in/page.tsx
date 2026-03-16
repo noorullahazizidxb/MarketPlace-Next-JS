@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { Chrome, Facebook, Mail, Lock, LogIn } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -13,6 +13,7 @@ import { setCachedToken } from "@/lib/axiosClient";
 import { useApiMutation, useLocalMutation } from "@/lib/api-hooks";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { useListingsStore } from "@/store/listings.store";
+import { config } from "@/lib/config";
 
 type FormData = { email: string; password: string };
 
@@ -30,6 +31,7 @@ export default function SignInPage() {
     "/auth/login"
   );
   const setServerSession = useLocalMutation("post", "/api/login-session");
+  const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
 
   // If already signed in, redirect to /listings
   useEffect(() => {
@@ -74,7 +76,7 @@ export default function SignInPage() {
         if (Array.isArray(u.listings) && u.listings.length) {
           setListings(u.listings);
         }
-      } catch {}
+      } catch { }
 
       // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
       await setServerSession
@@ -109,6 +111,35 @@ export default function SignInPage() {
           <div>
             <h1 className="heading-lg mb-2">{t("signInTitle")}</h1>
             <p className="subtle text-sm mb-6">{t("signInSubtitle")}</p>
+
+            {hasSocialAuth && (
+              <div className="mb-6 space-y-3">
+                <div className="grid gap-3 sm:grid-cols-2">
+                  {config.googleAuthUrl && (
+                    <Button asChild variant="secondary" className="w-full justify-center">
+                      <Link href={config.googleAuthUrl} className="inline-flex items-center gap-2">
+                        <Chrome className="size-4" />
+                        {t("continueWithGoogle")}
+                      </Link>
+                    </Button>
+                  )}
+                  {config.facebookAuthUrl && (
+                    <Button asChild variant="secondary" className="w-full justify-center">
+                      <Link href={config.facebookAuthUrl} className="inline-flex items-center gap-2">
+                        <Facebook className="size-4" />
+                        {t("continueWithFacebook")}
+                      </Link>
+                    </Button>
+                  )}
+                </div>
+                <div className="relative text-center text-xs text-[hsl(var(--foreground))/0.6]">
+                  <span className="relative z-10 bg-[hsl(var(--card))]/95 px-3">
+                    {t("orContinueWithEmail")}
+                  </span>
+                  <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
+                </div>
+              </div>
+            )}
 
             <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
               <label className="block text-sm">

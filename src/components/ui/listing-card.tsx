@@ -132,13 +132,13 @@ export function ListingCard({
               className="absolute inset-0 flex items-end justify-center p-4 pointer-events-none z-10"
             >
               <div className="pointer-events-auto w-full flex justify-between items-center">
-                <a
-                  className="inline-flex items-center gap-2 bg-[hsl(var(--primary))] text-white px-4 py-2 rounded-2xl shadow-md"
-                  href="#"
+                <Link
+                  className="inline-flex items-center gap-2 rounded-2xl bg-[hsl(var(--primary))] px-4 py-2 text-[hsl(var(--primary-foreground))] no-underline shadow-md transition-all duration-200 hover:bg-[hsl(var(--primary))] hover:text-[hsl(var(--primary-foreground))] hover:no-underline hover:shadow-lg"
+                  href={`/listings/${listing.id}`}
                 >
-                  View
+                  {t("details")}
                   <ArrowRight className="size-4" />
-                </a>
+                </Link>
                 <span className="text-xs px-3 py-1 rounded-full bg-[hsl(var(--background))]/70 border border-[hsl(var(--border))]">
                   {listing.price} {listing.currency}
                 </span>
@@ -156,48 +156,48 @@ export function ListingCard({
               transition={{ duration: 0.2 }}
               className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none"
             >
-          {/* Rating badge - default to 0.0 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
-            <div className="flex items-center -ml-1">
-              {Array.from({ length: 5 }).map((_, i) => {
-                const rating =
-                  typeof listing.averageRating === "number"
+              {/* Rating badge - default to 0.0 */}
+              <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
+                <div className="flex items-center -ml-1">
+                  {Array.from({ length: 5 }).map((_, i) => {
+                    const rating =
+                      typeof listing.averageRating === "number"
+                        ? listing.averageRating
+                        : 0;
+                    const filled = i + 1 <= Math.floor(rating);
+                    const half =
+                      !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
+                    return (
+                      <Star
+                        key={i}
+                        className={
+                          "mr-[2px] size-3 transition-colors " +
+                          (filled
+                            ? "text-amber-400 fill-amber-400"
+                            : half
+                              ? "text-amber-300"
+                              : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
+                        }
+                      />
+                    );
+                  })}
+                </div>
+                <span className="ml-1 font-medium tabular-nums">
+                  {(typeof listing.averageRating === "number"
                     ? listing.averageRating
-                    : 0;
-                const filled = i + 1 <= Math.floor(rating);
-                const half =
-                  !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
-                return (
-                  <Star
-                    key={i}
-                    className={
-                      "mr-[2px] size-3 transition-colors " +
-                      (filled
-                        ? "text-amber-400 fill-amber-400"
-                        : half
-                          ? "text-amber-300"
-                          : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
-                    }
-                  />
-                );
-              })}
-            </div>
-            <span className="ml-1 font-medium tabular-nums">
-              {(typeof listing.averageRating === "number"
-                ? listing.averageRating
-                : 0
-              ).toFixed(1)}
-            </span>
-          </div>
-          {/* Reviews badge - default to 0 */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
-            <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
-            <span className="font-medium tabular-nums">
-              {typeof listing.reviewCount === "number"
-                ? listing.reviewCount
-                : 0}
-            </span>
-          </div>
+                    : 0
+                  ).toFixed(1)}
+                </span>
+              </div>
+              {/* Reviews badge - default to 0 */}
+              <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
+                <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
+                <span className="font-medium tabular-nums">
+                  {typeof listing.reviewCount === "number"
+                    ? listing.reviewCount
+                    : 0}
+                </span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
@@ -211,12 +211,12 @@ export function ListingCard({
               transition={{ duration: 0.2 }}
               className="absolute top-2 left-2 z-[0]"
             >
-          <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
-            <CreditCard className="size-4 inline-flex" />
-            <span className="font-medium tabular-nums">
-              {listing.price} {listing.currency}
-            </span>
-          </span>
+              <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
+                <CreditCard className="size-4 inline-flex" />
+                <span className="font-medium tabular-nums">
+                  {listing.price} {listing.currency}
+                </span>
+              </span>
             </motion.div>
           )}
         </AnimatePresence>
@@ -230,18 +230,18 @@ export function ListingCard({
               transition={{ duration: 0.2 }}
               className="absolute bottom-2 left-2 z-[0] flex items-center gap-2"
             >
-          {showSeller ? (
-            <span
-              onClick={() => setContactOpen(true)}
-              className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm"
-            >
-              <Phone className="size-3" /> {t("seller")}
-            </span>
-          ) : (
-            <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-              <ShieldCheck className="size-3" /> {t("promoted")}
-            </span>
-          )}
+              {showSeller ? (
+                <span
+                  onClick={() => setContactOpen(true)}
+                  className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm"
+                >
+                  <Phone className="size-3" /> {t("seller")}
+                </span>
+              ) : (
+                <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+                  <ShieldCheck className="size-3" /> {t("promoted")}
+                </span>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -255,11 +255,11 @@ export function ListingCard({
               transition={{ duration: 0.2 }}
               className="absolute bottom-2 right-2 z-[0] flex items-center gap-2"
             >
-          {listing.category?.name && (
-            <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-              <TagIcon className="size-3" /> {listing.category?.name}
-            </span>
-          )}
+              {listing.category?.name && (
+                <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+                  <TagIcon className="size-3" /> {listing.category?.name}
+                </span>
+              )}
             </motion.div>
           )}
         </AnimatePresence>
@@ -374,7 +374,7 @@ export function ListingCard({
                   </p>
                   <div className="flex flex-col gap-3 max-h-[50vh] overflow-y-auto pr-1">
                     {Array.isArray(listing.representatives) &&
-                    listing.representatives.length > 0 ? (
+                      listing.representatives.length > 0 ? (
                       listing.representatives.map((r, idx) => {
                         const rep = (r as any).representative ?? r;
                         const phone =

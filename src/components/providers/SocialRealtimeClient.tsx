@@ -1,8 +1,10 @@
 "use client";
 import React from "react";
-import { useSocialRealtime } from "@/lib/use-social-realtime";
+import { useAuth } from "@/lib/use-auth";
+import { useRealtimeSocial } from "@/hooks/useRealtimeSocial";
 
 export default function SocialRealtimeClient() {
-  useSocialRealtime(true);
+  const { token } = useAuth();
+  useRealtimeSocial(token);
   return null;
 }
