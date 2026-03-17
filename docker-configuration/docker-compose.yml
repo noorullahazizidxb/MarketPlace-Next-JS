@@ -2,11 +2,13 @@ services:
   mysql:
     image: mysql:8.4
     restart: unless-stopped
+    env_file:
+      - ./.env
     # Removed deprecated startup option that causes MySQL 8.4 to fail.
     # If you need 'mysql_native_password' set a compatible server version or configure users later.
     environment:
       MYSQL_DATABASE: marketplace
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-Mcitp@123}
+      MYSQL_ROOT_PASSWORD: "Mcitp@123"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -41,43 +43,45 @@ services:
       args:
         BACKEND_REPO_URL: https://github.com/noorullahazizidxb/MarketPlace-Back-End-Node-Parisma.git
         BACKEND_REPO_REF: main
-        GIT_USERNAME: ${GIT_USERNAME:-noorullahazizidxb}
+        GIT_USERNAME: "noorullahazizidxb"
       secrets:
         - git_password
     restart: unless-stopped
+    env_file:
+      - ./.env
     environment:
       PORT: 4000
       NODE_ENV: production
-      DATABASE_URL: ${DATABASE_URL:-mysql://root:${MYSQL_ROOT_PASSWORD:-Mcitp@123}@mysql:3306/marketplace}
-      REDIS_URL: ${REDIS_URL:-redis://redis:6379}
-      ENABLE_ELASTIC_SEARCH: ${ENABLE_ELASTIC_SEARCH:-false}
-      ELASTICSEARCH_NODE: ${ELASTICSEARCH_NODE:-http://elasticsearch:9200}
-      ELASTICSEARCH_USERNAME: ${ELASTICSEARCH_USERNAME:-}
-      ELASTICSEARCH_PASSWORD: ${ELASTICSEARCH_PASSWORD:-}
-      ELASTICSEARCH_INDEX: ${ELASTICSEARCH_INDEX:-listings}
-      ELASTICSEARCH_USERS_INDEX: ${ELASTICSEARCH_USERS_INDEX:-users}
-      ELASTICSEARCH_BLOGS_INDEX: ${ELASTICSEARCH_BLOGS_INDEX:-blogs}
-      ELASTICSEARCH_ALLOW_SELF_SIGNED: ${ELASTICSEARCH_ALLOW_SELF_SIGNED:-true}
-      TOKEN_SECRET: ${TOKEN_SECRET:-change_this_super_secret_value}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
-      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
-      SMTP_HOST: ${SMTP_HOST:-localhost}
-      SMTP_PORT: ${SMTP_PORT:-1025}
-      SMTP_SECURE: ${SMTP_SECURE:-false}
-      SMTP_USER: ${SMTP_USER:-}
-      SMTP_PASS: ${SMTP_PASS:-}
-      SMTP_FROM: ${SMTP_FROM:-no-reply@devminds.net}
-      TWILIO_ACCOUNT_SID: ${TWILIO_ACCOUNT_SID:-}
-      TWILIO_AUTH_TOKEN: ${TWILIO_AUTH_TOKEN:-}
-      WHATSAPP_FROM: ${WHATSAPP_FROM:-}
-      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@devminds.net}
-      ADMIN_PHONE: ${ADMIN_PHONE:-}
-      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-ChangeMe123!}
-      UNAPPROVED_RETENTION_DAYS: ${UNAPPROVED_RETENTION_DAYS:-2}
-      RENEW_WINDOW_DAYS: ${RENEW_WINDOW_DAYS:-14}
-      MODERATION_CLEANUP_TIME: ${MODERATION_CLEANUP_TIME:-03:00}
-      RENEWAL_CLEANUP_TIME: ${RENEWAL_CLEANUP_TIME:-06:00}
+      DATABASE_URL: "mysql://root:Mcitp%40123@mysql:3306/marketplace"
+      REDIS_URL: "redis://redis:6379"
+      ENABLE_ELASTIC_SEARCH: "false"
+      ELASTICSEARCH_NODE: "http://elasticsearch:9200"
+      ELASTICSEARCH_USERNAME: ""
+      ELASTICSEARCH_PASSWORD: ""
+      ELASTICSEARCH_INDEX: "listings"
+      ELASTICSEARCH_USERS_INDEX: "users"
+      ELASTICSEARCH_BLOGS_INDEX: "blogs"
+      ELASTICSEARCH_ALLOW_SELF_SIGNED: "true"
+      TOKEN_SECRET: "replace_with_random_token_secret"
+      GOOGLE_CLIENT_ID: ""
+      FACEBOOK_APP_ID: ""
+      FACEBOOK_APP_SECRET: ""
+      SMTP_HOST: "localhost"
+      SMTP_PORT: "1025"
+      SMTP_SECURE: "false"
+      SMTP_USER: ""
+      SMTP_PASS: ""
+      SMTP_FROM: "no-reply@devminds.net"
+      TWILIO_ACCOUNT_SID: ""
+      TWILIO_AUTH_TOKEN: ""
+      WHATSAPP_FROM: ""
+      ADMIN_EMAIL: "noorullah.azizi2040@gmail.com"
+      ADMIN_PHONE: ""
+      ADMIN_PASSWORD: "ChangeMe123!"
+      UNAPPROVED_RETENTION_DAYS: "2"
+      RENEW_WINDOW_DAYS: "14"
+      MODERATION_CLEANUP_TIME: "03:00"
+      RENEWAL_CLEANUP_TIME: "06:00"
     depends_on:
       - mysql
       - redis
@@ -94,27 +98,29 @@ services:
         FRONTEND_REPO_URL: https://github.com/noorullahazizidxb/MarketPlace-Next-JS.git
         FRONTEND_REPO_REF: main
     restart: unless-stopped
+    env_file:
+      - ./.env
     environment:
       PORT: 3000
       NODE_ENV: production
-      NEXT_PUBLIC_API_BASE: ${NEXT_PUBLIC_API_BASE:-https://api.devminds.net/api}
-      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-https://api.devminds.net/api}
-      NEXT_PUBLIC_WS_URL: ${NEXT_PUBLIC_WS_URL:-https://api.devminds.net}
-      NEXT_PUBLIC_SOCKET_URL: ${NEXT_PUBLIC_SOCKET_URL:-https://api.devminds.net}
-      BLOG_ORIGIN: ${BLOG_ORIGIN:-https://blog.devminds.net}
-      MARKETPLACE_ORIGIN: ${MARKETPLACE_ORIGIN:-https://marketplace.devminds.net}
-      NEXT_PUBLIC_ENABLE_ELASTIC_SEARCH: ${NEXT_PUBLIC_ENABLE_ELASTIC_SEARCH:-false}
-      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ${NEXT_PUBLIC_GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID:-}
-      GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET:-}
-      NEXT_PUBLIC_FACEBOOK_APP_ID: ${NEXT_PUBLIC_FACEBOOK_APP_ID:-}
-      FACEBOOK_APP_ID: ${FACEBOOK_APP_ID:-}
-      FACEBOOK_APP_SECRET: ${FACEBOOK_APP_SECRET:-}
-      NEXT_PUBLIC_GOOGLE_AUTH_URL: ${NEXT_PUBLIC_GOOGLE_AUTH_URL:-/api/auth/google}
-      NEXT_PUBLIC_FACEBOOK_AUTH_URL: ${NEXT_PUBLIC_FACEBOOK_AUTH_URL:-/api/auth/facebook}
-      SESSION_SECRET: ${SESSION_SECRET:-change_this_session_secret_for_frontend}
+      NEXT_PUBLIC_API_BASE: "https://api.devminds.net/api"
+      NEXT_PUBLIC_API_BASE_URL: "https://api.devminds.net/api"
+      NEXT_PUBLIC_WS_URL: "https://api.devminds.net"
+      NEXT_PUBLIC_SOCKET_URL: "https://api.devminds.net"
+      BLOG_ORIGIN: "https://blogs.devminds.net"
+      MARKETPLACE_ORIGIN: "https://marketplace.devminds.net"
+      NEXT_PUBLIC_ENABLE_ELASTIC_SEARCH: "false"
+      NEXT_PUBLIC_GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_ID: ""
+      GOOGLE_CLIENT_SECRET: ""
+      NEXT_PUBLIC_FACEBOOK_APP_ID: ""
+      FACEBOOK_APP_ID: ""
+      FACEBOOK_APP_SECRET: ""
+      NEXT_PUBLIC_GOOGLE_AUTH_URL: "/api/auth/google"
+      NEXT_PUBLIC_FACEBOOK_AUTH_URL: "/api/auth/facebook"
+      SESSION_SECRET: "replace_with_random_session_secret"
       # Database access is usually not needed in frontend except if it hits prisma directly (it doesn't here usually)
-      # DATABASE_URL: ${DATABASE_URL:-}
+      # DATABASE_URL: ""
     depends_on:
       - backend
     ports:
@@ -127,6 +133,8 @@ services:
       - edge
     image: nginx:1.27-alpine
     restart: unless-stopped
+    env_file:
+      - ./.env
     depends_on:
       - frontend
       - backend

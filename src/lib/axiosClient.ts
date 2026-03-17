@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store/auth.store";
 const baseURL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   process.env.NEXT_PUBLIC_API_BASE ||
-  "http://localhost:3002/api";
+  "https://api.devminds.net/api";
 
 export const axiosClient = axios.create({
   baseURL,
@@ -29,7 +29,7 @@ export function setCachedToken(token: string | null) {
           delete (axiosClient.defaults.headers as any).common.Authorization;
       }
     }
-  } catch {}
+  } catch { }
 }
 axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
@@ -43,7 +43,7 @@ axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) 
           token = state?.session?.token ?? null;
           if (token) cachedToken = token;
         }
-      } catch {}
+      } catch { }
       if (token) {
         // ensure headers exists
         (config.headers as any) = (config.headers as any) || {};
@@ -51,7 +51,7 @@ axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) 
         (config.headers as any).Authorization = `Bearer ${token}`;
       }
     }
-  } catch {}
+  } catch { }
   return config;
 });
 

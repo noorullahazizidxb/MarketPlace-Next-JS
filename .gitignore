@@ -19,4 +19,6 @@ yarn-error.log*
 /.next
 .next/*
 client_secret_*.apps.googleusercontent.com.json
+docker-configuration/secrets/*
+!docker-configuration/secrets/git_password.txt
 /.next/*
