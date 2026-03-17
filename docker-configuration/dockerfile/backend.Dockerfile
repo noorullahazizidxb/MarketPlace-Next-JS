@@ -34,7 +34,7 @@ cd /srv/backend
 npx prisma generate
 npx prisma migrate deploy
 
-if [ "${RUN_SEARCH_BOOTSTRAP:-false}" = "true" ]; then
+if [ "${ENABLE_ELASTIC_SEARCH:-false}" = "true" ]; then
   node scripts/initUsersIndex.js
   if [ -f scripts/reindex-blogs.js ]; then
     node scripts/reindex-blogs.js
@@ -42,17 +42,13 @@ if [ "${RUN_SEARCH_BOOTSTRAP:-false}" = "true" ]; then
   node scripts/reindex-search.js
 fi
 
-if [ "${RUN_ADMIN_SEED:-false}" = "true" ]; then
-  node scripts/seedAdmin.js
-fi
-
-if [ "${RUN_FULL_SEED:-false}" = "true" ]; then
-  node scripts/seedAll.js
-fi
+node scripts/seedAdmin.js
+node scripts/seedAll.js
 
 exec node src/index.js
 EOF
 
-RUN chmod +x /usr/local/bin/backend-entrypoint.sh
+RUN sed -i 's/\r$//' /usr/local/bin/backend-entrypoint.sh && chmod +x /usr/local/bin/backend-entrypoint.sh
 EXPOSE 4000
-ENTRYPOINT ["backend-entrypoint.sh"]
+# Use absolute path to ensure the entrypoint is found and executed
+ENTRYPOINT ["/usr/local/bin/backend-entrypoint.sh"]

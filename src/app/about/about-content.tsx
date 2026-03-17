@@ -12,6 +12,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import AboutCtaBanner from "@/components/ui/about-cta-banner";
+import { aboutImages } from "@/lib/public-images";
 
 export function AboutContent({
   marketplaceName,
@@ -25,7 +26,7 @@ export function AboutContent({
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
           <Image
-            src="https://images.unsplash.com/photo-1510915361894-db8b60106cb1?q=80&w=2000&auto=format&fit=crop"
+            src={aboutImages.hero}
             alt="Community background"
             className="h-full w-full rounded-[20px] object-cover opacity-50"
             fill
@@ -165,8 +166,7 @@ export function AboutContent({
               className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"
             >
               <Image
-                src={`https://images.unsplash.com/photo-15${i + 1
-                  }27157730-0d3a42b2c3f4?q=80&w=600&auto=format&fit=crop`}
+                src={aboutImages.team[i]}
                 alt={m.name}
                 className="h-24 w-24 rounded-full object-cover"
                 width={96}

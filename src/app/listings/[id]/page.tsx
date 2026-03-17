@@ -33,6 +33,7 @@ import { setCachedToken } from "@/lib/axiosClient";
 import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
+import { listingPlaceholderImages } from "@/lib/public-images";
 
 export default function ListingDetailsPage() {
   return (
@@ -539,8 +540,8 @@ function Stars({ count }: { count: number }) {
         <Star
           key={i}
           className={`size-4 ${i < count
-              ? "fill-yellow-400 text-yellow-400"
-              : "text-[hsl(var(--primary))]/20"
+            ? "fill-yellow-400 text-yellow-400"
+            : "text-[hsl(var(--primary))]/20"
             }`}
         />
       ))}
@@ -620,12 +621,7 @@ function getInitials(name: string) {
 }
 
 function AdPlaceholder({ index }: { index: number }) {
-  const urls = [
-    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1512295767273-ac109ac3acfa?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1493612276216-ee3925520721?q=80&w=1200&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1200&auto=format&fit=crop",
-  ];
+  const urls = listingPlaceholderImages.compact;
   const url = urls[index % urls.length];
   return (
     <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
@@ -639,12 +635,7 @@ function AdPlaceholder({ index }: { index: number }) {
 }
 
 function LargeAdPlaceholder() {
-  const urls = [
-    "https://images.unsplash.com/photo-1506744038136-46273834b3fb?q=80&w=2000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?q=80&w=2000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?q=80&w=2000&auto=format&fit=crop",
-    "https://images.unsplash.com/photo-1526403224741-5a0d0fb7f7b9?q=80&w=2000&auto=format&fit=crop",
-  ];
+  const urls = listingPlaceholderImages.large;
   const url = urls[0];
   return (
     <div className="w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">

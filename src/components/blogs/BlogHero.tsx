@@ -5,6 +5,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
 import React from "react";
+import { blogHeroImage } from "@/lib/public-images";
 
 type Props = {
   value: string;
@@ -181,7 +182,7 @@ export function BlogHero({
           className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-white/10 overflow-hidden"
         >
           <Image
-            src="https://images.unsplash.com/photo-1515378791036-0648a3ef77b2?q=80&w=1600&auto=format&fit=crop"
+            src={blogHeroImage}
             alt="Blog hero"
             fill
             priority

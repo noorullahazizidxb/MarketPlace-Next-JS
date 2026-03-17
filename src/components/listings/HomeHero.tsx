@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { homeHeroImages } from "@/lib/public-images";
 
 export function HomeHero() {
   const { t, isRtl } = useLanguage();
@@ -82,7 +83,7 @@ export function HomeHero() {
           className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-white/10 overflow-hidden"
         >
           <Image
-            src="https://images.unsplash.com/photo-1505691723518-36a5ac3b2d95?q=80&w=1600&auto=format&fit=crop"
+            src={homeHeroImages.main}
             alt="Hero property"
             fill
             priority
@@ -90,17 +91,13 @@ export function HomeHero() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
           <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-3">
-            {[
-              "photo-1505691938895-1758d7feb511",
-              "photo-1512917774080-9991f1c4c750",
-              "photo-1523217582562-09d0def993a6",
-            ].map((id, i) => (
+            {homeHeroImages.gallery.map((url, i) => (
               <div
                 key={i}
                 className="relative h-20 rounded-xl overflow-hidden border border-white/20"
               >
                 <Image
-                  src={`https://images.unsplash.com/${id}?q=80&w=800&auto=format&fit=crop`}
+                  src={url}
                   alt={`Gallery ${i + 1}`}
                   fill
                   className="object-cover"
