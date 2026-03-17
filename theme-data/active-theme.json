@@ -12,7 +12,7 @@
           "xs": "10px",
           "2xl": "22px",
           "3xl": "28px",
-          "base": "0.813rem"
+          "base": "0.745rem"
         },
         "weights": {
           "bold": "600",
@@ -27,13 +27,14 @@
           "relaxed": "1.5"
         },
         "elements": {
-          "body": "0.905rem",
-          "heading": "1.12rem"
+          "body": "0.845rem",
+          "heading": "1.26rem"
         },
         "families": {
           "english": "Roboto",
-          "persian": "Vazirmatn",
-          "heading": "Poppins"
+          "persian": "Yekan",
+          "heading": "Roboto",
+          "headingPersian": "Yekan"
         }
       },
       "radii": {
@@ -164,13 +165,13 @@
           "hex": "#09090b"
         },
         "accentForeground": {
-          "css": "hsl(235 100% 95%)",
+          "css": "hsl(240 20% 1%)",
           "hsl": [
-            235,
-            100,
-            95
+            240,
+            20,
+            1
           ],
-          "hex": "#e5e8ff"
+          "hex": "#020203"
         },
         "primaryForeground": {
           "css": "hsl(0 0% 98%)",
@@ -328,7 +329,7 @@
           "token": "primary"
         },
         "activeColor": {
-          "token": "primary"
+          "token": "linkBg"
         },
         "hoverBackground": {
           "token": "linkBg"
@@ -398,6 +399,6 @@
       }
     },
     "preferredColorMode": "HEX",
-    "updatedAt": "2026-03-01T12:40:37.509Z"
+    "updatedAt": "2026-03-16T13:12:00.607Z"
   }
 ]

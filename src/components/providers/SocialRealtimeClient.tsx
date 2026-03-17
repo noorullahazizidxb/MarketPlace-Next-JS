@@ -5,6 +5,6 @@ import { useRealtimeSocial } from "@/hooks/useRealtimeSocial";
 
 export default function SocialRealtimeClient() {
   const { token } = useAuth();
-  useRealtimeSocial(token);
+  useRealtimeSocial(token ?? undefined);
   return null;
 }

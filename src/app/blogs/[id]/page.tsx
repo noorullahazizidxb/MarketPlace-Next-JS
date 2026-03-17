@@ -29,21 +29,22 @@ export default function BlogDetailPage() {
   const onDelete = async () => {
     try {
       await del.mutateAsync({} as any);
-    } catch {}
+    } catch { }
     try {
       const { getSocket } = await import("@/lib/socket");
       getSocket()?.emit?.("blogDeleted", { id });
-    } catch {}
+    } catch { }
     setConfirmOpen(false);
     router.push("/blogs");
   };
   const [comment, setComment] = React.useState("");
   const onPostComment = async () => {
+    if (!user) return;
     if (!comment.trim()) return;
     try {
       await addComment.mutateAsync({ body: comment.trim() });
       setComment("");
-    } catch {}
+    } catch { }
   };
 
   const { t } = useLanguage();
@@ -81,18 +82,24 @@ export default function BlogDetailPage() {
 
       <section className="space-y-3">
         <h3 className="font-semibold">{t("blogCommentsTitle")}</h3>
-        <div className="flex items-center gap-2">
-          <input
-            className="input flex-1"
-            value={comment}
-            onChange={(e) => setComment(e.target.value)}
-            placeholder={t("blogCommentsPlaceholder")}
-            aria-label={t("blogCommentsPlaceholder")}
-          />
-          <button className="btn" onClick={onPostComment}>
-            {t("post")}
-          </button>
-        </div>
+        {user ? (
+          <div className="flex items-center gap-2">
+            <input
+              className="input flex-1"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              placeholder={t("blogCommentsPlaceholder")}
+              aria-label={t("blogCommentsPlaceholder")}
+            />
+            <button className="btn" onClick={onPostComment}>
+              {t("post")}
+            </button>
+          </div>
+        ) : (
+          <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--foreground))/0.76]">
+            {t("signInToComment")}
+          </div>
+        )}
         <div className="space-y-2">
           {blog.comments?.map((c: any) => (
             <div

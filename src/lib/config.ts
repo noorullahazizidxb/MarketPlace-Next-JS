@@ -21,7 +21,9 @@ export const config = {
     readPublicEnv("NEXT_PUBLIC_ENABLE-ELASTIC-SEARCH", "NEXT_PUBLIC_ENABLE_ELASTIC_SEARCH"),
     true
   ),
-  googleAuthUrl: readPublicEnv("NEXT_PUBLIC_GOOGLE_AUTH_URL"),
-  facebookAuthUrl: readPublicEnv("NEXT_PUBLIC_FACEBOOK_AUTH_URL"),
+  googleClientId: readPublicEnv("NEXT_PUBLIC_GOOGLE_CLIENT_ID"),
+  facebookAppId: readPublicEnv("NEXT_PUBLIC_FACEBOOK_APP_ID"),
+  googleAuthUrl: readPublicEnv("NEXT_PUBLIC_GOOGLE_AUTH_URL") || "/api/auth/google",
+  facebookAuthUrl: readPublicEnv("NEXT_PUBLIC_FACEBOOK_AUTH_URL") || "/api/auth/facebook",
   themeFileRoute: "/api/themes/file",
 };

@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Chrome, Facebook, Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, LogIn } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -14,6 +14,7 @@ import { useApiMutation, useLocalMutation } from "@/lib/api-hooks";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { useListingsStore } from "@/store/listings.store";
 import { config } from "@/lib/config";
+import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 
 type FormData = { email: string; password: string };
 
@@ -114,24 +115,10 @@ export default function SignInPage() {
 
             {hasSocialAuth && (
               <div className="mb-6 space-y-3">
-                <div className="grid gap-3 sm:grid-cols-2">
-                  {config.googleAuthUrl && (
-                    <Button asChild variant="secondary" className="w-full justify-center">
-                      <Link href={config.googleAuthUrl} className="inline-flex items-center gap-2">
-                        <Chrome className="size-4" />
-                        {t("continueWithGoogle")}
-                      </Link>
-                    </Button>
-                  )}
-                  {config.facebookAuthUrl && (
-                    <Button asChild variant="secondary" className="w-full justify-center">
-                      <Link href={config.facebookAuthUrl} className="inline-flex items-center gap-2">
-                        <Facebook className="size-4" />
-                        {t("continueWithFacebook")}
-                      </Link>
-                    </Button>
-                  )}
-                </div>
+                <SocialAuthButtons
+                  googleUrl={config.googleAuthUrl}
+                  facebookUrl={config.facebookAuthUrl}
+                />
                 <div className="relative text-center text-xs text-[hsl(var(--foreground))/0.6]">
                   <span className="relative z-10 bg-[hsl(var(--card))]/95 px-3">
                     {t("orContinueWithEmail")}

@@ -26,6 +26,8 @@ import { PartnersSkeleton } from "@/components/skeletons/PartnersSkeleton";
 /* ---------------------------------------------------- */
 
 const PUBLIC_PATH_PREFIXES = [
+  "/blog",
+  "/blogs",
   "/listings",
   "/about",
   "/contact",
@@ -87,7 +89,7 @@ export function AppShell({ children }: PropsWithChildren) {
         router.replace("/listings");
         return;
       }
-    } catch {}
+    } catch { }
     if (!user && !isPublicRoute) {
       router.replace("/sign-in");
     }
@@ -97,11 +99,16 @@ export function AppShell({ children }: PropsWithChildren) {
     if (pathname === "/") {
       if (loading) return;
       const timeoutId = window.setTimeout(() => {
+        const isBlogHost = window.location.host.toLowerCase().includes("blog.");
+        if (isBlogHost) {
+          router.replace("/blog");
+          return;
+        }
         if (user) {
           router.replace(isAdmin ? "/admin" : "/listings");
-        } else {
-          router.replace("/listings");
+          return;
         }
+        router.replace("/listings");
       }, 0);
       return () => window.clearTimeout(timeoutId);
     }

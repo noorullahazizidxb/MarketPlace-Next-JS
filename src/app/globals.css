@@ -89,13 +89,14 @@ html[lang="fa"] .heading-2xl,
 html[lang="fa"] .heading-lg,
 html[lang="fa"] .heading-md,
 html[lang="fa"] .heading-sm {
-  font-family: var(--font-family-heading, HSDream, Vazirmatn, Yekan, sans-serif);
+  font-family: var(--font-family-heading-persian, var(--font-family-heading, HSDream, Vazirmatn, Yekan, sans-serif));
 }
 
 :root {
   --font-family-english: Inter, PoppinsLocal, Roboto, Open Sans, Lato, ui-sans-serif, system-ui;
   --font-family-persian: Vazirmatn, Yekan, HSDream, Tahoma, sans-serif;
   --font-family-heading: Poppins, PoppinsLocal, Inter, ui-sans-serif, system-ui;
+  --font-family-heading-persian: HSDream, Vazirmatn, Yekan, sans-serif;
   --font-size-body: 1rem;
   --font-size-heading: 1.25rem;
   --font-size-ui: 0.95rem;

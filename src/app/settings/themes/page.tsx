@@ -105,6 +105,7 @@ const normalizeScalesPayload = (incoming: ScalesShape | null) => {
   if (!font.families.english) font.families.english = "Inter";
   if (!font.families.persian) font.families.persian = "Vazirmatn";
   if (!font.families.heading) font.families.heading = "Poppins";
+  if (!font.families.headingPersian) font.families.headingPersian = "HSDream";
   delete font.family;
 
   if (!font.sizes || typeof font.sizes !== "object") font.sizes = {};
@@ -410,6 +411,35 @@ export default function ThemeSettingsPage() {
     });
   };
 
+  const handleFontSizeRangeChange = (
+    key: "base" | "body" | "heading",
+    next: number,
+  ) => {
+    const value = `${next}rem`;
+    setScales((prev) => {
+      const base: any = prev ? JSON.parse(JSON.stringify(prev)) : {};
+      if (!base.font || typeof base.font !== "object") base.font = {};
+      if (!base.font.sizes || typeof base.font.sizes !== "object") {
+        base.font.sizes = {};
+      }
+      if (!base.font.elements || typeof base.font.elements !== "object") {
+        base.font.elements = {};
+      }
+
+      if (key === "base") {
+        base.font.sizes.base = value;
+        base.font.elements.body = value;
+      } else if (key === "body") {
+        base.font.elements.body = value;
+      } else {
+        base.font.elements.heading = value;
+      }
+
+      applyThemeScales(base);
+      return base as ScalesShape;
+    });
+  };
+
   const resetFromRemote = async () => {
     setLoading(true);
     setError(null);
@@ -556,8 +586,8 @@ export default function ThemeSettingsPage() {
       <div className="flex items-center gap-2">
         <button
           className={`px-3 py-1.5 rounded-full border ${activeTab === "colors"
-              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
-              : "border-[hsl(var(--border))]"
+            ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+            : "border-[hsl(var(--border))]"
             }`}
           onClick={() => setActiveTab("colors")}
         >
@@ -565,8 +595,8 @@ export default function ThemeSettingsPage() {
         </button>
         <button
           className={`px-3 py-1.5 rounded-full border ${activeTab === "scales"
-              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
-              : "border-[hsl(var(--border))]"
+            ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+            : "border-[hsl(var(--border))]"
             }`}
           onClick={() => setActiveTab("scales")}
         >
@@ -574,8 +604,8 @@ export default function ThemeSettingsPage() {
         </button>
         <button
           className={`px-3 py-1.5 rounded-full border ${activeTab === "components"
-              ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
-              : "border-[hsl(var(--border))]"
+            ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-transparent"
+            : "border-[hsl(var(--border))]"
             }`}
           onClick={() => setActiveTab("components")}
         >
@@ -696,9 +726,9 @@ export default function ThemeSettingsPage() {
                   </select>
                 </label>
                 <label className="flex items-center gap-3">
-                  <span className="text-sm w-36">Heading font</span>
+                  <span className="text-sm w-36">English Heading</span>
                   <select
-                    aria-label="Heading font family"
+                    aria-label="English Heading font family"
                     className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
                     value={String(scales?.font?.families?.heading ?? "Poppins")}
                     onChange={(e) =>
@@ -706,6 +736,23 @@ export default function ThemeSettingsPage() {
                     }
                   >
                     {ENGLISH_FONT_OPTIONS.map((font) => (
+                      <option key={font} value={font}>
+                        {font}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="flex items-center gap-3">
+                  <span className="text-sm w-36">Persian Heading</span>
+                  <select
+                    aria-label="Persian Heading font family"
+                    className="flex-1 h-9 rounded-md bg-transparent border border-[hsl(var(--border))] px-2 text-sm"
+                    value={String(scales?.font?.families?.headingPersian ?? "HSDream")}
+                    onChange={(e) =>
+                      handleScaleChange("font.families.headingPersian", e.target.value)
+                    }
+                  >
+                    {PERSIAN_FONT_OPTIONS.map((font) => (
                       <option key={font} value={font}>
                         {font}
                       </option>
@@ -720,9 +767,7 @@ export default function ThemeSettingsPage() {
                   max={1.5}
                   step={0.01}
                   value={toRemNumber(scales?.font?.sizes?.base, 1)}
-                  onChange={(next) =>
-                    handleScaleChange("font.sizes.base", `${next}rem`)
-                  }
+                  onChange={(next) => handleFontSizeRangeChange("base", next)}
                 />
                 <ThemeRange
                   label="Body size"
@@ -733,9 +778,7 @@ export default function ThemeSettingsPage() {
                     scales?.font?.elements?.body ?? scales?.font?.sizes?.base,
                     1,
                   )}
-                  onChange={(next) =>
-                    handleScaleChange("font.elements.body", `${next}rem`)
-                  }
+                  onChange={(next) => handleFontSizeRangeChange("body", next)}
                 />
                 <ThemeRange
                   label="Heading size"
@@ -747,7 +790,7 @@ export default function ThemeSettingsPage() {
                     1.25,
                   )}
                   onChange={(next) =>
-                    handleScaleChange("font.elements.heading", `${next}rem`)
+                    handleFontSizeRangeChange("heading", next)
                   }
                 />
               </div>

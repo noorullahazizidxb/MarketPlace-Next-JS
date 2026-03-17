@@ -97,6 +97,7 @@ function pushScaleVars(lines: string[], scales?: JsonRecord) {
       if (typeof families.english === "string") lines.push(`--font-family-english:${families.english} !important;`);
       if (typeof families.persian === "string") lines.push(`--font-family-persian:${families.persian} !important;`);
       if (typeof families.heading === "string") lines.push(`--font-family-heading:${families.heading} !important;`);
+      if (typeof families.headingPersian === "string") lines.push(`--font-family-heading-persian:${families.headingPersian} !important;`);
     }
   }
 
