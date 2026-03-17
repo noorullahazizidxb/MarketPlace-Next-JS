@@ -1,0 +1,227 @@
+{
+  "id": 1,
+  "name": "default",
+  "scales": {
+    "font": {
+      "sizes": {
+        "lg": "16px",
+        "md": "14px",
+        "sm": "12px",
+        "xl": "18px",
+        "xs": "10px",
+        "2xl": "22px",
+        "3xl": "28px",
+        "base": "13px"
+      },
+      "family": "\"Inter\", system-ui, -apple-system, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial",
+      "weights": {
+        "bold": "600",
+        "medium": "400",
+        "regular": "300",
+        "semibold": "500",
+        "extrabold": "700"
+      },
+      "lineHeights": { "tight": "1.1", "normal": "1.3", "relaxed": "1.5" }
+    },
+    "radii": {
+      "lg": "18px",
+      "md": "12px",
+      "sm": "6px",
+      "xl": "24px",
+      "round": "9999px"
+    },
+    "shadow": {
+      "lg": "0 20px 60px rgba(2,6,23,0.18)",
+      "md": "0 6px 18px rgba(2,6,23,0.12)",
+      "sm": "0 1px 2px rgba(0,0,0,0.04)",
+      "none": "none",
+      "glass": "0 8px 30px rgba(2,6,23,0.12), inset 0 -6px 20px rgba(255,255,255,0.02)"
+    },
+    "zIndex": { "base": 10, "modal": 90, "overlay": 70, "dropdown": 60 },
+    "spacing": {
+      "lg": "24px",
+      "md": "16px",
+      "sm": "8px",
+      "xl": "32px",
+      "xs": "4px",
+      "xxl": "48px"
+    },
+    "borderWidth": { "thin": "1px", "thick": "2px", "regular": "1.5px" },
+    "transitions": {
+      "fast": "150ms cubic-bezier(.2,.9,.2,1)",
+      "slow": "350ms cubic-bezier(.2,.9,.2,1)",
+      "normal": "250ms cubic-bezier(.2,.9,.2,1)",
+      "spring": { "type": "spring", "damping": 30, "stiffness": 300 }
+    }
+  },
+  "tokens": {
+    "dark": {
+      "card": {
+        "css": "hsl(240 10% 4%)",
+        "hex": "#09090b",
+        "hsl": [240, 10, 4]
+      },
+      "input": {
+        "css": "hsl(240 3.8% 23%)",
+        "hex": "#38383d",
+        "hsl": [240, 4, 23]
+      },
+      "muted": {
+        "css": "hsl(240 3.7% 15.9%)",
+        "hex": "#27272a",
+        "hsl": [240, 4, 16]
+      },
+      "accent": {
+        "css": "hsl(342 100% 32%)",
+        "hex": "#a30031",
+        "hsl": [342, 100, 32]
+      },
+      "border": {
+        "css": "hsl(240 3.8% 23%)",
+        "hex": "#38383d",
+        "hsl": [240, 4, 23]
+      },
+      "primary": {
+        "css": "hsl(0 0% 98%)",
+        "hex": "#fafafa",
+        "hsl": [0, 0, 98]
+      },
+      "secondary": {
+        "css": "hsl(240 3.7% 15.9%)",
+        "hex": "#27272a",
+        "hsl": [240, 4, 16]
+      },
+      "background": {
+        "css": "hsl(240 10% 4%)",
+        "hex": "#09090b",
+        "hsl": [240, 10, 4]
+      },
+      "foreground": {
+        "css": "hsl(0 0% 98%)",
+        "hex": "#fafafa",
+        "hsl": [0, 0, 98]
+      },
+      "accentForeground": {
+        "css": "hsl(235 100% 95%)",
+        "hex": "#e5e8ff",
+        "hsl": [235, 100, 95]
+      },
+      "primaryForeground": {
+        "css": "hsl(240 10% 4%)",
+        "hex": "#09090b",
+        "hsl": [240, 10, 4]
+      },
+      "secondaryForeground": {
+        "css": "hsl(0 0% 98%)",
+        "hex": "#fafafa",
+        "hsl": [0, 0, 98]
+      }
+    },
+    "light": {
+      "card": { "css": "hsl(0 0% 100%)", "hex": "#ffffff", "hsl": [0, 0, 100] },
+      "input": {
+        "css": "hsl(240 5.9% 90%)",
+        "hex": "#e4e4e7",
+        "hsl": [240, 6, 90]
+      },
+      "muted": {
+        "css": "hsl(240 4.8% 95.9%)",
+        "hex": "#f4f4f5",
+        "hsl": [240, 5, 96]
+      },
+      "accent": {
+        "css": "hsl(253 66% 72%)",
+        "hex": "#9d88e7",
+        "hsl": [253, 66, 72]
+      },
+      "border": {
+        "css": "hsl(240 5.9% 90%)",
+        "hex": "#e4e4e7",
+        "hsl": [240, 6, 90]
+      },
+      "primary": { "css": "hsl(0 0% 7%)", "hex": "#121212", "hsl": [0, 0, 7] },
+      "secondary": {
+        "css": "hsl(240 4.8% 95.9%)",
+        "hex": "#f4f4f5",
+        "hsl": [240, 5, 96]
+      },
+      "background": {
+        "css": "hsl(0 0% 100%)",
+        "hex": "#ffffff",
+        "hsl": [0, 0, 100]
+      },
+      "foreground": {
+        "css": "hsl(240 10% 3.9%)",
+        "hex": "#09090b",
+        "hsl": [240, 10, 4]
+      },
+      "accentForeground": {
+        "css": "hsl(235 100% 95%)",
+        "hex": "#e5e8ff",
+        "hsl": [235, 100, 95]
+      },
+      "primaryForeground": {
+        "css": "hsl(0 0% 98%)",
+        "hex": "#fafafa",
+        "hsl": [0, 0, 98]
+      },
+      "secondaryForeground": {
+        "css": "hsl(240 10% 3.9%)",
+        "hex": "#09090b",
+        "hsl": [240, 10, 4]
+      }
+    }
+  },
+  "components": {
+    "card": {
+      "border": { "token": "border", "width": "thin" },
+      "radius": "lg",
+      "shadow": "sm",
+      "background": { "token": "card" }
+    },
+    "link": {
+      "color": { "token": "foreground" },
+      "underline": { "token": "primaryForeground" },
+      "background": { "token": "accent" },
+      "hoverColor": { "token": "primary" },
+      "activeColor": { "token": "primary" },
+      "hoverBackground": { "token": "linkBg" }
+    },
+    "button": {
+      "accent": {
+        "radius": "md",
+        "hoverColor": { "token": "foreground" },
+        "hoverShadow": "md",
+        "activeShadow": "lg",
+        "hoverBackground": { "token": "accent" },
+        "activeBackground": { "token": "accent" }
+      },
+      "primary": {
+        "color": { "token": "muted" },
+        "radius": "md",
+        "shadow": "sm",
+        "background": { "token": "primary" },
+        "hoverColor": { "token": "foreground" },
+        "transition": "fast",
+        "hoverShadow": "md",
+        "activeShadow": "lg",
+        "hoverBackground": { "token": "accent" },
+        "activeBackground": { "token": "accent" }
+      },
+      "secondary": {
+        "radius": "md",
+        "hoverColor": { "token": "foreground" },
+        "hoverShadow": "md",
+        "activeShadow": "lg",
+        "hoverBackground": { "token": "accent" },
+        "activeBackground": { "token": "accent" }
+      }
+    },
+    "navbar": {
+      "border": { "token": "border", "width": "thick" },
+      "shadow": "sm",
+      "background": { "token": "background" }
+    }
+  },
+  "preferredColorMode": "HEX"
+}

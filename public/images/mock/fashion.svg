@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#ec4899"/>
+      <stop offset="100%" stop-color="#8b5cf6"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <circle cx="270" cy="250" r="130" fill="rgba(255,255,255,0.2)"/>
+  <rect x="480" y="180" width="300" height="440" rx="36" fill="rgba(255,255,255,0.22)"/>
+  <text x="140" y="700" fill="#ffffff" font-size="72" font-family="Inter, Arial, sans-serif" font-weight="700">Fashion</text>
+</svg>

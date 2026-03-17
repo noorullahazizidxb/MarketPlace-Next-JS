@@ -1,0 +1,79 @@
+.modern-loader-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+/* Spinner */
+.modern-spinner {
+  width: 50px;
+  aspect-ratio: 1;
+  display: grid;
+  border: 4px solid transparent;
+  border-radius: 50%;
+  border-color: hsl(var(--border)) transparent;
+  animation: s-spin 1s infinite linear;
+}
+
+.modern-spinner::before,
+.modern-spinner::after {
+  content: "";
+  grid-area: 1/1;
+  margin: 2px;
+  border: inherit;
+  border-radius: 50%;
+}
+
+.modern-spinner::before {
+  border-color: hsl(var(--primary)) transparent;
+  animation: inherit;
+  animation-duration: .5s;
+  animation-direction: reverse;
+}
+
+.modern-spinner::after {
+  margin: 8px;
+}
+
+@keyframes s-spin {
+  100% {
+    transform: rotate(1turn);
+  }
+}
+
+/* Text */
+.modern-loader-text {
+  width: fit-content;
+  font-size: 24px;
+  font-family: system-ui, sans-serif;
+  font-weight: bold;
+  text-transform: uppercase;
+  color: transparent;
+  -webkit-text-stroke: 1px hsl(var(--muted-foreground) / 0.5);
+  background:
+    radial-gradient(0.71em at 50% 1em, hsl(var(--primary)) 99%, transparent 101%) calc(50% - 1em) 1em/2em 200% repeat-x,
+    radial-gradient(0.71em at 50% -0.5em, transparent 99%, hsl(var(--primary)) 101%) 50% 1.5em/2em 200% repeat-x;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation:
+    t-fill 0.8s linear infinite alternate,
+    t-wave 4s linear infinite;
+}
+
+.modern-loader-text::before {
+  content: attr(data-text);
+}
+
+@keyframes t-fill {
+  to {
+    background-position-x: 50%, calc(50% + 1em);
+  }
+}
+
+@keyframes t-wave {
+  to {
+    background-position-y: -.5em, 0;
+  }
+}
