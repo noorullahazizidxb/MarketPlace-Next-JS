@@ -23,6 +23,90 @@
   }
 }
 
+/* ── Marquee: CSS-only partners scroll (GPU compositor thread, no JS) ─────── */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+  will-change: transform;
+}
+
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
+
+/* ── Slow spin for AnimatedBg conic layer ────────────────────────────────── */
+@keyframes spin-slow {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+  will-change: transform;
+}
+
+/* ── Slow drift for AnimatedBg ribbon blobs ─────────────────────────────── */
+@keyframes drift-a {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  33% {
+    transform: translate(20px, -10px);
+  }
+
+  66% {
+    transform: translate(-10px, 15px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes drift-b {
+  0% {
+    transform: translate(0, 0);
+  }
+
+  33% {
+    transform: translate(-16px, 12px);
+  }
+
+  66% {
+    transform: translate(12px, -8px);
+  }
+
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.animate-drift-a {
+  animation: drift-a 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-drift-b {
+  animation: drift-b 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+
 /* Local font faces */
 @font-face {
   font-family: 'PoppinsLocal';

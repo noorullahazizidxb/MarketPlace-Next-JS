@@ -22,6 +22,7 @@ import { useSocialRealtime } from "@/lib/use-social-realtime";
 import { asset } from "@/lib/assets";
 import StoriesBar from "@/components/stories/StoriesBar";
 import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
+import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 
 export default function ListingsPage() {
   return (
@@ -160,7 +161,7 @@ function ListingsContent() {
           }
         }, 120);
       }
-    } catch {}
+    } catch { }
   }, [allItems, id, searchText]);
 
   return (
@@ -202,9 +203,8 @@ function ListingsContent() {
                                 : "h-0";
         return (
           <div
-            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${
-              pulling ? "" : "transition-[height] duration-300 ease-in-out"
-            }`}
+            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${pulling ? "" : "transition-[height] duration-300 ease-in-out"
+              }`}
           >
             <div className="text-[10px] tracking-wide font-medium text-foreground/60">
               {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
@@ -215,61 +215,68 @@ function ListingsContent() {
       })()}
       <div id="listings" ref={listingsAnchorRef} className="card p-4 space-y-3">
         <FiltersBar />
-        {isLoading && (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-            {Array.from({ length: pageSize }).map((_, i) => (
-              <div
-                key={i}
-                className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden"
-              >
-                <div className="animate-pulse">
-                  <div className="h-40 bg-[hsl(var(--foreground))/0.08]" />
-                  <div className="p-4 space-y-2">
-                    <div className="h-5 bg-[hsl(var(--foreground))/0.08] rounded" />
-                    <div className="h-4 bg-[hsl(var(--foreground))/0.08] rounded w-2/3" />
-                    <div className="h-4 bg-[hsl(var(--foreground))/0.08] rounded w-1/3" />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        )}
         {error && (
           <p className="text-red-500">
             {String((error as any).message || error)}
           </p>
         )}
-        {!isLoading &&
-          !error &&
-          (items.length === 0 ? (
-            <p>{t("noListingsFound")}</p>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                {pageItems.map((item, idx) => (
-                  <Fragment key={item.id}>
-                    <ListingCard
-                      key={item.id}
-                      listing={item}
-                      cleanImageOverlayOnEngage
-                    />
-                    {/* Insert an ad after finishing each row */}
-                    {((idx + 1) % 4 === 0 ||
-                      (idx === pageItems.length - 1 &&
-                        (idx + 1) % 4 !== 0)) && (
-                      <div
-                        key={`ad-${item.id}-${idx}`}
-                        className="col-span-full"
-                      >
-                        <AdPlaceholder index={Math.floor(idx / 4)} />
-                      </div>
-                    )}
-                  </Fragment>
-                ))}
+        {/* Grid is always rendered — skeletons occupy the same space as cards
+            while data loads so there is no layout shift when content arrives. */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          {isLoading
+            ? Array.from({ length: pageSize }).map((_, i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))]"
+              >
+                <Skeleton className="h-40 w-full rounded-none" />
+                <div className="p-4 space-y-2">
+                  <Skeleton className="h-5 w-3/4" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-4 w-1/3" />
+                  <div className="flex items-center gap-2 pt-1">
+                    <Skeleton className="h-6 w-16 rounded-xl" />
+                    <Skeleton className="h-6 w-20 rounded-xl" />
+                  </div>
+                </div>
               </div>
-              <Pagination page={current} pageCount={pageCount} />
-            </>
-          ))}
+            ))
+            : (
+              !error && (
+                items.length === 0
+                  ? (
+                    <p className="col-span-full">{t("noListingsFound")}</p>
+                  )
+                  : (
+                    <>
+                      {pageItems.map((item, idx) => (
+                        <Fragment key={item.id}>
+                          <ListingCard
+                            listing={item}
+                            cleanImageOverlayOnEngage
+                          />
+                          {/* Insert an ad after finishing each row */}
+                          {((idx + 1) % 4 === 0 ||
+                            (idx === pageItems.length - 1 &&
+                              (idx + 1) % 4 !== 0)) && (
+                              <div
+                                key={`ad-${item.id}-${idx}`}
+                                className="col-span-full"
+                              >
+                                <AdPlaceholder index={Math.floor(idx / 4)} />
+                              </div>
+                            )}
+                        </Fragment>
+                      ))}
+                    </>
+                  )
+              )
+            )
+          }
+        </div>
+        {!isLoading && !error && items.length > 0 && (
+          <Pagination page={current} pageCount={pageCount} />
+        )}
       </div>
     </div>
   );

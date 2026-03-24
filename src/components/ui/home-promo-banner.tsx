@@ -25,9 +25,10 @@ export default function HomePromoBanner() {
     >
       <div className="container-padded">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 32 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-hidden rounded-3xl
                        border border-[hsl(var(--border))]
                        bg-gradient-to-br from-[hsl(var(--accent)/0.15)]
@@ -36,18 +37,14 @@ export default function HomePromoBanner() {
                        shadow-lg shadow-[hsl(var(--accent)/0.2)] dark:shadow-none"
         >
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
-            <motion.div
-              className="absolute -left-10 -top-10"
-              animate={{ rotate: [10, 22, 10], y: [0, -6, 0] }}
-              transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-            >
+            {/* Decorative shapes — CSS float animation (GPU compositor) */}
+            <div className="absolute -left-10 -top-10 animate-float" style={{ animationDuration: "5.5s" }}>
               <Hexagon className="h-32 w-32 text-[hsl(var(--accent)/0.25)] opacity-60" />
-            </motion.div>
+            </div>
             <motion.svg
               viewBox="0 0 200 200"
-              className="absolute -bottom-16 -right-16 h-64 w-64 text-[hsl(var(--primary)/0.2)] opacity-50"
-              animate={{ rotate: [0, -10, 0], x: [0, 8, 0], y: [0, -8, 0] }}
-              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+              className="absolute -bottom-16 -right-16 h-64 w-64 text-[hsl(var(--primary)/0.2)] opacity-50 animate-float"
+              style={{ animationDuration: "8s", animationDelay: "1s" }}
             >
               <path
                 fill="currentColor"
@@ -55,77 +52,80 @@ export default function HomePromoBanner() {
                 transform="translate(100 100)"
               />
             </motion.svg>
-          </div>
 
-          <div className="relative px-6 py-10 md:px-10 md:py-14">
-            <div
-              className={isRtl
-                ? "flex flex-col items-center gap-8 md:flex-row-reverse md:gap-12"
-                : "grid items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10"}
-            >
-              <div className={isRtl ? "hidden" : "hidden md:flex md:justify-start"}>
-                <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[hsl(var(--accent))/0.2] bg-[hsl(var(--background))/0.55] shadow-inner backdrop-blur-sm">
-                  <ShoppingCart className="size-12 text-[hsl(var(--accent))] drop-shadow-xl" />
-                </div>
-              </div>
-
-              <div className={`flex-1 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
-                <motion.h2
-                  initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="heading-2xl text-[hsl(var(--foreground))] drop-shadow-md"
-                >
-                  {(t as any)("homePromoTitle") || "تمام محصولات ما را ببینید!"}
-                </motion.h2>
-                <motion.p
-                  initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="mt-3 text-base text-[hsl(var(--foreground)/0.8)] max-w-2xl"
-                >
-                  {(t as any)("homePromoSubtitle") ||
-                    "پیش از صدها موبایل های جدید و مستعمل از بهترین فروشگاه های افغانستان در دسترس شما."}
-                </motion.p>
-              </div>
-
-              <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.4, type: "spring", stiffness: 300 }}
-                className={isRtl ? "flex flex-col items-center gap-4 sm:flex-row" : "flex flex-col items-center gap-4 md:items-end"}
+            <div className="relative px-6 py-10 md:px-10 md:py-14">
+              <div
+                className={isRtl
+                  ? "flex flex-col items-center gap-8 md:flex-row-reverse md:gap-12"
+                  : "grid items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10"}
               >
-                <Link
-                  href="/listings"
-                  className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
+                <div className={isRtl ? "hidden" : "hidden md:flex md:justify-start"}>
+                  <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[hsl(var(--accent))/0.2] bg-[hsl(var(--background))/0.55] shadow-inner backdrop-blur-sm">
+                    <ShoppingCart className="size-12 text-[hsl(var(--accent))] drop-shadow-xl" />
+                  </div>
+                </div>
+
+                <div className={`flex-1 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
+                  <motion.h2
+                    initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="heading-2xl text-[hsl(var(--foreground))] drop-shadow-md"
+                  >
+                    {(t as any)("homePromoTitle") || "تمام محصولات ما را ببینید!"}
+                  </motion.h2>
+                  <motion.p
+                    initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+                    className="mt-3 text-base text-[hsl(var(--foreground)/0.8)] max-w-2xl"
+                  >
+                    {(t as any)("homePromoSubtitle") ||
+                      "پیش از صدها موبایل های جدید و مستعمل از بهترین فروشگاه های افغانستان در دسترس شما."}
+                  </motion.p>
+                </div>
+
+                <motion.div
+                  initial={{ opacity: 0, scale: 0.92 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.35, type: "spring", stiffness: 300 }}
+                  className={isRtl ? "flex flex-col items-center gap-4 sm:flex-row" : "flex flex-col items-center gap-4 md:items-end"}
+                >
+                  <Link
+                    href="/listings"
+                    className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
                                bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]
                                shadow-md shadow-[hsl(var(--primary)/0.3)]
                                hover:scale-105 active:scale-95
                                transition-all duration-200"
-                  aria-label={(t as any)("viewAll") || "View all"}
-                >
-                  <DirectionIcon className="size-4" />
-                  <span className="font-semibold text-sm">
-                    {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
-                  </span>
-                </Link>
+                    aria-label={(t as any)("viewAll") || "View all"}
+                  >
+                    <DirectionIcon className="size-4" />
+                    <span className="font-semibold text-sm">
+                      {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
+                    </span>
+                  </Link>
 
-                <Link
-                  href="/listings?sort=newest#listings"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
+                  <Link
+                    href="/listings?sort=newest#listings"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
                                bg-[hsl(var(--accent)/0.12)] text-[hsl(var(--accent))]
                                border border-[hsl(var(--accent)/0.2)]
                                hover:bg-[hsl(var(--accent)/0.2)] active:scale-95
                                transition-all duration-200"
-                  aria-label={(t as any)("quickExplore") || "Quick explore"}
-                >
-                  <ShoppingCart className="size-4" />
-                  <span className="text-sm">
-                    {(t as any)("quickExplore") || "گشتی سریع"}
-                  </span>
-                </Link>
+                    aria-label={(t as any)("quickExplore") || "Quick explore"}
+                  >
+                    <ShoppingCart className="size-4" />
+                    <span className="text-sm">
+                      {(t as any)("quickExplore") || "گشتی سریع"}
+                    </span>
+                  </Link>
 
-              </motion.div>
+                </motion.div>
+              </div>
             </div>
           </div>
         </motion.div>

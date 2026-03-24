@@ -69,7 +69,8 @@ export function ListingCard({
     <motion.article
       initial={{ opacity: 0, y: 10 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.4 }}
+      viewport={{ once: true, amount: 0.2 }}
+      style={{ willChange: "transform" }}
       className="group hover-ambient relative rounded-2xl bg-[hsl(var(--card))] border border-[hsl(var(--border))] shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
     >
       <div
@@ -98,37 +99,26 @@ export function ListingCard({
         ) : (
           <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-[hsl(var(--card))/0.08] via-[hsl(var(--card))/0.04] to-transparent" />
         )}
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.2 }}
-              className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.8] via-[hsl(var(--background))/0.1] to-transparent pointer-events-none"
-            />
-          )}
-        </AnimatePresence>
+        {/* ── Static overlays — CSS transitions, no framer runtime cost ─────── */}
+        {/* Gradient + radial blend — always present, opacity via CSS */}
+        <div
+          className={
+            "absolute inset-0 pointer-events-none transition-opacity duration-200 " +
+            (hideImageOverlays ? "opacity-0" : "opacity-100")
+          }
+        >
+          <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.8] via-[hsl(var(--background))/0.1] to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light" />
+        </div>
 
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              className="absolute inset-0 bg-[radial-gradient(circle_at_center,hsl(var(--accent)/0.12),transparent_70%)] mix-blend-soft-light pointer-events-none"
-            />
-          )}
-        </AnimatePresence>
-
+        {/* Hover CTA — single AnimatePresence for the one element that truly needs a spring */}
         <AnimatePresence initial={false}>
           {showHoverCta && (
             <motion.div
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.2 }}
+              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
               className="absolute inset-0 flex items-end justify-center p-4 pointer-events-none z-10"
             >
               <div className="pointer-events-auto w-full flex justify-between items-center">
@@ -147,131 +137,112 @@ export function ListingCard({
           )}
         </AnimatePresence>
 
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none"
-            >
-              {/* Rating badge - default to 0.0 */}
-              <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
-                <div className="flex items-center -ml-1">
-                  {Array.from({ length: 5 }).map((_, i) => {
-                    const rating =
-                      typeof listing.averageRating === "number"
-                        ? listing.averageRating
-                        : 0;
-                    const filled = i + 1 <= Math.floor(rating);
-                    const half =
-                      !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
-                    return (
-                      <Star
-                        key={i}
-                        className={
-                          "mr-[2px] size-3 transition-colors " +
-                          (filled
-                            ? "text-amber-400 fill-amber-400"
-                            : half
-                              ? "text-amber-300"
-                              : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
-                        }
-                      />
-                    );
-                  })}
-                </div>
-                <span className="ml-1 font-medium tabular-nums">
-                  {(typeof listing.averageRating === "number"
+        {/* Badges — CSS opacity transitions, no per-badge AnimatePresence */}
+        <div
+          className={
+            "absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none transition-opacity duration-200 " +
+            (hideImageOverlays ? "opacity-0" : "opacity-100")
+          }
+        >
+          {/* Rating badge - default to 0.0 */}
+          <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
+            <div className="flex items-center -ml-1">
+              {Array.from({ length: 5 }).map((_, i) => {
+                const rating =
+                  typeof listing.averageRating === "number"
                     ? listing.averageRating
-                    : 0
-                  ).toFixed(1)}
-                </span>
-              </div>
-              {/* Reviews badge - default to 0 */}
-              <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
-                <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
-                <span className="font-medium tabular-nums">
-                  {typeof listing.reviewCount === "number"
-                    ? listing.reviewCount
-                    : 0}
-                </span>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                    : 0;
+                const filled = i + 1 <= Math.floor(rating);
+                const half =
+                  !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
+                return (
+                  <Star
+                    key={i}
+                    className={
+                      "mr-[2px] size-3 transition-colors " +
+                      (filled
+                        ? "text-amber-400 fill-amber-400"
+                        : half
+                          ? "text-amber-300"
+                          : "text-[hsl(var(--muted-foreground))] dark:text-white/30")
+                    }
+                  />
+                );
+              })}
+            </div>
+            <span className="ml-1 font-medium tabular-nums">
+              {(typeof listing.averageRating === "number"
+                ? listing.averageRating
+                : 0
+              ).toFixed(1)}
+            </span>
+          </div>
+          {/* Reviews badge - default to 0 */}
+          <div className="inline-flex items-center gap-1 rounded-full border border-[hsl(var(--accent))]/30 bg-[hsl(var(--background))]/80 backdrop-blur px-2 py-1 text-[11px] text-[hsl(var(--foreground))] shadow-md">
+            <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
+            <span className="font-medium tabular-nums">
+              {typeof listing.reviewCount === "number"
+                ? listing.reviewCount
+                : 0}
+            </span>
+          </div>
+        </div>
 
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0, y: -6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -6 }}
-              transition={{ duration: 0.2 }}
-              className="absolute top-2 left-2 z-[0]"
-            >
-              <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
-                <CreditCard className="size-4 inline-flex" />
-                <span className="font-medium tabular-nums">
-                  {listing.price} {listing.currency}
-                </span>
-              </span>
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Price — top-left */}
+        <div
+          className={
+            "absolute top-2 left-2 z-[0] transition-opacity duration-200 " +
+            (hideImageOverlays ? "opacity-0" : "opacity-100")
+          }
+        >
+          <span className="text-xs px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
+            <CreditCard className="size-4 inline-flex" />
+            <span className="font-medium tabular-nums">
+              {listing.price} {listing.currency}
+            </span>
+          </span>
+        </div>
 
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-2 left-2 z-[0] flex items-center gap-2"
+        {/* Seller / Promoted — bottom-left */}
+        <div
+          className={
+            "absolute bottom-2 left-2 z-[0] flex items-center gap-2 transition-opacity duration-200 " +
+            (hideImageOverlays ? "opacity-0" : "opacity-100")
+          }
+        >
+          {showSeller ? (
+            <span
+              onClick={() => setContactOpen(true)}
+              className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm cursor-pointer"
             >
-              {showSeller ? (
-                <span
-                  onClick={() => setContactOpen(true)}
-                  className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm"
-                >
-                  <Phone className="size-3" /> {t("seller")}
-                </span>
-              ) : (
-                <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-                  <ShieldCheck className="size-3" /> {t("promoted")}
-                </span>
-              )}
-            </motion.div>
+              <Phone className="size-3" /> {t("seller")}
+            </span>
+          ) : (
+            <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+              <ShieldCheck className="size-3" /> {t("promoted")}
+            </span>
           )}
-        </AnimatePresence>
+        </div>
 
-        <AnimatePresence initial={false}>
-          {!hideImageOverlays && (
-            <motion.div
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 6 }}
-              transition={{ duration: 0.2 }}
-              className="absolute bottom-2 right-2 z-[0] flex items-center gap-2"
-            >
-              {listing.category?.name && (
-                <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
-                  <TagIcon className="size-3" /> {listing.category?.name}
-                </span>
-              )}
-            </motion.div>
-          )}
-        </AnimatePresence>
+        {/* Category — bottom-right */}
+        {listing.category?.name && (
+          <div
+            className={
+              "absolute bottom-2 right-2 z-[0] flex items-center gap-2 transition-opacity duration-200 " +
+              (hideImageOverlays ? "opacity-0" : "opacity-100")
+            }
+          >
+            <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
+              <TagIcon className="size-3" /> {listing.category?.name}
+            </span>
+          </div>
+        )}
       </div>
 
-      <div className="p-2">
-        <div className="flex items-start justify-between gap-3">
-          <h3 className="font-semibold tracking-tight line-clamp-1">
-            {listing.title}
-          </h3>
-        </div>
-        <div className="absolute right-1 b-20"></div>
+      <div className="p-3">
+        <h3 className="font-semibold tracking-tight line-clamp-1 text-sm">
+          {listing.title}
+        </h3>
         {listing.description && (
           <p
             className="mt-1 text-[11px] leading-snug text-[hsl(var(--muted-foreground))] truncate"
@@ -282,16 +253,22 @@ export function ListingCard({
         )}
 
         {listing.location && (
-          <p className="subtle mt-1 text-xs">{listing.location}</p>
+          <p className="subtle mt-1 text-xs flex items-center gap-1">
+            <span className="inline-block size-1.5 rounded-full bg-[hsl(var(--accent))]" />
+            {listing.location}
+          </p>
         )}
 
-        <div className="mt-4 flex items-center justify-between">
+        <div className="mt-3 flex items-center justify-between">
           {showSeller ? (
             <>
               <button
                 onClick={() => setContactOpen(true)}
-                className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
+                className="text-xs inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                           bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
+                           hover:bg-emerald-500/20 hover:-translate-y-0.5 transition-all border border-emerald-500/20"
               >
+                <Phone className="size-3" />
                 {t("contactSeller")}
               </button>
               <Dialog open={contactOpen} onOpenChange={setContactOpen}>

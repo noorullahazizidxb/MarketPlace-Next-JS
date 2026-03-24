@@ -3,6 +3,7 @@ import React from "react";
 import { useRouter } from "next/navigation";
 import { useApiGet } from "@/lib/api-hooks";
 import BlogCard from "@/components/blogs/BlogCard";
+import { BlogCardSkeleton } from "@/components/blogs/BlogCardSkeleton";
 import { useAuth } from "@/lib/use-auth";
 import BlogViewer from "@/components/blogs/BlogViewer";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -13,6 +14,29 @@ import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { config as appConfig } from "@/lib/config";
 import { filterBlogsByQuery } from "@/lib/search-utils";
+
+// Pre-defined skeleton rows that mirror the complex 2 / 3 / wide layout pattern.
+const SKELETON_ROWS = [
+  {
+    type: "two" as const, skeletons: [
+      { id: "sk1", imageHeightClass: "h-64 md:h-80 lg:h-96" },
+      { id: "sk2", imageHeightClass: "h-64 md:h-80 lg:h-96" },
+    ]
+  },
+  {
+    type: "three" as const, skeletons: [
+      { id: "sk3", imageHeightClass: undefined },
+      { id: "sk4", imageHeightClass: undefined },
+      { id: "sk5", imageHeightClass: undefined },
+    ]
+  },
+  {
+    type: "wide" as const, skeletons: [
+      { id: "sk6", imageHeightClass: "h-72 md:h-[22rem] lg:h-[26rem]" },
+      { id: "sk7", imageHeightClass: undefined },
+    ]
+  },
+];
 
 export default function BlogsPage() {
   const [q, setQ] = React.useState("");
@@ -114,8 +138,14 @@ export default function BlogsPage() {
         onChange={setQ}
         onSubmit={runSearch}
         suggestions={suggestions}
-        canCreate={!!user}
-        onCreate={() => router.push("/blogs/create")}
+        canCreate={true}
+        onCreate={() => {
+          if (!user) {
+            router.push("/sign-in");
+            return;
+          }
+          router.push("/blogs/create");
+        }}
         resultCount={filtered?.length ?? 0}
       />
       {/* Reused components from listings page */}
@@ -125,42 +155,64 @@ export default function BlogsPage() {
       )}
       {/* Promotional banners inserted for blogs page */}
       <ListingsPromoBanner />
-      {isLoading && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {Array.from({ length: 6 }).map((_, i) => (
-            <div
-              key={i}
-              className="h-48 rounded-2xl bg-[hsl(var(--muted))]/10 animate-pulse"
-            />
-          ))}
-        </div>
-      )}
-      {/* Row pattern: 1) two equal, 2) three equal, 3) two with left wide (2/3) + right narrow (1/3) - repeat */}
+      {/* Row pattern: 1) two equal, 2) three equal, 3) two with left wide (2/3) + right narrow (1/3) - repeat
+          While loading, skeleton placeholders are rendered in the exact same grid structure so
+          layout is established immediately and there are no content shifts on data arrival. */}
       <div className="space-y-6">
-        {(() => {
-          const rows: { type: "two" | "three" | "wide"; items: any[] }[] = [];
-          const list = pagedBlogs || [];
-          let i = 0;
-          let patternIdx = 0; // 0 -> two, 1 -> three, 2 -> wide
-          while (i < list.length) {
-            const type =
-              patternIdx === 0 ? "two" : patternIdx === 1 ? "three" : "wide";
-            const take = type === "two" ? 2 : type === "three" ? 3 : 2;
-            rows.push({ type: type as any, items: list.slice(i, i + take) });
-            i += take;
-            patternIdx = (patternIdx + 1) % 3;
-          }
-          return rows.map((row, idx) => {
+        {isLoading ? (
+          // ----- Skeleton grid (same structure as real content) -----
+          SKELETON_ROWS.map((row) => {
             if (row.type === "two") {
-              // two equal columns
               return (
-                <div
-                  key={idx}
-                  className="grid grid-cols-1 sm:grid-cols-2 gap-6"
-                >
-                  {row.items.map((b: any) => (
-                    <div key={b.id} className="">
+                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {row.skeletons.map((sk) => (
+                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
+                  ))}
+                </div>
+              );
+            }
+            if (row.type === "three") {
+              return (
+                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {row.skeletons.map((sk) => (
+                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
+                  ))}
+                </div>
+              );
+            }
+            // wide
+            return (
+              <div key={row.type} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                {row.skeletons.map((sk, j) => (
+                  <div key={sk.id} className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}>
+                    <BlogCardSkeleton imageHeightClass={sk.imageHeightClass} />
+                  </div>
+                ))}
+              </div>
+            );
+          })
+        ) : (
+          // ----- Real content grid -----
+          (() => {
+            const rows: { type: "two" | "three" | "wide"; items: any[] }[] = [];
+            const list = pagedBlogs || [];
+            let i = 0;
+            let patternIdx = 0; // 0 -> two, 1 -> three, 2 -> wide
+            while (i < list.length) {
+              const type =
+                patternIdx === 0 ? "two" : patternIdx === 1 ? "three" : "wide";
+              const take = type === "two" ? 2 : type === "three" ? 3 : 2;
+              rows.push({ type: type as any, items: list.slice(i, i + take) });
+              i += take;
+              patternIdx = (patternIdx + 1) % 3;
+            }
+            return rows.map((row, idx) => {
+              if (row.type === "two") {
+                return (
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {row.items.map((b: any) => (
                       <BlogCard
+                        key={b.id}
                         blog={b}
                         onOpen={onOpen}
                         variant="overlay"
@@ -168,23 +220,40 @@ export default function BlogsPage() {
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
                       />
-                    </div>
-                  ))}
-                </div>
-              );
-            }
-            if (row.type === "three") {
-              // three equal columns
+                    ))}
+                  </div>
+                );
+              }
+              if (row.type === "three") {
+                return (
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {row.items.map((b: any) => (
+                      <BlogCard
+                        key={b.id}
+                        blog={b}
+                        onOpen={onOpen}
+                        countOverride={countOverrides[String(b.id)]}
+                        onCountsChange={updateBlogCounts}
+                      />
+                    ))}
+                  </div>
+                );
+              }
+              // wide
               return (
-                <div
-                  key={idx}
-                  className="grid grid-cols-1 sm:grid-cols-3 gap-6"
-                >
-                  {row.items.map((b: any) => (
-                    <div key={b.id} className="">
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {row.items.map((b: any, j: number) => (
+                    <div
+                      key={b.id}
+                      className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}
+                    >
                       <BlogCard
                         blog={b}
                         onOpen={onOpen}
+                        variant={j === 0 ? "overlay" : "default"}
+                        imageHeightClass={
+                          j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
+                        }
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
                       />
@@ -192,31 +261,9 @@ export default function BlogsPage() {
                   ))}
                 </div>
               );
-            }
-            // wide: left card spans 2/3, right card spans 1/3 on sm+; on small screens stack
-            return (
-              <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {row.items.map((b: any, j: number) => (
-                  <div
-                    key={b.id}
-                    className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}
-                  >
-                    <BlogCard
-                      blog={b}
-                      onOpen={onOpen}
-                      variant={j === 0 ? "overlay" : "default"}
-                      imageHeightClass={
-                        j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
-                      }
-                      countOverride={countOverrides[String(b.id)]}
-                      onCountsChange={updateBlogCounts}
-                    />
-                  </div>
-                ))}
-              </div>
-            );
-          });
-        })()}
+            });
+          })()
+        )}
         {!isLoading && (filtered?.length ?? 0) === 0 && (
           <div className="card p-6">
             {q.trim() ? t("noResults") || "No results" : t("noBlogsYet")}

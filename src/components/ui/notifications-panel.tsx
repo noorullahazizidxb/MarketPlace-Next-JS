@@ -53,7 +53,7 @@ export type NotificationsPanelProps = {
   fetchUrl?: string; // API URL to GET notifications; defaults to "/notifications"
   onMarkRead?: (id: string) => Promise<void> | void;
   onMarkAllRead?: (ids: string[]) => Promise<void> | void;
-  anchor?: "top-right" | "bottom-center" | "center";
+  anchor?: "top-right" | "top-left" | "bottom-center" | "center";
 };
 
 function formatTimeAgo(input: string | Date): string {
@@ -86,7 +86,7 @@ export function NotificationsPanel({
   fetchUrl = "/notifications",
   onMarkRead,
   onMarkAllRead,
-  anchor = "top-right",
+  anchor = "top-right" as "top-right" | "top-left" | "bottom-center" | "center",
 }: NotificationsPanelProps) {
   const { t } = useLanguage();
   const getMessage = (n: any): string | null => {
@@ -301,7 +301,9 @@ export function NotificationsPanel({
                 ? "fixed inset-0 z-[1200] flex items-center justify-center p-4"
                 : anchor === "bottom-center"
                   ? "fixed bottom-[110px] left-1/2 -translate-x-1/2 z-[1200] w-[min(96vw,440px)] origin-bottom"
-                  : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
+                  : anchor === "top-left"
+                    ? "fixed left-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-left"
+                    : "fixed right-4 top-20 z-[1200] w-[min(92vw,420px)] origin-top-right",
               className
             )}
             initial={

@@ -7,10 +7,12 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { homeHeroImages } from "@/lib/public-images";
+import { useAuth } from "@/lib/use-auth";
 
 export function HomeHero() {
   const { t, isRtl } = useLanguage();
   const router = useRouter();
+  const { user } = useAuth();
 
   return (
     <section className="relative overflow-hidden mt-5 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
@@ -27,11 +29,7 @@ export function HomeHero() {
           animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
           transition={{ duration: 9.2, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute right-20 top-20 w-24 h-24 rounded-full border-2 border-[hsl(var(--accent)/.4)]"
-          animate={{ scale: [1, 1.1, 1], opacity: [0.6, 1, 0.6] }}
-          transition={{ duration: 5.5, repeat: Infinity, ease: "easeInOut" }}
-        />
+
       </div>
 
       <div className="relative z-10 px-5 sm:px-8 md:px-12 py-12 sm:py-16 md:py-20 grid lg:grid-cols-2 items-center gap-8">
@@ -67,7 +65,13 @@ export function HomeHero() {
               <Button variant="accent" onClick={() => router.push("/listings")}>{t("browseNow")}</Button>
               <Button
                 variant="secondary"
-                onClick={() => router.push("/listings/create")}
+                onClick={() => {
+                  if (!user) {
+                    router.push("/sign-in");
+                    return;
+                  }
+                  router.push("/listings/create");
+                }}
               >
                 {t("listYourProperty")}
               </Button>

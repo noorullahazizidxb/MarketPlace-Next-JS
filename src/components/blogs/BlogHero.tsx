@@ -52,11 +52,7 @@ export function BlogHero({
           animate={{ rotate: [45, 60, 45], y: [0, 10, 0] }}
           transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
         />
-        <motion.div
-          className="absolute left-10 top-10 w-20 h-20 rounded-full border-2 border-[hsl(var(--accent)/.4)]"
-          animate={{ scale: [1, 1.12, 1], opacity: [0.55, 1, 0.55] }}
-          transition={{ duration: 5.3, repeat: Infinity, ease: "easeInOut" }}
-        />
+
         <motion.div
           className="absolute -right-20 bottom-24 w-64 h-24 rounded-full bg-[hsl(var(--accent)/.12)] backdrop-blur-xl border border-white/10"
           animate={{ x: [0, -8, 0], y: [0, 8, 0] }}

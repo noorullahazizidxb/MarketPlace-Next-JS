@@ -36,39 +36,42 @@ export function AboutContent({
             className="absolute -left-10 top-8 h-36 w-36 rounded-3xl border border-white/20 bg-[hsl(var(--accent))/0.14] backdrop-blur-xl"
             animate={{ rotate: [10, 24, 10], y: [0, 10, 0] }}
             transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
-          />
-          <motion.div
-            className="absolute right-8 bottom-10 h-28 w-28 rounded-full border-2 border-[hsl(var(--accent)/0.45)]"
-            animate={{ scale: [1, 1.14, 1], opacity: [0.6, 1, 0.6] }}
-            transition={{ duration: 5.6, repeat: Infinity, ease: "easeInOut" }}
+            style={{ willChange: "transform" }}
           />
         </div>
         <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className={`max-w-3xl ${isRtl ? "text-right" : "text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[hsl(var(--foreground))]">
-              {t("futureFlexible")}
-            </h1>
-            <p className="mt-4 text-base sm:text-lg text-[hsl(var(--foreground))]/85">
-              {t("aboutHero").replace("{marketplaceName}", marketplaceName)}
-            </p>
-            <div className="mt-8 flex flex-wrap gap-3">
-              <Button asChild variant="primary">
-                <Link
-                  href="/listings"
-                  className="inline-flex items-center gap-2 px-5 py-3 h-auto"
-                >
-                  {t("browseListings")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
-                </Link>
-              </Button>
-              <Button asChild variant="secondary">
-                <Link
-                  href="/sign-in"
-                  className="inline-flex items-center gap-2 px-5 py-3 h-auto"
-                >
-                  {t("becomeSeller")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
-                </Link>
-              </Button>
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.5 }}
+              transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+            >
+              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+                {t("futureFlexible")}
+              </h1>
+              <p className="mt-4 text-base sm:text-lg text-[hsl(var(--foreground))]/85">
+                {t("aboutHero").replace("{marketplaceName}", marketplaceName)}
+              </p>
+              <div className="mt-8 flex flex-wrap gap-3">
+                <Button asChild variant="primary">
+                  <Link
+                    href="/listings"
+                    className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                  >
+                    {t("browseListings")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
+                  </Link>
+                </Button>
+                <Button asChild variant="secondary">
+                  <Link
+                    href="/sign-in"
+                    className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                  >
+                    {t("becomeSeller")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
+                  </Link>
+                </Button>
+              </div>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -76,71 +79,82 @@ export function AboutContent({
       {/* Mission & Vision */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <h2 className="text-xl font-semibold">{t("missionHeading")}</h2>
-            <p className="mt-2 text-[hsl(var(--foreground))]/80">
-              {t("missionText")}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <h2 className="text-xl font-semibold">{t("visionHeading")}</h2>
-            <p className="mt-2 text-[hsl(var(--foreground))]/80">
-              {t("visionText")}
-            </p>
-          </div>
+          {[
+            { heading: t("missionHeading"), text: t("missionText"), gradient: "from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/10" },
+            { heading: t("visionHeading"), text: t("visionText"), gradient: "from-[hsl(var(--accent))]/20 to-[hsl(var(--secondary))]/10" },
+          ].map((item, i) => (
+            <motion.div
+              key={item.heading}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.3 }}
+              transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+              className={`rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-br ${item.gradient} backdrop-blur-sm p-6`}
+            >
+              <h2 className="text-xl font-semibold">{item.heading}</h2>
+              <p className="mt-2 text-[hsl(var(--foreground))]/80 text-sm leading-relaxed">{item.text}</p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* How It Works */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-        <h2 className="text-2xl font-semibold">{t("howItWorks")}</h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl font-semibold"
+        >
+          {t("howItWorks")}
+        </motion.h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <div className="flex items-center gap-3">
-              <Box className="h-6 w-6 text-[hsl(var(--primary))]" />
-              <h3 className="font-semibold">{t("listYourItem")}</h3>
-            </div>
-            <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
-              {t("listYourItemDesc")}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <div className="flex items-center gap-3">
-              <MessageCircle className="h-6 w-6 text-[hsl(var(--primary))]" />
-              <h3 className="font-semibold">{t("connectSecurely")}</h3>
-            </div>
-            <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
-              {t("connectSecurelyDesc")}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <div className="flex items-center gap-3">
-              <ShieldCheck className="h-6 w-6 text-[hsl(var(--primary))]" />
-              <h3 className="font-semibold">{t("transactConfidence")}</h3>
-            </div>
-            <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
-              {t("transactConfidenceDesc")}
-            </p>
-          </div>
-          <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6">
-            <div className="flex items-center gap-3">
-              <Sparkles className="h-6 w-6 text-[hsl(var(--primary))]" />
-              <h3 className="font-semibold">{t("enjoyFlexibility")}</h3>
-            </div>
-            <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
-              {t("enjoyFlexibilityDesc")}
-            </p>
-          </div>
+          {[
+            { icon: Box, label: t("listYourItem"), desc: t("listYourItemDesc"), step: "01" },
+            { icon: MessageCircle, label: t("connectSecurely"), desc: t("connectSecurelyDesc"), step: "02" },
+            { icon: ShieldCheck, label: t("transactConfidence"), desc: t("transactConfidenceDesc"), step: "03" },
+            { icon: Sparkles, label: t("enjoyFlexibility"), desc: t("enjoyFlexibilityDesc"), step: "04" },
+          ].map((item, i) => (
+            <motion.div
+              key={item.step}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="relative rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 overflow-hidden group hover:-translate-y-1 transition-transform duration-300"
+            >
+              {/* Step number watermark */}
+              <span className="absolute top-3 right-4 text-6xl font-black text-[hsl(var(--foreground))]/5 select-none leading-none group-hover:text-[hsl(var(--accent))]/10 transition-colors">
+                {item.step}
+              </span>
+              <div className="flex items-center gap-3 mb-3">
+                <span className="size-10 rounded-xl bg-[hsl(var(--primary))]/15 grid place-items-center ring-1 ring-[hsl(var(--primary))]/25">
+                  <item.icon className="h-5 w-5 text-[hsl(var(--primary))]" />
+                </span>
+                <h3 className="font-semibold text-sm">{item.label}</h3>
+              </div>
+              <p className="text-sm text-[hsl(var(--foreground))]/75 leading-relaxed">
+                {item.desc}
+              </p>
+            </motion.div>
+          ))}
         </div>
       </section>
 
       {/* Story */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-        <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 md:p-10">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+          className="rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--secondary))]/30 p-6 md:p-10"
+        >
           <h2 className="text-2xl font-semibold">
             {t("storyBehind")} {marketplaceName}
           </h2>
-          <div className="mt-4 space-y-3 text-[hsl(var(--foreground))]/80">
+          <div className="mt-4 space-y-3 text-[hsl(var(--foreground))]/80 leading-relaxed">
             <p>{t("aboutStoryPara1")}</p>
             <p>
               {t("aboutStoryPara2").replace(
@@ -149,37 +163,52 @@ export function AboutContent({
               )}
             </p>
           </div>
-        </div>
+        </motion.div>
       </section>
 
       {/* Team */}
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
-        <h2 className="text-2xl font-semibold">{t("meetTheTeam")}</h2>
+        <motion.h2
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ duration: 0.5 }}
+          className="text-2xl font-semibold"
+        >
+          {t("meetTheTeam")}
+        </motion.h2>
         <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {[
             { name: t("teamAlexName"), title: t("teamAlexTitle") },
             { name: t("teamSamiraName"), title: t("teamSamiraTitle") },
             { name: t("teamDiegoName"), title: t("teamDiegoTitle") },
           ].map((m, i) => (
-            <article
+            <motion.article
               key={m.name}
-              className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6"
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300"
             >
-              <Image
-                src={aboutImages.team[i]}
-                alt={m.name}
-                className="h-24 w-24 rounded-full object-cover"
-                width={96}
-                height={96}
-              />
+              <div className="relative">
+                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(var(--primary))]/30 to-[hsl(var(--accent))]/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <Image
+                  src={aboutImages.team[i]}
+                  alt={m.name}
+                  className="relative h-24 w-24 rounded-full object-cover ring-2 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary))]/50 transition-all duration-300"
+                  width={96}
+                  height={96}
+                />
+              </div>
               <h3 className="mt-4 font-semibold">{m.name}</h3>
-              <p className="text-sm text-[hsl(var(--foreground))]/70">
+              <p className="text-sm text-[hsl(var(--primary))] font-medium mt-0.5">
                 {m.title}
               </p>
-              <p className="mt-2 text-sm text-[hsl(var(--foreground))]/80">
+              <p className="mt-2 text-sm text-[hsl(var(--foreground))]/70 leading-relaxed">
                 {t("passionTagline")}
               </p>
-            </article>
+            </motion.article>
           ))}
         </div>
       </section>

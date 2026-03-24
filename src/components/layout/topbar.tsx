@@ -37,7 +37,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 export function Topbar() {
   const { user, counts, roles } = useAuth();
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
-  const { t, locale } = useLanguage();
+  const { t, locale, isRtl } = useLanguage();
   const [notifOpen, setNotifOpen] = useState(false);
   useNotificationsRealtime(!!user);
   const [open, setOpen] = useState(false);
@@ -183,7 +183,7 @@ export function Topbar() {
                           console.log(
                             "[notifications] bell clicked -> toggle panel"
                           );
-                        } catch {}
+                        } catch { }
                         setNotifOpen((v) => !v);
                       }}
                     >
@@ -198,6 +198,7 @@ export function Topbar() {
                       isOpen={notifOpen}
                       onClose={() => setNotifOpen(false)}
                       fetchUrl="/notifications"
+                      anchor={isRtl ? "top-left" : "top-right"}
                     />
                   </>
                 )}
@@ -352,7 +353,7 @@ function LogoutButton() {
       onClick={async () => {
         try {
           await mutateAsync({} as any);
-        } catch {}
+        } catch { }
         try {
           const { setCachedToken } = await import("@/lib/axiosClient");
           const { useAuthStore } = await import("@/store/auth.store");
@@ -364,7 +365,7 @@ function LogoutButton() {
           useAuthStore.getState().clear();
           useListingsStore.getState().clear();
           useNotificationsStore.getState().clear();
-        } catch {}
+        } catch { }
         window.location.href = "/sign-in";
       }}
       className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"

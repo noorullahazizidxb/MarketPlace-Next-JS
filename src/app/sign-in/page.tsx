@@ -15,6 +15,7 @@ import { useNotificationsStore } from "@/store/notifications.store";
 import { useListingsStore } from "@/store/listings.store";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
+import { motion } from "framer-motion";
 
 type FormData = { email: string; password: string };
 
@@ -96,7 +97,12 @@ export default function SignInPage() {
       dir={isRtl ? "rtl" : "ltr"}
       className="min-h-screen grid place-items-center p-6 bg-[hsl(var(--background))]"
     >
-      <div className="w-full max-w-xl rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/60 p-8 shadow-2xl">
+      <motion.div
+        initial={{ opacity: 0, y: 28, scale: 0.97 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ type: "spring", stiffness: 280, damping: 28 }}
+        className="w-full max-w-xl rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/60 p-8 shadow-2xl"
+      >
         <div className="grid md:grid-cols-2 gap-6 items-center">
           <div className="hidden md:flex flex-col justify-center items-start gap-4">
             <div className="size-14 rounded-3xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-extrabold text-2xl w-20 h-20">
@@ -192,7 +198,7 @@ export default function SignInPage() {
             </form>
           </div>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }

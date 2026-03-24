@@ -117,7 +117,6 @@ const BottomNavItem: React.FC<{
       <span
         className={
           "leading-none transition-all " +
-          (compactLabels ? "max-[390px]:sr-only" : "") +
           (active
             ? ""
             : " text-[hsl(var(--muted-foreground,var(--foreground)))]")
@@ -559,7 +558,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             else if (isAuthed) setUserOpen(true);
             try {
               navigator.vibrate?.(10);
-            } catch {}
+            } catch { }
           }
         }}
         aria-hidden
@@ -634,7 +633,7 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
   const handleLogout = async () => {
     try {
       await mutateAsync({} as any);
-    } catch {}
+    } catch { }
     try {
       const { setCachedToken } = await import("@/lib/axiosClient");
       const { useAuthStore } = await import("@/store/auth.store");
@@ -646,7 +645,7 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
       useAuthStore.getState().clear();
       useListingsStore.getState().clear();
       useNotificationsStore.getState().clear();
-    } catch {}
+    } catch { }
     onDone?.();
     window.location.href = "/sign-in";
   };

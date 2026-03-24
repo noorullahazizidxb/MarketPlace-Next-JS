@@ -17,6 +17,7 @@ import { Partners } from "@/components/ui/partners";
 import HomePromoBanner from "@/components/ui/home-promo-banner";
 import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
+import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
 
 /* --------------  NEW SKELETON IMPORTS  -------------- */
@@ -170,6 +171,7 @@ export function AppShell({ children }: PropsWithChildren) {
           </>
         </div>
         <BottomNavigation />
+        <MobileQuickBar />
       </div>
     );
   }
@@ -205,6 +207,7 @@ export function AppShell({ children }: PropsWithChildren) {
       )}
 
       <BottomNavigation />
+      <MobileQuickBar />
     </div>
   );
 }
