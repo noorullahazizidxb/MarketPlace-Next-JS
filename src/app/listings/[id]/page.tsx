@@ -733,7 +733,8 @@ function FeedbackCreateForm({
               type="submit"
               size="sm"
               variant="primary"
-              disabled={createFeedback.isPending || !rating}
+              loading={createFeedback.isPending}
+              disabled={!rating}
             >
               Post
             </Button>

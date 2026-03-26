@@ -14,6 +14,10 @@ import {
   Mail,
   FileText,
   Shield,
+  BookOpen,
+  LayoutList,
+  Image as ImageIcon,
+  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -35,16 +39,29 @@ const nav = [
   { href: "/contact", key: "contact", Icon: Mail },
 ];
 
+const resources = [
+  { href: "/listings", key: "listings", Icon: LayoutList },
+  { href: "/blogs", key: "blog", Icon: BookOpen },
+  { href: "/about", key: "about", Icon: Info },
+  { href: "/contact", key: "contact", Icon: Mail },
+];
+
 export default function Footer() {
   const { locale, t } = useLanguage();
 
   return (
     <footer className="relative mt-20" dir={locale === "fa" ? "rtl" : "ltr"}>
-      {/* Background scene */}
+      {/* Background scene — only CSS vars, no hardcoded palette colors */}
       <div className="pointer-events-none absolute inset-0 -z-10">
-        <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full bg-[conic-gradient(from_180deg,theme(colors.violet.500/.18),theme(colors.fuchsia.500/.14),theme(colors.cyan.500/.14))] blur-3xl opacity-70" />
-        <div className="absolute -bottom-14 -left-10 size-56 rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.emerald.400/.18),transparent_60%)] blur-2xl" />
-        <div className="absolute top-10 right-10 size-44 rounded-full bg-[radial-gradient(ellipse_at_center,theme(colors.sky.400/.18),transparent_60%)] blur-2xl" />
+        <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full blur-3xl opacity-60"
+          style={{ background: "conic-gradient(from 180deg, hsl(var(--primary)/0.18), hsl(var(--accent)/0.14), hsl(var(--secondary)/0.14))" }}
+        />
+        <div className="absolute -bottom-14 -left-10 size-56 rounded-full blur-2xl"
+          style={{ background: "radial-gradient(ellipse at center, hsl(var(--accent)/0.16), transparent 60%)" }}
+        />
+        <div className="absolute top-10 right-10 size-44 rounded-full blur-2xl"
+          style={{ background: "radial-gradient(ellipse at center, hsl(var(--primary)/0.14), transparent 60%)" }}
+        />
       </div>
 
       <motion.div
@@ -55,7 +72,7 @@ export default function Footer() {
         className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8"
       >
         <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
-          <div className="grid grid-cols-1 gap-8 p-6 sm:grid-cols-2 lg:grid-cols-4 lg:p-10">
+          <div className="grid grid-cols-1 gap-8 p-6 sm:grid-cols-2 lg:grid-cols-5 lg:p-10">
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3">
@@ -123,6 +140,26 @@ export default function Footer() {
                   </Link>
                 ))}
               </div>
+            </div>
+
+            {/* Resources */}
+            <div>
+              <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
+                Resources
+              </div>
+              <ul className="mt-3 space-y-1 text-sm">
+                {resources.map((r) => (
+                  <li key={r.href}>
+                    <Link
+                      href={r.href}
+                      className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
+                    >
+                      <r.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                      <span>{t(r.key as any)}</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             {/* Newsletter */}

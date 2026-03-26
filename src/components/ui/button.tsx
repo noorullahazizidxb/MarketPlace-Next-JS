@@ -2,6 +2,7 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cn } from "@/lib/cn";
+import { LoaderIcon } from "lucide-react";
 
 type IconType = React.ComponentType<React.SVGProps<SVGSVGElement>>;
 
@@ -11,6 +12,8 @@ type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
   RightIcon?: IconType;
   variant?: "primary" | "secondary" | "ghost" | "accent";
   size?: "sm" | "md" | "lg";
+  /** When true, shows a LoaderIcon spinner and disables the button */
+  loading?: boolean;
 };
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
@@ -22,12 +25,15 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       RightIcon,
       variant = "primary",
       size = "md",
+      loading = false,
+      disabled,
       children,
       ...props
     },
     ref
   ) => {
     const Comp = asChild ? Slot : "button";
+    const isDisabled = disabled || loading;
     const base =
       "inline-flex items-center justify-center whitespace-nowrap [border-radius:var(--radius-button-override,var(--radius-button,var(--radius-md,0.75rem)))] font-medium transition-all duration-200 ease-premium disabled:opacity-60 disabled:cursor-not-allowed gap-2 neuo border active:translate-y-0.5 hover:scale-[1.015] active:scale-[0.985]";
     const sizes: Record<NonNullable<ButtonProps["size"]>, string> = {
@@ -47,18 +53,21 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
     const classes = cn(base, sizes[size], styles[variant], className);
     if (asChild) {
-      // Radix Slot requires exactly one React element child
       return (
-        <Comp ref={ref as any} className={classes} {...props}>
+        <Comp ref={ref as any} className={classes} disabled={isDisabled} {...props}>
           {children}
         </Comp>
       );
     }
     return (
-      <Comp ref={ref} className={classes} {...props}>
-        {LeftIcon ? <LeftIcon className="size-4" /> : null}
+      <Comp ref={ref} className={classes} disabled={isDisabled} {...props}>
+        {loading ? (
+          <LoaderIcon className="size-4 animate-spin" aria-hidden="true" />
+        ) : LeftIcon ? (
+          <LeftIcon className="size-4" />
+        ) : null}
         {children}
-        {RightIcon ? <RightIcon className="size-4" /> : null}
+        {!loading && RightIcon ? <RightIcon className="size-4" /> : null}
       </Comp>
     );
   }

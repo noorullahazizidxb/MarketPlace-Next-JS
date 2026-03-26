@@ -7,6 +7,13 @@ import {
   ShieldCheck,
   Sparkles,
   ArrowRight,
+  Users,
+  MapPin,
+  LayoutList,
+  Star,
+  BadgeCheck,
+  Globe,
+  Handshake,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
@@ -96,6 +103,113 @@ export function AboutContent({
             </motion.div>
           ))}
         </div>
+      </section>
+
+      {/* Stats & Metrics */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.3 }}
+          transition={{ duration: 0.5 }}
+          className="text-center mb-8"
+        >
+          <h2 className="text-2xl font-semibold">{t("byTheNumbers") || "By the Numbers"}</h2>
+          <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
+            {t("trustedByThousands") || "Trusted by thousands across Afghanistan"}
+          </p>
+        </motion.div>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { value: "20,000+", labelKey: "activeBuyers", fallback: "Active Buyers", Icon: Users },
+            { value: "34", labelKey: "provincesServed", fallback: "Provinces Served", Icon: MapPin },
+            { value: "50,000+", labelKey: "listingsPosted", fallback: "Listings Posted", Icon: LayoutList },
+            { value: "98%", labelKey: "satisfactionRate", fallback: "Satisfaction Rate", Icon: Star },
+          ].map((stat, i) => (
+            <motion.div
+              key={stat.labelKey}
+              initial={{ opacity: 0, y: 24 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
+              className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 text-center group hover:-translate-y-1 transition-transform duration-300"
+            >
+              <div className="size-10 mx-auto rounded-xl bg-[hsl(var(--primary))]/15 grid place-items-center ring-1 ring-[hsl(var(--primary))]/25 group-hover:bg-[hsl(var(--primary))]/25 transition-colors">
+                <stat.Icon className="size-5 text-[hsl(var(--primary))]" />
+              </div>
+              <div className="mt-3 text-2xl font-bold tabular-nums bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--accent))] bg-clip-text text-transparent">
+                {stat.value}
+              </div>
+              <div className="mt-1 text-xs text-[hsl(var(--muted-foreground))]">
+                {(t(stat.labelKey as any) || stat.fallback) as string}
+              </div>
+            </motion.div>
+          ))}
+        </div>
+      </section>
+
+      {/* Trust & Verification */}
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5 }}
+          className="rounded-2xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(var(--primary))]/5 to-[hsl(var(--accent))]/5 p-6 md:p-10"
+        >
+          <div className="text-center mb-8">
+            <h2 className="text-2xl font-semibold">{t("whyTrustUs") || "Why Trust Us?"}</h2>
+            <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
+              {t("builtOnTransparency") || "Built on transparency, security, and community standards"}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {[
+              {
+                Icon: ShieldCheck,
+                titleKey: "verifiedSellers",
+                titleFallback: "Verified Sellers",
+                descKey: "verifiedSellersDesc",
+                descFallback: "All sellers are reviewed and verified before listing products.",
+              },
+              {
+                Icon: Globe,
+                titleKey: "nationwideCoverage",
+                titleFallback: "Nationwide Coverage",
+                descKey: "nationwideCoverageDesc",
+                descFallback: "Active across all 34 provinces with local language support.",
+              },
+              {
+                Icon: Handshake,
+                titleKey: "safeTransactions",
+                titleFallback: "Safe Transactions",
+                descKey: "safeTransactionsDesc",
+                descFallback: "Buyer protection and dispute resolution for peace of mind.",
+              },
+            ].map((item, i) => (
+              <motion.div
+                key={item.titleKey}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
+                className="flex items-start gap-4 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-5"
+              >
+                <div className="size-10 shrink-0 rounded-xl bg-[hsl(var(--primary))]/15 grid place-items-center ring-1 ring-[hsl(var(--primary))]/20">
+                  <item.Icon className="size-5 text-[hsl(var(--primary))]" />
+                </div>
+                <div>
+                  <h3 className="font-semibold text-sm">
+                    {(t(item.titleKey as any) || item.titleFallback) as string}
+                  </h3>
+                  <p className="mt-1 text-xs text-[hsl(var(--muted-foreground))] leading-relaxed">
+                    {(t(item.descKey as any) || item.descFallback) as string}
+                  </p>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
       </section>
 
       {/* How It Works */}

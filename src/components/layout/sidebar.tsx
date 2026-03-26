@@ -55,7 +55,8 @@ export function Sidebar({
     { href: "/admin/contacts", label: t("contacts"), Icon: Mail },
     { href: "/admin/users", label: t("usersManagement"), Icon: User },
     { href: "/pendings", label: t("pendingLists"), Icon: List },
-    { href: "/listings/create", label: t("newListing"), Icon: PlusCircle }, // keep Settings in the nav but render children below
+    { href: "/admin/manage-content-status", label: "Content Status", Icon: LayoutGrid },
+    { href: "/listings/create", label: t("newListing"), Icon: PlusCircle },
     { href: "/admin/stories", label: t("stories"), Icon: Megaphone },
     { href: "/settings/themes", label: t("themes"), Icon: Layers },
   ];
@@ -159,7 +160,7 @@ export function Sidebar({
                     onClick={async () => {
                       try {
                         await logout.mutateAsync({});
-                      } catch {}
+                      } catch { }
                       try {
                         const { setCachedToken } = await import(
                           "@/lib/axiosClient"
@@ -177,7 +178,7 @@ export function Sidebar({
                         useAuthStore.getState().clear();
                         useListingsStore.getState().clear();
                         useNotificationsStore.getState().clear();
-                      } catch {}
+                      } catch { }
                       window.location.href = "/sign-in";
                     }}
                     className="flex w-full items-center rounded-2xl gap-3 px-3 h-10 hover:bg-white/5 text-left"
@@ -205,9 +206,8 @@ export function Sidebar({
                     <Icon className="size-4" />
                     <span className="text-sm font-medium">{label}</span>
                     <ChevronDown
-                      className={`ml-auto transition-transform ${
-                        settingsOpen ? "rotate-180" : ""
-                      }`}
+                      className={`ml-auto transition-transform ${settingsOpen ? "rotate-180" : ""
+                        }`}
                     />
                   </div>
                 ) : (

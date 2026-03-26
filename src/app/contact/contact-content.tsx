@@ -8,6 +8,8 @@ import {
   HelpCircle,
   MessageSquare,
   ShieldCheck,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import ContactForm from "@/components/ui/contact-form";
@@ -121,6 +123,50 @@ function ContactInfoCards() {
   );
 }
 
+function BusinessHoursCard() {
+  const { t } = useLanguage();
+  const hours = [
+    { day: "Saturday – Thursday", time: "8:00 AM – 8:00 PM", open: true },
+    { day: "Friday", time: "10:00 AM – 4:00 PM", open: true },
+    { day: "Public Holidays", time: "Closed", open: false },
+  ];
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.3 }}
+      transition={{ duration: 0.45 }}
+      className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 p-5"
+    >
+      <div className="flex items-center gap-2 mb-4">
+        <div className="size-8 rounded-xl bg-[hsl(var(--primary))]/15 grid place-items-center">
+          <Clock className="size-4 text-[hsl(var(--primary))]" />
+        </div>
+        <h3 className="font-semibold text-sm">
+          {(t("businessHours" as any) || "Business Hours") as string}
+        </h3>
+      </div>
+      <div className="space-y-2">
+        {hours.map((row) => (
+          <div key={row.day} className="flex items-center justify-between text-sm gap-2">
+            <span className="text-[hsl(var(--foreground))]/70 text-xs">{row.day}</span>
+            <span
+              className={`font-medium text-xs px-2 py-0.5 rounded-full border ${row.open
+                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-400/30 dark:text-emerald-400"
+                  : "bg-[hsl(var(--muted))]/30 text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))]"
+                }`}
+            >
+              {row.open && <CheckCircle2 className="size-3 inline mr-1" />}
+              {row.time}
+            </span>
+          </div>
+        ))}
+      </div>
+    </motion.div>
+  );
+}
+
 export function ContactContent() {
   const { isRtl, t } = useLanguage();
 
@@ -131,6 +177,7 @@ export function ContactContent() {
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
         <div className="space-y-4">
           <ContactInfoCards />
+          <BusinessHoursCard />
           <div className="rounded-3xl border border-[hsl(var(--border))] bg-[linear-gradient(135deg,hsl(var(--card)),hsl(var(--background)))] p-6">
             <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[hsl(var(--accent))]">
               {t("contactSupportEyebrow")}

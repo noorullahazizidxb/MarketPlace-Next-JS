@@ -5,7 +5,6 @@ import { useApiGet } from "@/lib/api-hooks";
 import BlogCard from "@/components/blogs/BlogCard";
 import { BlogCardSkeleton } from "@/components/blogs/BlogCardSkeleton";
 import { useAuth } from "@/lib/use-auth";
-import BlogViewer from "@/components/blogs/BlogViewer";
 import { useLanguage } from "@/components/providers/language-provider";
 import { BlogHero } from "@/components/blogs/BlogHero";
 import StoriesBar from "@/components/stories/StoriesBar";
@@ -58,11 +57,8 @@ export default function BlogsPage() {
   const { user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
-  const [open, setOpen] = React.useState(false);
-  const [active, setActive] = React.useState<any | null>(null);
   const onOpen = (blog: any) => {
-    setActive(blog);
-    setOpen(true);
+    router.push(`/blogs/${blog.id}`);
   };
   const filtered = React.useMemo(() => {
     const list = blogs || [];
@@ -337,22 +333,6 @@ export default function BlogsPage() {
         <RelatedListingsSlider currentId={0} />
       )}
 
-      <BlogViewer
-        open={open}
-        blog={
-          active
-            ? {
-              ...active,
-              counts: {
-                ...(active.counts || {}),
-                ...(countOverrides[String(active.id)] || {}),
-              },
-            }
-            : active
-        }
-        onClose={() => setOpen(false)}
-        onCountsChange={updateBlogCounts}
-      />
     </div>
   );
 }

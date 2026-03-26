@@ -4,6 +4,7 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { mutate } from "swr";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/use-auth";
 import { getSocket } from "@/lib/socket";
 import Link from "next/link";
@@ -130,13 +131,16 @@ export default function CommentsInline({
             placeholder={t("messagePlaceholder") as string}
             aria-label={t("message")}
           />
-          <button className="btn" type="submit" disabled={post.isPending}>
+          <Button type="submit" size="sm" loading={post.isPending} variant="primary">
             {t("post")}
-          </button>
+          </Button>
         </form>
       ) : (
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--foreground))/0.76]">
-          {t("signInToComment")}
+        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--muted-foreground))] flex items-center justify-between gap-3">
+          <span>{t("signInToComment")}</span>
+          <Link href="/sign-in" className="text-xs font-medium text-[hsl(var(--primary))] hover:underline underline-offset-2">
+            {t("signIn") || "Sign in"}
+          </Link>
         </div>
       )}
       <div className="mt-2 space-y-2">

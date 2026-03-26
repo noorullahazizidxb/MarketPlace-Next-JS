@@ -178,7 +178,7 @@ export default function BlogCard({
     if (target?.closest('[data-slider-control="true"]')) {
       return;
     }
-    onOpen?.(blog);
+    router.push(`/blogs/${blog.id}`);
   };
 
   return (
@@ -239,7 +239,7 @@ export default function BlogCard({
             <div className="absolute left-3 bottom-3 z-[50] drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
               <button
                 type="button"
-                onClick={() => onOpen?.(blog)}
+                onClick={() => router.push(`/blogs/${blog.id}`)}
                 aria-label={t("openBlog")}
                 className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[hsl(var(--accent)/0.18)] hover:scale-105 transform-gpu transition-all duration-200"
               >

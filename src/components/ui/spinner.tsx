@@ -1,40 +1,34 @@
 "use client";
+import { LoaderIcon } from "lucide-react";
 import { cn } from "@/lib/cn";
 
 export type SpinnerSize = "xs" | "sm" | "md" | "lg" | "xl";
 export type SpinnerVariant = "default" | "primary" | "accent" | "muted";
 
-const sizeMap: Record<SpinnerSize, string> = {
-  xs: "size-3 border",
-  sm: "size-4 border-2",
-  md: "size-6 border-2",
-  lg: "size-8 border-[3px]",
-  xl: "size-12 border-4",
+const iconSizeMap: Record<SpinnerSize, string> = {
+  xs: "size-3",
+  sm: "size-4",
+  md: "size-5",
+  lg: "size-7",
+  xl: "size-10",
 };
 
-const variantMap: Record<SpinnerVariant, string> = {
-  default:
-    "border-[hsl(var(--foreground))]/20 border-t-[hsl(var(--foreground))]/80",
-  primary:
-    "border-[hsl(var(--primary))]/20 border-t-[hsl(var(--primary))]",
-  accent:
-    "border-[hsl(var(--accent))]/20 border-t-[hsl(var(--accent))]",
-  muted:
-    "border-[hsl(var(--muted-foreground))]/20 border-t-[hsl(var(--muted-foreground))]",
+const variantColorMap: Record<SpinnerVariant, string> = {
+  default: "text-[hsl(var(--foreground))]/70",
+  primary: "text-[hsl(var(--primary))]",
+  accent: "text-[hsl(var(--accent))]",
+  muted: "text-[hsl(var(--muted-foreground))]",
 };
 
 export interface SpinnerProps {
-  /** Visual size of the spinner */
   size?: SpinnerSize;
-  /** Color variant */
   variant?: SpinnerVariant;
-  /** Accessible label shown below the spinner */
   label?: string;
   className?: string;
 }
 
 /**
- * Shared spinner / loading indicator.
+ * Shared spinner using Lucide's LoaderIcon with animate-spin.
  *
  * Usage:
  *   <Spinner />
@@ -51,19 +45,13 @@ export function Spinner({
     <span
       role="status"
       aria-label={label ?? "Loading"}
-      className={cn("inline-flex flex-col items-center gap-2", className)}
+      className={cn("inline-flex flex-col items-center gap-1.5", className)}
     >
-      <span
-        className={cn(
-          "rounded-full animate-spin",
-          sizeMap[size],
-          variantMap[variant],
-        )}
+      <LoaderIcon
+        className={cn("animate-spin", iconSizeMap[size], variantColorMap[variant])}
       />
       {label && (
-        <span className="text-xs text-[hsl(var(--muted-foreground))]">
-          {label}
-        </span>
+        <span className="text-xs text-[hsl(var(--muted-foreground))]">{label}</span>
       )}
     </span>
   );
@@ -71,10 +59,6 @@ export function Spinner({
 
 /**
  * Full-page / full-section centered spinner.
- *
- * Usage:
- *   <PageSpinner />
- *   <PageSpinner label="Fetching listings…" />
  */
 export function PageSpinner({ label }: { label?: string }) {
   return (
@@ -83,3 +67,22 @@ export function PageSpinner({ label }: { label?: string }) {
     </div>
   );
 }
+
+/**
+ * Inline image placeholder shown while a next/Image is loading.
+ * Renders as an absolutely-positioned overlay on the parent (position relative).
+ */
+export function ImageSpinner({ className }: { className?: string }) {
+  return (
+    <span
+      aria-hidden="true"
+      className={cn(
+        "absolute inset-0 flex items-center justify-center bg-[hsl(var(--muted))]/40 backdrop-blur-[2px] z-10 transition-opacity",
+        className
+      )}
+    >
+      <LoaderIcon className="animate-spin size-6 text-[hsl(var(--muted-foreground))]" />
+    </span>
+  );
+}
+

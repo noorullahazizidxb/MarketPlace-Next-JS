@@ -2,7 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, LoaderIcon } from "lucide-react";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 
 type Slide = { url?: string | null; alt?: string | null };
@@ -143,21 +143,13 @@ export function ImageSlider({
           }
         >
           {slides.map((s, i) => (
-            <div key={i} className="relative min-w-full h-full snap-start">
-              <Image
-                src={asset(s?.url) || "/images/placeholder-card.jpg"}
-                alt={s?.alt || `Slide ${i + 1}`}
-                fill
-                className="object-cover will-change-transform"
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
-                sizes={sizes}
-                loading={i === 0 ? "eager" : "lazy"}
-                priority={i === 0}
-                fetchPriority={i === 0 ? "high" : "auto"}
-                draggable={false}
-              />
-            </div>
+            <SlideImage
+              key={i}
+              slide={s}
+              index={i}
+              sizes={sizes}
+              isActive={i === index}
+            />
           ))}
         </div>
       </div>
@@ -209,6 +201,47 @@ export function ImageSlider({
           </div>
         </>
       )}
+    </div>
+  );
+}
+
+// ─── Sub-component: individual slide with loading spinner ────────────────────
+function SlideImage({
+  slide,
+  index,
+  sizes,
+  isActive,
+}: {
+  slide: { url?: string | null; alt?: string | null };
+  index: number;
+  sizes: string;
+  isActive: boolean;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative min-w-full h-full snap-start">
+      {!loaded && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 flex items-center justify-center bg-[hsl(var(--muted))]/50 z-10"
+        >
+          <LoaderIcon className="animate-spin size-6 text-[hsl(var(--muted-foreground))]" />
+        </span>
+      )}
+      <Image
+        src={asset(slide?.url) || "/images/placeholder-card.jpg"}
+        alt={slide?.alt || `Slide ${index + 1}`}
+        fill
+        className="object-cover will-change-transform"
+        placeholder="blur"
+        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
+        sizes={sizes}
+        loading={index === 0 ? "eager" : "lazy"}
+        priority={index === 0}
+        fetchPriority={index === 0 ? "high" : "auto"}
+        draggable={false}
+        onLoad={() => setLoaded(true)}
+      />
     </div>
   );
 }
