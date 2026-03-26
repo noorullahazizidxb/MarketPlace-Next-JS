@@ -9,6 +9,7 @@ import {
   DialogTrigger,
   DialogContent,
   DialogClose,
+  DialogTitle,
 } from "@/components/ui/dialog";
 import { Switch } from "../../../components/ads/switch"; // relative to avoid path alias issues
 import { PlacementSelect } from "../../../components/ads/placement-select";
@@ -190,9 +191,9 @@ export default function AdsManagementPage() {
             </Button>
           </DialogTrigger>
           <DialogContent className="max-h-[90vh] overflow-y-auto">
-            <h2 className="text-xl font-semibold mb-4">
+            <DialogTitle className="text-xl font-semibold mb-4">
               {editingAd ? t("editAd") : t("createNewAd")}
-            </h2>
+            </DialogTitle>
             <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
               <div className="space-y-2">
                 <label className="text-sm font-medium" htmlFor="title">

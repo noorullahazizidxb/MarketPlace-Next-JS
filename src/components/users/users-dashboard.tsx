@@ -13,7 +13,8 @@ import { cn } from "@/lib/cn";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog";
+import { Tooltip } from "@/components/ui/tooltip";
 import ExpandedUserRow from "./expanded-user-row";
 import UserCreateWizard from "./user-create-wizard";
 import { asset } from "@/lib/assets";
@@ -185,23 +186,20 @@ const UsersDashboard: React.FC = () => {
           role="region"
           aria-label="Users table. Scroll horizontally on small screens."
         >
-          <table className="w-full min-w-[1100px] table-auto">
+          <table className="w-full table-auto">
             <thead className="bg-[hsl(var(--card))]/90 backdrop-blur border-b sticky top-0 z-10">
-              <tr className="text-xs text-foreground/70">
-                <th className="p-3 text-left">User</th>
-                <th className="p-3 text-left">Roles</th>
-                <th className="p-3 text-left">Listings</th>
-                <th className="p-3 text-left">Notifications</th>
-                <th className="p-3 text-left">Audit Logs</th>
-                <th className="p-3 text-left">Feedbacks</th>
-                <th className="p-3 text-left">Created</th>
-                <th className="p-3">Actions</th>
+              <tr className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
+                <th className="px-4 py-3 text-left">User</th>
+                <th className="px-4 py-3 text-left">Roles</th>
+                <th className="px-4 py-3 text-center">Activity</th>
+                <th className="px-4 py-3 text-left">Joined</th>
+                <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
             <tbody className="bg-[hsl(var(--card))]">
               {isLoading && (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center">
+                  <td colSpan={5} className="p-8 text-center">
                     <Loader2 className="mx-auto size-6 animate-spin" />
                   </td>
                 </tr>
@@ -209,7 +207,7 @@ const UsersDashboard: React.FC = () => {
               {error && !isLoading && (
                 <tr>
                   <td
-                    colSpan={8}
+                    colSpan={5}
                     className="p-6 text-center text-red-500 text-sm"
                   >
                     {(error as any)?.message || "Failed to load users"}
@@ -218,7 +216,7 @@ const UsersDashboard: React.FC = () => {
               )}
               {!isLoading && !error && current.length === 0 && (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center subtle text-sm">
+                  <td colSpan={5} className="p-8 text-center subtle text-sm">
                     No users match your filters.
                   </td>
                 </tr>
@@ -234,16 +232,16 @@ const UsersDashboard: React.FC = () => {
                         isExpanded && "bg-[hsl(var(--muted))]/10"
                       )}
                     >
-                      <td className="p-3 align-top">
-                        <div className="flex   items-center gap-3">
+                      <td className="px-4 py-3 align-middle">
+                        <div className="flex items-center gap-3">
                           <Link
                             href={u.id ? `/profile/${u.id}` : "#"}
                             onClick={(e) => {
                               if (!u.id) e.preventDefault();
                             }}
-                            className="flex rounded-full border border-[hsl(var(--border))] p-4 items-center gap-3"
+                            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
                           >
-                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))]">
+                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))] shrink-0">
                               <Image
                                 src={avatar}
                                 alt={u.fullName || u.email}
@@ -253,21 +251,23 @@ const UsersDashboard: React.FC = () => {
                               />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-sm font-medium truncate">
+                              <div className="text-sm font-semibold truncate max-w-[160px]">
                                 {u.fullName || u.firstName || u.email}
                               </div>
-                              <div className="text-2xs subtle truncate">
+                              <div className="text-xs text-[hsl(var(--muted-foreground))] truncate max-w-[160px]">
                                 {u.email}
                               </div>
-                              <div className="text-2xs subtle truncate">
-                                {u.phone || "—"}
-                              </div>
+                              {u.phone && (
+                                <div className="text-xs text-[hsl(var(--muted-foreground))]/70 truncate">
+                                  {u.phone}
+                                </div>
+                              )}
                             </div>
                           </Link>
                         </div>
                       </td>
-                      <td className="p-3 align-top whitespace-nowrap">
-                        <div className="flex flex-wrap gap-1 max-w-[160px]">
+                      <td className="px-4 py-3 align-middle">
+                        <div className="flex flex-wrap gap-1 max-w-[180px]">
                           {(u.roles || []).map((r: any, idx: number) => {
                             const label =
                               typeof r === "string"
@@ -277,10 +277,18 @@ const UsersDashboard: React.FC = () => {
                               typeof r === "string"
                                 ? `${label}-${idx}`
                                 : `${r?.id || label}-${idx}`;
+                            const colorMap: Record<string, string> = {
+                              ADMIN: "bg-red-500/10 text-red-600 border-red-400/30 dark:text-red-400",
+                              USER: "bg-blue-500/10 text-blue-600 border-blue-400/30 dark:text-blue-400",
+                              REPRESENTATIVE: "bg-amber-500/10 text-amber-600 border-amber-400/30 dark:text-amber-400",
+                            };
                             return (
                               <span
                                 key={key}
-                                className="px-2 py-0.5 rounded-full bg-[hsl(var(--muted))/0.4] border border-[hsl(var(--border))] text-2xs"
+                                className={cn(
+                                  "px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wide",
+                                  colorMap[label] ?? "bg-[hsl(var(--muted))]/40 border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
+                                )}
                               >
                                 {label}
                               </span>
@@ -288,43 +296,53 @@ const UsersDashboard: React.FC = () => {
                           })}
                         </div>
                       </td>
-                      <td className="p-3 align-top text-center text-2xs">
-                        {(u.listings || []).length || 0}
+                      <td className="px-4 py-3 align-middle">
+                        <div className="flex items-center justify-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
+                          <span className="flex flex-col items-center gap-0.5">
+                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.listings || []).length || 0}</span>
+                            <span className="text-[10px] uppercase tracking-wide">Listings</span>
+                          </span>
+                          <span className="w-px h-6 bg-[hsl(var(--border))]" />
+                          <span className="flex flex-col items-center gap-0.5">
+                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.notifications || []).length || 0}</span>
+                            <span className="text-[10px] uppercase tracking-wide">Notifs</span>
+                          </span>
+                          <span className="w-px h-6 bg-[hsl(var(--border))]" />
+                          <span className="flex flex-col items-center gap-0.5">
+                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.feedbacks || []).length || 0}</span>
+                            <span className="text-[10px] uppercase tracking-wide">Feedbacks</span>
+                          </span>
+                        </div>
                       </td>
-                      <td className="p-3 align-top text-center text-2xs">
-                        {(u.notifications || []).length || 0}
-                      </td>
-                      <td className="p-3 align-top text-center text-2xs">
-                        {(u.auditLogs || []).length || 0}
-                      </td>
-                      <td className="p-3 align-top text-center text-2xs">
-                        {(u.feedbacks || []).length || 0}
-                      </td>
-                      <td className="p-3 align-top text-2xs whitespace-nowrap">
+                      <td className="px-4 py-3 align-middle text-sm text-[hsl(var(--muted-foreground))] whitespace-nowrap">
                         {u.createdAt
                           ? new Date(u.createdAt).toLocaleDateString()
                           : "—"}
                       </td>
-                      <td className="p-3 align-top">
+                      <td className="px-4 py-3 align-middle">
                         <div className="flex items-center gap-2 justify-center">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() =>
-                              setExpandedRow(isExpanded ? null : u.id)
-                            }
-                          >
-                            {isExpanded ? (
-                              <ChevronLeft className="size-4" />
-                            ) : (
-                              <ChevronRight className="size-4" />
-                            )}
-                          </Button>
+                          <Tooltip content={isExpanded ? "Collapse details" : "Expand details"} side="left">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="h-8 w-8 p-0 rounded-lg"
+                              aria-label={isExpanded ? "Collapse row" : "Expand row"}
+                              onClick={() =>
+                                setExpandedRow(isExpanded ? null : u.id)
+                              }
+                            >
+                              {isExpanded ? (
+                                <ChevronLeft className="size-4" />
+                              ) : (
+                                <ChevronRight className="size-4" />
+                              )}
+                            </Button>
+                          </Tooltip>
                         </div>
                       </td>
                     </tr>
                     <tr className={!isExpanded ? "hidden" : ""}>
-                      <td colSpan={8} className="p-0">
+                      <td colSpan={5} className="p-0">
                         <ExpandedRowWrapper isExpanded={isExpanded}>
                           <ExpandedUserRow user={u} />
                         </ExpandedRowWrapper>
@@ -365,6 +383,7 @@ const UsersDashboard: React.FC = () => {
       </div>
       <Dialog open={openCreate} onOpenChange={setOpenCreate}>
         <DialogContent className="w-full max-w-3xl p-0 overflow-hidden">
+          <DialogTitle className="sr-only">Create New User</DialogTitle>
           <UserCreateWizard
             onClose={() => setOpenCreate(false)}
             onCreated={() => mutate()}

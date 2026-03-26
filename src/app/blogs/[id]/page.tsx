@@ -373,7 +373,7 @@ export default function BlogDetailPage() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="max-w-3xl mx-auto px-4 py-8 space-y-8"
+      className="max-w-5xl mx-auto px-4 py-8 space-y-8"
     >
       {/* ── Back navigation ─────────────────────────────────────────── */}
       <button

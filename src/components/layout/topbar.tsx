@@ -28,6 +28,7 @@ import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useUIStore } from "@/store/ui.store";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
+import { Tooltip } from "@/components/ui/tooltip";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { NotificationsPanel } from "@/components/ui/notifications-panel";
 import { asset } from "@/lib/assets";
@@ -175,25 +176,27 @@ export function Topbar() {
                 {/* Notifications */}
                 {user && (
                   <>
-                    <button
-                      className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
-                      aria-label="Toggle notifications"
-                      onClick={() => {
-                        try {
-                          console.log(
-                            "[notifications] bell clicked -> toggle panel"
-                          );
-                        } catch { }
-                        setNotifOpen((v) => !v);
-                      }}
-                    >
-                      <Bell className="size-4" />
-                      {unreadCount > 0 && (
-                        <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
-                          {unreadCount > 99 ? "99+" : unreadCount}
-                        </span>
-                      )}
-                    </button>
+                    <Tooltip content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'Notifications'} side="bottom">
+                      <button
+                        className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+                        aria-label="Toggle notifications"
+                        onClick={() => {
+                          try {
+                            console.log(
+                              "[notifications] bell clicked -> toggle panel"
+                            );
+                          } catch { }
+                          setNotifOpen((v) => !v);
+                        }}
+                      >
+                        <Bell className="size-4" />
+                        {unreadCount > 0 && (
+                          <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
+                            {unreadCount > 99 ? "99+" : unreadCount}
+                          </span>
+                        )}
+                      </button>
+                    </Tooltip>
                     <NotificationsPanel
                       isOpen={notifOpen}
                       onClose={() => setNotifOpen(false)}

@@ -57,8 +57,8 @@ export default function CreateListingPage() {
   const cats: { id: number; name: string }[] = Array.isArray(categories)
     ? categories
     : categories
-    ? [categories]
-    : [];
+      ? [categories]
+      : [];
 
   // Fetch representatives to populate location regions
   const { data: reps } = useApiGet<any>(
@@ -105,9 +105,9 @@ export default function CreateListingPage() {
     const L = Array.isArray(d) ? d[0] : d;
     const imgs: ExistingImage[] = Array.isArray(L?.images)
       ? L.images.map((i: any) => ({
-          id: i?.id != null ? String(i.id) : i?.key != null ? String(i.key) : undefined,
-          url: i?.url ?? i,
-        }))
+        id: i?.id != null ? String(i.id) : i?.key != null ? String(i.key) : undefined,
+        url: i?.url ?? i,
+      }))
       : [];
     return imgs.filter((x: any) => x?.url);
   }, [editId, editListingFetch.data]);
@@ -251,11 +251,10 @@ export default function CreateListingPage() {
           <motion.button
             key={typeKey}
             whileTap={{ scale: 0.98 }}
-            className={`h-20 rounded-2xl border bg-[hsl(var(--card))]/70 backdrop-blur hover:bg-[hsl(var(--muted))]/40 transition-all shadow-sm ${
-              pickedType === typeKey
+            className={`h-20 rounded-2xl border bg-[hsl(var(--card))]/70 backdrop-blur hover:bg-[hsl(var(--muted))]/40 transition-all shadow-sm ${pickedType === typeKey
                 ? "ring-2 ring-[hsl(var(--accent))]/50 border-[hsl(var(--accent))]/40"
                 : "border-[hsl(var(--border))]"
-            }`}
+              }`}
             onClick={() => {
               setPickedType(typeKey);
               setValue("listingType", typeKey);
@@ -281,11 +280,10 @@ export default function CreateListingPage() {
           <motion.button
             key={c.id}
             whileTap={{ scale: 0.98 }}
-            className={`h-16 rounded-2xl border text-sm bg-[hsl(var(--card))]/70 backdrop-blur hover:bg-[hsl(var(--muted))]/40 transition-all shadow-sm ${
-              pickedCategory === c.id
+            className={`h-16 rounded-2xl border text-sm bg-[hsl(var(--card))]/70 backdrop-blur hover:bg-[hsl(var(--muted))]/40 transition-all shadow-sm ${pickedCategory === c.id
                 ? "ring-2 ring-[hsl(var(--accent))]/50 border-[hsl(var(--accent))]/40"
                 : "border-[hsl(var(--border))]"
-            }`}
+              }`}
             onClick={() => {
               setPickedCategory(c.id);
               setValue("categoryId", c.id);
@@ -312,9 +310,8 @@ export default function CreateListingPage() {
     <div className="space-y-4 transition-opacity duration-300">
       <h2 className="text-lg font-semibold">{t("listingsCreateStep3Title")}</h2>
       <div
-        className={`p-6 rounded-2xl border-2 border-dashed bg-[hsl(var(--card))]/70 backdrop-blur shadow-sm transition-colors ${
-          imagesLocalError ? "border-red-500" : ""
-        }`}
+        className={`p-6 rounded-2xl border-2 border-dashed bg-[hsl(var(--card))]/70 backdrop-blur shadow-sm transition-colors ${imagesLocalError ? "border-red-500" : ""
+          }`}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
           e.preventDefault();
@@ -610,8 +607,8 @@ export default function CreateListingPage() {
                       i === step
                         ? "px-2 py-0.5 rounded-full bg-[hsl(var(--accent))]/15 text-[hsl(var(--accent))]"
                         : i < step
-                        ? "px-2 py-0.5 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
-                        : "px-2 py-0.5 rounded-full bg-[hsl(var(--muted))]"
+                          ? "px-2 py-0.5 rounded-full bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]"
+                          : "px-2 py-0.5 rounded-full bg-[hsl(var(--muted))]"
                     }
                   >
                     Step {i}

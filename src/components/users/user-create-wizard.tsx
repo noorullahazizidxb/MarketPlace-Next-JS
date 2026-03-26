@@ -28,9 +28,9 @@ const useFormContextSafe = () => useFormContext();
 
 const TextField: React.FC<{
   name:
-    | keyof CreateUserFormValues
-    | `representativeInfo.${number}.${string}`
-    | string;
+  | keyof CreateUserFormValues
+  | `representativeInfo.${number}.${string}`
+  | string;
   label: string;
   type?: string;
   required?: boolean;
@@ -96,35 +96,35 @@ const PasswordPair: React.FC = () => {
     score <= 1
       ? "Very weak"
       : score === 2
-      ? "Weak"
-      : score === 3
-      ? "Fair"
-      : score === 4
-      ? "Strong"
-      : "Very strong";
+        ? "Weak"
+        : score === 3
+          ? "Fair"
+          : score === 4
+            ? "Strong"
+            : "Very strong";
   const barColor =
     score <= 1
       ? "bg-red-500"
       : score === 2
-      ? "bg-orange-400"
-      : score === 3
-      ? "bg-yellow-400"
-      : score === 4
-      ? "bg-emerald-400"
-      : "bg-green-500";
+        ? "bg-orange-400"
+        : score === 3
+          ? "bg-yellow-400"
+          : score === 4
+            ? "bg-emerald-400"
+            : "bg-green-500";
   // Map score to tailwind width classes (discrete steps)
   const widthClass =
     score === 0
       ? "w-0"
       : score === 1
-      ? "w-1/6"
-      : score === 2
-      ? "w-2/6"
-      : score === 3
-      ? "w-3/6"
-      : score === 4
-      ? "w-4/6"
-      : "w-full";
+        ? "w-1/6"
+        : score === 2
+          ? "w-2/6"
+          : score === 3
+            ? "w-3/6"
+            : score === 4
+              ? "w-4/6"
+              : "w-full";
 
   return (
     <div className="md:col-span-2 grid md:grid-cols-2 gap-5">
@@ -531,7 +531,7 @@ const UserCreateWizard: React.FC<{
       toastSuccess("User created successfully");
       try {
         onCreated?.();
-      } catch {}
+      } catch { }
       onClose();
     } catch (e: any) {
       toastError(e?.message || "Creation failed");
@@ -563,8 +563,8 @@ const UserCreateWizard: React.FC<{
                     i === step
                       ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"
                       : i < step
-                      ? "bg-green-500/80 text-white"
-                      : "bg-[hsl(var(--muted))] text-foreground/60"
+                        ? "bg-green-500/80 text-white"
+                        : "bg-[hsl(var(--muted))] text-foreground/60"
                   )}
                 >
                   {i + 1}
@@ -631,8 +631,8 @@ const UserCreateWizard: React.FC<{
               {(registerUser.isPending ||
                 registerAdmin.isPending ||
                 registerRep.isPending) && (
-                <Loader2 className="size-3 animate-spin" />
-              )}
+                  <Loader2 className="size-3 animate-spin" />
+                )}
               Create
             </Button>
           )}
@@ -1008,8 +1008,8 @@ const UserCreateWizard: React.FC<{
                 {(registerUser.isPending ||
                   registerAdmin.isPending ||
                   registerRep.isPending) && (
-                  <Loader2 className="size-4 animate-spin" />
-                )}
+                    <Loader2 className="size-4 animate-spin" />
+                  )}
                 Create User
               </Button>
             )}

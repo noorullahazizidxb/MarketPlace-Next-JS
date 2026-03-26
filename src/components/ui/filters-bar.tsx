@@ -35,8 +35,8 @@ export function FiltersBar() {
   const cats: Category[] = Array.isArray(categories)
     ? categories
     : categories
-    ? [categories]
-    : [];
+      ? [categories]
+      : [];
 
   const onType = (next: string) => {
     const q = setParam(search, "type", next === type ? null : next);

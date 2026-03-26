@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState, useId } from "react";
+import React, { useEffect, useMemo, useState, useId } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Search } from "lucide-react";
@@ -529,9 +529,8 @@ export default function NotificationsAdminPage() {
               </thead>
               <tbody className="bg-[hsl(var(--card))]">
                 {current.map((n) => (
-                  <>
+                  <React.Fragment key={n.id}>
                     <tr
-                      key={n.id}
                       className="border-b hover:bg-[hsl(var(--muted))]/5 transition-colors"
                     >
                       <td className="p-3 align-top whitespace-nowrap">
@@ -708,7 +707,7 @@ export default function NotificationsAdminPage() {
                         </td>
                       </tr>
                     )}
-                  </>
+                  </React.Fragment>
                 ))}
               </tbody>
             </table>

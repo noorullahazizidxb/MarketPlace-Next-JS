@@ -86,8 +86,8 @@ export default function StoryCreateModal({
       try {
         const { toastSuccess } = await import("@/lib/toast");
         toastSuccess(isEdit ? "Story updated" : "Story created");
-      } catch {}
-    } catch {}
+      } catch { }
+    } catch { }
   };
 
   const canNext = (idx: number) => {

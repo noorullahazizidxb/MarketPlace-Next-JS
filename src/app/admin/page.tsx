@@ -154,24 +154,36 @@ export default function AdminDashboardPage() {
       icon: Building2,
       value: summary.totalListings ?? data?.totals?.total ?? 0,
       accent: "text-[hsl(var(--primary))]",
+      iconBg: "bg-[hsl(var(--primary))]/10",
+      borderColor: "border-l-[hsl(var(--primary))]",
+      sub: `${data?.totals?.pending ?? 0} pending`,
     },
     {
       title: t("approvedShort") || "Approved",
       icon: ShieldCheck,
       value: summary.approvedListings ?? data?.totals?.approved ?? 0,
       accent: "text-emerald-500",
+      iconBg: "bg-emerald-500/10",
+      borderColor: "border-l-emerald-500",
+      sub: null,
     },
     {
       title: t("users") || "Users",
       icon: Users2,
       value: summary.totalUsers ?? 0,
       accent: "text-indigo-500",
+      iconBg: "bg-indigo-500/10",
+      borderColor: "border-l-indigo-500",
+      sub: null,
     },
     {
       title: t("feedbacks") || "Feedbacks",
       icon: Star,
       value: summary.feedbackCount ?? 0,
       accent: "text-amber-500",
+      iconBg: "bg-amber-500/10",
+      borderColor: "border-l-amber-500",
+      sub: summary.avgRating ? `Avg ${summary.avgRating}★` : null,
     },
   ];
 
@@ -194,22 +206,24 @@ export default function AdminDashboardPage() {
         {kpis.map((k) => (
           <Card
             key={k.title}
-            className="p-5 border border-[hsl(var(--border))] bg-[hsl(var(--card))] flex flex-col gap-2"
+            className={`relative overflow-hidden p-5 border-l-4 ${k.borderColor} border-t border-r border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] flex flex-col gap-3 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}
           >
             <div className="flex items-start justify-between">
               <div className="space-y-1">
-                <p className="text-xs uppercase tracking-wide text-[hsl(var(--foreground))]/60">
+                <p className="text-xs uppercase tracking-wide font-semibold text-[hsl(var(--foreground))]/50">
                   {k.title}
                 </p>
                 <p className="text-3xl font-bold tabular-nums">
-                  {isLoading ? "—" : k.value}
+                  {isLoading ? "—" : k.value.toLocaleString()}
                 </p>
               </div>
-              <k.icon className={"size-7 " + k.accent} />
+              <div className={`size-12 rounded-2xl flex items-center justify-center ${k.iconBg}`}>
+                <k.icon className={"size-6 " + k.accent} />
+              </div>
             </div>
-            {!isLoading && k.title === (t("feedbacks") || "Feedbacks") && (
-              <p className="text-[11px] text-[hsl(var(--foreground))]/50">
-                {t("avgRating") || "Avg Rating"}: {summary.avgRating ?? "—"}
+            {k.sub && (
+              <p className="text-[11px] text-[hsl(var(--foreground))]/50 font-medium">
+                {k.sub}
               </p>
             )}
           </Card>
@@ -756,10 +770,10 @@ function ListingsTypeStatusCharts({
     mode === "daily"
       ? "day"
       : mode === "weekly"
-      ? "week"
-      : mode === "monthly"
-      ? "month"
-      : "year";
+        ? "week"
+        : mode === "monthly"
+          ? "month"
+          : "year";
 
   const statusKeys = [
     "PENDING",

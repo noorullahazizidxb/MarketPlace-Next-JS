@@ -5,6 +5,7 @@ import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 import { Spinner, ImageSpinner } from "@/components/ui/spinner";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
@@ -22,6 +23,11 @@ import {
   BadgeCheck,
   Ban,
   Eye,
+  EyeOff,
+  KeyRound,
+  PenLine,
+  ShoppingBag,
+  CalendarX2,
 } from "lucide-react";
 
 // ─── Types ──────────────────────────────────────────────────────────────────
@@ -33,20 +39,22 @@ type StatusOption =
   | "PENDING"
   | "APPROVED"
   | "REJECTED"
-  | "ACTIVE"
+  | "DRAFT"
   | "EXPIRED"
   | "SOLD"
-  | "RENTED";
+  | "RENTED"
+  | "HIDDEN";
 
 const LISTING_STATUSES: StatusOption[] = [
   "ALL",
   "PENDING",
   "APPROVED",
   "REJECTED",
-  "ACTIVE",
+  "DRAFT",
   "SOLD",
   "RENTED",
   "EXPIRED",
+  "HIDDEN",
 ];
 const BLOG_STATUSES: StatusOption[] = ["ALL", "PENDING", "APPROVED", "REJECTED"];
 
@@ -58,22 +66,35 @@ const STATUS_STYLES: Record<string, string> = {
   APPROVED:
     "bg-emerald-500/15 text-emerald-600 border-emerald-400/30 dark:text-emerald-400",
   REJECTED: "bg-red-500/15 text-red-600 border-red-400/30 dark:text-red-400",
-  ACTIVE:
-    "bg-sky-500/15 text-sky-600 border-sky-400/30 dark:text-sky-400",
+  DRAFT: "bg-slate-500/15 text-slate-500 border-slate-400/30 dark:text-slate-400",
   EXPIRED: "bg-zinc-500/15 text-zinc-500 border-zinc-400/30",
   SOLD: "bg-purple-500/15 text-purple-600 border-purple-400/30 dark:text-purple-400",
   RENTED:
     "bg-indigo-500/15 text-indigo-600 border-indigo-400/30 dark:text-indigo-400",
+  HIDDEN: "bg-gray-500/15 text-gray-500 border-gray-400/30 dark:text-gray-400",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
   PENDING: <Clock className="size-3" />,
   APPROVED: <CheckCircle2 className="size-3" />,
   REJECTED: <XCircle className="size-3" />,
-  ACTIVE: <BadgeCheck className="size-3" />,
-  EXPIRED: <Ban className="size-3" />,
-  SOLD: <BadgeCheck className="size-3" />,
-  RENTED: <BadgeCheck className="size-3" />,
+  DRAFT: <PenLine className="size-3" />,
+  EXPIRED: <CalendarX2 className="size-3" />,
+  SOLD: <ShoppingBag className="size-3" />,
+  RENTED: <KeyRound className="size-3" />,
+  HIDDEN: <EyeOff className="size-3" />,
+};
+
+const PILL_ICONS: Record<StatusOption, React.ReactNode> = {
+  ALL: <LayoutList className="size-3.5" />,
+  PENDING: <Clock className="size-3.5" />,
+  APPROVED: <CheckCircle2 className="size-3.5" />,
+  REJECTED: <XCircle className="size-3.5" />,
+  DRAFT: <PenLine className="size-3.5" />,
+  SOLD: <ShoppingBag className="size-3.5" />,
+  RENTED: <KeyRound className="size-3.5" />,
+  EXPIRED: <CalendarX2 className="size-3.5" />,
+  HIDDEN: <EyeOff className="size-3.5" />,
 };
 
 function StatusBadge({ status }: { status: string }) {
@@ -105,11 +126,12 @@ function StatusPills({
         <button
           key={s}
           onClick={() => onChange(s)}
-          className={`rounded-full border px-3 py-1 text-xs font-medium transition-all ${active === s
+          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all ${active === s
               ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))] shadow-sm"
-              : "border-[hsl(var(--border))] hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--muted))]/50"
+              : "border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--muted))]/50 hover:text-[hsl(var(--foreground))]"
             }`}
         >
+          {PILL_ICONS[s]}
           {s}
         </button>
       ))}
@@ -200,9 +222,11 @@ function ListingRow({
       {/* Actions */}
       <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
         <Link href={`/listings/${listing.id}`} target="_blank">
-          <Button size="sm" variant="ghost" className="gap-1 px-2">
-            <Eye className="size-3.5" />
-          </Button>
+          <Tooltip content="Preview listing" side="top">
+            <Button size="sm" variant="ghost" className="gap-1 px-2">
+              <Eye className="size-3.5" />
+            </Button>
+          </Tooltip>
         </Link>
         {listing.status !== "APPROVED" && (
           <Button
@@ -316,9 +340,11 @@ function BlogRow({
       {/* Actions */}
       <div className="flex items-center gap-1.5 shrink-0 mt-0.5">
         <Link href={`/blogs/${blog.id}`} target="_blank">
-          <Button size="sm" variant="ghost" className="gap-1 px-2">
-            <Eye className="size-3.5" />
-          </Button>
+          <Tooltip content="Preview blog" side="top">
+            <Button size="sm" variant="ghost" className="gap-1 px-2">
+              <Eye className="size-3.5" />
+            </Button>
+          </Tooltip>
         </Link>
         {blog.status !== "APPROVED" && (
           <Button
@@ -510,8 +536,8 @@ export default function ManageContentStatusPage() {
             key={t}
             onClick={() => setTab(t)}
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === t
-                ? "border-[hsl(var(--primary))] text-[hsl(var(--primary))]"
-                : "border-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+              ? "border-[hsl(var(--primary))] text-[hsl(var(--primary))]"
+              : "border-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
               }`}
           >
             {t === "listings" ? (

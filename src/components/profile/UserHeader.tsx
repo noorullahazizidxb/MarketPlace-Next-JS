@@ -85,12 +85,12 @@ export default function UserHeader({ user }: { user: PublicUser }) {
               {typeof user.address === "string"
                 ? user.address
                 : [
-                    user.address?.street,
-                    user.address?.city,
-                    user.address?.country,
-                  ]
-                    .filter(Boolean)
-                    .join(", ")}
+                  user.address?.street,
+                  user.address?.city,
+                  user.address?.country,
+                ]
+                  .filter(Boolean)
+                  .join(", ")}
             </div>
           )}
           {(user.email || user.phone) && (

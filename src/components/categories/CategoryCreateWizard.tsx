@@ -48,7 +48,7 @@ const fireConfetti = () => {
     el.appendChild(frag);
     document.body.appendChild(el);
     setTimeout(() => el.remove(), 2000);
-  } catch {}
+  } catch { }
 };
 
 // Mirror Joi schema
@@ -168,8 +168,8 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
               (i === step
                 ? "bg-[hsl(var(--accent))/0.2] border-[hsl(var(--accent))]"
                 : i < step
-                ? "bg-[hsl(var(--muted))/0.5]"
-                : "bg-[hsl(var(--muted))/0.2] opacity-70")
+                  ? "bg-[hsl(var(--muted))/0.5]"
+                  : "bg-[hsl(var(--muted))/0.2] opacity-70")
             }
           >
             {label}

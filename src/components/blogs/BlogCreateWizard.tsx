@@ -94,7 +94,7 @@ export default function BlogCreateWizard({
         try {
           const { getSocket } = await import("@/lib/socket");
           getSocket()?.emit?.("blogUpdated", { id: blogId, blog: updated });
-        } catch {}
+        } catch { }
         onClose();
       } else {
         await create.mutateAsync(
@@ -105,7 +105,7 @@ export default function BlogCreateWizard({
         );
         onClose();
       }
-    } catch {}
+    } catch { }
   };
 
   return (
@@ -121,13 +121,12 @@ export default function BlogCreateWizard({
           {steps.map((s, i) => (
             <div key={s} className="flex items-center gap-1">
               <div
-                className={`size-6 rounded-full grid place-items-center text-[10px] font-semibold ${
-                  i === step
+                className={`size-6 rounded-full grid place-items-center text-[10px] font-semibold ${i === step
                     ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"
                     : i < step
-                    ? "bg-green-500/80 text-white"
-                    : "bg-[hsl(var(--muted))] text-foreground/60"
-                }`}
+                      ? "bg-green-500/80 text-white"
+                      : "bg-[hsl(var(--muted))] text-foreground/60"
+                  }`}
               >
                 {i + 1}
               </div>

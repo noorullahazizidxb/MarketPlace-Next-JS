@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
+import { ImageSpinner } from "@/components/ui/spinner";
 import Link from "next/link";
 
 type Tab = "listings" | "blogs";
@@ -51,15 +52,19 @@ function PendingBlogCard({
     } catch { }
   };
 
+  const [coverLoaded, setCoverLoaded] = useState(false);
+
   return (
     <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden flex flex-col">
       {cover && (
         <div className="relative h-44 w-full bg-[hsl(var(--muted))]">
+          {!coverLoaded && <ImageSpinner />}
           <Image
             src={cover}
             alt={blog.title || "blog"}
             fill
-            className="object-cover"
+            className={`object-cover transition-opacity duration-300 ${coverLoaded ? "opacity-100" : "opacity-0"}`}
+            onLoad={() => setCoverLoaded(true)}
           />
         </div>
       )}

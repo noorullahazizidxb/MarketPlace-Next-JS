@@ -42,7 +42,7 @@ export function HiddenListingsSlider({
     return () => {
       try {
         obs.disconnect();
-      } catch {}
+      } catch { }
     };
   }, []);
   // Accept HIDDEN explicitly, plus support older HIDE_SELLER for safety
@@ -138,9 +138,8 @@ export function HiddenListingsSlider({
     prefersReducedMotion,
   ]);
 
-  const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${
-    slides.length
-  }`;
+  const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${slides.length
+    }`;
 
   if (hidden.length === 0) return null;
 

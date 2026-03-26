@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import { ImageSpinner } from "@/components/ui/spinner";
 import {
   ChevronLeft,
   ChevronRight,
@@ -215,10 +216,10 @@ function TabbedHeroCarousel({
     items && items.length > 0
       ? items
       : related.length
-      ? related
-      : topRated.length
-      ? topRated
-      : promoted;
+        ? related
+        : topRated.length
+          ? topRated
+          : promoted;
 
   return (
     <div>
@@ -226,11 +227,10 @@ function TabbedHeroCarousel({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTab("related")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-              tab === "related"
-                ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-                : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
-            }`}
+            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "related"
+              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
+              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              }`}
           >
             <TagIcon className="size-5" />
             Related
@@ -238,11 +238,10 @@ function TabbedHeroCarousel({
 
           <button
             onClick={() => setTab("top")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-              tab === "top"
-                ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-                : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
-            }`}
+            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "top"
+              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
+              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              }`}
           >
             <Star className="size-4 text-amber-400" />
             Top Rated
@@ -250,11 +249,10 @@ function TabbedHeroCarousel({
 
           <button
             onClick={() => setTab("promoted")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${
-              tab === "promoted"
-                ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-                : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
-            }`}
+            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "promoted"
+              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
+              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              }`}
           >
             <ShieldCheck className="size-4 text-emerald-500" />
             Promoted
@@ -338,6 +336,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
   };
   const onLeave = () => setTilt({ x: 0, y: 0 });
 
+  const [imgLoaded, setImgLoaded] = useState(false);
   const img = item.images?.[0]?.url
     ? asset(item.images[0]?.url || "")
     : "/favicon.svg";
@@ -365,12 +364,14 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       </div>
 
       <div className="relative h-[60%]">
+        {!imgLoaded && <ImageSpinner />}
         <Image
           src={img}
           alt={item.title || "Listing"}
           fill
           sizes="(max-width: 1024px) 100vw, 33vw"
-          className="object-cover transition-transform duration-500 will-change-transform hover:scale-[1.03]"
+          className={`object-cover transition-all duration-500 will-change-transform hover:scale-[1.03] ${imgLoaded ? "opacity-100" : "opacity-0"}`}
+          onLoad={() => setImgLoaded(true)}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.85] via-transparent to-transparent" />
         {/* Price pill */}
@@ -415,13 +416,12 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
 
       {/* Rank accent */}
       <div
-        className={`pointer-events-none absolute -right-6 -top-6 size-20 rounded-full blur-2xl opacity-40 ${
-          rank === 0
-            ? "bg-[hsl(var(--primary))]"
-            : rank === 1
+        className={`pointer-events-none absolute -right-6 -top-6 size-20 rounded-full blur-2xl opacity-40 ${rank === 0
+          ? "bg-[hsl(var(--primary))]"
+          : rank === 1
             ? "bg-[hsl(var(--accent))]"
             : "bg-[hsl(var(--secondary,var(--accent)))]"
-        }`}
+          }`}
       />
     </motion.article>
   );
@@ -443,11 +443,10 @@ function ProgressDots({
           key={i}
           onClick={() => onDot(i)}
           aria-label={`Go to slide ${i + 1}`}
-          className={`h-1.5 rounded-full transition-all go-to-slide ${
-            i === index
-              ? "w-6 bg-[hsl(var(--accent))]"
-              : "w-3 bg-[hsl(var(--foreground))/0.3] hover:bg-[hsl(var(--foreground))/0.5]"
-          }`}
+          className={`h-1.5 rounded-full transition-all go-to-slide ${i === index
+            ? "w-6 bg-[hsl(var(--accent))]"
+            : "w-3 bg-[hsl(var(--foreground))/0.3] hover:bg-[hsl(var(--foreground))/0.5]"
+            }`}
         />
       ))}
     </div>
