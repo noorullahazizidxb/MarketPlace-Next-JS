@@ -4,18 +4,28 @@ import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Switch } from "../ui/switch";
-import { Card } from "@/components/ui/card";
 import { ParentAutocomplete } from "./ParentAutocomplete";
 import { useCreateCategory } from "./useCategoryData";
 import type { CreateCategoryInput } from "./types";
 import { toastSuccess } from "@/lib/toast";
-// Optional visual celebration; you can wire a real confetti lib later.
+import { cn } from "@/lib/cn";
+import {
+  Type,
+  Hash,
+  ToggleLeft,
+  FolderTree,
+  ClipboardCheck,
+  ArrowLeft,
+  ArrowRight,
+  Loader2,
+  Check,
+  Sparkles,
+  X,
+} from "lucide-react";
+
 const fireConfetti = () => {
   try {
-    // lightweight fallback animation (no external dep)
     if (typeof window === "undefined") return;
     const el = document.createElement("div");
     el.className = "fixed inset-0 pointer-events-none overflow-hidden z-[9999]";
@@ -32,16 +42,9 @@ const fireConfetti = () => {
       p.animate(
         [
           { transform: "translate(0,0) scale(1)", opacity: 1 },
-          {
-            transform: `translate(${tx}px,${ty}px) rotate(${rot}deg) scale(0.4)`,
-            opacity: 0,
-          },
+          { transform: `translate(${tx}px,${ty}px) rotate(${rot}deg) scale(0.4)`, opacity: 0 },
         ],
-        {
-          duration: 1200 + Math.random() * 600,
-          easing: "cubic-bezier(.32,.72,.37,.97)",
-          fill: "forwards",
-        }
+        { duration: 1200 + Math.random() * 600, easing: "cubic-bezier(.32,.72,.37,.97)", fill: "forwards" }
       );
       frag.appendChild(p);
     }
@@ -51,7 +54,6 @@ const fireConfetti = () => {
   } catch { }
 };
 
-// Mirror Joi schema
 const schema = z.object({
   name: z.string().min(1).max(200),
   slug: z.string().min(1).max(200).optional().or(z.literal("")),
@@ -65,6 +67,17 @@ interface WizardProps {
   onCreated: () => void;
   onClose?: () => void;
 }
+
+const STEP_CONFIG = [
+  { key: "name", label: "Name", icon: Type },
+  { key: "slug", label: "Slug", icon: Hash },
+  { key: "options", label: "Options", icon: ToggleLeft },
+  { key: "parent", label: "Parent", icon: FolderTree, conditional: true },
+  { key: "review", label: "Review", icon: ClipboardCheck },
+];
+
+const inputCls =
+  "w-full h-11 rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/60 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30";
 
 export const CategoryCreateWizard: React.FC<WizardProps> = ({
   onCreated,
@@ -80,17 +93,9 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
     formState: { errors },
   } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: {
-      name: "",
-      slug: "",
-      isActive: true,
-      isSub: false,
-      parentId: null,
-    },
+    defaultValues: { name: "", slug: "", isActive: true, isSub: false, parentId: null },
   });
-  const create = useCreateCategory(() => {
-    onCreated();
-  });
+  const create = useCreateCategory(() => { onCreated(); });
   const name = useWatch({ control, name: "name" }) || "";
   const slug = useWatch({ control, name: "slug" }) || "";
   const isSub = useWatch({ control, name: "isSub" }) ?? false;
@@ -99,254 +104,213 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
 
   React.useEffect(() => {
     if (autoSlug)
-      setValue(
-        "slug",
-        name
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/^-+|-+$/g, "")
-          .slice(0, 200)
-      );
+      setValue("slug", name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "").slice(0, 200));
   }, [name, autoSlug, setValue]);
 
-  const steps = useMemo(() => {
-    const base = [
-      "Name",
-      "Slug",
-      "Activation",
-      ...(isSub ? ["Parent"] : []),
-      "Review",
-    ];
-    return base;
-  }, [isSub]);
+  const steps = useMemo(() => STEP_CONFIG.filter((s) => !s.conditional || isSub), [isSub]);
 
   const nextAllowed = () => {
-    if (step === 0) return !!name && !errors.name;
-    if (step === 1) return !!slug && !errors.slug;
-    if (step === 2) return true; // activation step always valid
-    if (isSub && step === 3) return parentId != null; // parent required if sub
+    const cur = steps[step];
+    if (!cur) return false;
+    if (cur.key === "name") return !!name && !errors.name;
+    if (cur.key === "slug") return !!slug && !errors.slug;
+    if (cur.key === "options") return true;
+    if (cur.key === "parent") return parentId != null;
     return true;
   };
 
-  const goNext = () => {
-    if (step < steps.length - 1 && nextAllowed()) setStep((s) => s + 1);
-  };
-  const goPrev = () => {
-    if (step > 0) setStep((s) => s - 1);
-  };
+  const goNext = () => { if (step < steps.length - 1 && nextAllowed()) setStep((s) => s + 1); };
+  const goPrev = () => { if (step > 0) setStep((s) => s - 1); };
 
   const onSubmit = async (vals: FormValues) => {
     const payload: CreateCategoryInput = {
       name: vals.name.trim(),
-      slug:
-        vals.slug?.trim() ||
-        vals.name
-          .trim()
-          .toLowerCase()
-          .replace(/[^a-z0-9]+/g, "-"),
+      slug: vals.slug?.trim() || vals.name.trim().toLowerCase().replace(/[^a-z0-9]+/g, "-"),
       isActive: vals.isActive,
       parentId: vals.isSub ? vals.parentId ?? undefined : undefined,
     };
     await create.submit(payload);
-    // tiny celebratory confetti
     fireConfetti();
     toastSuccess("Category created");
     onCreated();
     onClose?.();
   };
 
+  const curStep = steps[step];
+
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6">
-      <div className="flex items-center gap-3 flex-wrap">
-        {steps.map((label, i) => (
-          <button
-            type="button"
-            key={label}
-            onClick={() => i < step && setStep(i)}
-            className={
-              "text-2xs tracking-wide font-medium px-3 h-8 rounded-full border transition-colors " +
-              (i === step
-                ? "bg-[hsl(var(--accent))/0.2] border-[hsl(var(--accent))]"
-                : i < step
-                  ? "bg-[hsl(var(--muted))/0.5]"
-                  : "bg-[hsl(var(--muted))/0.2] opacity-70")
-            }
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-      <div className="relative min-h-[200px]">
-        <AnimatePresence mode="wait">
-          {step === 0 && (
-            <motion.div
-              key="step-name"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <div>
-                <label className="text-2xs font-semibold uppercase tracking-wide">
-                  Name *
-                </label>
-                <Input
-                  {...register("name")}
-                  placeholder="e.g. Electronics"
-                  className="mt-1"
-                />
-                {errors.name && (
-                  <p className="text-2xs text-red-500 mt-1">
-                    {errors.name.message}
-                  </p>
-                )}
-              </div>
-            </motion.div>
-          )}
-          {step === 1 && (
-            <motion.div
-              key="step-slug"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <div className="flex items-center gap-2">
-                <div className="flex-1">
-                  <label className="text-2xs font-semibold uppercase tracking-wide">
-                    Slug *
-                  </label>
-                  <Input
-                    {...register("slug")}
-                    disabled={autoSlug}
-                    placeholder="electronics"
-                    className="mt-1"
-                  />
-                </div>
-                <div className="pt-5 flex items-center gap-2 text-2xs">
-                  <Switch
-                    checked={autoSlug}
-                    onCheckedChange={setAutoSlug}
-                    id="autoslug"
-                  />
-                  <label htmlFor="autoslug">Auto</label>
-                </div>
-              </div>
-              {errors.slug && (
-                <p className="text-2xs text-red-500">{errors.slug.message}</p>
-              )}
-            </motion.div>
-          )}
-          {step === 2 && (
-            <motion.div
-              key="step-active"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-6"
-            >
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-2xs font-medium">
-                  <Switch
-                    {...register("isActive")}
-                    checked={isActive}
-                    onCheckedChange={(v: boolean) => setValue("isActive", v)}
-                    id="active"
-                  />
-                  <label htmlFor="active">Active</label>
-                </div>
-                <div className="flex items-center gap-2 text-2xs font-medium">
-                  <Switch
-                    {...register("isSub")}
-                    checked={isSub}
-                    onCheckedChange={(v: boolean) => setValue("isSub", v)}
-                    id="isSub"
-                  />
-                  <label htmlFor="isSub">Is Sub Category?</label>
-                </div>
-              </div>
-            </motion.div>
-          )}
-          {isSub && step === 3 && (
-            <motion.div
-              key="step-parent"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <label className="text-2xs font-semibold uppercase tracking-wide">
-                Parent *
-              </label>
-              <ParentAutocomplete
-                value={parentId}
-                onChange={(v) => setValue("parentId", v)}
-              />
-              {parentId == null && (
-                <p className="text-2xs text-amber-500">
-                  Select a parent to continue.
-                </p>
-              )}
-            </motion.div>
-          )}
-          {step === steps.length - 1 && (
-            <motion.div
-              key="step-review"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              transition={{ duration: 0.3 }}
-              className="space-y-4"
-            >
-              <Card className="p-4 space-y-2 text-xs">
-                <div className="flex justify-between">
-                  <span className="font-medium">Name</span>
-                  <span>{name || "—"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Slug</span>
-                  <span>{slug || "—"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Active</span>
-                  <span>{isActive ? "Yes" : "No"}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="font-medium">Is Sub</span>
-                  <span>{isSub ? "Yes" : "No"}</span>
-                </div>
-                {isSub && (
-                  <div className="flex justify-between">
-                    <span className="font-medium">Parent</span>
-                    <span>{parentId || "—"}</span>
+    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-6 relative">
+      {/* shimmer */}
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/10 to-transparent" />
+
+      {/* Step indicator */}
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-1.5">
+          {steps.map((s, i) => {
+            const Icon = s.icon;
+            const done = i < step;
+            const active = i === step;
+            return (
+              <React.Fragment key={s.key}>
+                <motion.button
+                  type="button"
+                  onClick={() => i < step && setStep(i)}
+                  animate={{
+                    backgroundColor: done
+                      ? "hsl(var(--primary))"
+                      : active
+                        ? "hsl(var(--primary))"
+                        : "hsl(var(--muted))",
+                  }}
+                  transition={{ duration: 0.2 }}
+                  className={cn(
+                    "size-8 rounded-xl flex items-center justify-center transition-opacity",
+                    (done || active) ? "text-[hsl(var(--primary-foreground))]" : "text-[hsl(var(--muted-foreground))]",
+                    i > step ? "opacity-40" : "opacity-100",
+                    i < step ? "cursor-pointer hover:brightness-110" : "cursor-default"
+                  )}
+                  title={s.label}
+                >
+                  <AnimatePresence mode="wait">
+                    {done ? (
+                      <motion.span key="done" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                        <Check className="size-3.5" />
+                      </motion.span>
+                    ) : (
+                      <motion.span key="icon" initial={{ scale: 0 }} animate={{ scale: 1 }} exit={{ scale: 0 }}>
+                        <Icon className="size-3.5" />
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                </motion.button>
+                {i < steps.length - 1 && (
+                  <div className="relative w-6 h-0.5">
+                    <div className="absolute inset-0 rounded-full bg-[hsl(var(--border))]/30" />
+                    <motion.div
+                      className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]"
+                      animate={{ scaleX: i < step ? 1 : 0 }}
+                      style={{ originX: 0 }}
+                      transition={{ duration: 0.25 }}
+                    />
                   </div>
                 )}
-              </Card>
+              </React.Fragment>
+            );
+          })}
+        </div>
+        <span className="text-[10px] text-[hsl(var(--foreground))]/35 font-medium tabular-nums">
+          {step + 1} / {steps.length}
+        </span>
+      </div>
+
+      {/* Step content */}
+      <div className="relative min-h-[180px]">
+        <AnimatePresence mode="wait">
+          {curStep?.key === "name" && (
+            <motion.div key="step-name" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Category Name *</label>
+              <input {...register("name")} placeholder="e.g. Electronics" className={inputCls} autoFocus />
+              {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+            </motion.div>
+          )}
+          {curStep?.key === "slug" && (
+            <motion.div key="step-slug" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">URL Slug *</label>
+              <div className="flex items-center gap-2">
+                <input {...register("slug")} disabled={autoSlug} placeholder="electronics" className={cn(inputCls, "flex-1", autoSlug && "opacity-60")} />
+                <div className="flex items-center gap-2 shrink-0 px-3 h-11 rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/40">
+                  <Switch checked={autoSlug} onCheckedChange={setAutoSlug} id="autoslug" />
+                  <label htmlFor="autoslug" className="text-xs font-medium cursor-pointer whitespace-nowrap">Auto</label>
+                </div>
+              </div>
+              {errors.slug && <p className="text-xs text-red-400">{errors.slug.message}</p>}
+            </motion.div>
+          )}
+          {curStep?.key === "options" && (
+            <motion.div key="step-opts" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-4">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Category Options</label>
+              <div className="grid grid-cols-2 gap-3">
+                {[
+                  { id: "active", checked: isActive, onChange: (v: boolean) => setValue("isActive", v), label: "Active", desc: "Visible to users" },
+                  { id: "isSub", checked: isSub, onChange: (v: boolean) => setValue("isSub", v), label: "Sub-category", desc: "Has a parent category" },
+                ].map((opt) => (
+                  <div key={opt.id} className={cn(
+                    "flex items-center justify-between gap-3 p-4 rounded-2xl border cursor-pointer transition-all",
+                    opt.checked
+                      ? "border-[hsl(var(--primary))]/40 bg-[hsl(var(--primary))]/5"
+                      : "border-[hsl(var(--border))]/50 hover:border-[hsl(var(--border))]"
+                  )} onClick={() => opt.onChange(!opt.checked)}>
+                    <div>
+                      <p className="text-sm font-medium">{opt.label}</p>
+                      <p className="text-[11px] text-[hsl(var(--foreground))]/45">{opt.desc}</p>
+                    </div>
+                    <Switch checked={opt.checked} onCheckedChange={opt.onChange} id={opt.id} />
+                  </div>
+                ))}
+              </div>
+            </motion.div>
+          )}
+          {curStep?.key === "parent" && (
+            <motion.div key="step-parent" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Parent Category *</label>
+              <ParentAutocomplete value={parentId} onChange={(v) => setValue("parentId", v)} />
+              {parentId == null && <p className="text-xs text-amber-400">Select a parent category to continue.</p>}
+            </motion.div>
+          )}
+          {curStep?.key === "review" && (
+            <motion.div key="step-review" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Review & Create</label>
+              <div className="rounded-2xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--muted))]/10 divide-y divide-[hsl(var(--border))]/20 overflow-hidden">
+                {[
+                  ["Name", name || "—"],
+                  ["Slug", slug || "—"],
+                  ["Active", isActive ? "Yes" : "No"],
+                  ["Sub-category", isSub ? "Yes" : "No"],
+                  ...(isSub ? [["Parent ID", String(parentId ?? "—")]] : []),
+                ].map(([k, v]) => (
+                  <div key={k} className="flex items-center justify-between px-4 py-3 text-sm">
+                    <span className="text-[hsl(var(--foreground))]/50 font-medium">{k}</span>
+                    <span className="font-semibold">{v}</span>
+                  </div>
+                ))}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
       </div>
-      <div className="flex justify-between pt-2">
-        <Button
+
+      {/* Footer */}
+      <div className="flex items-center justify-between pt-1">
+        <button
           type="button"
-          variant="secondary"
           disabled={step === 0}
           onClick={goPrev}
+          className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
+          <ArrowLeft className="size-3.5" />
           Back
-        </Button>
+        </button>
         {step < steps.length - 1 ? (
-          <Button type="button" disabled={!nextAllowed()} onClick={goNext}>
+          <button
+            type="button"
+            disabled={!nextAllowed()}
+            onClick={goNext}
+            className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+          >
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
             Next
-          </Button>
+            <ArrowRight className="size-3.5" />
+          </button>
         ) : (
-          <Button type="submit" disabled={create.isPending}>
-            {create.isPending ? "Creating..." : "Create Category"}
-          </Button>
+          <button
+            type="submit"
+            disabled={create.isPending}
+            className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+          >
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+            {create.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
+            {create.isPending ? "Creating…" : "Create Category"}
+          </button>
         )}
       </div>
     </form>

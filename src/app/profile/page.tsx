@@ -788,8 +788,8 @@ function PasswordField({
     strength <= 1
       ? "bg-red-400"
       : strength === 2
-      ? "bg-yellow-400"
-      : "bg-emerald-400";
+        ? "bg-yellow-400"
+        : "bg-emerald-400";
 
   return (
     <div className="relative mt-1">
@@ -853,13 +853,12 @@ function ConfirmPasswordField({
       <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
         <div className="flex items-center gap-2 text-sm">
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${
-              !filled
-                ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
-                : matches
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${!filled
+              ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
+              : matches
                 ? "bg-emerald-500/10 text-emerald-400"
                 : "bg-red-500/10 text-red-400"
-            }`}
+              }`}
             aria-live="polite"
           >
             <Check className="size-3" />

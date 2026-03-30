@@ -171,7 +171,7 @@ export function ContactContent() {
   const { isRtl, t } = useLanguage();
 
   return (
-    <div dir={isRtl ? "rtl" : "ltr"} className="mx-auto max-w-7xl space-y-8 px-4 py-8 sm:px-6 lg:px-8">
+    <div dir={isRtl ? "rtl" : "ltr"} className="container-padded py-8 space-y-8">
       <ContactHero />
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">

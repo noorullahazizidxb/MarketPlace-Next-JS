@@ -9,7 +9,6 @@ import {
   useWatch,
 } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/components/ui/button";
 import {
   Loader2,
   Plus,
@@ -18,6 +17,8 @@ import {
   ImagePlus,
   Check,
   X,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
 import { toastError, toastSuccess } from "@/lib/toast";
@@ -56,7 +57,7 @@ const TextField: React.FC<{
           ...(rules || {}),
         })}
         className={cn(
-          "h-11 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm focus:outline-none focus:ring-2 ring-[hsl(var(--accent))/40]",
+          "h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30",
           small && "h-9"
         )}
       />
@@ -138,7 +139,7 @@ const PasswordPair: React.FC = () => {
               minLength: { value: 8, message: "Minimum 8 characters" },
             })}
             placeholder="Create a secure password"
-            className="h-11 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm"
+            className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all placeholder:text-[hsl(var(--foreground))]/30"
           />
         </label>
 
@@ -226,7 +227,7 @@ const PasswordPair: React.FC = () => {
                 v === (password || "") || "Passwords do not match",
             })}
             placeholder="Repeat your password"
-            className="h-11 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm"
+            className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all placeholder:text-[hsl(var(--foreground))]/30"
           />
         </label>
 
@@ -261,7 +262,7 @@ const RoleSelect: React.FC = () => {
       <span className="text-xs font-medium">Role *</span>
       <select
         {...register("role", { required: "Role is required" })}
-        className="h-12 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm"
+        className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all"
       >
         <option value="">Select role</option>
         <option value="USER">USER</option>
@@ -292,14 +293,13 @@ const PhotoUpload: React.FC<{ preview?: string }> = ({ preview }) => {
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <Button
+          <button
             type="button"
-            size="sm"
-            variant="secondary"
             onClick={() => fileInputRef.current?.click()}
+            className="h-9 px-4 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium hover:bg-[hsl(var(--muted))]/20 transition-colors"
           >
             Upload
-          </Button>
+          </button>
           <input
             ref={fileInputRef}
             type="file"
@@ -549,92 +549,89 @@ const UserCreateWizard: React.FC<{
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
-        <div className="p-6 border-b border-[hsl(var(--border))] flex items-center gap-4 relative">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <UserPlus className="size-5 text-[hsl(var(--accent))]" /> Create
-            User
-          </h2>
-          <div className="flex items-center gap-2 text-2xs ml-auto">
-            {steps.map((s, i) => (
-              <div key={s} className="flex items-center gap-1">
-                <div
-                  className={cn(
-                    "size-6 rounded-full grid place-items-center text-[10px] font-semibold",
-                    i === step
-                      ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]"
-                      : i < step
-                        ? "bg-green-500/80 text-white"
-                        : "bg-[hsl(var(--muted))] text-foreground/60"
-                  )}
-                >
-                  {i + 1}
-                </div>
-                <span
-                  className={cn(
-                    "uppercase tracking-wide font-medium",
-                    i === step ? "text-foreground" : "text-foreground/50"
-                  )}
-                >
-                  {s}
-                </span>
+        <div className="px-6 pt-5 pb-4 border-b border-[hsl(var(--border))]/30 relative">
+          <div className="flex items-start justify-between mb-4">
+            <div className="flex items-center gap-2.5">
+              <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
+                <UserPlus className="size-4.5 text-[hsl(var(--primary))]" />
               </div>
-            ))}
+              <div>
+                <h2 className="text-base font-bold leading-tight">Create User</h2>
+                <p className="text-[11px] text-[hsl(var(--foreground))]/40">Step {step + 1} of {steps.length} — {steps[step]}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-1.5">
+              {steps.map((s, i) => (
+                <React.Fragment key={s}>
+                  <motion.div
+                    animate={{
+                      backgroundColor: i < step ? "hsl(var(--primary))" : i === step ? "hsl(var(--primary))" : "hsl(var(--border))",
+                      opacity: i > step ? 0.35 : 1,
+                    }}
+                    transition={{ duration: 0.2 }}
+                    className={cn(
+                      "size-7 rounded-xl flex items-center justify-center text-[10px] font-bold",
+                      i <= step ? "text-[hsl(var(--primary-foreground))]" : "text-[hsl(var(--muted-foreground))]"
+                    )}
+                  >
+                    {i < step ? <Check className="size-3" /> : i + 1}
+                  </motion.div>
+                  {i < steps.length - 1 && (
+                    <div className="relative w-5 h-0.5">
+                      <div className="absolute inset-0 rounded-full bg-[hsl(var(--border))]/30" />
+                      <motion.div className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]" animate={{ scaleX: i < step ? 1 : 0 }} style={{ originX: 0 }} transition={{ duration: 0.2 }} />
+                    </div>
+                  )}
+                </React.Fragment>
+              ))}
+            </div>
           </div>
-          {/* animated slim progress rail */}
-          <div className="absolute left-0 bottom-0 h-1 w-full bg-[hsl(var(--muted))/0.4] overflow-hidden rounded">
+          <div className="h-1 rounded-full bg-[hsl(var(--muted))]/20 overflow-hidden">
             <motion.div
               initial={false}
               animate={{ width: progress + "%" }}
               transition={{ type: "spring", stiffness: 140, damping: 22 }}
-              className="h-full bg-gradient-to-r from-[hsl(var(--accent))] via-emerald-400 to-green-500"
+              className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary))]/60"
             />
           </div>
         </div>
         {/* Mobile action bar (top) */}
-        <div className="px-4 pt-3 flex items-center gap-2 sm:hidden sticky top-0 z-20 bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/85 border-b border-[hsl(var(--border))]">
+        <div className="px-4 pt-3 flex items-center gap-2 sm:hidden sticky top-0 z-20 bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/85 border-b border-[hsl(var(--border))]/30">
           {step > 0 && (
-            <Button
+            <button
               type="button"
-              variant="secondary"
-              size="sm"
               onClick={prev}
-              className="h-9 px-3 text-2xs"
+              className="h-9 px-3 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium flex items-center gap-1 hover:bg-[hsl(var(--muted))]/20 transition-colors"
             >
-              Back
-            </Button>
+              <ArrowLeft className="size-3" /> Back
+            </button>
           )}
           {step < steps.length - 1 && (
-            <Button
+            <button
               type="button"
-              size="sm"
-              variant="accent"
               disabled={!canNext}
               onClick={next}
-              className="h-9 px-4 text-2xs ml-auto"
+              className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold ml-auto flex items-center gap-1 disabled:opacity-40 transition-all"
             >
-              Next
-            </Button>
+              Next <ArrowRight className="size-3" />
+            </button>
           )}
           {step === steps.length - 1 && (
-            <Button
+            <button
               type="submit"
-              size="sm"
-              variant="primary"
               disabled={
                 !canNext ||
                 registerUser.isPending ||
                 registerAdmin.isPending ||
                 registerRep.isPending
               }
-              className="h-9 px-4 text-2xs ml-auto inline-flex items-center gap-1"
+              className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold ml-auto flex items-center gap-1.5 disabled:opacity-40 transition-all"
             >
-              {(registerUser.isPending ||
-                registerAdmin.isPending ||
-                registerRep.isPending) && (
-                  <Loader2 className="size-3 animate-spin" />
-                )}
+              {(registerUser.isPending || registerAdmin.isPending || registerRep.isPending) && (
+                <Loader2 className="size-3 animate-spin" />
+              )}
               Create
-            </Button>
+            </button>
           )}
         </div>
         <div className="flex-1 overflow-y-auto sm:overflow-visible p-6 min-h-0 pb-28 sm:pb-8 scroll-smooth overscroll-contain max-h-[calc(100vh-220px)] sm:max-h-none [@supports(height:100dvh)]:max-h-[calc(100dvh-220px)] sm:[@supports(height:100dvh)]:max-h-none">
@@ -843,27 +840,24 @@ const UserCreateWizard: React.FC<{
                           />
                           <div className="flex justify-end mt-6">
                             {repInfoArray.fields.length > 1 && (
-                              <Button
+                              <button
                                 type="button"
-                                variant="ghost"
-                                size="sm"
                                 onClick={() => repInfoArray.remove(index)}
+                                className="size-8 rounded-xl flex items-center justify-center text-[hsl(var(--foreground))]/40 hover:text-red-400 hover:bg-red-400/10 transition-colors"
                               >
                                 <Trash2 className="size-4" />
-                              </Button>
+                              </button>
                             )}
                           </div>
                         </div>
                       ))}
-                      <Button
+                      <button
                         type="button"
-                        variant="accent"
-                        size="sm"
                         onClick={() => repInfoArray.append(emptyRepProvince())}
-                        className="inline-flex items-center gap-2"
+                        className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] text-xs font-semibold flex items-center gap-2 hover:bg-[hsl(var(--primary))]/20 transition-colors"
                       >
                         <Plus className="size-4" /> Add Province
-                      </Button>
+                      </button>
                     </div>
                   </motion.div>
                 )}
@@ -871,7 +865,7 @@ const UserCreateWizard: React.FC<{
             </div>
             {/* Live Summary Sidebar */}
             <aside className="hidden xl:block w-72 shrink-0 space-y-4 sticky top-4 self-start">
-              <div className="rounded-xl border p-4 space-y-3 bg-[hsl(var(--muted))/0.25]">
+              <div className="rounded-2xl border border-[hsl(var(--border))]/40 p-4 space-y-3 bg-[hsl(var(--muted))]/10">
                 <h4 className="text-xs font-semibold tracking-wide uppercase">
                   Summary
                 </h4>
@@ -947,7 +941,7 @@ const UserCreateWizard: React.FC<{
                   )}
                 </div>
               </div>
-              <div className="rounded-xl border p-3 bg-[hsl(var(--muted))/0.15]">
+              <div className="rounded-2xl border border-[hsl(var(--border))]/40 p-3 bg-[hsl(var(--muted))]/10">
                 <div className="flex items-center justify-between text-2xs font-medium">
                   <span>Progress</span>
                   <span>{Math.round(progress)}%</span>
@@ -964,54 +958,27 @@ const UserCreateWizard: React.FC<{
             </aside>
           </div>
         </div>
-        <div className="hidden sm:flex sticky bottom-0 z-30 p-4 border-t border-[hsl(var(--border))] bg-[hsl(var(--card))] backdrop-blur-sm flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
-          <div className="text-2xs subtle">
-            Step {step + 1} of {steps.length}
-          </div>
-          <div className="flex items-center gap-2 justify-end">
-            <Button type="button" variant="ghost" size="sm" onClick={onClose}>
-              Cancel
-            </Button>
+        <div className="hidden sm:flex sticky bottom-0 z-30 px-6 py-4 border-t border-[hsl(var(--border))]/30 bg-[hsl(var(--card))]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
+          <button type="button" onClick={onClose} className="h-9 px-3 rounded-xl text-sm text-[hsl(var(--foreground))]/50 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-colors">
+            Cancel
+          </button>
+          <div className="flex items-center gap-2">
             {step > 0 && (
-              <Button
-                type="button"
-                variant="secondary"
-                size="sm"
-                onClick={prev}
-              >
-                Back
-              </Button>
+              <button type="button" onClick={prev} className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors">
+                <ArrowLeft className="size-3.5" /> Back
+              </button>
             )}
-            {step < steps.length - 1 && (
-              <Button
-                type="button"
-                size="sm"
-                variant="accent"
-                disabled={!canNext}
-                onClick={next}
-              >
-                Next
-              </Button>
-            )}
-            {step === steps.length - 1 && (
-              <Button
-                type="submit"
-                variant="primary"
-                size="sm"
-                disabled={
-                  registerUser.isPending ||
-                  registerAdmin.isPending ||
-                  registerRep.isPending ||
-                  !canNext
-                }
-              >
-                {(registerUser.isPending ||
-                  registerAdmin.isPending ||
-                  registerRep.isPending) && (
-                    <Loader2 className="size-4 animate-spin" />
-                  )}
+            {step < steps.length - 1 ? (
+              <button type="button" disabled={!canNext} onClick={next} className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden">
+                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                Next <ArrowRight className="size-3.5" />
+              </button>
+            ) : (
+              <button type="submit" disabled={registerUser.isPending || registerAdmin.isPending || registerRep.isPending || !canNext} className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden">
+                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                {(registerUser.isPending || registerAdmin.isPending || registerRep.isPending) ? <Loader2 className="size-4 animate-spin" /> : <UserPlus className="size-4" />}
                 Create User
-              </Button>
+              </button>
             )}
           </div>
         </div>

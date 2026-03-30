@@ -155,7 +155,6 @@ export default function AdminDashboardPage() {
       value: summary.totalListings ?? data?.totals?.total ?? 0,
       accent: "text-[hsl(var(--primary))]",
       iconBg: "bg-[hsl(var(--primary))]/10",
-      borderColor: "border-l-[hsl(var(--primary))]",
       sub: `${data?.totals?.pending ?? 0} pending`,
     },
     {
@@ -164,7 +163,6 @@ export default function AdminDashboardPage() {
       value: summary.approvedListings ?? data?.totals?.approved ?? 0,
       accent: "text-emerald-500",
       iconBg: "bg-emerald-500/10",
-      borderColor: "border-l-emerald-500",
       sub: null,
     },
     {
@@ -173,7 +171,6 @@ export default function AdminDashboardPage() {
       value: summary.totalUsers ?? 0,
       accent: "text-indigo-500",
       iconBg: "bg-indigo-500/10",
-      borderColor: "border-l-indigo-500",
       sub: null,
     },
     {
@@ -182,7 +179,6 @@ export default function AdminDashboardPage() {
       value: summary.feedbackCount ?? 0,
       accent: "text-amber-500",
       iconBg: "bg-amber-500/10",
-      borderColor: "border-l-amber-500",
       sub: summary.avgRating ? `Avg ${summary.avgRating}★` : null,
     },
   ];
@@ -203,30 +199,34 @@ export default function AdminDashboardPage() {
 
       {/* KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
-        {kpis.map((k) => (
-          <Card
+        {kpis.map((k, i) => (
+          <div
             key={k.title}
-            className={`relative overflow-hidden p-5 border-l-4 ${k.borderColor} border-t border-r border-b border-[hsl(var(--border))] bg-[hsl(var(--card))] flex flex-col gap-3 hover:shadow-lg hover:-translate-y-0.5 transition-all duration-200`}
+            className="relative overflow-hidden rounded-[1.5rem] border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/80 backdrop-blur-xl p-5 flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
           >
-            <div className="flex items-start justify-between">
+            {/* shimmer top line */}
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            {/* accent glow */}
+            <span className={`pointer-events-none absolute -top-8 -left-4 size-24 rounded-full blur-2xl opacity-20 ${k.iconBg}`} />
+            <div className="flex items-start justify-between relative">
               <div className="space-y-1">
-                <p className="text-xs uppercase tracking-wide font-semibold text-[hsl(var(--foreground))]/50">
+                <p className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/45">
                   {k.title}
                 </p>
                 <p className="text-3xl font-bold tabular-nums">
-                  {isLoading ? "—" : k.value.toLocaleString()}
+                  {isLoading ? <span className="inline-block h-8 w-12 rounded-lg bg-[hsl(var(--muted))]/30 animate-pulse" /> : k.value.toLocaleString()}
                 </p>
               </div>
-              <div className={`size-12 rounded-2xl flex items-center justify-center ${k.iconBg}`}>
-                <k.icon className={"size-6 " + k.accent} />
+              <div className={`size-11 rounded-2xl flex items-center justify-center ${k.iconBg} shadow-sm`}>
+                <k.icon className={"size-5 " + k.accent} />
               </div>
             </div>
             {k.sub && (
-              <p className="text-[11px] text-[hsl(var(--foreground))]/50 font-medium">
+              <p className="text-[11px] text-[hsl(var(--foreground))]/40 font-medium relative">
                 {k.sub}
               </p>
             )}
-          </Card>
+          </div>
         ))}
       </div>
 

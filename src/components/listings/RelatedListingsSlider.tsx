@@ -164,14 +164,14 @@ function HeroCarousel({
           <button
             aria-label="Previous"
             onClick={prev}
-            className="size-9 rounded-xl grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.08]"
+            className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
           >
             <ChevronLeft className="size-4" />
           </button>
           <button
             aria-label="Next"
             onClick={next}
-            className="size-9 rounded-xl grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.08]"
+            className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
           >
             <ChevronRight className="size-4" />
           </button>

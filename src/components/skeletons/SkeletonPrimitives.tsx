@@ -3,13 +3,13 @@ import React from "react";
 import { cn } from "@/lib/cn";
 
 export const shimmer =
-  "animate-pulse bg-[linear-gradient(110deg,rgba(255,255,255,0.06),rgba(255,255,255,0.18),rgba(255,255,255,0.06))] bg-[length:200%_100%]";
+  "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-[hsl(var(--foreground))]/10 before:to-transparent border border-[hsl(var(--border))]/50";
 
 export function Skeleton({ className }: { className?: string }) {
   return (
     <div
       className={cn(
-        "rounded-md bg-[hsl(var(--foreground))/0.06]",
+        "rounded-xl bg-[hsl(var(--foreground))]/5 backdrop-blur-xl shadow-inner",
         shimmer,
         className
       )}
@@ -19,7 +19,7 @@ export function Skeleton({ className }: { className?: string }) {
 
 export function Block({ lines = 3 }: { lines?: number }) {
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 w-full">
       {Array.from({ length: lines }).map((_, i) => (
         <Skeleton
           key={i}

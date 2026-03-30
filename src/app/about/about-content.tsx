@@ -46,7 +46,7 @@ export function AboutContent({
             style={{ willChange: "transform" }}
           />
         </div>
-        <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="relative z-10 container-padded py-16 sm:py-24">
           <div className={`max-w-3xl ${isRtl ? "text-right" : "text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -84,7 +84,7 @@ export function AboutContent({
       </section>
 
       {/* Mission & Vision */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             { heading: t("missionHeading"), text: t("missionText"), gradient: "from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/10" },
@@ -106,7 +106,7 @@ export function AboutContent({
       </section>
 
       {/* Stats & Metrics */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -114,9 +114,9 @@ export function AboutContent({
           transition={{ duration: 0.5 }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-semibold">{t("byTheNumbers") || "By the Numbers"}</h2>
+          <h2 className="text-2xl font-semibold">{t("byTheNumbers" as any) || "By the Numbers"}</h2>
           <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))]">
-            {t("trustedByThousands") || "Trusted by thousands across Afghanistan"}
+            {t("trustedByThousands" as any) || "Trusted by thousands across Afghanistan"}
           </p>
         </motion.div>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -149,7 +149,7 @@ export function AboutContent({
       </section>
 
       {/* Trust & Verification */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -213,7 +213,7 @@ export function AboutContent({
       </section>
 
       {/* How It Works */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <motion.h2
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -257,7 +257,7 @@ export function AboutContent({
       </section>
 
       {/* Story */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -281,7 +281,7 @@ export function AboutContent({
       </section>
 
       {/* Team */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <motion.h2
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -328,7 +328,7 @@ export function AboutContent({
       </section>
 
       {/* CTA */}
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 mt-12 sm:mt-16">
+      <section className="container-padded mt-12 sm:mt-16">
         <AboutCtaBanner />
       </section>
     </main>

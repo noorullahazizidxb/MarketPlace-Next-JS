@@ -34,6 +34,7 @@ import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { listingPlaceholderImages } from "@/lib/public-images";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export default function ListingDetailsPage() {
   return (
@@ -449,42 +450,51 @@ function SocialsCard() {
     <div className="card p-5">
       <h3 className="font-semibold mb-3">Follow</h3>
       <div className="flex items-center gap-2">
-        <Link
-          href="#"
-          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
-        >
-          <svg
-            aria-hidden
-            className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
-            viewBox="0 0 24 24"
+        <Tooltip content="Follow on X" side="top">
+          <Link
+            href="#"
+            aria-label="Follow on X"
+            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
           >
-            <path
-              fill="currentColor"
-              d="M22.46 6c-.77.35-1.6.58-2.46.69a4.16 4.16 0 0 0 1.82-2.3a8.3 8.3 0 0 1-2.63 1a4.15 4.15 0 0 0-7.07 3.78A11.8 11.8 0 0 1 3.15 4.6a4.13 4.13 0 0 0 1.28 5.54a4.1 4.1 0 0 1-1.88-.52v.05a4.15 4.15 0 0 0 3.33 4.07a4.2 4.2 0 0 1-1.88.07a4.16 4.16 0 0 0 3.88 2.89A8.33 8.33 0 0 1 2 19.54a11.76 11.76 0 0 0 6.36 1.86c7.63 0 11.8-6.32 11.8-11.8l-.01-.54A8.4 8.4 0 0 0 22.46 6Z"
-            />
-          </svg>
-        </Link>
-        <Link
-          href="#"
-          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
-        >
-          <svg
-            aria-hidden
-            className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
-            viewBox="0 0 24 24"
+            <svg
+              aria-hidden
+              className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M22.46 6c-.77.35-1.6.58-2.46.69a4.16 4.16 0 0 0 1.82-2.3a8.3 8.3 0 0 1-2.63 1a4.15 4.15 0 0 0-7.07 3.78A11.8 11.8 0 0 1 3.15 4.6a4.13 4.13 0 0 0 1.28 5.54a4.1 4.1 0 0 1-1.88-.52v.05a4.15 4.15 0 0 0 3.33 4.07a4.2 4.2 0 0 1-1.88.07a4.16 4.16 0 0 0 3.88 2.89A8.33 8.33 0 0 1 2 19.54a11.76 11.76 0 0 0 6.36 1.86c7.63 0 11.8-6.32 11.8-11.8l-.01-.54A8.4 8.4 0 0 0 22.46 6Z"
+              />
+            </svg>
+          </Link>
+        </Tooltip>
+        <Tooltip content="Verified" side="top">
+          <Link
+            href="#"
+            aria-label="Verified"
+            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
           >
-            <path
-              fill="currentColor"
-              d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2Zm3.95 7.05L10.5 14.5L8.05 12.05l-1.4 1.4L10.5 17.3l7.85-7.85l-1.4-1.4Z"
-            />
-          </svg>
-        </Link>
-        <Link
-          href="#"
-          className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
-        >
-          <Link2 className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]" />
-        </Link>
+            <svg
+              aria-hidden
+              className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+              viewBox="0 0 24 24"
+            >
+              <path
+                fill="currentColor"
+                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2Zm3.95 7.05L10.5 14.5L8.05 12.05l-1.4 1.4L10.5 17.3l7.85-7.85l-1.4-1.4Z"
+              />
+            </svg>
+          </Link>
+        </Tooltip>
+        <Tooltip content="Copy link" side="top">
+          <Link
+            href="#"
+            aria-label="Copy link"
+            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+          >
+            <Link2 className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]" />
+          </Link>
+        </Tooltip>
       </div>
     </div>
   );

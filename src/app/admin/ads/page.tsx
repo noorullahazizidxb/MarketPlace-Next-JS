@@ -2,8 +2,6 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Dialog,
   DialogTrigger,
@@ -20,6 +18,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApiMutation, useApiGet } from "@/lib/api-hooks";
 import AdCard from "@/components/ads/ad-card";
+import { Tooltip } from "@/components/ui/tooltip";
 
 // Enum list derived from Prisma model
 const AD_PLACEMENTS = [
@@ -179,30 +178,48 @@ export default function AdsManagementPage() {
           }}
         >
           <DialogTrigger asChild>
-            <Button
-              LeftIcon={Plus}
-              variant="accent"
+            <button
+              type="button"
               onClick={() => {
                 setEditingAd(null);
                 form.reset();
               }}
+              className="h-10 px-4 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 transition-all relative overflow-hidden"
             >
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+              <Plus className="size-4" />
               {t("createNewAd")}
-            </Button>
+            </button>
           </DialogTrigger>
-          <DialogContent className="max-h-[90vh] overflow-y-auto">
-            <DialogTitle className="text-xl font-semibold mb-4">
-              {editingAd ? t("editAd") : t("createNewAd")}
-            </DialogTitle>
-            <form className="space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="title">
+          <DialogContent className="max-h-[90vh] overflow-y-auto rounded-[2rem] border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.35)] p-0">
+            {/* shimmer top line */}
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-t-[2rem]" />
+            <div className="px-6 pt-6 pb-4 border-b border-[hsl(var(--border))]/30 flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
+                  <Plus className="size-4 text-[hsl(var(--primary))]" />
+                </div>
+                <DialogTitle className="text-base font-bold">
+                  {editingAd ? t("editAd") : t("createNewAd")}
+                </DialogTitle>
+              </div>
+              <Tooltip content="Close" side="bottom">
+                <DialogClose aria-label="Close" className="size-8 rounded-xl flex items-center justify-center text-[hsl(var(--foreground))]/40 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-colors">
+                  <span className="sr-only">Close</span>
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1l12 12M13 1L1 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" /></svg>
+                </DialogClose>
+              </Tooltip>
+            </div>
+            <form className="px-6 py-5 space-y-5" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[hsl(var(--foreground))]/60 uppercase tracking-wider" htmlFor="title">
                   {(t as any)("titleLabel")}
                 </label>
-                <Input
+                <input
                   id="title"
                   placeholder={(t as any)("adTitlePlaceholder")}
                   {...form.register("title")}
+                  className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30"
                 />
                 {form.formState.errors.title && (
                   <p className="text-xs text-red-400">
@@ -210,13 +227,13 @@ export default function AdsManagementPage() {
                   </p>
                 )}
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="body">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[hsl(var(--foreground))]/60 uppercase tracking-wider" htmlFor="body">
                   {(t as any)("adBodyLabel")}
                 </label>
                 <textarea
                   id="body"
-                  className="min-h-[120px] w-full rounded-2xl bg-input/20 border border-white/10 px-4 py-3 text-sm focus:ring-2 focus:ring-primary/40 outline-none"
+                  className="w-full min-h-[100px] rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30 resize-none"
                   placeholder={t("optionalSupportingText")}
                   {...form.register("body")}
                 />
@@ -226,14 +243,15 @@ export default function AdsManagementPage() {
                   </p>
                 )}
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium" htmlFor="imageUrl">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[hsl(var(--foreground))]/60 uppercase tracking-wider" htmlFor="imageUrl">
                   {t("imageUrlLabel")}
                 </label>
-                <Input
+                <input
                   id="imageUrl"
                   placeholder="https://..."
                   {...form.register("imageUrl")}
+                  className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30"
                 />
                 {form.formState.errors.imageUrl && (
                   <p className="text-xs text-red-400">
@@ -241,8 +259,8 @@ export default function AdsManagementPage() {
                   </p>
                 )}
               </div>
-              <div className="space-y-2">
-                <label className="text-sm font-medium">
+              <div className="space-y-1.5">
+                <label className="text-xs font-semibold text-[hsl(var(--foreground))]/60 uppercase tracking-wider">
                   {t("placementLabel")}
                 </label>
                 <PlacementSelect
@@ -255,10 +273,10 @@ export default function AdsManagementPage() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center justify-between rounded-xl bg-white/5 px-4 py-3 border border-white/10">
+              <div className="flex items-center justify-between rounded-2xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--muted))]/10 px-4 py-3.5">
                 <div className="space-y-0.5">
-                  <p className="text-sm font-medium">{t("activeLabel")}</p>
-                  <p className="text-xs text-muted-foreground">
+                  <p className="text-sm font-semibold">{t("activeLabel")}</p>
+                  <p className="text-xs text-[hsl(var(--foreground))]/45">
                     {t("activeHint")}
                   </p>
                 </div>
@@ -268,18 +286,18 @@ export default function AdsManagementPage() {
                   aria-label="Ad Active"
                 />
               </div>
-              <div className="flex justify-end gap-3 pt-4">
+              <div className="flex justify-end gap-3 pt-2 pb-1">
                 <DialogClose asChild>
-                  <Button type="button" variant="ghost">
+                  <button type="button" className="h-10 px-4 rounded-2xl text-sm font-medium text-[hsl(var(--foreground))]/50 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-colors">
                     {t("cancel")}
-                  </Button>
+                  </button>
                 </DialogClose>
-                <Button
+                <button
                   type="submit"
-                  disabled={
-                    createMutation.isPending || updateMutation.isPending
-                  }
+                  disabled={createMutation.isPending || updateMutation.isPending}
+                  className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
                 >
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                   {createMutation.isPending || updateMutation.isPending ? (
                     <Loader2 className="size-4 animate-spin" />
                   ) : editingAd ? (
@@ -287,7 +305,7 @@ export default function AdsManagementPage() {
                   ) : (
                     t("createNewAd")
                   )}
-                </Button>
+                </button>
               </div>
             </form>
           </DialogContent>
@@ -298,13 +316,13 @@ export default function AdsManagementPage() {
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-1 flex-col gap-4 sm:flex-row">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-muted-foreground" />
-            <Input
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[hsl(var(--foreground))]/40" />
+            <input
               aria-label={(t as any)("search")}
               placeholder={(t as any)("searchAdsPlaceholder")}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
-              className="pl-9"
+              className="h-10 w-full rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/70 backdrop-blur-sm pl-9 pr-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all placeholder:text-[hsl(var(--foreground))]/30"
             />
           </div>
           <div className="flex gap-3 flex-wrap">
@@ -312,7 +330,7 @@ export default function AdsManagementPage() {
               aria-label="Filter by status"
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value as any)}
-              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--accent))/0.4]"
+              className="h-10 rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all"
             >
               <option value="all">{(t as any)("adsAllStatuses")}</option>
               <option value="active">{(t as any)("active")}</option>
@@ -322,7 +340,7 @@ export default function AdsManagementPage() {
               aria-label="Filter by placement"
               value={placementFilter}
               onChange={(e) => setPlacementFilter(e.target.value)}
-              className="h-10 rounded-2xl bg-input/20 border border-white/10 px-3 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--accent))/0.4] min-w-[180px]"
+              className="h-10 rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all min-w-[180px]"
             >
               <option value="all">{(t as any)("adsAllPlacements")}</option>
               {AD_PLACEMENTS.map((p) => (

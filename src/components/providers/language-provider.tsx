@@ -9,7 +9,8 @@ import {
 interface LanguageContextValue {
   locale: Locale;
   setLocale: (l: Locale) => void;
-  t: (key: keyof (typeof translations)["en"]) => string;
+  // allow arbitrary string keys so callers can use dynamic/fallback keys
+  t: (key: string) => string;
   isRtl: boolean;
 }
 

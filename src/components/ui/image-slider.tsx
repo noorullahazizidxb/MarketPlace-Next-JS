@@ -4,6 +4,7 @@ import Image from "next/image";
 import { asset } from "@/lib/assets";
 import { ChevronLeft, ChevronRight, LoaderIcon } from "lucide-react";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type Slide = { url?: string | null; alt?: string | null };
 
@@ -157,31 +158,35 @@ export function ImageSlider({
       {/* controls */}
       {slides.length > 1 && (
         <>
-          <button
-            type="button"
-            aria-label="Previous image"
-            data-slider-control="true"
-            onClick={(event) => {
-              event.stopPropagation();
-              setIndex((i) => (i - 1 + slides.length) % slides.length);
-            }}
-            className={`absolute left-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
-          >
-            <ChevronLeft className="size-5" />
-          </button>
-          <button
-            type="button"
-            aria-label="Next image"
-            data-slider-control="true"
-            onClick={(event) => {
-              event.stopPropagation();
-              setIndex((i) => (i + 1) % slides.length);
-            }}
-            className={`absolute right-2 top-1/2 -translate-y-1/2 glass size-9 grid place-items-center rounded-full z-20`}
-          >
-            <ChevronRight className="size-5" />
-          </button>
-          <div className="absolute left-1/2 -translate-x-1/2 bottom-2 flex items-center gap-2 z-30">
+          <Tooltip content="Previous image" side="right">
+            <button
+              type="button"
+              aria-label="Previous image"
+              data-slider-control="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex((i) => (i - 1 + slides.length) % slides.length);
+              }}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 bg-[hsl(var(--background))]/60 backdrop-blur-md hover:bg-[hsl(var(--background))]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+            >
+              <ChevronLeft className="size-5 text-[hsl(var(--foreground))]" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Next image" side="left">
+            <button
+              type="button"
+              aria-label="Next image"
+              data-slider-control="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex((i) => (i + 1) % slides.length);
+              }}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 bg-[hsl(var(--background))]/60 backdrop-blur-md hover:bg-[hsl(var(--background))]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+            >
+              <ChevronRight className="size-5 text-[hsl(var(--foreground))]" />
+            </button>
+          </Tooltip>
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-2 z-30 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md">
             {slides.map((_, i) => (
               <button
                 type="button"
@@ -192,9 +197,9 @@ export function ImageSlider({
                   event.stopPropagation();
                   setIndex(i);
                 }}
-                className={`w-2 h-2 rounded-full go-to-slide ${i === index
-                  ? "bg-[hsl(var(--accent))]"
-                  : "bg-[hsl(var(--foreground))/0.4]"
+                className={`transition-all duration-300 rounded-full go-to-slide ${i === index
+                  ? "w-4 h-1.5 bg-white scale-1"
+                  : "w-1.5 h-1.5 bg-white/50 hover:bg-white/80 hover:scale-125"
                   }`}
               />
             ))}

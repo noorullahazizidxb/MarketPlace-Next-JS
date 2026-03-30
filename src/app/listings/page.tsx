@@ -95,7 +95,7 @@ function ListingsContent() {
   const categoryId = search.get("categoryId") || undefined;
   const searchText = search.get("search") || undefined;
   const page = parseInt(search.get("page") || "1", 10);
-  const pageSize = 12;
+  const pageSize = 15;
   // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
   const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
@@ -222,7 +222,7 @@ function ListingsContent() {
         )}
         {/* Grid is always rendered — skeletons occupy the same space as cards
             while data loads so there is no layout shift when content arrives. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
           {isLoading
             ? Array.from({ length: pageSize }).map((_, i) => (
               <div
@@ -255,15 +255,15 @@ function ListingsContent() {
                             listing={item}
                             cleanImageOverlayOnEngage
                           />
-                          {/* Insert an ad after finishing each row */}
-                          {((idx + 1) % 4 === 0 ||
+                          {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
+                          {((idx + 1) % 5 === 0 ||
                             (idx === pageItems.length - 1 &&
-                              (idx + 1) % 4 !== 0)) && (
+                              (idx + 1) % 5 !== 0)) && (
                               <div
                                 key={`ad-${item.id}-${idx}`}
                                 className="col-span-full"
                               >
-                                <AdPlaceholder index={Math.floor(idx / 4)} />
+                                <AdPlaceholder index={Math.floor(idx / 5)} />
                               </div>
                             )}
                         </Fragment>

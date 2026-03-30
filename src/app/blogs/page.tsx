@@ -14,25 +14,39 @@ import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlid
 import { config as appConfig } from "@/lib/config";
 import { filterBlogsByQuery } from "@/lib/search-utils";
 
-// Pre-defined skeleton rows that mirror the complex 2 / 3 / wide layout pattern.
+// Pre-defined skeleton rows that mirror the asymmetric layout pattern.
+// Pattern: hero(1) / trio(3) / featured(2+1) / quad(4) / duo(2) — repeat
 const SKELETON_ROWS = [
   {
-    type: "two" as const, skeletons: [
-      { id: "sk1", imageHeightClass: "h-64 md:h-80 lg:h-96" },
-      { id: "sk2", imageHeightClass: "h-64 md:h-80 lg:h-96" },
+    type: "hero" as const, skeletons: [
+      { id: "sk-h1", imageHeightClass: "h-72 md:h-80 lg:h-[26rem]" },
     ]
   },
   {
-    type: "three" as const, skeletons: [
-      { id: "sk3", imageHeightClass: undefined },
-      { id: "sk4", imageHeightClass: undefined },
-      { id: "sk5", imageHeightClass: undefined },
+    type: "trio" as const, skeletons: [
+      { id: "sk-t1", imageHeightClass: undefined },
+      { id: "sk-t2", imageHeightClass: undefined },
+      { id: "sk-t3", imageHeightClass: undefined },
     ]
   },
   {
-    type: "wide" as const, skeletons: [
-      { id: "sk6", imageHeightClass: "h-72 md:h-[22rem] lg:h-[26rem]" },
-      { id: "sk7", imageHeightClass: undefined },
+    type: "featured" as const, skeletons: [
+      { id: "sk-f1", imageHeightClass: "h-72 md:h-[22rem] lg:h-[26rem]" },
+      { id: "sk-f2", imageHeightClass: undefined },
+    ]
+  },
+  {
+    type: "quad" as const, skeletons: [
+      { id: "sk-q1", imageHeightClass: undefined },
+      { id: "sk-q2", imageHeightClass: undefined },
+      { id: "sk-q3", imageHeightClass: undefined },
+      { id: "sk-q4", imageHeightClass: undefined },
+    ]
+  },
+  {
+    type: "duo" as const, skeletons: [
+      { id: "sk-d1", imageHeightClass: "h-64 md:h-80 lg:h-96" },
+      { id: "sk-d2", imageHeightClass: "h-64 md:h-80 lg:h-96" },
     ]
   },
 ];
@@ -41,7 +55,15 @@ export default function BlogsPage() {
   const [q, setQ] = React.useState("");
   const [submittedQuery, setSubmittedQuery] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-  const [pageSize, setPageSize] = React.useState(9);
+  // Responsive default page size: more blogs on wider screens
+  const getResponsivePageSize = () => {
+    if (typeof window === "undefined") return 12;
+    if (window.innerWidth >= 1536) return 18;  // 2xl
+    if (window.innerWidth >= 1280) return 15;  // xl
+    if (window.innerWidth >= 1024) return 12;  // lg
+    return 9;
+  };
+  const [pageSize, setPageSize] = React.useState(() => getResponsivePageSize());
   const [countOverrides, setCountOverrides] = React.useState<
     Record<string, { likes?: number; shares?: number; comments?: number }>
   >({});
@@ -156,63 +178,88 @@ export default function BlogsPage() {
           layout is established immediately and there are no content shifts on data arrival. */}
       <div className="space-y-6">
         {isLoading ? (
-          // ----- Skeleton grid (same structure as real content) -----
+          // ----- Skeleton grid (asymmetric pattern) -----
           SKELETON_ROWS.map((row) => {
-            if (row.type === "two") {
+            if (row.type === "hero") {
               return (
-                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div key={row.type} className="grid grid-cols-1">
                   {row.skeletons.map((sk) => (
                     <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
                   ))}
                 </div>
               );
             }
-            if (row.type === "three") {
+            if (row.type === "trio") {
+              return (
+                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {row.skeletons.map((sk) => (
+                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
+                  ))}
+                </div>
+              );
+            }
+            if (row.type === "featured") {
               return (
                 <div key={row.type} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  {row.skeletons.map((sk, j) => (
+                    <div key={sk.id} className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}>
+                      <BlogCardSkeleton imageHeightClass={sk.imageHeightClass} />
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+            if (row.type === "quad") {
+              return (
+                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
                   {row.skeletons.map((sk) => (
                     <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
                   ))}
                 </div>
               );
             }
-            // wide
+            // duo
             return (
-              <div key={row.type} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                {row.skeletons.map((sk, j) => (
-                  <div key={sk.id} className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}>
-                    <BlogCardSkeleton imageHeightClass={sk.imageHeightClass} />
-                  </div>
+              <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                {row.skeletons.map((sk) => (
+                  <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
                 ))}
               </div>
             );
           })
         ) : (
-          // ----- Real content grid -----
+          // ----- Real content: asymmetric grid -----
+          // Pattern per cycle: hero(1) → trio(3) → featured(2+1) → quad(4) → duo(2) = 13 items/cycle
           (() => {
-            const rows: { type: "two" | "three" | "wide"; items: any[] }[] = [];
+            type RowType = "hero" | "trio" | "featured" | "quad" | "duo";
+            const PATTERN: { type: RowType; take: number }[] = [
+              { type: "hero", take: 1 },
+              { type: "trio", take: 3 },
+              { type: "featured", take: 3 },
+              { type: "quad", take: 4 },
+              { type: "duo", take: 2 },
+            ];
+            const rows: { type: RowType; items: any[] }[] = [];
             const list = pagedBlogs || [];
             let i = 0;
-            let patternIdx = 0; // 0 -> two, 1 -> three, 2 -> wide
+            let patternIdx = 0;
             while (i < list.length) {
-              const type =
-                patternIdx === 0 ? "two" : patternIdx === 1 ? "three" : "wide";
-              const take = type === "two" ? 2 : type === "three" ? 3 : 2;
-              rows.push({ type: type as any, items: list.slice(i, i + take) });
+              const { type, take } = PATTERN[patternIdx % PATTERN.length];
+              rows.push({ type, items: list.slice(i, i + take) });
               i += take;
-              patternIdx = (patternIdx + 1) % 3;
+              patternIdx++;
             }
             return rows.map((row, idx) => {
-              if (row.type === "two") {
+              if (row.type === "hero") {
                 return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div key={idx} className="grid grid-cols-1">
                     {row.items.map((b: any) => (
                       <BlogCard
                         key={b.id}
                         blog={b}
                         onOpen={onOpen}
                         variant="overlay"
-                        imageHeightClass="h-64 md:h-80 lg:h-96"
+                        imageHeightClass="h-72 md:h-80 lg:h-[26rem]"
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
                       />
@@ -220,9 +267,9 @@ export default function BlogsPage() {
                   </div>
                 );
               }
-              if (row.type === "three") {
+              if (row.type === "trio") {
                 return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                     {row.items.map((b: any) => (
                       <BlogCard
                         key={b.id}
@@ -235,25 +282,57 @@ export default function BlogsPage() {
                   </div>
                 );
               }
-              // wide
-              return (
-                <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {row.items.map((b: any, j: number) => (
-                    <div
-                      key={b.id}
-                      className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}
-                    >
+              if (row.type === "featured") {
+                return (
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    {row.items.map((b: any, j: number) => (
+                      <div
+                        key={b.id}
+                        className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}
+                      >
+                        <BlogCard
+                          blog={b}
+                          onOpen={onOpen}
+                          variant={j === 0 ? "overlay" : "default"}
+                          imageHeightClass={
+                            j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
+                          }
+                          countOverride={countOverrides[String(b.id)]}
+                          onCountsChange={updateBlogCounts}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                );
+              }
+              if (row.type === "quad") {
+                return (
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                    {row.items.map((b: any) => (
                       <BlogCard
+                        key={b.id}
                         blog={b}
                         onOpen={onOpen}
-                        variant={j === 0 ? "overlay" : "default"}
-                        imageHeightClass={
-                          j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
-                        }
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
                       />
-                    </div>
+                    ))}
+                  </div>
+                );
+              }
+              // duo
+              return (
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  {row.items.map((b: any) => (
+                    <BlogCard
+                      key={b.id}
+                      blog={b}
+                      onOpen={onOpen}
+                      variant="overlay"
+                      imageHeightClass="h-64 md:h-80 lg:h-96"
+                      countOverride={countOverrides[String(b.id)]}
+                      onCountsChange={updateBlogCounts}
+                    />
                   ))}
                 </div>
               );
@@ -277,7 +356,7 @@ export default function BlogsPage() {
                   className="h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
                   aria-label="Blog page size"
                 >
-                  {[6, 9, 12, 18].map((size) => (
+                  {[9, 12, 15, 18, 24].map((size) => (
                     <option key={size} value={size}>
                       {size} {t("perPage") || "per page"}
                     </option>

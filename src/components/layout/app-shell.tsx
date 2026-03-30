@@ -152,24 +152,23 @@ export function AppShell({ children }: PropsWithChildren) {
   /* ----------  ADMIN LAYOUT  ---------- */
   if (isAdmin) {
     return (
-      <div className="min-h-screen grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
+      <div className="min-h-screen flex flex-col">
         <AnimatedBg />
-        <Sidebar />
-        <div className="flex flex-col min-h-screen min-w-0 w-full">
-          <Navbar className="hidden md:block" />
-          <main
-            id="main-content"
-            className="flex-1 container-padded py-6"
-            dir="ltr"
-          >
-            <PageTransition>{children}</PageTransition>
-          </main>
-          <>
-            {/* skeleton while assets load */}
-            {!appReady ? <PartnersSkeleton /> : <Partners />}
-            <SiteFooter />
-          </>
+        <div className="flex-1 grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
+          <Sidebar />
+          <div className="flex flex-col min-h-full min-w-0 w-full">
+            <Navbar className="hidden md:block" />
+            <main
+              id="main-content"
+              className="flex-1 container-padded py-6"
+              dir="ltr"
+            >
+              <PageTransition>{children}</PageTransition>
+            </main>
+          </div>
         </div>
+        {!appReady ? <PartnersSkeleton /> : <Partners />}
+        <SiteFooter />
         <BottomNavigation />
         <MobileQuickBar />
       </div>

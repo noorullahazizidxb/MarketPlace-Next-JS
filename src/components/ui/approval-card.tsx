@@ -300,9 +300,9 @@ export function ApprovalCard({
                     href={
                       author?.contacts?.whatsapp
                         ? `https://wa.me/${author.contacts.whatsapp.replace(
-                            /[^\d]/g,
-                            ""
-                          )}`
+                          /[^\d]/g,
+                          ""
+                        )}`
                         : "#"
                     }
                     className="link truncate"
@@ -313,12 +313,12 @@ export function ApprovalCard({
                   <span className="truncate">
                     {author?.address
                       ? [
-                          author.address.street,
-                          author.address.city,
-                          author.address.country,
-                        ]
-                          .filter(Boolean)
-                          .join(", ")
+                        author.address.street,
+                        author.address.city,
+                        author.address.country,
+                      ]
+                        .filter(Boolean)
+                        .join(", ")
                       : "-"}
                   </span>
                 </div>

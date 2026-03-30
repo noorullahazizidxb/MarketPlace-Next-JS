@@ -116,14 +116,14 @@ export default function NotFound() {
             </motion.div>
 
             <motion.h1
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
+              initial={{ opacity: 0, y: 10, scale: 0.95 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{
                 duration: 0.7,
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="mt-4 text-7xl sm:text-8xl md:text-9xl font-black tracking-[-0.02em] bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--accent))] bg-clip-text text-transparent drop-shadow"
+              className="mt-4 text-[7rem] sm:text-[9rem] md:text-[11rem] leading-none font-black tracking-tighter bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--accent))] bg-clip-text text-transparent drop-shadow-2xl"
             >
               404
             </motion.h1>

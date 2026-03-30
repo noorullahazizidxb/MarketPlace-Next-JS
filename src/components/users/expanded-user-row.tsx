@@ -12,6 +12,7 @@ import {
   X,
   Loader2,
 } from "lucide-react";
+import { Tooltip } from "@/components/ui/tooltip";
 import { BaseUser, RepProvince, emptyRepProvince } from "./types";
 import { Portal } from "../ui/portal";
 import Image from "next/image";
@@ -75,14 +76,15 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
                 User: {user.fullName || user.email}
               </p>
             </div>
-            <button
-              onClick={onClose}
-              aria-label="Close"
-              title="Close"
-              className="size-8 rounded-xl inline-flex items-center justify-center border hover:bg-[hsl(var(--muted))/0.5]"
-            >
-              <X className="size-4" />
-            </button>
+            <Tooltip content="Close" side="left">
+              <button
+                onClick={onClose}
+                aria-label="Close"
+                className="size-8 rounded-xl inline-flex items-center justify-center border hover:bg-[hsl(var(--muted))/0.5]"
+              >
+                <X className="size-4" />
+              </button>
+            </Tooltip>
           </div>
           <div className="space-y-4">
             {rows.map((row, i) => (
@@ -121,15 +123,16 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
                     Active
                   </label>
                   {rows.length > 1 && (
-                    <button
-                      aria-label="Remove row"
-                      title="Remove row"
-                      type="button"
-                      onClick={() => removeRow(i)}
-                      className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-red-500/10 hover:border-red-400 transition-colors"
-                    >
-                      <X className="size-4" />
-                    </button>
+                    <Tooltip content="Remove row" side="top">
+                      <button
+                        aria-label="Remove row"
+                        type="button"
+                        onClick={() => removeRow(i)}
+                        className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-red-500/10 hover:border-red-400 transition-colors"
+                      >
+                        <X className="size-4" />
+                      </button>
+                    </Tooltip>
                   )}
                 </div>
               </div>

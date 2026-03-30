@@ -64,9 +64,10 @@ export function MobileQuickBar({ className }: { className?: string }) {
     >
       <div
         className={cn(
-          "flex items-center gap-1 px-1.5 py-1.5 rounded-2xl",
-          "bg-[hsl(var(--background))]/70 backdrop-blur-xl",
-          "border border-white/10 shadow-[0_4px_20px_-4px_rgba(0,0,0,0.4),0_0_0_1px_hsl(var(--border))]",
+          "relative flex items-center gap-1.5 px-2 py-1.5 rounded-full",
+          "bg-[hsl(var(--background))]/60 backdrop-blur-2xl",
+          "border border-white/20 shadow-xl",
+          "before:absolute before:-inset-2 before:bg-gradient-to-r before:from-primary/20 before:via-fuchsia-500/20 before:to-transparent before:blur-xl before:-z-10"
         )}
       >
         {/* ── Theme toggle ── */}
