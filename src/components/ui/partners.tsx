@@ -22,8 +22,9 @@ const logos = [
 export function Partners() {
   const pathname = usePathname();
   const { t } = useLanguage();
-  // Duplicate for seamless loop; -50% translate lands back at origin
-  const items = useMemo(() => [...logos, ...logos], []);
+  // Duplicate 4× so one half (2 sets) is always wider than any viewport;
+  // translateX(-50%) then snaps back on identical content → seamless.
+  const items = useMemo(() => [...logos, ...logos, ...logos, ...logos], []);
 
   if (!pathname) return null;
   if (pathname.startsWith("/sign-in") || pathname.startsWith("/sign-up")) return null;
@@ -40,12 +41,14 @@ export function Partners() {
           <div className="pointer-events-none absolute left-0 top-0 h-full w-16 z-10 bg-gradient-to-r from-[hsl(var(--card))]/80 to-transparent" />
           <div className="pointer-events-none absolute right-0 top-0 h-full w-16 z-10 bg-gradient-to-l from-[hsl(var(--card))]/80 to-transparent" />
 
-          {/* The track — CSS marquee, pauses on hover */}
-          <div className="flex animate-marquee py-5 gap-4" style={{ width: "max-content" }}>
+          {/* The track — CSS marquee, pauses on hover.
+               Using mx-2 per-item (not flex gap) so trailing space is baked
+               into each item; -50% translateX then lands exactly at the seam. */}
+          <div className="flex animate-marquee py-5" style={{ width: "max-content", animationDuration: "56s" }}>
             {items.map((l, idx) => (
               <div
                 key={idx}
-                className="shrink-0 flex flex-col items-center justify-center gap-3 w-32 h-28 rounded-xl
+                className="mx-2 shrink-0 flex flex-col items-center justify-center gap-3 w-32 h-28 rounded-xl
                            border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]
                            hover:border-[hsl(var(--accent))]/50 hover:bg-[hsl(var(--accent))]/8
                            transition-all duration-300 group"

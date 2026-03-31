@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Mail, Lock, LogIn } from "lucide-react";
+import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
@@ -15,13 +15,16 @@ import { useNotificationsStore } from "@/store/notifications.store";
 import { useListingsStore } from "@/store/listings.store";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { Tooltip } from "@/components/ui/tooltip";
+import { cn } from "@/lib/cn";
 
 type FormData = { email: string; password: string };
 
 export default function SignInPage() {
   const { t, isRtl } = useLanguage();
   const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
   const { register, handleSubmit } = useForm<FormData>();
   const { user } = useAuth();
   const router = useRouter();
@@ -95,108 +98,209 @@ export default function SignInPage() {
   return (
     <div
       dir={isRtl ? "rtl" : "ltr"}
-      className="min-h-screen grid place-items-center p-6 bg-[hsl(var(--background))]"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[hsl(var(--background))] relative overflow-hidden"
     >
+      {/* Animated background */}
+      <div className="absolute inset-0 -z-10">
+        <motion.div
+          className="absolute inset-0 bg-[linear-gradient(135deg,_hsl(var(--primary))/0.1,_transparent_45%,_hsl(var(--secondary))/0.12)]"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.9 }}
+        />
+        <motion.div
+          className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[hsl(var(--primary))/0.15] blur-3xl"
+          animate={{ y: [0, 14, -8, 0] }}
+          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-[hsl(var(--accent))/0.15] blur-3xl"
+          animate={{ y: [0, -12, 9, 0], x: [0, 8, -5, 0] }}
+          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
       <motion.div
         initial={{ opacity: 0, y: 28, scale: 0.97 }}
         animate={{ opacity: 1, y: 0, scale: 1 }}
-        transition={{ type: "spring", stiffness: 280, damping: 28 }}
-        className="w-full max-w-xl rounded-3xl border border-[hsl(var(--border))] backdrop-blur bg-[hsl(var(--card))]/60 p-8 shadow-2xl"
+        transition={{ type: "spring", stiffness: 260, damping: 28 }}
+        className="relative w-full max-w-md"
       >
-        <div className="grid md:grid-cols-2 gap-6 items-center">
-          <div className="hidden md:flex flex-col justify-center items-start gap-4">
-            <div className="size-14 rounded-3xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-extrabold text-2xl w-20 h-20">
+        <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/80 backdrop-blur-2xl shadow-[0_32px_70px_-40px_hsl(var(--primary)/0.4)] p-8">
+          {/* Shimmer lines */}
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.5] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.3] to-transparent" />
+
+          {/* Logo + heading */}
+          <motion.div
+            className="mb-8 text-center"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.08, duration: 0.4 }}
+          >
+            <div className="mx-auto mb-4 size-14 grid place-items-center rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))]/80 to-[hsl(var(--accent))]/60 font-extrabold text-2xl text-[hsl(var(--primary-foreground))] shadow-lg">
               M
             </div>
-            <div>
-              <h2 className="heading-xl">{t("welcomeBack")}</h2>
-              <p className="subtle mt-1">{t("signInHeroSubtitle")}</p>
-            </div>
-            <p className="text-sm subtle">{t("signInHeroDescription")}</p>
-          </div>
+            <h1 className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
+              {t("signInTitle")}
+            </h1>
+            <p className="mt-1.5 text-sm text-[hsl(var(--muted-foreground))]">
+              {t("signInSubtitle")}
+            </p>
+          </motion.div>
 
-          <div>
-            <h1 className="heading-lg mb-2">{t("signInTitle")}</h1>
-            <p className="subtle text-sm mb-6">{t("signInSubtitle")}</p>
-
-            {hasSocialAuth && (
-              <div className="mb-6 space-y-3">
-                <SocialAuthButtons
-                  googleUrl={config.googleAuthUrl}
-                  facebookUrl={config.facebookAuthUrl}
-                />
-                <div className="relative text-center text-xs text-[hsl(var(--foreground))/0.6]">
-                  <span className="relative z-10 bg-[hsl(var(--card))]/95 px-3">
-                    {t("orContinueWithEmail")}
-                  </span>
-                  <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
-                </div>
+          {/* Social auth */}
+          {hasSocialAuth && (
+            <motion.div
+              className="mb-6 space-y-3"
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.14, duration: 0.4 }}
+            >
+              <SocialAuthButtons
+                googleUrl={config.googleAuthUrl}
+                facebookUrl={config.facebookAuthUrl}
+              />
+              <div className="relative text-center text-xs text-[hsl(var(--muted-foreground))]">
+                <span className="relative z-10 bg-[hsl(var(--card))]/90 px-3">
+                  {t("orContinueWithEmail")}
+                </span>
+                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
               </div>
-            )}
+            </motion.div>
+          )}
 
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <label className="block text-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <Mail className="size-4 text-foreground/70" />
-                  <span className="text-sm">{t("email")}</span>
-                </div>
-                <Input
-                  {...register("email")}
-                  type="email"
-                  placeholder={t("emailPlaceholder")}
-                  className="h-11"
-                />
-              </label>
-
-              <label className="block text-sm">
-                <div className="flex items-center gap-3 mb-2">
-                  <Lock className="size-4 text-foreground/70" />
-                  <span className="text-sm">{t("password")}</span>
-                </div>
-                <Input
-                  {...register("password")}
-                  type="password"
-                  placeholder={t("passwordPlaceholder")}
-                  className="h-11"
-                />
-              </label>
-
-              {error && <p className="text-rose-500 text-sm">{error}</p>}
-
-              <div className="flex items-center justify-between">
-                <label className="inline-flex items-center gap-2 text-sm">
-                  <input type="checkbox" className="rounded-md" />
-                  {t("rememberMe")}
+          {/* Form */}
+          <motion.form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-5"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2, duration: 0.4 }}
+          >
+            {/* Email */}
+            <div className="space-y-1.5">
+              <Tooltip content={t("tooltipSignInEmail")} side="right">
+                <label
+                  htmlFor="sign-in-email"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--foreground))]/85 cursor-default"
+                >
+                  <Mail className="size-3.5 text-[hsl(var(--muted-foreground))]" />
+                  {t("email")}
                 </label>
+              </Tooltip>
+              <Input
+                id="sign-in-email"
+                {...register("email")}
+                type="email"
+                placeholder={t("emailPlaceholder")}
+                autoComplete="email"
+                className="h-11"
+              />
+            </div>
+
+            {/* Password */}
+            <div className="space-y-1.5">
+              <Tooltip content={t("tooltipSignInPassword")} side="right">
+                <label
+                  htmlFor="sign-in-password"
+                  className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--foreground))]/85 cursor-default"
+                >
+                  <Lock className="size-3.5 text-[hsl(var(--muted-foreground))]" />
+                  {t("password")}
+                </label>
+              </Tooltip>
+              <div className="relative">
+                <Input
+                  id="sign-in-password"
+                  {...register("password")}
+                  type={showPassword ? "text" : "password"}
+                  placeholder={t("passwordPlaceholder")}
+                  autoComplete="current-password"
+                  className={cn("h-11", isRtl ? "pl-10" : "pr-10")}
+                />
+                <Tooltip
+                  content={
+                    showPassword
+                      ? t("tooltipHidePassword")
+                      : t("tooltipShowPassword")
+                  }
+                  side="left"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((v) => !v)}
+                    className={cn(
+                      "absolute top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors",
+                      isRtl ? "left-3" : "right-3"
+                    )}
+                    aria-label={showPassword ? "Hide password" : "Show password"}
+                  >
+                    {showPassword ? (
+                      <EyeOff className="size-4" />
+                    ) : (
+                      <Eye className="size-4" />
+                    )}
+                  </button>
+                </Tooltip>
+              </div>
+            </div>
+
+            {/* Error */}
+            <AnimatePresence>
+              {error && (
+                <motion.p
+                  className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-500"
+                  initial={{ opacity: 0, y: -6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                >
+                  {error}
+                </motion.p>
+              )}
+            </AnimatePresence>
+
+            {/* Remember me + forgot */}
+            <div className="flex items-center justify-between">
+              <Tooltip content={t("tooltipRememberMe")} side="top">
+                <label className="inline-flex items-center gap-2 text-sm cursor-pointer select-none">
+                  <input type="checkbox" className="rounded" />
+                  <span>{t("rememberMe")}</span>
+                </label>
+              </Tooltip>
+              <Tooltip content={t("tooltipForgotPassword")} side="top">
                 <Link
                   href="#"
-                  className="text-sm text-[hsl(var(--accent))] hover:underline"
+                  className="text-sm text-[hsl(var(--accent))] hover:underline underline-offset-2 transition-colors"
                 >
                   {t("forgot")}
                 </Link>
-              </div>
+              </Tooltip>
+            </div>
 
-              <div className="flex gap-3 items-center">
+            {/* Action buttons */}
+            <div className="flex gap-3 pt-1">
+              <Tooltip content={t("tooltipSignInBtn")} side="top">
                 <Button
                   type="submit"
                   variant="primary"
                   className="flex-1 flex items-center justify-center gap-2"
+                  loading={loginMutation.isPending}
                 >
                   <LogIn className="size-4" />
                   {t("signIn")}
                 </Button>
-                <Button
-                  asChild
-                  variant="ghost"
-                  className="hidden md:inline-flex"
-                >
+              </Tooltip>
+              <Tooltip content={t("tooltipGoToSignUp")} side="top">
+                <Button asChild variant="ghost">
                   <Link href="/sign-up" className="flex items-center gap-2">
-                    {t("createAccount")}
+                    <UserPlus className="size-4" />
+                    <span>{t("createAccount")}</span>
                   </Link>
                 </Button>
-              </div>
-            </form>
-          </div>
+              </Tooltip>
+            </div>
+          </motion.form>
         </div>
       </motion.div>
     </div>

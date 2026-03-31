@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Loader2, Mail, MessageSquareText, PhoneCall } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useLocalMutation } from "@/lib/api-hooks";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export default function ContactForm() {
   const { t, isRtl } = useLanguage();
@@ -149,14 +150,16 @@ export default function ContactForm() {
               <span className="text-[hsl(0 70% 60%)]">{message}</span>
             )}
           </div>
-          <button
-            type="submit"
-            disabled={status === "loading"}
-            className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] px-6 py-3 text-sm font-semibold text-[hsl(var(--primary-foreground))] shadow-lg transition-all duration-200 hover:bg-[hsl(var(--primary))] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            {status === "loading" && <Loader2 className="size-4 animate-spin" />}
-            {status === "loading" ? t("sending") : t("sendMessage")}
-          </button>
+          <Tooltip content={t("sendMessage")} side="top">
+            <button
+              type="submit"
+              disabled={status === "loading"}
+              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] px-6 py-3 text-sm font-semibold text-[hsl(var(--primary-foreground))] shadow-lg transition-all duration-200 hover:bg-[hsl(var(--primary))] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
+            >
+              {status === "loading" && <Loader2 className="size-4 animate-spin" />}
+              {status === "loading" ? t("sending") : t("sendMessage")}
+            </button>
+          </Tooltip>
         </div>
       </form>
     </section>

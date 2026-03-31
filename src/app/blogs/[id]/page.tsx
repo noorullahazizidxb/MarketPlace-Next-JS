@@ -28,6 +28,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { Tooltip } from "@/components/ui/tooltip";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -69,43 +70,45 @@ function AuthorCard({
 
   return (
     <div className="flex items-center justify-between gap-4 flex-wrap">
-      <Link
-        href={authorId ? `/profile/${authorId}` : "#"}
-        onClick={(e) => !authorId && e.preventDefault()}
-        className="flex items-center gap-3 group"
-        aria-label={`View profile of ${authorName}`}
-      >
-        <div className="relative size-11 rounded-full overflow-hidden ring-2 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary))]/50 transition-all flex-shrink-0 bg-[hsl(var(--muted))]/20">
-          {photoUrl ? (
-            <>
-              {!avatarLoaded && <ImageSpinner className="rounded-full" />}
-              <Image
-                src={photoUrl}
-                alt={authorName}
-                fill
-                className="object-cover"
-                onLoad={() => setAvatarLoaded(true)}
-              />
-            </>
-          ) : (
-            <div className="size-full grid place-items-center bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/20">
-              <UserCircle2 className="size-6 text-[hsl(var(--muted-foreground))]" />
-            </div>
-          )}
-        </div>
-        <div>
-          <span className="text-sm font-semibold group-hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1">
-            {authorName}
-            {isOwner && <BadgeCheck className="size-3.5 text-[hsl(var(--primary))]" />}
-          </span>
-          {createdAt && (
-            <span className="flex items-center gap-1 text-xs text-[hsl(var(--muted-foreground))]">
-              <Calendar className="size-3" />
-              {formatDate(createdAt)}
+      <Tooltip content={`View ${authorName}'s profile`} side="bottom">
+        <Link
+          href={authorId ? `/profile/${authorId}` : "#"}
+          onClick={(e) => !authorId && e.preventDefault()}
+          className="flex items-center gap-3 group"
+          aria-label={`View profile of ${authorName}`}
+        >
+          <div className="relative size-11 rounded-full overflow-hidden ring-2 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary))]/50 transition-all flex-shrink-0 bg-[hsl(var(--muted))]/20">
+            {photoUrl ? (
+              <>
+                {!avatarLoaded && <ImageSpinner className="rounded-full" />}
+                <Image
+                  src={photoUrl}
+                  alt={authorName}
+                  fill
+                  className="object-cover"
+                  onLoad={() => setAvatarLoaded(true)}
+                />
+              </>
+            ) : (
+              <div className="size-full grid place-items-center bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/20">
+                <UserCircle2 className="size-6 text-[hsl(var(--muted-foreground))]" />
+              </div>
+            )}
+          </div>
+          <div>
+            <span className="text-sm font-semibold group-hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1">
+              {authorName}
+              {isOwner && <BadgeCheck className="size-3.5 text-[hsl(var(--primary))]" />}
             </span>
-          )}
-        </div>
-      </Link>
+            {createdAt && (
+              <span className="flex items-center gap-1 text-xs text-[hsl(var(--muted-foreground))]">
+                <Calendar className="size-3" />
+                {formatDate(createdAt)}
+              </span>
+            )}
+          </div>
+        </Link>
+      </Tooltip>
 
       {/* Expiry badge (visible only to owner if expiring soon) */}
       {isOwner && expiresAt && (
@@ -191,58 +194,62 @@ function SocialBar({
   return (
     <div className="flex items-center gap-2 flex-wrap">
       {/* Like */}
-      <button
-        type="button"
-        onClick={handleLike}
-        disabled={!user || likeMutation.isPending}
-        aria-pressed={liked}
-        aria-label={liked ? "Unlike this post" : "Like this post"}
-        className={cn(
-          "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
-          "hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
-          liked
-            ? "border-rose-400/50 bg-rose-500/10 text-rose-500 dark:text-rose-400"
-            : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-rose-400/40 hover:text-rose-400"
-        )}
-      >
-        <Heart
+      <Tooltip content={user ? (liked ? t("unlikePost") : t("likePost")) : t("signInToInteract")} side="top">
+        <button
+          type="button"
+          onClick={handleLike}
+          disabled={!user || likeMutation.isPending}
+          aria-pressed={liked}
+          aria-label={liked ? "Unlike this post" : "Like this post"}
           className={cn(
-            "size-4 transition-all duration-200",
-            liked && "fill-current scale-110",
-            likeMutation.isPending && "animate-pulse"
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+            "hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
+            liked
+              ? "border-rose-400/50 bg-rose-500/10 text-rose-500 dark:text-rose-400"
+              : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-rose-400/40 hover:text-rose-400"
           )}
-        />
-        <AnimatePresence mode="wait">
-          <motion.span
-            key={likeCount}
-            initial={{ y: -8, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            exit={{ y: 8, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-            className="tabular-nums"
-          >
-            {likeCount}
-          </motion.span>
-        </AnimatePresence>
-      </button>
+        >
+          <Heart
+            className={cn(
+              "size-4 transition-all duration-200",
+              liked && "fill-current scale-110",
+              likeMutation.isPending && "animate-pulse"
+            )}
+          />
+          <AnimatePresence mode="wait">
+            <motion.span
+              key={likeCount}
+              initial={{ y: -8, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 8, opacity: 0 }}
+              transition={{ duration: 0.15 }}
+              className="tabular-nums"
+            >
+              {likeCount}
+            </motion.span>
+          </AnimatePresence>
+        </button>
+      </Tooltip>
 
       {/* Share / Copy link */}
-      <button
-        type="button"
-        onClick={handleShare}
-        disabled={shareMutation.isPending}
-        aria-label="Copy link and share"
-        className={cn(
-          "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
-          "hover:scale-105 active:scale-95 disabled:opacity-50",
-          justShared
-            ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-            : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]/40 hover:text-[hsl(var(--primary))]"
-        )}
-      >
-        <Share2 className={cn("size-4", justShared && "scale-110")} />
-        <span>{justShared ? "Copied!" : shareCount}</span>
-      </button>
+      <Tooltip content={t("copyLinkAndShare")} side="top">
+        <button
+          type="button"
+          onClick={handleShare}
+          disabled={shareMutation.isPending}
+          aria-label="Copy link and share"
+          className={cn(
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+            "hover:scale-105 active:scale-95 disabled:opacity-50",
+            justShared
+              ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]/40 hover:text-[hsl(var(--primary))]"
+          )}
+        >
+          <Share2 className={cn("size-4", justShared && "scale-110")} />
+          <span>{justShared ? "Copied!" : shareCount}</span>
+        </button>
+      </Tooltip>
 
       {/* Comment count (visual only) */}
       <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-2 text-sm text-[hsl(var(--muted-foreground))]">
@@ -251,12 +258,14 @@ function SocialBar({
       </div>
 
       {!user && (
-        <Link
-          href="/sign-in"
-          className="text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] transition-colors underline-offset-2 hover:underline ml-1"
-        >
-          Sign in to like
-        </Link>
+        <Tooltip content={t("signInToInteract")} side="top">
+          <Link
+            href="/sign-in"
+            className="text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] transition-colors underline-offset-2 hover:underline ml-1"
+          >
+            {t("signInToLike") || "Sign in to like"}
+          </Link>
+        </Tooltip>
       )}
     </div>
   );
@@ -356,10 +365,12 @@ export default function BlogDetailPage() {
             This post may have been removed or never existed.
           </p>
         </div>
-        <Button variant="secondary" onClick={() => router.push("/blogs")}>
-          <ArrowLeft className="size-4 mr-2" />
-          {t("back") || "Back to Blog"}
-        </Button>
+        <Tooltip content={t("tooltipBack")} side="bottom">
+          <Button variant="secondary" onClick={() => router.push("/blogs")}>
+            <ArrowLeft className="size-4 mr-2" />
+            {t("back") || "Back to Blog"}
+          </Button>
+        </Tooltip>
       </div>
     );
   }
@@ -376,15 +387,17 @@ export default function BlogDetailPage() {
       className="max-w-5xl mx-auto px-4 py-8 space-y-8"
     >
       {/* ── Back navigation ─────────────────────────────────────────── */}
-      <button
-        type="button"
-        onClick={() => router.back()}
-        className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors group"
-        aria-label={t("back") || "Back"}
-      >
-        <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
-        {t("back") || "Back"}
-      </button>
+      <Tooltip content={t("tooltipBack")} side="bottom">
+        <button
+          type="button"
+          onClick={() => router.back()}
+          className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors group"
+          aria-label={t("back") || "Back"}
+        >
+          <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
+          {t("back") || "Back"}
+        </button>
+      </Tooltip>
 
       {/* ── Hero image slider ────────────────────────────────────────── */}
       {images.length > 0 && (
@@ -402,29 +415,33 @@ export default function BlogDetailPage() {
           {(isAuthor || isAdmin) && (
             <div className="flex items-center gap-1.5 shrink-0 mt-1">
               {isAuthor && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={onEdit}
-                  className="gap-1.5 px-3"
-                  aria-label="Edit post"
-                >
-                  <Pencil className="size-3.5" />
-                  <span className="hidden sm:inline">Edit</span>
-                </Button>
+                <Tooltip content={t("tooltipEdit")} side="bottom">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onEdit}
+                    className="gap-1.5 px-3"
+                    aria-label="Edit post"
+                  >
+                    <Pencil className="size-3.5" />
+                    <span className="hidden sm:inline">Edit</span>
+                  </Button>
+                </Tooltip>
               )}
               {canDelete && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="gap-1.5 px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10"
-                  onClick={() => setConfirmOpen(true)}
-                  loading={del.isPending}
-                  aria-label="Delete post"
-                >
-                  <Trash2 className="size-3.5" />
-                  <span className="hidden sm:inline">Delete</span>
-                </Button>
+                <Tooltip content={t("tooltipDelete")} side="bottom">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="gap-1.5 px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                    onClick={() => setConfirmOpen(true)}
+                    loading={del.isPending}
+                    aria-label="Delete post"
+                  >
+                    <Trash2 className="size-3.5" />
+                    <span className="hidden sm:inline">Delete</span>
+                  </Button>
+                </Tooltip>
               )}
             </div>
           )}

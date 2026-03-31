@@ -13,43 +13,10 @@ import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { config as appConfig } from "@/lib/config";
 import { filterBlogsByQuery } from "@/lib/search-utils";
+import { Tooltip } from "@/components/ui/tooltip";
 
-// Pre-defined skeleton rows that mirror the asymmetric layout pattern.
-// Pattern: hero(1) / trio(3) / featured(2+1) / quad(4) / duo(2) — repeat
-const SKELETON_ROWS = [
-  {
-    type: "hero" as const, skeletons: [
-      { id: "sk-h1", imageHeightClass: "h-72 md:h-80 lg:h-[26rem]" },
-    ]
-  },
-  {
-    type: "trio" as const, skeletons: [
-      { id: "sk-t1", imageHeightClass: undefined },
-      { id: "sk-t2", imageHeightClass: undefined },
-      { id: "sk-t3", imageHeightClass: undefined },
-    ]
-  },
-  {
-    type: "featured" as const, skeletons: [
-      { id: "sk-f1", imageHeightClass: "h-72 md:h-[22rem] lg:h-[26rem]" },
-      { id: "sk-f2", imageHeightClass: undefined },
-    ]
-  },
-  {
-    type: "quad" as const, skeletons: [
-      { id: "sk-q1", imageHeightClass: undefined },
-      { id: "sk-q2", imageHeightClass: undefined },
-      { id: "sk-q3", imageHeightClass: undefined },
-      { id: "sk-q4", imageHeightClass: undefined },
-    ]
-  },
-  {
-    type: "duo" as const, skeletons: [
-      { id: "sk-d1", imageHeightClass: "h-64 md:h-80 lg:h-96" },
-      { id: "sk-d2", imageHeightClass: "h-64 md:h-80 lg:h-96" },
-    ]
-  },
-];
+// Skeleton: uniform 4-col grid
+const SKELETON_COUNT = 12;
 
 export default function BlogsPage() {
   const [q, setQ] = React.useState("");
@@ -63,7 +30,7 @@ export default function BlogsPage() {
     if (window.innerWidth >= 1024) return 12;  // lg
     return 9;
   };
-  const [pageSize, setPageSize] = React.useState(() => getResponsivePageSize());
+  const [pageSize, setPageSize] = React.useState(12); // safe SSR default; updated client-side in effect
   const [countOverrides, setCountOverrides] = React.useState<
     Record<string, { likes?: number; shares?: number; comments?: number }>
   >({});
@@ -139,6 +106,15 @@ export default function BlogsPage() {
     setCurrentPage((prev) => Math.min(prev, totalPages));
   }, [totalPages]);
 
+  // Sync page size to viewport on mount and resize (avoids SSR/hydration mismatch)
+  React.useEffect(() => {
+    setPageSize(getResponsivePageSize());
+    const onResize = () => setPageSize(getResponsivePageSize());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   React.useEffect(() => {
     setCurrentPage(1);
   }, [pageSize, deferredQuery]);
@@ -178,160 +154,111 @@ export default function BlogsPage() {
           layout is established immediately and there are no content shifts on data arrival. */}
       <div className="space-y-6">
         {isLoading ? (
-          // ----- Skeleton grid (asymmetric pattern) -----
-          SKELETON_ROWS.map((row) => {
-            if (row.type === "hero") {
-              return (
-                <div key={row.type} className="grid grid-cols-1">
-                  {row.skeletons.map((sk) => (
-                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
-                  ))}
-                </div>
-              );
-            }
-            if (row.type === "trio") {
-              return (
-                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                  {row.skeletons.map((sk) => (
-                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
-                  ))}
-                </div>
-              );
-            }
-            if (row.type === "featured") {
-              return (
-                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                  {row.skeletons.map((sk, j) => (
-                    <div key={sk.id} className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}>
-                      <BlogCardSkeleton imageHeightClass={sk.imageHeightClass} />
-                    </div>
-                  ))}
-                </div>
-              );
-            }
-            if (row.type === "quad") {
-              return (
-                <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                  {row.skeletons.map((sk) => (
-                    <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
-                  ))}
-                </div>
-              );
-            }
-            // duo
-            return (
-              <div key={row.type} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                {row.skeletons.map((sk) => (
-                  <BlogCardSkeleton key={sk.id} imageHeightClass={sk.imageHeightClass} />
-                ))}
-              </div>
-            );
-          })
+          // ----- Skeleton grid (uniform) -----
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
+              <BlogCardSkeleton key={`sk-${i}`} />
+            ))}
+          </div>
         ) : (
-          // ----- Real content: asymmetric grid -----
-          // Pattern per cycle: hero(1) → trio(3) → featured(2+1) → quad(4) → duo(2) = 13 items/cycle
+          // ----- Real content: justified grid -----
+          // Rows of 2–4 cards. Only the very last row may have 1 card.
+          // Cycle: 4 → 3 → 2 for visual variety; if taking N would
+          // leave exactly 1 remaining, take N-1 so the next row gets 2.
           (() => {
-            type RowType = "hero" | "trio" | "featured" | "quad" | "duo";
-            const PATTERN: { type: RowType; take: number }[] = [
-              { type: "hero", take: 1 },
-              { type: "trio", take: 3 },
-              { type: "featured", take: 3 },
-              { type: "quad", take: 4 },
-              { type: "duo", take: 2 },
-            ];
-            const rows: { type: RowType; items: any[] }[] = [];
+            const CYCLE = [4, 3, 2];
             const list = pagedBlogs || [];
-            let i = 0;
-            let patternIdx = 0;
-            while (i < list.length) {
-              const { type, take } = PATTERN[patternIdx % PATTERN.length];
-              rows.push({ type, items: list.slice(i, i + take) });
-              i += take;
-              patternIdx++;
+            const rowSizes: number[] = [];
+            let remaining = list.length;
+            let ci = 0;
+
+            while (remaining > 4) {
+              const want = CYCLE[ci % CYCLE.length];
+              if (remaining - want === 1) {
+                // Prevent a following single-item row
+                rowSizes.push(want - 1);
+                remaining -= want - 1;
+              } else {
+                rowSizes.push(want);
+                remaining -= want;
+              }
+              ci++;
             }
-            return rows.map((row, idx) => {
-              if (row.type === "hero") {
+            if (remaining > 0) rowSizes.push(remaining);
+
+            // Build row slices
+            let offset = 0;
+            const rows = rowSizes.map((size) => {
+              const items = list.slice(offset, offset + size);
+              offset += size;
+              return items;
+            });
+            return rows.map((items, idx) => {
+              const count = items.length;
+
+              // Single card — only possible as last row
+              if (count === 1) {
                 return (
                   <div key={idx} className="grid grid-cols-1">
-                    {row.items.map((b: any) => (
+                    <BlogCard
+                      blog={items[0]}
+                      onOpen={onOpen}
+                      variant="overlay"
+                      imageHeightClass="h-64 md:h-80 lg:h-96"
+                      countOverride={countOverrides[String(items[0].id)]}
+                      onCountsChange={updateBlogCounts}
+                      isPriority={idx === 0}
+                    />
+                  </div>
+                );
+              }
+              // 2 cards — wider treatment with overlay variant
+              if (count === 2) {
+                return (
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    {items.map((b: any) => (
                       <BlogCard
                         key={b.id}
                         blog={b}
                         onOpen={onOpen}
                         variant="overlay"
-                        imageHeightClass="h-72 md:h-80 lg:h-[26rem]"
+                        imageHeightClass="h-64 md:h-80 lg:h-96"
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
+                        isPriority={idx === 0}
                       />
                     ))}
                   </div>
                 );
               }
-              if (row.type === "trio") {
+              // 3 cards
+              if (count === 3) {
                 return (
                   <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {row.items.map((b: any) => (
+                    {items.map((b: any) => (
                       <BlogCard
                         key={b.id}
                         blog={b}
                         onOpen={onOpen}
                         countOverride={countOverrides[String(b.id)]}
                         onCountsChange={updateBlogCounts}
+                        isPriority={idx === 0}
                       />
                     ))}
                   </div>
                 );
               }
-              if (row.type === "featured") {
-                return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                    {row.items.map((b: any, j: number) => (
-                      <div
-                        key={b.id}
-                        className={j === 0 ? "sm:col-span-2" : "sm:col-span-1"}
-                      >
-                        <BlogCard
-                          blog={b}
-                          onOpen={onOpen}
-                          variant={j === 0 ? "overlay" : "default"}
-                          imageHeightClass={
-                            j === 0 ? "h-72 md:h-[22rem] lg:h-[26rem]" : undefined
-                          }
-                          countOverride={countOverrides[String(b.id)]}
-                          onCountsChange={updateBlogCounts}
-                        />
-                      </div>
-                    ))}
-                  </div>
-                );
-              }
-              if (row.type === "quad") {
-                return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
-                    {row.items.map((b: any) => (
-                      <BlogCard
-                        key={b.id}
-                        blog={b}
-                        onOpen={onOpen}
-                        countOverride={countOverrides[String(b.id)]}
-                        onCountsChange={updateBlogCounts}
-                      />
-                    ))}
-                  </div>
-                );
-              }
-              // duo
+              // 4 cards
               return (
-                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                  {row.items.map((b: any) => (
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                  {items.map((b: any) => (
                     <BlogCard
                       key={b.id}
                       blog={b}
                       onOpen={onOpen}
-                      variant="overlay"
-                      imageHeightClass="h-64 md:h-80 lg:h-96"
                       countOverride={countOverrides[String(b.id)]}
                       onCountsChange={updateBlogCounts}
+                      isPriority={idx === 0}
                     />
                   ))}
                 </div>
@@ -350,59 +277,66 @@ export default function BlogsPage() {
             <div className="flex items-center gap-2 text-sm">
               <span className="subtle">{t("pageSizeLabel") || "Page size"}</span>
               <div className="relative">
-                <select
-                  value={pageSize}
-                  onChange={(event) => setPageSize(Number(event.target.value))}
-                  className="h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
-                  aria-label="Blog page size"
-                >
-                  {[9, 12, 15, 18, 24].map((size) => (
-                    <option key={size} value={size}>
-                      {size} {t("perPage") || "per page"}
-                    </option>
-                  ))}
-                </select>
+                <Tooltip content={t("pageSizeLabel") || "Page size"} side="top">
+                  <select
+                    value={pageSize}
+                    onChange={(event) => setPageSize(Number(event.target.value))}
+                    className="h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
+                    aria-label="Blog page size"
+                  >
+                    {[9, 12, 15, 18, 24].map((size) => (
+                      <option key={size} value={size}>
+                        {size} {t("perPage") || "per page"}
+                      </option>
+                    ))}
+                  </select>
+                </Tooltip>
               </div>
             </div>
 
             <div className="flex flex-wrap items-center gap-2">
-              <button
-                type="button"
-                onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                disabled={currentPage === 1}
-                className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
-              >
-                {t("prev") || "Previous"}
-              </button>
+              <Tooltip content={t("prev") || "Previous"} side="top">
+                <button
+                  type="button"
+                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
+                  disabled={currentPage === 1}
+                  className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+                >
+                  {t("prev") || "Previous"}
+                </button>
+              </Tooltip>
 
               {Array.from({ length: totalPages }).map((_, index) => {
                 const pageNumber = index + 1;
                 const active = currentPage === pageNumber;
                 return (
-                  <button
-                    type="button"
-                    key={pageNumber}
-                    onClick={() => setCurrentPage(pageNumber)}
-                    className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${active
-                      ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))/0.2] text-[hsl(var(--accent))]"
-                      : "border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]"
-                      }`}
-                  >
-                    {pageNumber}
-                  </button>
+                  <Tooltip key={pageNumber} content={`${t("page") || "Page"} ${pageNumber}`} side="top">
+                    <button
+                      type="button"
+                      onClick={() => setCurrentPage(pageNumber)}
+                      className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${active
+                        ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))/0.2] text-[hsl(var(--accent))]"
+                        : "border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]"
+                        }`}
+                    >
+                      {pageNumber}
+                    </button>
+                  </Tooltip>
                 );
               })}
 
-              <button
-                type="button"
-                onClick={() =>
-                  setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                }
-                disabled={currentPage === totalPages}
-                className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
-              >
-                {t("next") || "Next"}
-              </button>
+              <Tooltip content={t("next") || "Next"} side="top">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
+                  }
+                  disabled={currentPage === totalPages}
+                  className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+                >
+                  {t("next") || "Next"}
+                </button>
+              </Tooltip>
             </div>
           </div>
         )}

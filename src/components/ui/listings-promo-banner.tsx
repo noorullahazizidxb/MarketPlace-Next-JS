@@ -6,6 +6,7 @@ import { BadgePercent, ArrowRight, ArrowLeft, Sparkles } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function Prism(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -61,14 +62,16 @@ export default function ListingsPromoBanner() {
             >
               {!isRtl && (
                 <div className="hidden md:flex md:justify-start">
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    className="h-16 w-16 rounded-full border border-[hsl(var(--secondary-foreground)/0.12)] bg-[hsl(var(--background))/0.58] p-0 shadow-inner backdrop-blur-sm hover:bg-[hsl(var(--accent)/0.12)]"
-                    aria-label={(t as any)("deals") || "Deals"}
-                  >
-                    <BadgePercent className="size-7 text-[hsl(var(--accent))]" />
-                  </Button>
+                  <Tooltip content={(t as any)("deals") || "Deals"} side="right">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      className="h-16 w-16 rounded-full border border-[hsl(var(--secondary-foreground)/0.12)] bg-[hsl(var(--background))/0.58] p-0 shadow-inner backdrop-blur-sm hover:bg-[hsl(var(--accent)/0.12)]"
+                      aria-label={(t as any)("deals") || "Deals"}
+                    >
+                      <BadgePercent className="size-7 text-[hsl(var(--accent))]" />
+                    </Button>
+                  </Tooltip>
                 </div>
               )}
 
@@ -101,37 +104,41 @@ export default function ListingsPromoBanner() {
                 transition={{ delay: 0.4, type: "spring" }}
                 className={isRtl ? "flex flex-wrap items-center justify-center gap-4 md:justify-start" : "flex flex-col items-center gap-3 md:items-start"}
               >
-                <Link
-                  href="/listings"
-                  className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
+                <Tooltip content={(t as any)("browseNow") || "Browse listings"} side="top">
+                  <Link
+                    href="/listings"
+                    className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
                                bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))]
                                shadow-lg shadow-[hsl(var(--accent)/0.4)]
                                no-underline hover:no-underline hover:text-[hsl(var(--accent-foreground))]
                                hover:scale-105 active:scale-95
                                transition-all duration-200"
-                  aria-label={(t as any)("viewAll") || "View all"}
-                >
-                  <DirectionIcon className="size-4" />
-                  <span className="font-semibold text-sm">
-                    {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
-                  </span>
-                </Link>
+                    aria-label={(t as any)("viewAll") || "View all"}
+                  >
+                    <DirectionIcon className="size-4" />
+                    <span className="font-semibold text-sm">
+                      {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
+                    </span>
+                  </Link>
+                </Tooltip>
 
-                <Link
-                  href="/listings?tag=featured#listings"
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
+                <Tooltip content={(t as any)("deals") || "Featured deals"} side="top">
+                  <Link
+                    href="/listings?tag=featured#listings"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
                                bg-transparent text-[hsl(var(--secondary-foreground))]
                                border border-[hsl(var(--secondary-foreground)/0.08)]
                                no-underline hover:no-underline hover:text-[hsl(var(--secondary-foreground))]
                                hover:bg-[hsl(var(--accent)/0.06)] active:scale-95
                                transition-all duration-200"
-                  aria-label={(t as any)("deals") || "Deals"}
-                >
-                  <Sparkles className="size-4" />
-                  <span className="text-sm">
-                    {(t as any)("deals") || "پیشنهادها"}
-                  </span>
-                </Link>
+                    aria-label={(t as any)("deals") || "Deals"}
+                  >
+                    <Sparkles className="size-4" />
+                    <span className="text-sm">
+                      {(t as any)("deals") || "پیشنهادها"}
+                    </span>
+                  </Link>
+                </Tooltip>
 
               </motion.div>
             </div>

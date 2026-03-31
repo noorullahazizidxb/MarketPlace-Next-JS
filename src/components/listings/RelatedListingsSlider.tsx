@@ -16,6 +16,7 @@ import {
 import { useApiGet } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type ListingLite = {
   id: string | number;
@@ -161,20 +162,24 @@ function HeroCarousel({
           {title}
         </h3>
         <div className="flex items-center gap-2">
-          <button
-            aria-label="Previous"
-            onClick={prev}
-            className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
-          <button
-            aria-label="Next"
-            onClick={next}
-            className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
-          >
-            <ChevronRight className="size-4" />
-          </button>
+          <Tooltip content="Previous" side="bottom">
+            <button
+              aria-label="Previous"
+              onClick={prev}
+              className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Next" side="bottom">
+            <button
+              aria-label="Next"
+              onClick={next}
+              className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </Tooltip>
         </div>
       </div>
 

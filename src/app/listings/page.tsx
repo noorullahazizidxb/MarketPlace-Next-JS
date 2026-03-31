@@ -23,6 +23,7 @@ import { asset } from "@/lib/assets";
 import StoriesBar from "@/components/stories/StoriesBar";
 import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export default function ListingsPage() {
   return (
@@ -95,7 +96,25 @@ function ListingsContent() {
   const categoryId = search.get("categoryId") || undefined;
   const searchText = search.get("search") || undefined;
   const page = parseInt(search.get("page") || "1", 10);
-  const pageSize = 15;
+
+  // ── Viewport-aware columns (mirrors Tailwind grid breakpoints) ──────────
+  const computeNumCols = () => {
+    if (typeof window === "undefined") return 1;
+    if (window.innerWidth >= 1536) return 5;
+    if (window.innerWidth >= 1280) return 4;
+    if (window.innerWidth >= 1024) return 3;
+    if (window.innerWidth >= 640) return 2;
+    return 1;
+  };
+  const [numCols, setNumCols] = useState(1);
+  useEffect(() => {
+    setNumCols(computeNumCols());
+    const onResize = () => setNumCols(computeNumCols());
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+  const pageSize = numCols * 4; // 4 complete rows per page
   // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
   const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
@@ -131,7 +150,7 @@ function ListingsContent() {
   const current = Math.min(Math.max(1, page), pageCount);
   const pageItems = useMemo(
     () => items.slice((current - 1) * pageSize, current * pageSize),
-    [items, current],
+    [items, current, pageSize],
   );
   const {
     ref: ptrRef,
@@ -256,14 +275,14 @@ function ListingsContent() {
                             cleanImageOverlayOnEngage
                           />
                           {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
-                          {((idx + 1) % 5 === 0 ||
+                          {((idx + 1) % numCols === 0 ||
                             (idx === pageItems.length - 1 &&
-                              (idx + 1) % 5 !== 0)) && (
+                              (idx + 1) % numCols !== 0)) && (
                               <div
                                 key={`ad-${item.id}-${idx}`}
                                 className="col-span-full"
                               >
-                                <AdPlaceholder index={Math.floor(idx / 5)} />
+                                <AdPlaceholder index={Math.floor(idx / numCols)} />
                               </div>
                             )}
                         </Fragment>
@@ -308,14 +327,16 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
 
   return (
     <div className="mt-4 flex items-center justify-center gap-2">
-      <Button
-        variant="accent"
-        size="sm"
-        onClick={() => page > 1 && set(page - 1)}
-        disabled={page <= 1}
-      >
-        {t("prev")}
-      </Button>
+      <Tooltip content={t("prev")} side="top">
+        <Button
+          variant="accent"
+          size="sm"
+          onClick={() => page > 1 && set(page - 1)}
+          disabled={page <= 1}
+        >
+          {t("prev")}
+        </Button>
+      </Tooltip>
       <div className="flex items-center gap-1">
         {visible.map((p, idx) => {
           const prev = visible[idx - 1];
@@ -325,30 +346,34 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
               {showEllipsis && (
                 <span className="px-2 text-sm opacity-60">…</span>
               )}
-              <motion.button
-                whileTap={{ scale: 0.98 }}
-                onClick={() => set(p)}
-                className={
-                  p === page
-                    ? "px-3 h-9 rounded-xl bg-[hsl(var(--primary))] border border-[hsl(var(--primary))/0.35] text-[hsl(var(--primary-foreground))]"
-                    : "px-3 h-9 rounded-xl bg-[hsl(var(--accent))] border border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))] focus:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))]"
-                }
-                aria-current={p === page ? "page" : undefined}
-              >
-                {p}
-              </motion.button>
+              <Tooltip content={`${t("page" as any) || "Page"} ${p}`} side="top">
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  onClick={() => set(p)}
+                  className={
+                    p === page
+                      ? "px-3 h-9 rounded-xl bg-[hsl(var(--primary))] border border-[hsl(var(--primary))/0.35] text-[hsl(var(--primary-foreground))]"
+                      : "px-3 h-9 rounded-xl bg-[hsl(var(--accent))] border border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))] focus:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))]"
+                  }
+                  aria-current={p === page ? "page" : undefined}
+                >
+                  {p}
+                </motion.button>
+              </Tooltip>
             </Fragment>
           );
         })}
       </div>
-      <Button
-        variant="accent"
-        size="sm"
-        onClick={() => page < pageCount && set(page + 1)}
-        disabled={page >= pageCount}
-      >
-        {t("next")}
-      </Button>
+      <Tooltip content={t("next")} side="top">
+        <Button
+          variant="accent"
+          size="sm"
+          onClick={() => page < pageCount && set(page + 1)}
+          disabled={page >= pageCount}
+        >
+          {t("next")}
+        </Button>
+      </Tooltip>
     </div>
   );
 }

@@ -15,6 +15,7 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { useLanguage } from "@/components/providers/language-provider";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
+import { Tooltip } from "@/components/ui/tooltip";
 const gradientBgClass = "gradient-bg";
 const inputClasses =
   "h-11 rounded-2xl border border-[hsl(var(--border))/0.35] bg-[hsl(var(--card-bg,var(--card)))/0.55] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))/0.55] transition-all focus:border-transparent focus:bg-[hsl(var(--card-bg,var(--card)))/0.75] focus:ring-2 focus:ring-[hsl(var(--accent))] disabled:opacity-50";
@@ -180,6 +181,9 @@ export default function SignUpPage() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.5] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.4] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
+            <div className="mx-auto size-12 grid place-items-center rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))]/80 to-[hsl(var(--accent))]/60 font-extrabold text-xl text-[hsl(var(--primary-foreground))] shadow-lg">
+              M
+            </div>
             <motion.h1
               className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]"
               initial={{ opacity: 0, y: 12 }}
@@ -220,12 +224,14 @@ export default function SignUpPage() {
             noValidate
           >
             <div className="space-y-2">
-              <label
-                className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                htmlFor="fullName"
-              >
-                {t("fullName")}
-              </label>
+              <Tooltip content={t("tooltipSignUpFullName")} side="right">
+                <label
+                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
+                  htmlFor="fullName"
+                >
+                  {t("fullName")}
+                </label>
+              </Tooltip>
               <div className="group relative">
                 <motion.span
                   aria-hidden
@@ -260,12 +266,14 @@ export default function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <label
-                className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                htmlFor="email"
-              >
-                {t("emailAddress")}
-              </label>
+              <Tooltip content={t("tooltipSignUpEmail")} side="right">
+                <label
+                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
+                  htmlFor="email"
+                >
+                  {t("emailAddress")}
+                </label>
+              </Tooltip>
               <div className="group relative">
                 <motion.span
                   aria-hidden
@@ -300,12 +308,14 @@ export default function SignUpPage() {
             </div>
 
             <div className="space-y-2">
-              <label
-                className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                htmlFor="phone"
-              >
-                {t("phoneOptional")}
-              </label>
+              <Tooltip content={t("tooltipSignUpPhone")} side="right">
+                <label
+                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
+                  htmlFor="phone"
+                >
+                  {t("phoneOptional")}
+                </label>
+              </Tooltip>
               <div className="group relative">
                 <motion.span
                   aria-hidden
@@ -341,12 +351,14 @@ export default function SignUpPage() {
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
-                <label
-                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                  htmlFor="password"
-                >
-                  {t("password")}
-                </label>
+                <Tooltip content={t("tooltipSignUpPassword")} side="right">
+                  <label
+                    className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
+                    htmlFor="password"
+                  >
+                    {t("password")}
+                  </label>
+                </Tooltip>
                 <div className="group relative">
                   <motion.span
                     aria-hidden
@@ -381,12 +393,14 @@ export default function SignUpPage() {
                 </div>
               </div>
               <div className="space-y-2">
-                <label
-                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                  htmlFor="confirmPassword"
-                >
-                  {t("confirmPassword")}
-                </label>
+                <Tooltip content={t("tooltipSignUpConfirmPassword")} side="right">
+                  <label
+                    className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
+                    htmlFor="confirmPassword"
+                  >
+                    {t("confirmPassword")}
+                  </label>
+                </Tooltip>
                 <div className="group relative">
                   <motion.span
                     aria-hidden
@@ -439,25 +453,27 @@ export default function SignUpPage() {
               )}
             </AnimatePresence>
 
-            <Button
-              type="submit"
-              disabled={submitting || !isValid}
-              className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_hsl(var(--btn-primary-bg,var(--primary)))_0%,_hsl(var(--accent))_55%,_hsl(var(--secondary))_100%)] text-base font-semibold text-[hsl(var(--btn-primary-fg,var(--primary-foreground)))] shadow-[0_18px_48px_-20px_hsl(var(--primary)/0.6)] transition-all hover:shadow-[0_22px_60px_-18px_hsl(var(--secondary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--card-bg,var(--card)))] disabled:cursor-not-allowed disabled:opacity-70"
-            >
-              <motion.span
-                animate={submitting ? { opacity: 0.6 } : { opacity: 1 }}
-                transition={{ duration: 0.2 }}
+            <Tooltip content={t("tooltipCreateAccountBtn")} side="top">
+              <Button
+                type="submit"
+                disabled={submitting || !isValid}
+                className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_hsl(var(--btn-primary-bg,var(--primary)))_0%,_hsl(var(--accent))_55%,_hsl(var(--secondary))_100%)] text-base font-semibold text-[hsl(var(--btn-primary-fg,var(--primary-foreground)))] shadow-[0_18px_48px_-20px_hsl(var(--primary)/0.6)] transition-all hover:shadow-[0_22px_60px_-18px_hsl(var(--secondary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--card-bg,var(--card)))] disabled:cursor-not-allowed disabled:opacity-70"
               >
-                {submitting ? t("creatingAccount") : t("createAccountCta")}
-              </motion.span>
-              <motion.span
-                className="absolute inset-0 rounded-2xl bg-[hsl(var(--btn-primary-fg,var(--primary-foreground)))/0.16]"
-                initial={{ opacity: 0 }}
-                whileHover={{ opacity: 0.25 }}
-                transition={{ duration: 0.25 }}
-                aria-hidden
-              />
-            </Button>
+                <motion.span
+                  animate={submitting ? { opacity: 0.6 } : { opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  {submitting ? t("creatingAccount") : t("createAccountCta")}
+                </motion.span>
+                <motion.span
+                  className="absolute inset-0 rounded-2xl bg-[hsl(var(--btn-primary-fg,var(--primary-foreground)))/0.16]"
+                  initial={{ opacity: 0 }}
+                  whileHover={{ opacity: 0.25 }}
+                  transition={{ duration: 0.25 }}
+                  aria-hidden
+                />
+              </Button>
+            </Tooltip>
           </motion.form>
 
           <motion.div
@@ -467,12 +483,14 @@ export default function SignUpPage() {
             transition={{ delay: 0.25, duration: 0.4 }}
           >
             {t("alreadyHaveAccount")}{" "}
-            <Link
-              href="/sign-in"
-              className="font-semibold text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent))/0.8]"
-            >
-              {t("logIn")}
-            </Link>
+            <Tooltip content={t("tooltipGoToSignIn")} side="top">
+              <Link
+                href="/sign-in"
+                className="font-semibold text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent))/0.8]"
+              >
+                {t("logIn")}
+              </Link>
+            </Tooltip>
           </motion.div>
         </motion.div>
       </motion.section>

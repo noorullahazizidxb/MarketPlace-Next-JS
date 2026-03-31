@@ -8,6 +8,7 @@ import { useRouter } from "next/navigation";
 import React from "react";
 import { homeHeroImages } from "@/lib/public-images";
 import { useAuth } from "@/lib/use-auth";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export function HomeHero() {
   const { t, isRtl } = useLanguage();
@@ -62,19 +63,23 @@ export function HomeHero() {
           >
             <SearchBox placeholder={t("search")} className="w-full" />
             <div className="flex items-center gap-2">
-              <Button variant="accent" onClick={() => router.push("/listings")}>{t("browseNow")}</Button>
-              <Button
-                variant="secondary"
-                onClick={() => {
-                  if (!user) {
-                    router.push("/sign-in");
-                    return;
-                  }
-                  router.push("/listings/create");
-                }}
-              >
-                {t("listYourProperty")}
-              </Button>
+              <Tooltip content={t("browseNow")} side="bottom">
+                <Button variant="accent" onClick={() => router.push("/listings")}>{t("browseNow")}</Button>
+              </Tooltip>
+              <Tooltip content={t("listYourProperty")} side="bottom">
+                <Button
+                  variant="secondary"
+                  onClick={() => {
+                    if (!user) {
+                      router.push("/sign-in");
+                      return;
+                    }
+                    router.push("/listings/create");
+                  }}
+                >
+                  {t("listYourProperty")}
+                </Button>
+              </Tooltip>
             </div>
           </motion.div>
         </div>

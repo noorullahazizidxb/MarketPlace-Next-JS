@@ -18,6 +18,7 @@ import { getSocket } from "@/lib/socket";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
 import { useAuth } from "@/lib/use-auth";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function deferCountSync(callback?: () => void) {
   if (!callback) return;
@@ -40,6 +41,7 @@ type Props = {
   onOpen?: (blog: any) => void;
   variant?: "default" | "overlay";
   imageHeightClass?: string;
+  isPriority?: boolean;
   countOverride?: { likes?: number; shares?: number; comments?: number };
   onCountsChange?: (
     blogId: string,
@@ -52,6 +54,7 @@ export default function BlogCard({
   onOpen,
   variant = "default",
   imageHeightClass,
+  isPriority = false,
   countOverride,
   onCountsChange,
 }: Props) {
@@ -225,6 +228,8 @@ export default function BlogCard({
             autoPlay
             forceEngaged={isImageEngaged}
             intervalMs={2200}
+            firstSlideIsPriority={isPriority}
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw"
           />
         </div>
       </div>
@@ -237,21 +242,23 @@ export default function BlogCard({
             <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
             {/* Clickable title/description button that sits above the gradient but below the action controls */}
             <div className="absolute left-3 bottom-3 z-[50] drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
-              <button
-                type="button"
-                onClick={() => router.push(`/blogs/${blog.id}`)}
-                aria-label={t("openBlog")}
-                className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[hsl(var(--accent)/0.18)] hover:scale-105 transform-gpu transition-all duration-200"
-              >
-                <h3 className="text-lg font-semibold leading-tight line-clamp-2">
-                  {blog.title}
-                </h3>
-                {blog.excerpt && (
-                  <p className="mt-1 text-sm opacity-90 line-clamp-2">
-                    {blog.excerpt}
-                  </p>
-                )}
-              </button>
+              <Tooltip content={t("openBlog")} side="top">
+                <button
+                  type="button"
+                  onClick={() => router.push(`/blogs/${blog.id}`)}
+                  aria-label={t("openBlog")}
+                  className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[hsl(var(--accent)/0.18)] hover:scale-105 transform-gpu transition-all duration-200"
+                >
+                  <h3 className="text-lg font-semibold leading-tight line-clamp-2">
+                    {blog.title}
+                  </h3>
+                  {blog.excerpt && (
+                    <p className="mt-1 text-sm opacity-90 line-clamp-2">
+                      {blog.excerpt}
+                    </p>
+                  )}
+                </button>
+              </Tooltip>
             </div>
           </div>
           {/* author/meta and actions overlay with interactive controls */}
@@ -260,37 +267,39 @@ export default function BlogCard({
               {/* top-left author/meta */}
               <div className="p-3 sm:p-4 pointer-events-auto">
                 <div className="inline-flex items-center gap-2 text-[11px] text-white/90 bg-black/20 backdrop-blur rounded-full px-2 py-1 pointer-events-auto">
-                  <Link
-                    href={authorId ? `/profile/${authorId}` : "#"}
-                    onClick={(e) => {
-                      if (!authorId) e.preventDefault();
-                      e.stopPropagation();
-                    }}
-                    className="inline-flex items-center gap-2 hover:opacity-90"
-                  >
-                    <div className="size-6 rounded-full overflow-hidden bg-white/20 grid place-items-center text-white">
-                      {blog.author?.photo ? (
-                        <Image
-                          src={asset(blog.author.photo)}
-                          alt={blog.author?.fullName || "avatar"}
-                          className="w-6 h-6 object-cover"
-                          width={24} // Adding width property
-                          height={24} // Adding height property
-                        />
-                      ) : (
-                        <div className="text-[10px] font-semibold">
-                          {String(
-                            blog.author?.fullName || blog.author?.name || "?"
-                          )
-                            .slice(0, 1)
-                            .toUpperCase()}
-                        </div>
-                      )}
-                    </div>
-                    <span className="font-medium max-w-[12ch] truncate">
-                      {blog.author?.fullName || blog.author?.name || "Unknown"}
-                    </span>
-                  </Link>
+                  <Tooltip content={t("viewAuthorProfile")} side="bottom">
+                    <Link
+                      href={authorId ? `/profile/${authorId}` : "#"}
+                      onClick={(e) => {
+                        if (!authorId) e.preventDefault();
+                        e.stopPropagation();
+                      }}
+                      className="inline-flex items-center gap-2 hover:opacity-90"
+                    >
+                      <div className="size-6 rounded-full overflow-hidden bg-white/20 grid place-items-center text-white">
+                        {blog.author?.photo ? (
+                          <Image
+                            src={asset(blog.author.photo)}
+                            alt={blog.author?.fullName || "avatar"}
+                            className="w-6 h-6 object-cover"
+                            width={24} // Adding width property
+                            height={24} // Adding height property
+                          />
+                        ) : (
+                          <div className="text-[10px] font-semibold">
+                            {String(
+                              blog.author?.fullName || blog.author?.name || "?"
+                            )
+                              .slice(0, 1)
+                              .toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <span className="font-medium max-w-[12ch] truncate">
+                        {blog.author?.fullName || blog.author?.name || "Unknown"}
+                      </span>
+                    </Link>
+                  </Tooltip>
                   {blog.createdAt && <span aria-hidden>·</span>}
                   {blog.createdAt && (
                     <time dateTime={blog.createdAt}>
@@ -302,33 +311,37 @@ export default function BlogCard({
               {/* bottom-left actions */}
               <div className="p-3 sm:p-4 pointer-events-auto">
                 <div className="flex items-center gap-3 text-sm pointer-events-auto">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onLike();
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
-                    aria-label={t("like")}
-                    disabled={!canInteract || likeMut.isPending}
-                    title={!canInteract ? t("signInToInteract") : undefined}
-                  >
-                    <Heart className="size-4" /> {likeCount || 0}
-                  </button>
+                  <Tooltip content={canInteract ? t("like") : t("signInToInteract")} side="top">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onLike();
+                      }}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                      aria-label={t("like")}
+                      disabled={!canInteract || likeMut.isPending}
+                      title={!canInteract ? t("signInToInteract") : undefined}
+                    >
+                      <Heart className="size-4" /> {likeCount || 0}
+                    </button>
+                  </Tooltip>
                   <Dialog open={shareOpen} onOpenChange={setShareOpen}>
-                    <DialogTrigger asChild>
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShareOpen(true);
-                        }}
-                        className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
-                        aria-label="Share"
-                        disabled={!canInteract || shareMut.isPending}
-                        title={!canInteract ? t("signInToInteract") : undefined}
-                      >
-                        <Share2 className="size-4" /> {shareCount || 0}
-                      </button>
-                    </DialogTrigger>
+                    <Tooltip content={canInteract ? t("share") : t("signInToInteract")} side="top">
+                      <DialogTrigger asChild>
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShareOpen(true);
+                          }}
+                          className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                          aria-label="Share"
+                          disabled={!canInteract || shareMut.isPending}
+                          title={!canInteract ? t("signInToInteract") : undefined}
+                        >
+                          <Share2 className="size-4" /> {shareCount || 0}
+                        </button>
+                      </DialogTrigger>
+                    </Tooltip>
                     <DialogContent className="w-[min(92vw,420px)]">
                       <DialogTitle className="mb-3 text-lg font-semibold">
                         {t("share")}
@@ -372,17 +385,19 @@ export default function BlogCard({
                       </div>
                     </DialogContent>
                   </Dialog>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`);
-                    }}
-                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
-                    aria-label={t("commentsLabel")}
-                  >
-                    <MessageCircle className="size-4" /> {commentCount || 0}
-                  </button>
+                  <Tooltip content={t("commentsLabel")} side="top">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`);
+                      }}
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                      aria-label={t("commentsLabel")}
+                    >
+                      <MessageCircle className="size-4" /> {commentCount || 0}
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </div>
@@ -392,34 +407,36 @@ export default function BlogCard({
         // Default variant: original bottom content
         <div className="p-4">
           <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--foreground))/75]">
-            <Link
-              href={authorId ? `/profile/${authorId}` : "#"}
-              onClick={(e) => {
-                if (!authorId) e.preventDefault();
-              }}
-              className="inline-flex items-center gap-2 hover:opacity-90"
-            >
-              <div className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 grid place-items-center text-[hsl(var(--foreground))]">
-                {blog.author?.photo ? (
-                  <Image
-                    src={asset(blog.author.photo)}
-                    alt={blog.author?.fullName || "avatar"}
-                    className="w-8 h-8 object-cover"
-                    width={32} // Adding width property
-                    height={32} // Adding height property
-                  />
-                ) : (
-                  <div className="text-xs font-semibold">
-                    {String(blog.author?.fullName || blog.author?.name || "?")
-                      .slice(0, 1)
-                      .toUpperCase()}
-                  </div>
-                )}
-              </div>
-              <span className="font-medium">
-                {blog.author?.fullName || blog.author?.name || "Unknown"}
-              </span>
-            </Link>
+            <Tooltip content={t("viewAuthorProfile")} side="bottom">
+              <Link
+                href={authorId ? `/profile/${authorId}` : "#"}
+                onClick={(e) => {
+                  if (!authorId) e.preventDefault();
+                }}
+                className="inline-flex items-center gap-2 hover:opacity-90"
+              >
+                <div className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 grid place-items-center text-[hsl(var(--foreground))]">
+                  {blog.author?.photo ? (
+                    <Image
+                      src={asset(blog.author.photo)}
+                      alt={blog.author?.fullName || "avatar"}
+                      className="w-8 h-8 object-cover"
+                      width={32} // Adding width property
+                      height={32} // Adding height property
+                    />
+                  ) : (
+                    <div className="text-xs font-semibold">
+                      {String(blog.author?.fullName || blog.author?.name || "?")
+                        .slice(0, 1)
+                        .toUpperCase()}
+                    </div>
+                  )}
+                </div>
+                <span className="font-medium">
+                  {blog.author?.fullName || blog.author?.name || "Unknown"}
+                </span>
+              </Link>
+            </Tooltip>
             {blog.createdAt && <span aria-hidden>·</span>}
             {blog.createdAt && (
               <time dateTime={blog.createdAt}>
@@ -440,27 +457,31 @@ export default function BlogCard({
             </>
           )}
           <div className="mt-3 flex items-center gap-3 text-sm">
-            <button
-              onClick={onLike}
-              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
-              aria-label={t("like")}
-              disabled={!canInteract || likeMut.isPending}
-              title={!canInteract ? t("signInToInteract") : undefined}
-            >
-              <Heart className="size-4" /> {likeCount || 0}
-            </button>
+            <Tooltip content={canInteract ? t("like") : t("signInToInteract")} side="top">
+              <button
+                onClick={onLike}
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                aria-label={t("like")}
+                disabled={!canInteract || likeMut.isPending}
+                title={!canInteract ? t("signInToInteract") : undefined}
+              >
+                <Heart className="size-4" /> {likeCount || 0}
+              </button>
+            </Tooltip>
             <Dialog open={shareOpen} onOpenChange={setShareOpen}>
-              <DialogTrigger asChild>
-                <button
-                  onClick={() => setShareOpen(true)}
-                  className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
-                  aria-label="Share"
-                  disabled={!canInteract || shareMut.isPending}
-                  title={!canInteract ? t("signInToInteract") : undefined}
-                >
-                  <Share2 className="size-4" /> {shareCount || 0}
-                </button>
-              </DialogTrigger>
+              <Tooltip content={canInteract ? t("share") : t("signInToInteract")} side="top">
+                <DialogTrigger asChild>
+                  <button
+                    onClick={() => setShareOpen(true)}
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                    aria-label="Share"
+                    disabled={!canInteract || shareMut.isPending}
+                    title={!canInteract ? t("signInToInteract") : undefined}
+                  >
+                    <Share2 className="size-4" /> {shareCount || 0}
+                  </button>
+                </DialogTrigger>
+              </Tooltip>
               <DialogContent className="w-[min(92vw,420px)]">
                 <DialogTitle className="mb-3 text-lg font-semibold">{t("share")}</DialogTitle>
                 <div className="grid grid-cols-1 gap-2">
@@ -501,16 +522,18 @@ export default function BlogCard({
                 </div>
               </DialogContent>
             </Dialog>
-            <button
-              type="button"
-              onClick={() =>
-                onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`)
-              }
-              className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
-              aria-label={t("commentsLabel")}
-            >
-              <MessageCircle className="size-4" /> {commentCount || 0}
-            </button>
+            <Tooltip content={t("commentsLabel")} side="top">
+              <button
+                type="button"
+                onClick={() =>
+                  onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`)
+                }
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                aria-label={t("commentsLabel")}
+              >
+                <MessageCircle className="size-4" /> {commentCount || 0}
+              </button>
+            </Tooltip>
           </div>
         </div>
       )}

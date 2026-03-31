@@ -16,6 +16,7 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import { useState } from "react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useLanguage } from "@/components/providers/language-provider";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type ListingImage = { url: string; alt?: string | null };
 type Representative = {
@@ -211,12 +212,14 @@ export function ListingCard({
           }
         >
           {showSeller ? (
-            <span
-              onClick={() => setContactOpen(true)}
-              className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm cursor-pointer"
-            >
-              <Phone className="size-3" /> {t("seller")}
-            </span>
+            <Tooltip content={t("contactSeller")} side="top">
+              <span
+                onClick={() => setContactOpen(true)}
+                className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-[hsl(var(--accent))]/50 flex items-center gap-1 shadow-sm cursor-pointer"
+              >
+                <Phone className="size-3" /> {t("seller")}
+              </span>
+            </Tooltip>
           ) : (
             <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-[hsl(var(--accent))]/30 flex items-center gap-1 shadow-sm">
               <ShieldCheck className="size-3" /> {t("promoted")}
@@ -262,29 +265,33 @@ export function ListingCard({
         <div className="mt-3 flex items-center justify-between">
           {showSeller ? (
             <>
-              <button
-                onClick={() => setContactOpen(true)}
-                className="text-xs inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl
-                           bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
-                           hover:bg-emerald-500/20 hover:-translate-y-0.5 transition-all border border-emerald-500/20"
-              >
-                <Phone className="size-3" />
-                {t("contactSeller")}
-              </button>
+              <Tooltip content={t("contactSeller")} side="top">
+                <button
+                  onClick={() => setContactOpen(true)}
+                  className="text-xs inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl
+                             bg-emerald-500/10 text-emerald-600 dark:text-emerald-400
+                             hover:bg-emerald-500/20 hover:-translate-y-0.5 transition-all border border-emerald-500/20"
+                >
+                  <Phone className="size-3" />
+                  {t("contactSeller")}
+                </button>
+              </Tooltip>
               <Dialog open={contactOpen} onOpenChange={setContactOpen}>
                 <DialogContent className="max-w-sm p-5">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-semibold">
                       {t("contactSellerTitle")}
                     </h3>
-                    <DialogClose asChild>
-                      <button
-                        aria-label={t("close")}
-                        className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
-                      >
-                        ×
-                      </button>
-                    </DialogClose>
+                    <Tooltip content={t("close")} side="top">
+                      <DialogClose asChild>
+                        <button
+                          aria-label={t("close")}
+                          className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
+                        >
+                          ×
+                        </button>
+                      </DialogClose>
+                    </Tooltip>
                   </div>
                   <p className="subtle mb-4 text-sm">
                     {t("contactSellerSubtitle")}
@@ -325,26 +332,30 @@ export function ListingCard({
             </>
           ) : (
             <>
-              <button
-                onClick={() => setRepOpen(true)}
-                className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
-              >
-                {t("chooseRepresentative")}
-              </button>
+              <Tooltip content={t("chooseRepresentative")} side="top">
+                <button
+                  onClick={() => setRepOpen(true)}
+                  className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
+                >
+                  {t("chooseRepresentative")}
+                </button>
+              </Tooltip>
               <Dialog open={repOpen} onOpenChange={setRepOpen}>
                 <DialogContent className="max-w-md p-5">
                   <div className="flex items-center justify-between mb-2">
                     <h3 className="text-lg font-semibold">
                       {t("representatives")}
                     </h3>
-                    <DialogClose asChild>
-                      <button
-                        aria-label={t("close")}
-                        className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
-                      >
-                        ×
-                      </button>
-                    </DialogClose>
+                    <Tooltip content={t("close")} side="top">
+                      <DialogClose asChild>
+                        <button
+                          aria-label={t("close")}
+                          className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
+                        >
+                          ×
+                        </button>
+                      </DialogClose>
+                    </Tooltip>
                   </div>
                   <p className="subtle mb-4 text-sm">
                     {t("representativesSubtitle")}
@@ -407,12 +418,14 @@ export function ListingCard({
               </Dialog>
             </>
           )}
-          <Link
-            href={`/listings/${listing.id}`}
-            className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
-          >
-            {t("details")} <ArrowRight className="size-4" />
-          </Link>
+          <Tooltip content={t("details")} side="top">
+            <Link
+              href={`/listings/${listing.id}`}
+              className="text-sm inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-[hsl(var(--accent))]/30 hover:-translate-y-0.5 transition-all"
+            >
+              {t("details")} <ArrowRight className="size-4" />
+            </Link>
+          </Tooltip>
         </div>
       </div>
     </motion.article>

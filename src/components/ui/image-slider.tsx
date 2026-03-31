@@ -17,6 +17,7 @@ export function ImageSlider({
   autoPlay = false,
   forceEngaged = false,
   intervalMs = 5000,
+  firstSlideIsPriority = true,
 }: {
   images?: Slide[] | null;
   className?: string;
@@ -26,6 +27,7 @@ export function ImageSlider({
   autoPlay?: boolean; // enable/disable autoplay
   forceEngaged?: boolean; // parent-driven engagement (e.g., wrapper hover/focus)
   intervalMs?: number; // autoplay interval
+  firstSlideIsPriority?: boolean; // whether the first slide gets priority loading
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const getAspectClass = (a: string) => {
@@ -150,6 +152,7 @@ export function ImageSlider({
               index={i}
               sizes={sizes}
               isActive={i === index}
+              firstSlideIsPriority={firstSlideIsPriority}
             />
           ))}
         </div>
@@ -216,11 +219,13 @@ function SlideImage({
   index,
   sizes,
   isActive,
+  firstSlideIsPriority,
 }: {
   slide: { url?: string | null; alt?: string | null };
   index: number;
   sizes: string;
   isActive: boolean;
+  firstSlideIsPriority: boolean;
 }) {
   const [loaded, setLoaded] = useState(false);
   return (
@@ -242,10 +247,11 @@ function SlideImage({
         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
         sizes={sizes}
         loading={index === 0 ? "eager" : "lazy"}
-        priority={index === 0}
-        fetchPriority={index === 0 ? "high" : "auto"}
+        priority={firstSlideIsPriority && index === 0}
+        fetchPriority={firstSlideIsPriority && index === 0 ? "high" : "auto"}
         draggable={false}
         onLoad={() => setLoaded(true)}
+        onError={() => setLoaded(true)}
       />
     </div>
   );

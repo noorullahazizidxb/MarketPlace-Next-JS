@@ -5,6 +5,7 @@ import { useApiGet } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
 import { StoryViewer } from "@/components/stories/StoryViewer";
 import Image from "next/image";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export default function StoriesBar() {
   const { t } = useLanguage();
@@ -74,24 +75,28 @@ export default function StoriesBar() {
       {/* Scroll buttons */}
       <div className="pointer-events-none absolute inset-y-0 left-1 right-1">
         <div className="h-full flex items-center justify-between">
-          <button
-            className="pointer-events-auto glass size-8 grid place-items-center rounded-full"
-            aria-label={t("storiesScrollLeft")}
-            onClick={() =>
-              scroller.current?.scrollBy({ left: -220, behavior: "smooth" })
-            }
-          >
-            ‹
-          </button>
-          <button
-            className="pointer-events-auto glass size-8 grid place-items-center rounded-full"
-            aria-label={t("storiesScrollRight")}
-            onClick={() =>
-              scroller.current?.scrollBy({ left: 220, behavior: "smooth" })
-            }
-          >
-            ›
-          </button>
+          <Tooltip content={t("storiesScrollLeft" as any) || "Scroll left"} side="right">
+            <button
+              className="pointer-events-auto glass size-8 grid place-items-center rounded-full"
+              aria-label={t("storiesScrollLeft")}
+              onClick={() =>
+                scroller.current?.scrollBy({ left: -220, behavior: "smooth" })
+              }
+            >
+              ‹
+            </button>
+          </Tooltip>
+          <Tooltip content={t("storiesScrollRight" as any) || "Scroll right"} side="left">
+            <button
+              className="pointer-events-auto glass size-8 grid place-items-center rounded-full"
+              aria-label={t("storiesScrollRight")}
+              onClick={() =>
+                scroller.current?.scrollBy({ left: 220, behavior: "smooth" })
+              }
+            >
+              ›
+            </button>
+          </Tooltip>
         </div>
       </div>
 

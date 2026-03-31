@@ -20,6 +20,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import AboutCtaBanner from "@/components/ui/about-cta-banner";
 import { aboutImages } from "@/lib/public-images";
+import { Tooltip } from "@/components/ui/tooltip";
 
 export function AboutContent({
   marketplaceName,
@@ -46,7 +47,7 @@ export function AboutContent({
             style={{ willChange: "transform" }}
           />
         </div>
-        <div className="relative z-10 container-padded py-16 sm:py-24">
+        <div className="relative z-10 py-16 sm:py-24">
           <div className={`max-w-3xl ${isRtl ? "text-right" : "text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -61,22 +62,26 @@ export function AboutContent({
                 {t("aboutHero").replace("{marketplaceName}", marketplaceName)}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
-                <Button asChild variant="primary">
-                  <Link
-                    href="/listings"
-                    className="inline-flex items-center gap-2 px-5 py-3 h-auto"
-                  >
-                    {t("browseListings")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
-                  </Link>
-                </Button>
-                <Button asChild variant="secondary">
-                  <Link
-                    href="/sign-in"
-                    className="inline-flex items-center gap-2 px-5 py-3 h-auto"
-                  >
-                    {t("becomeSeller")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
-                  </Link>
-                </Button>
+                <Tooltip content={t("browseListings")} side="bottom">
+                  <Button asChild variant="primary">
+                    <Link
+                      href="/listings"
+                      className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                    >
+                      {t("browseListings")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
+                    </Link>
+                  </Button>
+                </Tooltip>
+                <Tooltip content={t("becomeSeller")} side="bottom">
+                  <Button asChild variant="secondary">
+                    <Link
+                      href="/sign-in"
+                      className="inline-flex items-center gap-2 px-5 py-3 h-auto"
+                    >
+                      {t("becomeSeller")} <ArrowRight className={`h-4 w-4 ${isRtl ? "rotate-180" : ""}`} />
+                    </Link>
+                  </Button>
+                </Tooltip>
               </div>
             </motion.div>
           </div>
@@ -84,7 +89,7 @@ export function AboutContent({
       </section>
 
       {/* Mission & Vision */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           {[
             { heading: t("missionHeading"), text: t("missionText"), gradient: "from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/10" },
@@ -106,7 +111,7 @@ export function AboutContent({
       </section>
 
       {/* Stats & Metrics */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -149,7 +154,7 @@ export function AboutContent({
       </section>
 
       {/* Trust & Verification */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 16 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -213,7 +218,7 @@ export function AboutContent({
       </section>
 
       {/* How It Works */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <motion.h2
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -257,7 +262,7 @@ export function AboutContent({
       </section>
 
       {/* Story */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -281,7 +286,7 @@ export function AboutContent({
       </section>
 
       {/* Team */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <motion.h2
           initial={{ opacity: 0, y: 12 }}
           whileInView={{ opacity: 1, y: 0 }}
@@ -328,7 +333,7 @@ export function AboutContent({
       </section>
 
       {/* CTA */}
-      <section className="container-padded mt-12 sm:mt-16">
+      <section className="mt-12 sm:mt-16">
         <AboutCtaBanner />
       </section>
     </main>

@@ -1,7 +1,7 @@
 import { Skeleton, Block } from "@/components/skeletons/SkeletonPrimitives";
 export default function Loading() {
   return (
-    <div className="container-padded py-12 space-y-10">
+    <div className="py-12 space-y-10">
       <Skeleton className="h-10 w-60" />
       <div className="grid gap-8 md:grid-cols-3">
         {Array.from({ length: 3 }).map((_, i) => (

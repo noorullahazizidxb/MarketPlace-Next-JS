@@ -4,6 +4,7 @@ import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { ListingCard, type Listing } from "../ui/listing-card";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];
@@ -168,20 +169,24 @@ export function HiddenListingsSlider({
           Promoted Listings
         </h3>
         <div className="flex items-center gap-2">
-          <button
-            aria-label="Previous"
-            onClick={prev}
-            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
-          >
-            <ChevronLeft className="size-4" />
-          </button>
-          <button
-            aria-label="Next"
-            onClick={next}
-            className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
-          >
-            <ChevronRight className="size-4" />
-          </button>
+          <Tooltip content="Previous" side="bottom">
+            <button
+              aria-label="Previous"
+              onClick={prev}
+              className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
+            >
+              <ChevronLeft className="size-4" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Next" side="bottom">
+            <button
+              aria-label="Next"
+              onClick={next}
+              className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
+            >
+              <ChevronRight className="size-4" />
+            </button>
+          </Tooltip>
         </div>
       </div>
       <div className="relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80">

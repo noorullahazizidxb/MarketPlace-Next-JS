@@ -13,6 +13,7 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import ContactForm from "@/components/ui/contact-form";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function ContactHero() {
   const { t, isRtl } = useLanguage();
@@ -103,21 +104,22 @@ function ContactInfoCards() {
   return (
     <div className="grid gap-4 sm:grid-cols-2">
       {cards.map((card) => (
-        <a
-          key={String(card.title)}
-          href={card.href}
-          className="group rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/88 p-5 shadow-[0_18px_36px_-24px_rgba(0,0,0,0.45)] transition-all hover:-translate-y-1 hover:border-[hsl(var(--accent))/0.4] hover:shadow-[0_22px_50px_-26px_rgba(0,0,0,0.55)]"
-        >
-          <div className="flex items-start gap-3">
-            <div className="rounded-2xl bg-[hsl(var(--accent))/0.14] p-3 text-[hsl(var(--accent))] transition-transform group-hover:scale-110">
-              <card.Icon className="size-5" />
+        <Tooltip key={String(card.title)} content={card.title as string} side="top">
+          <a
+            href={card.href}
+            className="group rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/88 p-5 shadow-[0_18px_36px_-24px_rgba(0,0,0,0.45)] transition-all hover:-translate-y-1 hover:border-[hsl(var(--accent))/0.4] hover:shadow-[0_22px_50px_-26px_rgba(0,0,0,0.55)]"
+          >
+            <div className="flex items-start gap-3">
+              <div className="rounded-2xl bg-[hsl(var(--accent))/0.14] p-3 text-[hsl(var(--accent))] transition-transform group-hover:scale-110">
+                <card.Icon className="size-5" />
+              </div>
+              <div>
+                <h3 className="font-semibold text-[hsl(var(--foreground))]">{card.title}</h3>
+                <p className="mt-1 text-sm text-[hsl(var(--foreground))/0.74]">{card.text}</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-[hsl(var(--foreground))]">{card.title}</h3>
-              <p className="mt-1 text-sm text-[hsl(var(--foreground))/0.74]">{card.text}</p>
-            </div>
-          </div>
-        </a>
+          </a>
+        </Tooltip>
       ))}
     </div>
   );
@@ -153,8 +155,8 @@ function BusinessHoursCard() {
             <span className="text-[hsl(var(--foreground))]/70 text-xs">{row.day}</span>
             <span
               className={`font-medium text-xs px-2 py-0.5 rounded-full border ${row.open
-                  ? "bg-emerald-500/10 text-emerald-600 border-emerald-400/30 dark:text-emerald-400"
-                  : "bg-[hsl(var(--muted))]/30 text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))]"
+                ? "bg-emerald-500/10 text-emerald-600 border-emerald-400/30 dark:text-emerald-400"
+                : "bg-[hsl(var(--muted))]/30 text-[hsl(var(--muted-foreground))] border-[hsl(var(--border))]"
                 }`}
             >
               {row.open && <CheckCircle2 className="size-3 inline mr-1" />}
@@ -171,7 +173,7 @@ export function ContactContent() {
   const { isRtl, t } = useLanguage();
 
   return (
-    <div dir={isRtl ? "rtl" : "ltr"} className="container-padded py-8 space-y-8">
+    <div dir={isRtl ? "rtl" : "ltr"} className="py-8 space-y-8">
       <ContactHero />
 
       <section className="grid gap-6 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">

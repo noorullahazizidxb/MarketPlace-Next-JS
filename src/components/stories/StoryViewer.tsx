@@ -8,6 +8,8 @@ import type { Story } from "../../types/social";
 import { Portal } from "@/components/ui/portal";
 import Image from "next/image";
 import Link from "next/link";
+import { useLanguage } from "@/components/providers/language-provider";
+import { Tooltip } from "@/components/ui/tooltip";
 
 type Img = string | { url?: string | null } | null | undefined;
 
@@ -24,15 +26,17 @@ export function StoryViewer({
   onPrev?: () => void;
   onNext?: () => void;
 }) {
+  const { t, isRtl } = useLanguage();
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") onPrev?.();
-      if (e.key === "ArrowRight") onNext?.();
+      if (e.key === "ArrowLeft") isRtl ? onNext?.() : onPrev?.();
+      if (e.key === "ArrowRight") isRtl ? onPrev?.() : onNext?.();
     };
     if (open) document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose, onPrev, onNext]);
+  }, [open, onClose, onPrev, onNext, isRtl]);
 
   const slides = (story?.images || []).map((u: Img) => ({
     url: typeof u === "string" ? u : u?.url ?? undefined,
@@ -99,13 +103,15 @@ export function StoryViewer({
                     )}
                   </div>
                 </div>
-                <button
-                  className="icon-btn"
-                  aria-label="Close"
-                  onClick={onClose}
-                >
-                  <X className="size-5" />
-                </button>
+                <Tooltip content={t("storyClose")} side="bottom">
+                  <button
+                    className="icon-btn"
+                    aria-label={t("storyClose")}
+                    onClick={onClose}
+                  >
+                    <X className="size-5" />
+                  </button>
+                </Tooltip>
               </div>
 
               {/* media */}
@@ -132,20 +138,24 @@ export function StoryViewer({
               {/* navigation */}
               <div className="absolute inset-y-0 left-2 right-2 pointer-events-none">
                 <div className="h-full flex items-center justify-between">
-                  <button
-                    className="pointer-events-auto glass size-10 grid place-items-center rounded-full"
-                    aria-label="Previous story"
-                    onClick={onPrev}
-                  >
-                    <ChevronLeft />
-                  </button>
-                  <button
-                    className="pointer-events-auto glass size-10 grid place-items-center rounded-full"
-                    aria-label="Next story"
-                    onClick={onNext}
-                  >
-                    <ChevronRight />
-                  </button>
+                  <Tooltip content={t("storyPrev")} side={isRtl ? "left" : "right"}>
+                    <button
+                      className="pointer-events-auto glass size-10 grid place-items-center rounded-full"
+                      aria-label={t("storyPrev")}
+                      onClick={onPrev}
+                    >
+                      {isRtl ? <ChevronRight /> : <ChevronLeft />}
+                    </button>
+                  </Tooltip>
+                  <Tooltip content={t("storyNext")} side={isRtl ? "right" : "left"}>
+                    <button
+                      className="pointer-events-auto glass size-10 grid place-items-center rounded-full"
+                      aria-label={t("storyNext")}
+                      onClick={onNext}
+                    >
+                      {isRtl ? <ChevronLeft /> : <ChevronRight />}
+                    </button>
+                  </Tooltip>
                 </div>
               </div>
             </motion.div>

@@ -9,7 +9,6 @@ import {
   LogOut,
   User2,
   LayoutGrid,
-  Stars,
   Mail,
   Menu,
   Home,
@@ -71,7 +70,7 @@ export function Topbar() {
         initial={{ y: -32, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="app-navbar fixed top-1   left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
+        className="app-navbar fixed top-3 left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="relative overflow-visible">
@@ -84,9 +83,11 @@ export function Topbar() {
                 whileHover={{ y: -2 }}
                 className="flex items-center gap-2 "
               >
-                <ThemeToggle iconOnly className="hidden sm:grid" />
-                <div className="size-9 rounded-2xl bg-gradient-to-br from-primary/80 to-fuchsia-500/60 text-background grid place-items-center font-bold shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
-                  <Stars className="size-5" />
+                <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
+                  <ThemeToggle iconOnly className="hidden sm:grid" />
+                </Tooltip>
+                <div className="size-12 rounded-xl overflow-hidden bg-white shadow-sm shrink-0">
+                  <Image src="/logo/logo.png" alt="Dev Minds" width={48} height={48} className="w-full h-full object-contain" priority />
                 </div>
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
@@ -97,81 +98,93 @@ export function Topbar() {
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Link
-                    href="/listings"
-                    className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
-                  >
-                    <Home className="size-4" />
-                    <span>{t("home")}</span>
-                    {isActive("/listings") && (
-                      <motion.span
-                        layoutId="top-underline"
-                        className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
-                      />
-                    )}
-                  </Link>
+                  <Tooltip content={t("home")} side="bottom">
+                    <Link
+                      href="/listings"
+                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                    >
+                      <Home className="size-4" />
+                      <span>{t("home")}</span>
+                      {isActive("/listings") && (
+                        <motion.span
+                          layoutId="top-underline"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
                 </motion.div>
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Link
-                    href="/blogs"
-                    className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
-                  >
-                    <Newspaper className="size-4" />
-                    <span>{t("blogs")}</span>
-                    {isActive("/blogs") && (
-                      <motion.span
-                        layoutId="top-underline"
-                        className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
-                      />
-                    )}
-                  </Link>
+                  <Tooltip content={t("blogs")} side="bottom">
+                    <Link
+                      href="/blogs"
+                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                    >
+                      <Newspaper className="size-4" />
+                      <span>{t("blogs")}</span>
+                      {isActive("/blogs") && (
+                        <motion.span
+                          layoutId="top-underline"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
                 </motion.div>
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Link
-                    href="/about"
-                    className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
-                  >
-                    <Info className="size-4" />
-                    <span>{t("about")}</span>
-                    {isActive("/about") && (
-                      <motion.span
-                        layoutId="top-underline"
-                        className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
-                      />
-                    )}
-                  </Link>
+                  <Tooltip content={t("about")} side="bottom">
+                    <Link
+                      href="/about"
+                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                    >
+                      <Info className="size-4" />
+                      <span>{t("about")}</span>
+                      {isActive("/about") && (
+                        <motion.span
+                          layoutId="top-underline"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
                 </motion.div>
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                 >
-                  <Link
-                    href="/contact"
-                    className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
-                  >
-                    <Phone className="size-4" />
-                    <span>{t("contact")}</span>
-                    {isActive("/contact") && (
-                      <motion.span
-                        layoutId="top-underline"
-                        className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
-                      />
-                    )}
-                  </Link>
+                  <Tooltip content={t("contact")} side="bottom">
+                    <Link
+                      href="/contact"
+                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                    >
+                      <Phone className="size-4" />
+                      <span>{t("contact")}</span>
+                      {isActive("/contact") && (
+                        <motion.span
+                          layoutId="top-underline"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                        />
+                      )}
+                    </Link>
+                  </Tooltip>
                 </motion.div>
                 {/* My listings removed from top nav to avoid duplicate links (profile menu has it) */}
               </nav>
 
               <div className="flex items-center justify-end gap-2 pr-12 sm:pr-2">
-                <LanguageDropdown className="sm:hidden inline-flex" />
+                <Tooltip content={t("language")} side="bottom">
+                  <LanguageDropdown className="sm:hidden inline-flex" />
+                </Tooltip>
                 <div className="flex items-center gap-2 sm:hidden">
-                  <SearchBox className="w-full" placeholder={t("search")} />
+                  <Tooltip content={t("search")} side="bottom">
+                    <SearchBox className="w-full" placeholder={t("search")} />
+                  </Tooltip>
                 </div>
                 {/* Notifications */}
                 {user && (
@@ -206,7 +219,9 @@ export function Topbar() {
                   </>
                 )}
                 <div className="hidden md:flex items-center gap-2">
-                  <SearchBox placeholder={t("search")} />
+                  <Tooltip content={t("search")} side="bottom">
+                    <SearchBox placeholder={t("search")} />
+                  </Tooltip>
                 </div>
                 {user ? (
                   <div className="relative">
@@ -313,30 +328,36 @@ export function Topbar() {
                   <>
                     {/* Desktop Sign In */}
                     <div className="hidden sm:block">
-                      <Button asChild variant="primary">
-                        <Link
-                          href="/sign-in"
-                          className="flex items-center gap-2 px-3"
-                        >
-                          <LogIn className="size-4" />
-                          <span>{t("signIn")}</span>
-                        </Link>
-                      </Button>
+                      <Tooltip content={t("signIn")} side="bottom">
+                        <Button asChild variant="primary">
+                          <Link
+                            href="/sign-in"
+                            className="flex items-center gap-2 px-3"
+                          >
+                            <LogIn className="size-4" />
+                            <span>{t("signIn")}</span>
+                          </Link>
+                        </Button>
+                      </Tooltip>
                     </div>
                   </>
                 )}
-                <LanguageDropdown className="hidden sm:inline-flex" />
-                <button
-                  className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 absolute right-4 top-1/2 -translate-y-1/2 z-50"
-                  aria-label="Open mobile menu"
-                  onClick={toggleMobileMenu}
-                >
-                  {mobileMenu ? (
-                    <X className="size-4" />
-                  ) : (
-                    <Menu className="size-4" />
-                  )}
-                </button>
+                <Tooltip content={t("language")} side="bottom">
+                  <LanguageDropdown className="hidden sm:inline-flex" />
+                </Tooltip>
+                <Tooltip content={mobileMenu ? (t("close" as any) || "Close") : (t("menu" as any) || "Menu")} side="bottom">
+                  <button
+                    className="sm:hidden glass size-8 rounded-xl flex items-center justify-center font-bold transition-transform hover:-translate-y-0.5 absolute right-4 top-1/2 -translate-y-1/2 z-50"
+                    aria-label="Open mobile menu"
+                    onClick={toggleMobileMenu}
+                  >
+                    {mobileMenu ? (
+                      <X className="size-4" />
+                    ) : (
+                      <Menu className="size-4" />
+                    )}
+                  </button>
+                </Tooltip>
               </div>
             </div>
           </div>

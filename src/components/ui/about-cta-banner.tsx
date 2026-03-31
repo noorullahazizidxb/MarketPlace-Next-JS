@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight, ShoppingCart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
+import { Tooltip } from "@/components/ui/tooltip";
 
 function Hexagon(props: React.SVGProps<SVGSVGElement>) {
   return (
@@ -69,20 +70,24 @@ export function AboutCtaBanner() {
             </div>
 
             <div className={isRtl ? "flex flex-col items-center gap-3 sm:flex-row" : "flex flex-col items-center gap-3 md:items-end"}>
-              <Button asChild variant="primary" size="md">
-                <Link href="/listings" className="inline-flex items-center gap-2">
-                  {isRtl && <ArrowLeft className="size-4" />}
-                  {t("browseListings")}
-                  {!isRtl && <ArrowRight className="size-4" />}
-                </Link>
-              </Button>
+              <Tooltip content={t("browseListings")} side="bottom">
+                <Button asChild variant="primary" size="md">
+                  <Link href="/listings" className="inline-flex items-center gap-2">
+                    {isRtl && <ArrowLeft className="size-4" />}
+                    {t("browseListings")}
+                    {!isRtl && <ArrowRight className="size-4" />}
+                  </Link>
+                </Button>
+              </Tooltip>
 
-              <Button asChild variant="secondary" size="md">
-                <Link href="/sign-in" className="inline-flex items-center gap-2">
-                  <ShoppingCart className="size-4" />
-                  {t("becomeSeller")}
-                </Link>
-              </Button>
+              <Tooltip content={t("becomeSeller")} side="bottom">
+                <Button asChild variant="secondary" size="md">
+                  <Link href="/sign-in" className="inline-flex items-center gap-2">
+                    <ShoppingCart className="size-4" />
+                    {t("becomeSeller")}
+                  </Link>
+                </Button>
+              </Tooltip>
             </div>
           </div>
         </div>

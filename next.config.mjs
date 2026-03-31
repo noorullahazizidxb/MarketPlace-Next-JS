@@ -1,8 +1,11 @@
 /** @type {import('next').NextConfig} */
-const isProd = process.env.NODE_ENV === 'production';
 const nextConfig = {
   reactStrictMode: true,
-  experimental: isProd ? { optimizePackageImports: ["lucide-react"] } : {},
+  experimental: {
+    // Always tree-shake heavy barrel exports — prevents slow dev compilations
+    // when navigating between pages that import from lucide-react or framer-motion.
+    optimizePackageImports: ["lucide-react", "framer-motion", "@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
+  },
   images: {
     remotePatterns: [
       { protocol: 'http', hostname: 'localhost', port: '4000', pathname: '/**' },

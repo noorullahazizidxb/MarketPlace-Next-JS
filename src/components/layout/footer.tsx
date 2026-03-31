@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
+import Image from "next/image";
 import QRCode from "react-qr-code";
+import { Tooltip } from "@/components/ui/tooltip";
 import {
   Github,
   Linkedin,
@@ -76,8 +78,8 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-[hsl(var(--primary))]/30 to-[hsl(var(--primary))]/60 text-[hsl(var(--background))] shadow-inner shadow-black/20">
-                  <span className="text-lg font-bold">M</span>
+                <div className="flex h-14 w-14 overflow-hidden rounded-2xl bg-white shadow-sm shrink-0">
+                  <Image src="/logo/logo.png" alt="Dev Minds" width={56} height={56} className="w-full h-full object-contain" priority />
                 </div>
                 <div>
                   <div className="text-base font-semibold tracking-tight">
@@ -92,17 +94,21 @@ export default function Footer() {
                 {t("platformMissionShort")}
               </p>
               <div className="mt-4 flex items-center gap-2">
-                <Button asChild size="sm" variant="primary">
-                  <Link
-                    href="/get-started"
-                    className="inline-flex items-center gap-1"
-                  >
-                    {t("getStarted")} <ArrowUpRight className="size-4" />
-                  </Link>
-                </Button>
-                <Button asChild size="sm" variant="ghost" className="glass">
-                  <Link href="/contact">{t("contact")}</Link>
-                </Button>
+                <Tooltip content={t("getStarted")} side="top">
+                  <Button asChild size="sm" variant="primary">
+                    <Link
+                      href="/get-started"
+                      className="inline-flex items-center gap-1"
+                    >
+                      {t("getStarted")} <ArrowUpRight className="size-4" />
+                    </Link>
+                  </Button>
+                </Tooltip>
+                <Tooltip content={t("contact")} side="top">
+                  <Button asChild size="sm" variant="ghost" className="glass">
+                    <Link href="/contact">{t("contact")}</Link>
+                  </Button>
+                </Tooltip>
               </div>
             </div>
 
@@ -114,30 +120,33 @@ export default function Footer() {
               <ul className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-2">
                 {nav.map((n) => (
                   <li key={n.href}>
-                    <Link
-                      href={n.href}
-                      className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
-                    >
-                      {n.Icon ? (
-                        <n.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
-                      ) : null}
-                      <span>{t(n.key as any)}</span>
-                    </Link>
+                    <Tooltip content={t(n.key as any)} side="right">
+                      <Link
+                        href={n.href}
+                        className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
+                      >
+                        {n.Icon ? (
+                          <n.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                        ) : null}
+                        <span>{t(n.key as any)}</span>
+                      </Link>
+                    </Tooltip>
                   </li>
                 ))}
               </ul>
               <div className="mt-4 flex items-center gap-2">
                 {socials.map(({ href, label, Icon }) => (
-                  <Link
-                    key={href}
-                    href={href}
-                    aria-label={label}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5 hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--primary))]/10 hover:shadow-md"
-                  >
-                    <Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70 transition-colors group-hover:text-[hsl(var(--primary))]" />
-                  </Link>
+                  <Tooltip key={href} content={label} side="top">
+                    <Link
+                      href={href}
+                      aria-label={label}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5 hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--primary))]/10 hover:shadow-md"
+                    >
+                      <Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70 transition-colors group-hover:text-[hsl(var(--primary))]" />
+                    </Link>
+                  </Tooltip>
                 ))}
               </div>
             </div>
@@ -150,13 +159,15 @@ export default function Footer() {
               <ul className="mt-3 space-y-1 text-sm">
                 {resources.map((r) => (
                   <li key={r.href}>
-                    <Link
-                      href={r.href}
-                      className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
-                    >
-                      <r.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
-                      <span>{t(r.key as any)}</span>
-                    </Link>
+                    <Tooltip content={t(r.key as any)} side="right">
+                      <Link
+                        href={r.href}
+                        className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
+                      >
+                        <r.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                        <span>{t(r.key as any)}</span>
+                      </Link>
+                    </Tooltip>
                   </li>
                 ))}
               </ul>
@@ -180,16 +191,20 @@ export default function Footer() {
                 }}
                 className="mt-3 flex items-center gap-2"
               >
-                <input
-                  name="email"
-                  type="email"
-                  required
-                  placeholder="you@domain.com"
-                  className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
-                />
-                <Button type="submit" size="sm" variant="primary">
-                  {t("subscribe")}
-                </Button>
+                <Tooltip content={t("subscribeEmail")} side="top">
+                  <input
+                    name="email"
+                    type="email"
+                    required
+                    placeholder="you@domain.com"
+                    className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
+                  />
+                </Tooltip>
+                <Tooltip content={t("subscribe")} side="top">
+                  <Button type="submit" size="sm" variant="primary">
+                    {t("subscribe")}
+                  </Button>
+                </Tooltip>
               </form>
             </div>
 
@@ -217,26 +232,32 @@ export default function Footer() {
               {t("allRightsReserved")}
             </div>
             <div className="flex items-center gap-3">
-              <Link
-                href="/privacy"
-                className="inline-flex items-center gap-2 link"
-              >
-                <Shield className="h-4 w-4" /> {t("privacy")}
-              </Link>
+              <Tooltip content={t("privacy")} side="top">
+                <Link
+                  href="/privacy"
+                  className="inline-flex items-center gap-2 link"
+                >
+                  <Shield className="h-4 w-4" /> {t("privacy")}
+                </Link>
+              </Tooltip>
               <span className="opacity-30">•</span>
-              <Link
-                href="/terms"
-                className="inline-flex items-center gap-2 link"
-              >
-                <FileText className="h-4 w-4" /> {t("terms")}
-              </Link>
+              <Tooltip content={t("terms")} side="top">
+                <Link
+                  href="/terms"
+                  className="inline-flex items-center gap-2 link"
+                >
+                  <FileText className="h-4 w-4" /> {t("terms")}
+                </Link>
+              </Tooltip>
               <span className="opacity-30">•</span>
-              <a
-                href="mailto:support@yourdomain.com"
-                className="inline-flex items-center gap-2 link"
-              >
-                <Mail className="h-4 w-4" /> support@yourdomain.com
-              </a>
+              <Tooltip content="support@yourdomain.com" side="top">
+                <a
+                  href="mailto:support@yourdomain.com"
+                  className="inline-flex items-center gap-2 link"
+                >
+                  <Mail className="h-4 w-4" /> support@yourdomain.com
+                </a>
+              </Tooltip>
             </div>
           </div>
         </div>
