@@ -61,7 +61,6 @@ export function QueryProvider({ children }: PropsWithChildren) {
 function ThemeBootstrap({ client }: { client: QueryClient }) {
   useEffect(() => {
     let mounted = true;
-    let completed = false;
 
     const applyThemePayload = (source: any) => {
       if (!mounted || !source) return;
@@ -77,7 +76,6 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
         (first as any)?.components || {},
         rawTokens?.components || {},
       );
-      // read preferred color mode from payload envelope
       const pref =
         rawTokens?.preferredColorMode ??
         (first as any)?.tokens?.preferredColorMode ??
@@ -86,7 +84,7 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
       if (pref) {
         try {
           useThemeStore.getState().setPreferredColorMode(pref);
-        } catch (_) {}
+        } catch (_) { }
       }
       if (Object.keys(scales || {}).length > 0) applyThemeScales(scales);
       if (normalized) applyThemeTokens(normalized);
@@ -94,54 +92,38 @@ function ThemeBootstrap({ client }: { client: QueryClient }) {
         applyThemeComponents(components);
     };
 
-    const finalize = () => {
-      if (!mounted || completed) return;
-      completed = true;
-      useAppStore.getState().setReady(true);
-    };
-
-    const safety = setTimeout(() => {
-      if (!mounted || completed) return;
-      void (async () => {
-        try {
-          const local = await loadBundledThemeFallback();
-          applyThemePayload(local);
-        } catch (_) {
-          // ignore, we'll still mark the app ready
-        } finally {
-          finalize();
-        }
-      })();
-    }, 5000);
-
-    (async () => {
+    // Step 1: Apply bundled theme immediately (no network) and mark app ready
+    // so the UI renders without any delay even on slow networks.
+    void (async () => {
       try {
-        // Load from file-based route and apply, but don't block forever.
+        const local = await loadBundledThemeFallback();
+        applyThemePayload(local);
+      } catch (_) {
+        // bundled fallback failed — continue anyway
+      } finally {
+        if (mounted) useAppStore.getState().setReady(true);
+      }
+    })();
+
+    // Step 2: Load remote theme in the background and apply it as an update.
+    // This never blocks rendering — it simply refines the theme once available.
+    void (async () => {
+      try {
         const raceProms: Promise<any>[] = [
           loadFileThemes(),
           new Promise((_, rej) =>
-            setTimeout(() => rej(new Error("theme-fetch-timeout")), 5000),
+            setTimeout(() => rej(new Error("theme-fetch-timeout")), 8000),
           ),
         ];
         const remote = await Promise.race(raceProms);
         applyThemePayload(remote);
-      } catch (e) {
-        // Try bundled fallback so app doesn't block forever
-        try {
-          const local = await loadBundledThemeFallback();
-          applyThemePayload(local);
-        } catch (_) {
-          // ignore
-        }
-      } finally {
-        clearTimeout(safety);
-        finalize();
+      } catch (_) {
+        // Remote theme unavailable — bundled theme already applied, no action needed.
       }
     })();
 
     return () => {
       mounted = false;
-      clearTimeout(safety);
     };
   }, [client]);
 

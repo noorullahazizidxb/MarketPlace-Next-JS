@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
@@ -138,8 +139,16 @@ export default function SignInPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08, duration: 0.4 }}
           >
-            <div className="mx-auto mb-4 size-14 grid place-items-center rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))]/80 to-[hsl(var(--accent))]/60 font-extrabold text-2xl text-[hsl(var(--primary-foreground))] shadow-lg">
-              M
+            <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] ring-1 ring-[hsl(var(--primary))]/20 dark:bg-white/95">
+              <Image
+                src="/logo/logo.png"
+                alt="DevMinds"
+                width={156}
+                height={108}
+                priority
+                className="h-14 w-auto object-contain"
+                draggable={false}
+              />
             </div>
             <h1 className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
               {t("signInTitle")}

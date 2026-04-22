@@ -93,6 +93,9 @@ export function useSWRGet<T = any>(
   const swrKey = key === null ? null : Array.isArray(key) ? key : [key];
   return useSWR<T, ErrorType>(swrKey as any, () => axiosGet<T>(url, params), {
     revalidateOnFocus: false,
+    // Cache results for 5 minutes to prevent re-fetching on navigation / remount
+    dedupingInterval: 5 * 60 * 1000,
+    revalidateIfStale: false,
     ...options,
   });
 }
@@ -106,6 +109,8 @@ export function useLocalGet<T = any>(
   const swrKey = Array.isArray(key) ? key : [key];
   return useSWR<T, ErrorType>(swrKey, () => localFetch<T>(url), {
     revalidateOnFocus: false,
+    dedupingInterval: 5 * 60 * 1000,
+    revalidateIfStale: false,
     ...options,
   });
 }
@@ -119,6 +124,7 @@ export function useLocalGetImmutable<T = any>(
   const swrKey = key === null ? null : Array.isArray(key) ? key : [key];
   return useSWRImmutable<T, ErrorType>(swrKey as any, () => localFetch<T>(url), {
     revalidateOnFocus: false,
+    dedupingInterval: 5 * 60 * 1000,
     ...options,
   }) as unknown as SWRResponse<T, ErrorType>;
 }
@@ -201,7 +207,7 @@ export function useLocalMutation<TData = any>(
           else if (method === "put") toastSuccess(`${String(entity)} updated successfully`);
           else if (method === "patch") toastSuccess(`${String(entity)} updated successfully`);
           else if (method === "delete") toastSuccess(`${String(entity)} deleted successfully`);
-        } catch {}
+        } catch { }
         return res;
       } catch (err: any) {
         toastError(err?.message || "Request failed");

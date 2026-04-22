@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
@@ -181,8 +182,16 @@ export default function SignUpPage() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.5] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.4] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
-            <div className="mx-auto size-12 grid place-items-center rounded-2xl bg-gradient-to-br from-[hsl(var(--primary))]/80 to-[hsl(var(--accent))]/60 font-extrabold text-xl text-[hsl(var(--primary-foreground))] shadow-lg">
-              M
+            <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] ring-1 ring-[hsl(var(--primary))]/20 dark:bg-white/95">
+              <Image
+                src="/logo/logo.png"
+                alt="DevMinds"
+                width={156}
+                height={108}
+                priority
+                className="h-14 w-auto object-contain"
+                draggable={false}
+              />
             </div>
             <motion.h1
               className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]"

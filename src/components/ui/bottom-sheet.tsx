@@ -120,7 +120,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
         // Restore focus
         try {
           lastFocusedRef.current?.focus();
-        } catch {}
+        } catch { }
       };
     } else {
       focusablesRef.current = [];
@@ -202,11 +202,11 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               prefersReducedMotion
                 ? { duration: 0.15 }
                 : {
-                    type: "spring",
-                    stiffness: 260,
-                    damping: 30,
-                    mass: 0.9,
-                  }
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 30,
+                  mass: 0.9,
+                }
             }
             {...(!prefersReducedMotion && {
               drag: "y",

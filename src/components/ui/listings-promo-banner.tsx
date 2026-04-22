@@ -27,9 +27,9 @@ export default function ListingsPromoBanner() {
     >
       <div className="container-padded">
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          initial={{ y: 24 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ duration: 0.7, ease: "easeOut" }}
           className="relative overflow-hidden rounded-3xl
                        border border-[hsl(var(--border))]
@@ -77,18 +77,18 @@ export default function ListingsPromoBanner() {
 
               <div className={`flex-1 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
                 <motion.h2
-                  initial={{ opacity: 0, x: isRtl ? -40 : 40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  initial={{ x: isRtl ? -20 : 20 }}
+                  whileInView={{ x: 0 }}
+                  viewport={{ once: true, amount: 0 }}
                   transition={{ delay: 0.2 }}
                   className="heading-2xl text-[hsl(var(--secondary-foreground))] drop-shadow"
                 >
                   {(t as any)("listingsPromoTitle") || "جدیدترین موبایل ها"}
                 </motion.h2>
                 <motion.p
-                  initial={{ opacity: 0, x: -40 }}
-                  whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  initial={{ x: -20 }}
+                  whileInView={{ x: 0 }}
+                  viewport={{ once: true, amount: 0 }}
                   transition={{ delay: 0.3 }}
                   className="mt-3 text-base text-[hsl(var(--secondary-foreground)/0.88)] max-w-2xl"
                 >
@@ -98,9 +98,9 @@ export default function ListingsPromoBanner() {
               </div>
 
               <motion.div
-                initial={{ opacity: 0, scale: 0.9 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                initial={{ scale: 0.95 }}
+                whileInView={{ scale: 1 }}
+                viewport={{ once: true, amount: 0 }}
                 transition={{ delay: 0.4, type: "spring" }}
                 className={isRtl ? "flex flex-wrap items-center justify-center gap-4 md:justify-start" : "flex flex-col items-center gap-3 md:items-start"}
               >

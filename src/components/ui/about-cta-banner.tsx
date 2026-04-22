@@ -21,9 +21,9 @@ export function AboutCtaBanner() {
   return (
     <section className="w-full">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
+        initial={{ y: 16 }}
+        whileInView={{ y: 0 }}
+        viewport={{ once: true, amount: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
         className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(var(--accent)/0.15)] via-[hsl(var(--primary)/0.08)] to-[hsl(var(--card))] shadow-lg shadow-[hsl(var(--accent)/0.2)] dark:shadow-none"
       >

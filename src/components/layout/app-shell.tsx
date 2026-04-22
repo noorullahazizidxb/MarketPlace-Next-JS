@@ -1,6 +1,6 @@
 "use client";
 
-import { PropsWithChildren, useEffect } from "react";
+import { PropsWithChildren, useEffect, useMemo } from "react";
 import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
@@ -15,16 +15,9 @@ import { useAppStore } from "@/store/app.store";
 import SiteFooter from "@/components/layout/site-footer";
 import { Partners } from "@/components/ui/partners";
 import HomePromoBanner from "@/components/ui/home-promo-banner";
-import { HomeSkeleton } from "@/components/skeletons/HomeSkeleton";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
-
-/* --------------  NEW SKELETON IMPORTS  -------------- */
-import { HomePromoBannerSkeleton } from "@/components/skeletons/HomePromoBannerSkeleton";
-import { ListingsPromoBannerSkeleton } from "@/components/skeletons/ListingsPromoBannerSkeleton";
-import { PartnersSkeleton } from "@/components/skeletons/PartnersSkeleton";
-/* ---------------------------------------------------- */
 
 const PUBLIC_PATH_PREFIXES = [
   "/blog",
@@ -35,6 +28,9 @@ const PUBLIC_PATH_PREFIXES = [
   "/sign-in",
   "/sign-up",
 ];
+
+// Stable constant — defined outside the component so its reference never changes
+const PREFETCH_PATHS = ["/listings/create", "/my-listings", "/profile", "/pendings", "/about"];
 
 export function AppShell({ children }: PropsWithChildren) {
   const { isAdmin, user, loading, token } = useAuth();
@@ -51,18 +47,15 @@ export function AppShell({ children }: PropsWithChildren) {
     }
   }, [density]);
 
-  usePrefetchOnIdle(
-    ["/listings/create", "/my-listings", "/profile", "/pendings", "/about"],
-    true
-  );
+  usePrefetchOnIdle(PREFETCH_PATHS, true);
 
-  const isPublicRoute = (() => {
+  const isPublicRoute = useMemo(() => {
     if (!pathname) return true;
     if (pathname === "/") return true;
     return PUBLIC_PATH_PREFIXES.some(
       (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`)
     );
-  })();
+  }, [pathname]);
 
   const hideChrome =
     pathname &&
@@ -115,7 +108,7 @@ export function AppShell({ children }: PropsWithChildren) {
     }
   }, [pathname, loading, user, isAdmin, router]);
 
-  /* ----------  FULL-SCREEN LOADER  ---------- */
+  /* ----------  FULL-SCREEN LOADER (auth check only) ---------- */
   if (loading || redirecting)
     return (
       <div
@@ -126,19 +119,6 @@ export function AppShell({ children }: PropsWithChildren) {
         <Loading size={24} />
       </div>
     );
-
-  /* ----------  THEME NOT READY  ---------- */
-  if (!appReady) {
-    return (
-      <div
-        className="fixed inset-0 grid place-items-center overflow-hidden bg-[hsl(var(--background))]"
-        aria-busy="true"
-        aria-live="polite"
-      >
-        <Loading size={24} />
-      </div>
-    );
-  }
 
   /* ----------  AUTH PAGES  ---------- */
   if (hideChrome || hideChromeGlobal) {
@@ -167,7 +147,7 @@ export function AppShell({ children }: PropsWithChildren) {
             </main>
           </div>
         </div>
-        {!appReady ? <PartnersSkeleton /> : <Partners />}
+        <Partners />
         <SiteFooter />
         <BottomNavigation />
         <MobileQuickBar />
@@ -190,21 +170,14 @@ export function AppShell({ children }: PropsWithChildren) {
         <PageTransition>{children}</PageTransition>
       </main>
 
-      {/*  SAME ORDER AS BEFORE – swap skeletons while !appReady  */}
-      {!appReady ? (
-        <>
-          <HomePromoBannerSkeleton />
-          <PartnersSkeleton />
-          <SiteFooter />
-        </>
-      ) : (
+      {appReady ? (
         <>
           <HomePromoBanner />
           <Partners />
-          <SiteFooter />
         </>
-      )}
+      ) : null}
 
+      <SiteFooter />
       <BottomNavigation />
       <MobileQuickBar />
     </div>

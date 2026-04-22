@@ -25,9 +25,9 @@ export default function HomePromoBanner() {
     >
       <div className="container-padded">
         <motion.div
-          initial={{ opacity: 0, y: 32 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, amount: 0.3 }}
+          initial={{ y: 20 }}
+          whileInView={{ y: 0 }}
+          viewport={{ once: true, amount: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-hidden rounded-3xl
                        border border-[hsl(var(--border))]
@@ -67,18 +67,18 @@ export default function HomePromoBanner() {
 
                 <div className={`flex-1 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
                   <motion.h2
-                    initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    initial={{ x: isRtl ? 20 : -20 }}
+                    whileInView={{ x: 0 }}
+                    viewport={{ once: true, amount: 0 }}
                     transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="heading-2xl text-[hsl(var(--foreground))] drop-shadow-md"
                   >
                     {(t as any)("homePromoTitle") || "تمام محصولات ما را ببینید!"}
                   </motion.h2>
                   <motion.p
-                    initial={{ opacity: 0, x: isRtl ? 40 : -40 }}
-                    whileInView={{ opacity: 1, x: 0 }}
-                    viewport={{ once: true }}
+                    initial={{ x: isRtl ? 20 : -20 }}
+                    whileInView={{ x: 0 }}
+                    viewport={{ once: true, amount: 0 }}
                     transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
                     className="mt-3 text-base text-[hsl(var(--foreground)/0.8)] max-w-2xl"
                   >
@@ -88,9 +88,9 @@ export default function HomePromoBanner() {
                 </div>
 
                 <motion.div
-                  initial={{ opacity: 0, scale: 0.92 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
+                  initial={{ scale: 0.96 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true, amount: 0 }}
                   transition={{ delay: 0.35, type: "spring", stiffness: 300 }}
                   className={isRtl ? "flex flex-col items-center gap-4 sm:flex-row" : "flex flex-col items-center gap-4 md:items-end"}
                 >

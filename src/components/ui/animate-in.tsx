@@ -25,6 +25,7 @@ export const AnimateIn: React.FC<AnimateInProps> = ({
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Use amount:0 so animation triggers as soon as element enters view
     const obs = new IntersectionObserver(
       (entries) => {
         entries.forEach((e) => {
@@ -36,7 +37,7 @@ export const AnimateIn: React.FC<AnimateInProps> = ({
           }
         });
       },
-      { threshold: 0.15 }
+      { threshold: 0 }
     );
     obs.observe(el);
     return () => obs.disconnect();
@@ -48,6 +49,9 @@ export const AnimateIn: React.FC<AnimateInProps> = ({
       initial="initial"
       animate={visible ? "animate" : "initial"}
       className={`${className ?? ""} will-change`}
+      // Ensure content is never permanently invisible: if not yet in view,
+      // show with reduced opacity rather than fully hidden
+      style={!visible ? { opacity: 0.01 } : undefined}
       transition={{ ...variant.animate?.transition, delay }}
     >
       <Tag>{children}</Tag>

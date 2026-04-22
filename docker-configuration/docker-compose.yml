@@ -54,6 +54,8 @@ services:
       NODE_ENV: production
       DATABASE_URL: "mysql://root:Mcitp%40123@mysql:3306/marketplace"
       REDIS_URL: "redis://redis:6379"
+      REDIS_USERNAME: ""
+      REDIS_PASSWORD: ""
       ENABLE_ELASTIC_SEARCH: "false"
       ELASTICSEARCH_NODE: "http://elasticsearch:9200"
       ELASTICSEARCH_USERNAME: ""
@@ -78,10 +80,27 @@ services:
       ADMIN_EMAIL: "noorullah.azizi2040@gmail.com"
       ADMIN_PHONE: ""
       ADMIN_PASSWORD: "ChangeMe123!"
-      UNAPPROVED_RETENTION_DAYS: "2"
-      RENEW_WINDOW_DAYS: "14"
-      MODERATION_CLEANUP_TIME: "03:00"
-      RENEWAL_CLEANUP_TIME: "06:00"
+      # Listing retention & renewal
+      LISTING_UNAPPROVED_DELETE_AFTER_DAYS: "2"
+      LISTING_RENEWAL_WINDOW_DAYS: "14"
+      # Blog & story content retention
+      BLOG_STORY_KEEP_DAYS: "30"
+      # Status cleanup days
+      SOLD_RENTED_CLEANUP_DAYS: "90"
+      DRAFT_CLEANUP_DAYS: "30"
+      # Feedback reminder
+      FEEDBACK_REMINDER_DAYS: "7"
+      # Blog expiry lifecycle
+      BLOG_DEFAULT_EXPIRY_DAYS: "90"
+      NOTIFY_BLOG_OWNER_TO_RENEW_DAYS: "7"
+      # Scheduled job times (HH:mm 24h)
+      DAILY_LISTING_CLEANUP_TIME: "03:00"
+      DAILY_RENEWAL_REMINDER_TIME: "06:00"
+      DAILY_BLOG_STORY_CLEANUP_TIME: "04:00"
+      DAILY_STATUS_CLEANUP_TIME: "02:00"
+      DAILY_RENEWAL_EXPIRE_TIME: "01:00"
+      DAILY_FEEDBACK_REMINDER_TIME: "08:00"
+      DAILY_BLOG_EXPIRY_CHECK_TIME: "05:00"
     depends_on:
       - mysql
       - redis
@@ -106,6 +125,8 @@ services:
         NEXT_PUBLIC_FACEBOOK_APP_ID: ""
         NEXT_PUBLIC_GOOGLE_AUTH_URL: "/api/auth/google"
         NEXT_PUBLIC_FACEBOOK_AUTH_URL: "/api/auth/facebook"
+        NEXT_PUBLIC_SITE_URL: "https://marketplace.devminds.net"
+        NEXT_PUBLIC_USE_MOCK_DATA: "false"
         BLOG_ORIGIN: "https://blogs.devminds.net"
         MARKETPLACE_ORIGIN: "https://marketplace.devminds.net"
     restart: unless-stopped
@@ -130,6 +151,10 @@ services:
       NEXT_PUBLIC_GOOGLE_AUTH_URL: "/api/auth/google"
       NEXT_PUBLIC_FACEBOOK_AUTH_URL: "/api/auth/facebook"
       SESSION_SECRET: "replace_with_random_session_secret"
+      NEXT_PUBLIC_SITE_URL: "https://marketplace.devminds.net"
+      NEXT_PUBLIC_USE_MOCK_DATA: "false"
+      # Server-side internal API base (used by Next.js API routes / auth callbacks / uploads proxy)
+      API_BASE: "http://backend:4000/api"
       # Database access is usually not needed in frontend except if it hits prisma directly (it doesn't here usually)
       # DATABASE_URL: ""
     depends_on:

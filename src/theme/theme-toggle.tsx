@@ -10,7 +10,7 @@ type Props = {
 };
 
 function subscribe() {
-  return () => {};
+  return () => { };
 }
 
 export function ThemeToggle({ iconOnly = false, className }: Props) {
