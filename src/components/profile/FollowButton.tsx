@@ -3,7 +3,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "swr";
+import { mutate } from "@/lib/query-client";
 import { useAuth } from "@/lib/use-auth";
 import { UserCheck, UserPlus, Loader2 } from "lucide-react";
 

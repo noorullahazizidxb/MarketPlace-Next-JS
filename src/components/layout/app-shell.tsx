@@ -1,6 +1,7 @@
 "use client";
 
 import { PropsWithChildren, useEffect, useMemo } from "react";
+import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
@@ -13,11 +14,19 @@ import { PageTransition } from "@/components/ui/page-transition";
 import Loading from "@/components/ui/loading";
 import { useAppStore } from "@/store/app.store";
 import SiteFooter from "@/components/layout/site-footer";
-import { Partners } from "@/components/ui/partners";
-import HomePromoBanner from "@/components/ui/home-promo-banner";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
+
+// Below-fold heavy components — lazy loaded so they don't block initial render
+const Partners = dynamic(
+  () => import("@/components/ui/partners").then((m) => m.Partners),
+  { ssr: false }
+);
+const HomePromoBanner = dynamic(
+  () => import("@/components/ui/home-promo-banner"),
+  { ssr: false }
+);
 
 const PUBLIC_PATH_PREFIXES = [
   "/blog",

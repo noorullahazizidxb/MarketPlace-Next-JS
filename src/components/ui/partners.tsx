@@ -1,5 +1,4 @@
 "use client";
-import Image from "next/image";
 import { useMemo } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { usePathname } from "next/navigation";
@@ -53,7 +52,8 @@ export function Partners() {
                            hover:border-[hsl(var(--accent))]/50 hover:bg-[hsl(var(--accent))]/8
                            transition-all duration-300 group"
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={l.src}
                   alt={l.alt}
                   width={40}

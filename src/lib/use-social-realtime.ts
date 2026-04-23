@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 import { io, Socket } from "socket.io-client";
 import { setCachedToken } from "./axiosClient";
 import { useAuth } from "./use-auth";
-import { mutate as mutateSWR } from "swr";
+import { mutate as mutateSWR } from "@/lib/query-client";
 import { Story, BlogSummary, CommentItem } from "../types/social";
 
 /**
@@ -27,7 +27,7 @@ export function useSocialRealtime(enabled = true) {
     sockRef.current = socket;
 
     socket.on("connect", () => {
-      try { console.log("[social] connected"); } catch {}
+      try { console.log("[social] connected"); } catch { }
     });
 
     socket.on("storyCreated", (s: Story) => {
@@ -38,7 +38,7 @@ export function useSocialRealtime(enabled = true) {
           if (prev.find((x) => x.id === s.id)) return prev;
           return [s, ...prev];
         }) as any, false);
-      } catch {}
+      } catch { }
     });
 
     socket.on("blogUpdated", (b: BlogSummary) => {
@@ -48,8 +48,8 @@ export function useSocialRealtime(enabled = true) {
           return prev.map((x) => (x.id === b.id ? { ...x, ...b } : x));
         }) as any, false);
         // update blog detail cache
-  mutateSWR(["blogs", b.id] as any, ((prev: any) => ({ ...(prev || {}), ...b }) ) as any, false);
-      } catch {}
+        mutateSWR(["blogs", b.id] as any, ((prev: any) => ({ ...(prev || {}), ...b })) as any, false);
+      } catch { }
     });
 
     socket.on("newComment", (c: CommentItem) => {
@@ -82,7 +82,7 @@ export function useSocialRealtime(enabled = true) {
           mutateSWR(["blogs", c.blogId]);
           mutateSWR(["blogs"]);
         }
-      } catch {}
+      } catch { }
     });
 
     socket.on("newLike", (payload: { blogId: string; likes?: number }) => {
@@ -97,7 +97,7 @@ export function useSocialRealtime(enabled = true) {
           mutateSWR(["blogs", payload.blogId]);
           mutateSWR(["blogs"]);
         }
-      } catch {}
+      } catch { }
     });
 
     socket.on("newShare", (payload: { blogId: string; shares?: number }) => {
@@ -111,13 +111,13 @@ export function useSocialRealtime(enabled = true) {
           mutateSWR(["blogs", payload.blogId]);
           mutateSWR(["blogs"]);
         }
-      } catch {}
+      } catch { }
     });
 
     return () => {
       try {
         socket.disconnect();
-      } catch {}
+      } catch { }
       sockRef.current = null;
       setCachedToken(null);
     };

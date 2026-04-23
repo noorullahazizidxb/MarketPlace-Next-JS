@@ -1,7 +1,7 @@
 "use client";
 import React, { useMemo, useState } from "react";
 import { useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "swr";
+import { mutate } from "@/lib/query-client";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";

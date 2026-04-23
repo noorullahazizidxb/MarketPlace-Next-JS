@@ -54,12 +54,28 @@ export function ImageSlider({
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const { isEngaged, engagementProps } = useEngagedAutoplay();
   const prevActiveRef = useRef(false);
+  // Cache container width to avoid reading clientWidth (forced reflow) on every slide change
+  const cachedWidthRef = useRef<number>(0);
   // Respect reduced motion preferences
   const prefersReducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [inView, setInView] = useState(true);
+
+  // Cache scroller width via ResizeObserver — avoids forced reflow on slide change
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    // Seed the initial value
+    cachedWidthRef.current = el.clientWidth;
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) cachedWidthRef.current = entry.contentRect.width;
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
 
   // Observe visibility to avoid running autoplay offscreen
   useEffect(() => {
@@ -118,12 +134,12 @@ export function ImageSlider({
     inView,
   ]);
 
-  // Scroll to active index when it changes
+  // Scroll to active index when it changes — use cached width to avoid forced reflow
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
-    const left = index * el.clientWidth;
-    el.scrollTo({ left, behavior: "smooth" });
+    const width = cachedWidthRef.current || el.offsetWidth;
+    el.scrollTo({ left: index * width, behavior: "smooth" });
   }, [index]);
 
   return (

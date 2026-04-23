@@ -87,13 +87,13 @@ export function SearchBox({
     elasticSearchEnabled ? ["search", debounced, page, perPage] : null,
     searchURL,
     { q: debounced, page, perPage },
-    { revalidateOnFocus: false }
+    { refetchOnWindowFocus: false }
   );
   const { data: fallbackListings, isLoading: isFallbackLoading } = useSWRGet<any[]>(
     elasticSearchEnabled ? null : ["listings", "search-fallback"],
     "/listings",
     undefined,
-    { revalidateOnFocus: false }
+    { refetchOnWindowFocus: false }
   );
 
   useEffect(() => {
@@ -106,20 +106,29 @@ export function SearchBox({
   }, []);
 
   useLayoutEffect(() => {
-    const update = () => {
-      const el = boxRef.current;
-      if (!el) return setRect(null);
-      const r = el.getBoundingClientRect();
-      setRect(r);
+    const el = boxRef.current;
+    if (!el) return;
+    // Always capture initial rect so popup is positioned correctly on first open
+    const r = el.getBoundingClientRect();
+    setRect(r);
+
+    if (!open) return; // Don't attach listeners when dropdown is closed
+
+    // On resize update the rect; on scroll just close (avoids getBoundingClientRect on every scroll)
+    const onResize = () => {
+      const el2 = boxRef.current;
+      if (!el2) return setRect(null);
+      setRect(el2.getBoundingClientRect());
     };
-    update();
-    window.addEventListener("resize", update);
-    window.addEventListener("scroll", update, true);
+    const onScroll = () => setOpen(false);
+
+    window.addEventListener("resize", onResize);
+    window.addEventListener("scroll", onScroll, { passive: true, capture: true });
     return () => {
-      window.removeEventListener("resize", update);
-      window.removeEventListener("scroll", update, true);
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("scroll", onScroll, { capture: true } as EventListenerOptions);
     };
-  }, []);
+  }, [open]);
   const popupRef = useRef<HTMLDivElement | null>(null);
   useLayoutEffect(() => {
     const el = popupRef.current;
@@ -190,6 +199,9 @@ export function SearchBox({
           <line x1="21" y1="21" x2="16.65" y2="16.65" />
         </svg>
         <input
+          id="search-box-input"
+          name="q"
+          autoComplete="off"
           className={cn(
             "bg-transparent outline-none text-sm flex-1 min-w-0",
             isSheet ? "w-full" : "w-40 sm:w-56"

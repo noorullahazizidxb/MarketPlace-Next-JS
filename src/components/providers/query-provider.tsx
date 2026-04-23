@@ -2,6 +2,7 @@
 
 import React, { PropsWithChildren, useState, useEffect } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "@/lib/query-client";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import {
   loadFileThemes,
@@ -33,18 +34,7 @@ const deepMerge = (base: any, override: any): any => {
 };
 
 export function QueryProvider({ children }: PropsWithChildren) {
-  const [client] = useState(
-    () =>
-      new QueryClient({
-        defaultOptions: {
-          queries: {
-            retry: 1,
-            staleTime: 30_000,
-            refetchOnWindowFocus: false,
-          },
-        },
-      }),
-  );
+  const [client] = useState(() => queryClient);
 
   return (
     <QueryClientProvider client={client}>

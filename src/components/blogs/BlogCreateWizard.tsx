@@ -2,7 +2,7 @@
 import React, { useMemo, useState, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "swr";
+import { mutate } from "@/lib/query-client";
 import {
   ArrowLeft,
   ArrowRight,

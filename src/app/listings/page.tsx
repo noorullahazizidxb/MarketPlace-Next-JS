@@ -7,23 +7,31 @@ import {
   useRef,
   useState,
   useEffect,
+  useTransition,
+  memo,
 } from "react";
+import dynamic from "next/dynamic";
 import { useApiGet } from "@/lib/api-hooks";
 import { ListingCard, type Listing } from "@/components/ui/listing-card";
 import { FiltersBar } from "@/components/ui/filters-bar";
 import { HomeHero } from "@/components/listings/HomeHero";
-import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSocialRealtime } from "@/lib/use-social-realtime";
-import { asset } from "@/lib/assets";
 import StoriesBar from "@/components/stories/StoriesBar";
 import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 import { Tooltip } from "@/components/ui/tooltip";
+import { ComponentLoading } from "@/components/ui/component-loading";
+
+// Lazy-load below-fold / heavy components to keep initial bundle small
+const HiddenListingsSlider = dynamic(
+  () => import("@/components/listings/HiddenListingsSlider").then((m) => m.HiddenListingsSlider),
+  { ssr: false, loading: () => <ComponentLoading rows={2} className="h-24" /> }
+);
 
 export default function ListingsPage() {
   return (
@@ -106,7 +114,8 @@ function ListingsContent() {
     if (window.innerWidth >= 640) return 2;
     return 1;
   };
-  const [numCols, setNumCols] = useState(1);
+  // Initialize from window immediately (not 1) to avoid layout shift on desktop
+  const [numCols, setNumCols] = useState(() => computeNumCols());
   useEffect(() => {
     setNumCols(computeNumCols());
     const onResize = () => setNumCols(computeNumCols());
@@ -310,12 +319,15 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const search = useSearchParams();
   const router = useRouter();
   const pathname = usePathname();
+  const [isPending, startTransition] = useTransition();
   const set = (p: number) => {
-    const params = new URLSearchParams(search.toString());
-    params.set("page", String(p));
-    router.push(`${pathname}?${params.toString()}`);
-    const el = document.querySelector("h2.heading-xl");
-    if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    startTransition(() => {
+      const params = new URLSearchParams(search.toString());
+      params.set("page", String(p));
+      router.push(`${pathname}?${params.toString()}`);
+      const el = document.querySelector("h2.heading-xl");
+      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+    });
   };
   const generateVisible = (cur: number, total: number) => {
     if (total <= 5) return Array.from({ length: total }).map((_, i) => i + 1);
@@ -326,13 +338,13 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const visible = generateVisible(page, pageCount);
 
   return (
-    <div className="mt-4 flex items-center justify-center gap-2">
+    <div className={`mt-4 flex items-center justify-center gap-2 transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
       <Tooltip content={t("prev")} side="top">
         <Button
           variant="accent"
           size="sm"
           onClick={() => page > 1 && set(page - 1)}
-          disabled={page <= 1}
+          disabled={page <= 1 || isPending}
         >
           {t("prev")}
         </Button>
@@ -369,7 +381,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
           variant="accent"
           size="sm"
           onClick={() => page < pageCount && set(page + 1)}
-          disabled={page >= pageCount}
+          disabled={page >= pageCount || isPending}
         >
           {t("next")}
         </Button>

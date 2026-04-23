@@ -1,8 +1,6 @@
 "use client";
 
-import useSWR, { SWRConfiguration, SWRResponse } from "swr";
-import useSWRImmutable from "swr/immutable";
-import { useMutation, UseMutationOptions } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from "@tanstack/react-query";
 import type { AxiosError, AxiosRequestConfig } from "axios";
 import { api, HttpMethod } from "./axiosClient";
 import { toastSuccess, toastError } from "./toast";
@@ -83,58 +81,82 @@ async function localFetch<T>(url: string, init?: RequestInit): Promise<T> {
   }
 }
 
-// SWR GET for external API with axios interceptor (Authorization etc.)
+// React Query GET for external API with axios interceptor (Authorization etc.)
 export function useSWRGet<T = any>(
   key: string | any[] | null,
   url: string,
   params?: Record<string, any>,
-  options?: SWRConfiguration<T, ErrorType>
-): SWRResponse<T, ErrorType> {
-  const swrKey = key === null ? null : Array.isArray(key) ? key : [key];
-  return useSWR<T, ErrorType>(swrKey as any, () => axiosGet<T>(url, params), {
-    revalidateOnFocus: false,
-    // Cache results for 5 minutes to prevent re-fetching on navigation / remount
-    dedupingInterval: 5 * 60 * 1000,
-    revalidateIfStale: false,
+  options?: Omit<UseQueryOptions<T, ErrorType>, "queryKey" | "queryFn">
+) {
+  const queryClient = useQueryClient();
+  const queryKey: any[] = key === null ? ["__disabled__"] : Array.isArray(key) ? key : [key];
+  const result = useQuery<T, ErrorType>({
+    queryKey,
+    queryFn: () => axiosGet<T>(url, params),
+    enabled: key !== null,
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     ...options,
   });
+  // SWR-compatible bound mutate: mutate(data?, revalidate? = true)
+  const mutate = (data?: T | ((prev: T | undefined) => T), revalidate = true) => {
+    if (data !== undefined) queryClient.setQueryData<T>(queryKey, data as any);
+    if (revalidate !== false) queryClient.invalidateQueries({ queryKey });
+  };
+  return { ...result, mutate };
 }
 
-// SWR GET for internal Next API routes (/api/*)
+// React Query GET for internal Next API routes (/api/*)
 export function useLocalGet<T = any>(
   key: string | any[],
   url: string,
-  options?: SWRConfiguration<T, ErrorType>
-): SWRResponse<T, ErrorType> {
-  const swrKey = Array.isArray(key) ? key : [key];
-  return useSWR<T, ErrorType>(swrKey, () => localFetch<T>(url), {
-    revalidateOnFocus: false,
-    dedupingInterval: 5 * 60 * 1000,
-    revalidateIfStale: false,
+  options?: Omit<UseQueryOptions<T, ErrorType>, "queryKey" | "queryFn">
+) {
+  const queryClient = useQueryClient();
+  const queryKey: any[] = Array.isArray(key) ? key : [key];
+  const result = useQuery<T, ErrorType>({
+    queryKey,
+    queryFn: () => localFetch<T>(url),
+    staleTime: 5 * 60 * 1000,
+    refetchOnWindowFocus: false,
     ...options,
   });
+  const mutate = (data?: T | ((prev: T | undefined) => T), revalidate = true) => {
+    if (data !== undefined) queryClient.setQueryData<T>(queryKey, data as any);
+    if (revalidate !== false) queryClient.invalidateQueries({ queryKey });
+  };
+  return { ...result, mutate };
 }
 
-// Immutable variant for internal GETs
+// Immutable variant for internal GETs (staleTime: Infinity means never re-fetch)
 export function useLocalGetImmutable<T = any>(
   key: string | any[] | null,
   url: string,
-  options?: SWRConfiguration<T, ErrorType>
-): SWRResponse<T, ErrorType> {
-  const swrKey = key === null ? null : Array.isArray(key) ? key : [key];
-  return useSWRImmutable<T, ErrorType>(swrKey as any, () => localFetch<T>(url), {
-    revalidateOnFocus: false,
-    dedupingInterval: 5 * 60 * 1000,
+  options?: Omit<UseQueryOptions<T, ErrorType>, "queryKey" | "queryFn">
+) {
+  const queryClient = useQueryClient();
+  const queryKey: any[] = key === null ? ["__disabled__"] : Array.isArray(key) ? key : [key];
+  const result = useQuery<T, ErrorType>({
+    queryKey,
+    queryFn: () => localFetch<T>(url),
+    enabled: key !== null,
+    staleTime: Infinity,
+    refetchOnWindowFocus: false,
     ...options,
-  }) as unknown as SWRResponse<T, ErrorType>;
+  });
+  const mutate = (data?: T | ((prev: T | undefined) => T), revalidate = true) => {
+    if (data !== undefined) queryClient.setQueryData<T>(queryKey, data as any);
+    if (revalidate !== false) queryClient.invalidateQueries({ queryKey });
+  };
+  return { ...result, mutate };
 }
 
-// Backward-compatible wrapper: delegate React Query GETs to SWR
+// Backward-compatible wrapper
 export function useApiGet<TData = any>(
   key: readonly unknown[] | null,
   url: string,
   params?: Record<string, any>,
-  options?: SWRConfiguration<TData, ErrorType>
+  options?: Omit<UseQueryOptions<TData, ErrorType>, "queryKey" | "queryFn">
 ) {
   return useSWRGet<TData>(key as any, url, params, options);
 }
@@ -217,5 +239,3 @@ export function useLocalMutation<TData = any>(
     ...options,
   });
 }
-
-export { useSWRImmutable };

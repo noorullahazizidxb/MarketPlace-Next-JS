@@ -1,7 +1,7 @@
 "use client";
 import { useEffect } from "react";
 import { initSocket, getSocket } from "@/lib/socket";
-import { mutate as swrMutate } from "swr";
+import { mutate as swrMutate } from "@/lib/query-client";
 
 type BlogUpdatedPayload = { id: string; blog: any };
 type NewCommentPayload = { blogId: string; comment: any };
