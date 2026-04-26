@@ -74,7 +74,7 @@ const UsersDashboard: React.FC = () => {
       include:
         "roles,listings,notifications,auditLogs,feedbacks,representativeInfo",
     },
-    { revalidateOnFocus: false }
+    { refetchOnWindowFocus: false }
   );
 
   const users: BaseUser[] = useMemo(() => {
