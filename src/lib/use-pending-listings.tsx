@@ -13,7 +13,7 @@ export function usePendingListings() {
   const socketRef = useRef<Socket | null>(null);
   const [connected, setConnected] = useState(false);
 
-  const { data, error, isValidating, mutate } = useApiGet(
+  const { data, error, isFetching: isValidating, mutate } = useApiGet(
     token && isAdmin ? ["pending-listings"] : null,
     "/listings/for-approval"
   );

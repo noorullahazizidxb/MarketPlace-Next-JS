@@ -13,7 +13,7 @@ export function useRealtimeSocial(token?: string) {
 
     const mutateBlogLists = (updater: (prev: any[] | undefined) => any[]) => {
       swrMutate(
-        (key) => Array.isArray(key) && key[0] === "blogs" && key.length >= 3,
+        (key: any) => Array.isArray(key) && key[0] === "blogs" && key.length >= 3,
         (prev: any) => updater(Array.isArray(prev) ? prev : []),
         false
       );

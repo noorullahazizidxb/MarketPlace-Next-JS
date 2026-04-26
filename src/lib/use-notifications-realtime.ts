@@ -15,7 +15,7 @@ export function useNotificationsRealtime(enabled: boolean = true) {
 
   const userId = useMemo(() => (user?.id ?? user?._id ?? null), [user]);
 
-  const { data, error, isValidating, mutate } = useApiGet<any[]>(
+  const { data, error, isFetching: isValidating, mutate } = useApiGet<any[]>(
     userId ? ["notifications", userId] : (undefined as unknown as readonly unknown[]),
     "/notifications"
   );
@@ -69,20 +69,20 @@ export function useNotificationsRealtime(enabled: boolean = true) {
     const socket = io(
       process.env.NEXT_PUBLIC_WS_URL || process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000",
       {
-      auth: { token: bearer },
-      query: { token: bearer },
-      transports: ["websocket"],
-      autoConnect: true,
-      reconnection: true,
-      reconnectionAttempts: 10,
-      reconnectionDelay: 1000,
+        auth: { token: bearer },
+        query: { token: bearer },
+        transports: ["websocket"],
+        autoConnect: true,
+        reconnection: true,
+        reconnectionAttempts: 10,
+        reconnectionDelay: 1000,
       }
     );
     socketRef.current = socket;
 
     socket.on("connect", () => {
       setConnected(true);
-      try { console.log("[notifications] websocket connected"); } catch {}
+      try { console.log("[notifications] websocket connected"); } catch { }
     });
     socket.on("disconnect", () => setConnected(false));
 
