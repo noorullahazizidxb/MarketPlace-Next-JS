@@ -73,11 +73,16 @@ const config: Config = {
           "0%": { backgroundPosition: "0% 50%" },
           "100%": { backgroundPosition: "200% 50%" },
         },
+        "logo-scroll": {
+          "0%": { transform: "translateX(0px)" },
+          "100%": { transform: "translateX(-144rem)" },
+        },
       },
       animation: {
         aurora: "aurora 12s ease-in-out infinite",
         float: "float 6s ease-in-out infinite",
         shimmer: "shimmer 2.5s linear infinite",
+        "logo-scroll": "logo-scroll 30s linear infinite",
       },
     },
   },

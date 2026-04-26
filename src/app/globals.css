@@ -184,6 +184,8 @@ html[lang="fa"] .heading-sm {
   --font-size-body: 1rem;
   --font-size-heading: 1.25rem;
   --font-size-ui: 0.95rem;
+  /* Heading texture mask — points to /public/mask.png; used by :where(h1…h6) and strong/b below */
+  --app-heading-mask-image: url('/mask.png');
 
   /* Default LIGHT prefixed tokens (local neon fallback) */
   --light-background: 195 100% 98%;
@@ -291,6 +293,33 @@ h6,
 .heading-md,
 .heading-sm {
   font-size: var(--font-size-heading, inherit);
+}
+
+/* ── Textured heading mask treatment — RTL + LTR safe (mask-position: center) ── */
+/* Works in both dir="ltr" and dir="rtl" because center is axis-agnostic.          */
+:where(h1, h2, h3, h4, h5, h6) {
+  line-height: 1.4cap;
+  padding-block-end: 0.25ch;
+  -webkit-mask-image: var(--app-heading-mask-image);
+  mask-image: var(--app-heading-mask-image);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
+}
+
+/* Apply the same texture to bold / important inline text */
+:where(strong, b) {
+  -webkit-mask-image: var(--app-heading-mask-image);
+  mask-image: var(--app-heading-mask-image);
+  -webkit-mask-size: cover;
+  mask-size: cover;
+  -webkit-mask-repeat: no-repeat;
+  mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-position: center;
 }
 
 input,
@@ -817,6 +846,17 @@ button[aria-label^="Go to slide"]:focus {
 
 @media (prefers-reduced-motion: reduce) {
   .partners-marquee-track {
+    animation: none;
+  }
+}
+
+/* Logo carousel — used by partners.tsx (logo-carousel replacement) */
+.animate-logo-scroll:hover {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-logo-scroll {
     animation: none;
   }
 }
