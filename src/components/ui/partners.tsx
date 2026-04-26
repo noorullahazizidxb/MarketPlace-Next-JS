@@ -120,7 +120,7 @@ export function Partners() {
           <div className="pointer-events-none absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-[hsl(var(--background))] to-transparent" />
 
           {/* Track — duplicated 2× so translateX(-50%) loops seamlessly */}
-          <div className="flex animate-logo-scroll py-4">
+          <div className="flex animate-logo-scroll py-14">
             {[...techCompanies, ...techCompanies].map((company, index) => (
               <div
                 key={index}
