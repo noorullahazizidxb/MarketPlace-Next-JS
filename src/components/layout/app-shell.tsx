@@ -16,13 +16,10 @@ import { useAppStore } from "@/store/app.store";
 import SiteFooter from "@/components/layout/site-footer";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
+import { Partners } from "@/components/ui/partners";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
 
 // Below-fold heavy components — lazy loaded so they don't block initial render
-const Partners = dynamic(
-  () => import("@/components/ui/partners").then((m) => m.Partners),
-  { ssr: false }
-);
 const HomePromoBanner = dynamic(
   () => import("@/components/ui/home-promo-banner"),
   { ssr: false }
@@ -149,7 +146,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <Navbar className="hidden md:block" />
             <main
               id="main-content"
-              className="flex-1 container-padded py-6"
+              className="flex-1 container-padded py-4 md:py-5"
               dir="ltr"
             >
               <PageTransition>{children}</PageTransition>
@@ -173,18 +170,15 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
       <main
         id="main-content"
-        className="flex-1 container-padded py-6"
+        className="flex-1 container-padded py-4 md:py-5"
         dir="ltr"
       >
         <PageTransition>{children}</PageTransition>
       </main>
 
-      {appReady ? (
-        <>
-          <HomePromoBanner />
-          <Partners />
-        </>
-      ) : null}
+      {appReady ? <HomePromoBanner /> : null}
+
+      <Partners />
 
       <SiteFooter />
       <BottomNavigation />

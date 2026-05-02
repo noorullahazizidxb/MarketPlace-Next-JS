@@ -13,11 +13,11 @@ export function ImageSlider({
   className = "",
   aspect = "4/1",
   heightClass,
-  sizes = "(max-width: 768px) 100vw, 33vw",
+  sizes = "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, (max-width: 1536px) 30vw, 22vw",
   autoPlay = false,
   forceEngaged = false,
   intervalMs = 5000,
-  firstSlideIsPriority = true,
+  firstSlideIsPriority = false,
 }: {
   images?: Slide[] | null;
   className?: string;
@@ -262,7 +262,7 @@ function SlideImage({
         placeholder="blur"
         blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
         sizes={sizes}
-        loading={index === 0 ? "eager" : "lazy"}
+        loading={firstSlideIsPriority && index === 0 ? "eager" : "lazy"}
         priority={firstSlideIsPriority && index === 0}
         fetchPriority={firstSlideIsPriority && index === 0 ? "high" : "auto"}
         draggable={false}

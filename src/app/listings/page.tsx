@@ -117,11 +117,9 @@ function ListingsContent() {
   // Initialize from window immediately (not 1) to avoid layout shift on desktop
   const [numCols, setNumCols] = useState(() => computeNumCols());
   useEffect(() => {
-    setNumCols(computeNumCols());
     const onResize = () => setNumCols(computeNumCols());
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
   const pageSize = numCols * 4; // 4 complete rows per page
   // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
@@ -324,9 +322,11 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
     startTransition(() => {
       const params = new URLSearchParams(search.toString());
       params.set("page", String(p));
-      router.push(`${pathname}?${params.toString()}`);
-      const el = document.querySelector("h2.heading-xl");
-      if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+      const listingsRoot = document.getElementById("listings");
+      if (listingsRoot) {
+        listingsRoot.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+      router.push(`${pathname}?${params.toString()}`, { scroll: false });
     });
   };
   const generateVisible = (cur: number, total: number) => {

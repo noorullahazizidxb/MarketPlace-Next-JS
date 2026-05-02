@@ -16,7 +16,7 @@ export function HomeHero() {
   const { user } = useAuth();
 
   return (
-    <section className="relative overflow-hidden mt-5 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <section className="relative overflow-hidden mt-2 md:mt-3 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
       {/* ----------  accent gradients + glass shapes ---------- */}
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,hsl(var(--accent)/.3),transparent_50%)]" />
@@ -33,7 +33,7 @@ export function HomeHero() {
 
       </div>
 
-      <div className="relative z-10 px-5 sm:px-8 md:px-12 py-12 sm:py-16 md:py-20 grid lg:grid-cols-2 items-center gap-8">
+      <div className="relative z-10 px-5 sm:px-8 md:px-10 py-8 sm:py-10 md:py-14 grid lg:grid-cols-2 items-center gap-6 md:gap-8">
         {/* ----------  left side ---------- */}
         <div dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "text-right" : "text-left"}>
           <motion.h1
@@ -96,6 +96,7 @@ export function HomeHero() {
             alt="Hero property"
             fill
             priority
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 50vw"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
@@ -109,6 +110,8 @@ export function HomeHero() {
                   src={url}
                   alt={`Gallery ${i + 1}`}
                   fill
+                  sizes="(max-width: 640px) 28vw, (max-width: 1024px) 18vw, 12vw"
+                  loading="lazy"
                   className="object-cover"
                 />
                 {i === 1 && (

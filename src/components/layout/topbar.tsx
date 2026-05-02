@@ -87,7 +87,7 @@ export function Topbar() {
                   <ThemeToggle iconOnly className="hidden sm:grid" />
                 </Tooltip>
                 <div className="size-12 rounded-xl overflow-hidden bg-white shadow-sm shrink-0">
-                  <Image src="/logo/logo.png" alt="Dev Minds" width={48} height={48} className="w-full h-full object-contain" priority />
+                  <Image src="/logo/logo.png" alt="Dev Minds" width={48} height={48} sizes="48px" className="w-full h-full object-contain" />
                 </div>
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}

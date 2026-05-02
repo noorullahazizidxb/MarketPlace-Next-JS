@@ -88,7 +88,7 @@ const techCompanies = [
 
 export function Partners() {
   return (
-    <section className="relative py-20 overflow-hidden">
+    <section className="relative py-12 md:py-14 overflow-hidden">
       {/* Ambient radial glow — compositor-only, no layout cost */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[260px] rounded-full bg-[hsl(var(--primary)/0.07)] blur-3xl" />
@@ -98,7 +98,7 @@ export function Partners() {
 
       <div className="container mx-auto px-4 relative">
         {/* ── Heading ──────────────────────────────────────────────────────── */}
-        <div className="text-center mb-12 space-y-3">
+        <div className="text-center mb-8 md:mb-10 space-y-3">
           <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-[hsl(var(--primary))]">
             Our Partners
           </p>
@@ -120,7 +120,7 @@ export function Partners() {
           <div className="pointer-events-none absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-[hsl(var(--background))] to-transparent" />
 
           {/* Track — duplicated 2× so translateX(-50%) loops seamlessly */}
-          <div className="flex animate-logo-scroll py-14">
+          <div className="flex animate-logo-scroll py-10 md:py-12">
             {[...techCompanies, ...techCompanies].map((company, index) => (
               <div
                 key={index}

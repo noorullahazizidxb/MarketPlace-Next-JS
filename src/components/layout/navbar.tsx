@@ -1,21 +1,15 @@
 "use client";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import { ThemeToggle } from "../../theme/theme-toggle";
 import { SearchBox } from "../ui/search-box";
-import { Search, Menu, Bell as BellIcon } from "lucide-react";
-import { useAuth } from "@/lib/use-auth";
+import { Menu } from "lucide-react";
 import { useUIStore } from "@/store/ui.store";
 import { LanguageDropdown } from "@/components/ui/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Tooltip } from "@/components/ui/tooltip";
 
 export function Navbar({ className = "" }: { className?: string }) {
-  const mobileOpen = useUIStore((s) => s.mobileMenuOpen);
   const toggleMobileMenu = useUIStore((s) => s.toggleMobileMenu);
-  const closeMobileMenu = useUIStore((s) => s.closeMobileMenu);
-  const { roles } = useAuth();
-  const canSeeMobileSidebar = roles.includes("ADMIN");
   const { t, locale } = useLanguage();
 
   return (
@@ -36,7 +30,7 @@ export function Navbar({ className = "" }: { className?: string }) {
               </button>
             </Tooltip>
             <div className="size-11 rounded-xl overflow-hidden bg-white shadow-sm hidden sm:flex shrink-0">
-              <Image src="/logo/logo.png" alt="Dev Minds" width={44} height={44} className="w-full h-full object-contain" priority />
+              <Image src="/logo/logo.png" alt="Dev Minds" width={44} height={44} sizes="44px" className="w-full h-full object-contain" />
             </div>
             <span className="font-semibold">{t("marketplace")}</span>
           </div>

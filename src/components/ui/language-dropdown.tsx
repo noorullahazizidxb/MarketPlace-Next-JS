@@ -35,7 +35,7 @@ function Flag({
       alt={alt || country}
       width={20}
       height={14}
-      className={cn("rounded-sm object-cover", className)}
+      className={cn("h-auto w-auto rounded-sm object-cover", className)}
       priority={false}
     />
   );

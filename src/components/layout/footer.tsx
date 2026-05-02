@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { motion } from "framer-motion";
 import Image from "next/image";
 import QRCode from "react-qr-code";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -18,8 +17,6 @@ import {
   Shield,
   BookOpen,
   LayoutList,
-  Image as ImageIcon,
-  Star,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -52,7 +49,7 @@ export default function Footer() {
   const { locale, t } = useLanguage();
 
   return (
-    <footer className="relative mt-20" dir={locale === "fa" ? "rtl" : "ltr"}>
+    <footer className="relative mt-10 md:mt-12" dir={locale === "fa" ? "rtl" : "ltr"}>
       {/* Background scene — only CSS vars, no hardcoded palette colors */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full blur-3xl opacity-60"
@@ -66,20 +63,14 @@ export default function Footer() {
         />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, amount: 0.3 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-        className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8"
-      >
+      <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
         <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
-          <div className="grid grid-cols-1 gap-8 p-6 sm:grid-cols-2 lg:grid-cols-5 lg:p-10">
+          <div className="grid grid-cols-1 gap-6 p-5 sm:grid-cols-2 lg:grid-cols-5 lg:p-8">
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3">
                 <div className="flex h-14 w-14 overflow-hidden rounded-2xl bg-white shadow-sm shrink-0">
-                  <Image src="/logo/logo.png" alt="Dev Minds" width={56} height={56} className="w-full h-full object-contain" priority />
+                  <Image src="/logo/logo.png" alt="Dev Minds" width={56} height={56} sizes="56px" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <div className="text-base font-semibold tracking-tight">
@@ -261,7 +252,7 @@ export default function Footer() {
             </div>
           </div>
         </div>
-      </motion.div>
+      </div>
     </footer>
   );
 }
