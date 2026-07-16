@@ -9,7 +9,7 @@ export function AnimatedBg() {
   return (
     <div
       aria-hidden
-      className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
+      className="pointer-events-none fixed inset-0 z-0 overflow-hidden"
     >
       {/* Conic glow — CSS spin-slow class, GPU compositor layer */}
       <div className="absolute -inset-1 opacity-60 bg-conic-primary-secondary blur-18 animate-spin-slow" />

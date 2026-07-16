@@ -138,9 +138,9 @@ export function AppShell({ children }: PropsWithChildren) {
   /* ----------  ADMIN LAYOUT  ---------- */
   if (isAdmin) {
     return (
-      <div className="min-h-screen flex flex-col">
+      <div className="relative isolate min-h-screen flex flex-col">
         <AnimatedBg />
-        <div className="flex-1 grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
+        <div className="relative z-10 flex-1 grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
           <Sidebar />
           <div className="flex flex-col min-h-full min-w-0 w-full">
             <Navbar className="hidden md:block" />
@@ -153,8 +153,10 @@ export function AppShell({ children }: PropsWithChildren) {
             </main>
           </div>
         </div>
-        <Partners />
-        <SiteFooter />
+        <div className="relative z-10">
+          <Partners />
+          <SiteFooter />
+        </div>
         <BottomNavigation />
         <MobileQuickBar />
       </div>
@@ -163,24 +165,24 @@ export function AppShell({ children }: PropsWithChildren) {
 
   /* ----------  NORMAL USER LAYOUT  ---------- */
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="relative isolate min-h-screen flex flex-col">
       <AnimatedBg />
-      <div className="hidden md:block">
+      <div className="relative z-10 hidden md:block">
         <Topbar />
       </div>
       <main
         id="main-content"
-        className="flex-1 container-padded py-4 md:py-5"
+        className="relative z-10 flex-1 container-padded py-4 md:py-5"
         dir="ltr"
       >
         <PageTransition>{children}</PageTransition>
       </main>
 
-      {appReady ? <HomePromoBanner /> : null}
-
-      <Partners />
-
-      <SiteFooter />
+      <div className="relative z-10">
+        {appReady ? <HomePromoBanner /> : null}
+        <Partners />
+        <SiteFooter />
+      </div>
       <BottomNavigation />
       <MobileQuickBar />
     </div>

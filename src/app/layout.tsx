@@ -32,8 +32,8 @@ import SocialRealtimeClient from "@/components/providers/SocialRealtimeClient";
 import { getInitialThemeCss, getThemeModeInitScript } from "../theme/server-theme";
 
 export const metadata = {
-  title: "Marketplace Premium Starter",
-  description: "Futuristic, minimal Next.js starter",
+  title: "DevMinds.net Market Place For Everything",
+  description: "DevMinds.net Market Place For Everything Developed by Noorullah Azizi",
   icons: {
     icon: "/favicon.svg",
   },

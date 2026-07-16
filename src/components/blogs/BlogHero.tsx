@@ -66,6 +66,7 @@ export function BlogHero({
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
           >
@@ -76,6 +77,7 @@ export function BlogHero({
           <motion.p
             initial={{ opacity: 0, y: 12 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, delay: 0.05 }}
             className={`mt-4 max-w-xl text-sm sm:text-base text-[hsl(var(--muted-foreground))] ${isRtl ? "mr-auto" : "ml-0"}`}
           >
@@ -85,6 +87,7 @@ export function BlogHero({
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.5, delay: 0.1 }}
             className={`mt-6 flex items-center gap-3 ${isRtl ? "" : "justify-start"}`}
           >
@@ -174,6 +177,7 @@ export function BlogHero({
         <motion.div
           initial={{ opacity: 0, scale: 0.98 }}
           whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-white/10 overflow-hidden"
         >

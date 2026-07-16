@@ -36,7 +36,6 @@
 
 .animate-marquee {
   animation: marquee 28s linear infinite;
-  will-change: transform;
 }
 
 .animate-marquee:hover {
@@ -56,7 +55,6 @@
 
 .animate-spin-slow {
   animation: spin-slow 60s linear infinite;
-  will-change: transform;
 }
 
 /* ── Slow drift for AnimatedBg ribbon blobs ─────────────────────────────── */
@@ -98,12 +96,10 @@
 
 .animate-drift-a {
   animation: drift-a 20s ease-in-out infinite;
-  will-change: transform;
 }
 
 .animate-drift-b {
   animation: drift-b 22s ease-in-out infinite;
-  will-change: transform;
 }
 
 
@@ -345,7 +341,7 @@ button {
 
   body {
     @apply min-h-screen antialiased;
-    overflow: hidden;
+    overflow-x: hidden;
   }
 }
 

@@ -12,7 +12,7 @@ import {
   Bar,
   PieChart,
   Pie,
-  Cell,
+  type TooltipPayload,
 } from "recharts";
 import { useMemo, useState } from "react";
 import { Card } from "@/components/ui/card";
@@ -86,17 +86,35 @@ interface AdminStatsResponse {
 const chartCardBg =
   "bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--card))/70]";
 
-function ChartTooltip({ active, payload, label }: any) {
-  if (!active || !payload || !payload.length) return null;
+type ChartTooltipProps = {
+  active?: boolean;
+  payload?: TooltipPayload;
+  label?: string | number;
+  formatValue?: (value: number, dataKey: string) => string;
+  formatName?: (name: string, dataKey: string) => string;
+};
+
+function ChartTooltip({
+  active,
+  payload,
+  label,
+  formatValue,
+  formatName,
+}: ChartTooltipProps) {
+  if (!active || !payload?.length) return null;
+
+  const labelText = label != null ? String(label) : null;
+
   return (
     <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--popover))]/90 backdrop-blur-sm px-3 py-2 shadow-lg min-w-[140px]">
-      {label && (
+      {labelText && (
         <p className="text-[11px] font-medium mb-1 text-[hsl(var(--foreground))]/80">
-          {label}
+          {labelText}
         </p>
       )}
       <div className="space-y-0.5">
-        {payload.map((p: any) => {
+        {payload.map((p) => {
+          const dataKey = String(p.dataKey ?? "");
           const colorMap: Record<string, string> = {
             "#2563eb": "bg-[hsl(var(--primary))]",
             "#16a34a": "bg-[hsl(var(--accent))]",
@@ -107,10 +125,24 @@ function ChartTooltip({ active, payload, label }: any) {
             "#f59e0b": "bg-[hsl(var(--secondary))]",
             "#0ea5e9": "bg-[hsl(var(--primary))]",
           };
-          const swatch = colorMap[p.color] || "bg-[hsl(var(--primary))]";
+          const swatch =
+            colorMap[String(p.color ?? "")] || "bg-[hsl(var(--primary))]";
+          const rawName = String(p.name ?? dataKey);
+          const displayName = formatName
+            ? formatName(rawName, dataKey)
+            : rawName;
+          const numericValue =
+            typeof p.value === "number" ? p.value : Number(p.value);
+          const displayValue =
+            formatValue && Number.isFinite(numericValue)
+              ? formatValue(numericValue, dataKey)
+              : typeof p.value === "number"
+                ? p.value.toLocaleString()
+                : String(p.value ?? "");
+
           return (
             <div
-              key={p.dataKey}
+              key={dataKey}
               className="flex items-center justify-between gap-4 text-[11px]"
             >
               <span className="flex items-center gap-1.5">
@@ -118,13 +150,11 @@ function ChartTooltip({ active, payload, label }: any) {
                   className={`inline-block size-2.5 rounded-sm ${swatch}`}
                 />
                 <span className="text-[hsl(var(--foreground))]/70">
-                  {p.name || p.dataKey}
+                  {displayName}
                 </span>
               </span>
               <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
-                {typeof p.value === "number"
-                  ? p.value.toLocaleString()
-                  : p.value}
+                {displayValue}
               </span>
             </div>
           );
@@ -366,7 +396,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Legend />
@@ -414,7 +444,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="month" />
                   <YAxis />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Bar dataKey="created" fill="#2563eb" radius={[4, 4, 0, 0]} />
@@ -445,7 +475,7 @@ export default function AdminDashboardPage() {
                 <XAxis dataKey="date" hide />
                 <YAxis />
                 <Tooltip
-                  content={<ChartTooltip />}
+                  content={(props) => <ChartTooltip {...props} />}
                   wrapperClassName="chart-tooltip"
                 />
                 <Bar
@@ -481,7 +511,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide />
                   <YAxis />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Line
@@ -521,7 +551,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide />
                   <YAxis />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Line
@@ -569,7 +599,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide />
                   <YAxis />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Line
@@ -638,7 +668,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide />
                   <YAxis />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Line
@@ -677,7 +707,7 @@ export default function AdminDashboardPage() {
                   <XAxis dataKey="date" hide />
                   <YAxis domain={[0, 5]} />
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Line
@@ -710,7 +740,7 @@ export default function AdminDashboardPage() {
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip
-                    content={<ChartTooltip />}
+                    content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
                   <Pie
@@ -831,16 +861,17 @@ function ListingsTypeStatusCharts({
               <XAxis dataKey={keyField} tick={{ fontSize: 11 }} />
               <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} />
               <Tooltip
-                content={<ChartTooltip />}
+                content={(props) => (
+                  <ChartTooltip
+                    active={props.active}
+                    payload={props.payload}
+                    label={props.label}
+                    formatValue={(value) => `${(value * 100).toFixed(1)}%`}
+                    formatName={(name) => (t as any)(name.toLowerCase()) || name}
+                  />
+                )}
                 wrapperClassName="chart-tooltip"
-                formatter={(value: any, name: string) => [
-                  `${(Number(value) * 100).toFixed(1)}%`,
-                  (t as any)(name.toLowerCase()) || name,
-                ]}
               />
-              <div className="recharts-legend-wrapper chart-legend">
-                <Legend />
-              </div>
               {statusKeys.map((k) => (
                 <Bar
                   key={k}
@@ -851,6 +882,7 @@ function ListingsTypeStatusCharts({
                   radius={k === "HIDDEN" ? [4, 4, 0, 0] : 0}
                 />
               ))}
+              <Legend wrapperStyle={{ fontSize: 12 }} itemSorter={null} />
             </BarChart>
           </ResponsiveContainer>
         ) : !isLoading && dataset.length === 0 ? (
