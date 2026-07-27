@@ -73,7 +73,7 @@ export default function Footer() {
             <div>
               <div className="flex items-center gap-3">
                 <div className="flex h-14 w-14 overflow-hidden rounded-2xl bg-white shadow-sm shrink-0">
-                  <Image src="/logo/logo.png" alt="Dev Minds" width={56} height={56} sizes="56px" className="w-full h-full object-contain" />
+                  <Image src="/brand/devminds-logo.png" alt="DevMinds" width={56} height={56} sizes="56px" className="w-full h-full object-contain" />
                 </div>
                 <div>
                   <div className="text-base font-semibold tracking-tight">
@@ -211,7 +211,7 @@ export default function Footer() {
               </div>
               <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
                 <QRCode
-                  value="https://yourdomain.com"
+                  value="https://noorullah-azizi.my.canva.site"
                   className="h-auto w-full"
                 />
               </div>
@@ -246,12 +246,12 @@ export default function Footer() {
                 </Link>
               </Tooltip>
               <span className="opacity-30">•</span>
-              <Tooltip content="support@yourdomain.com" side="top">
+              <Tooltip content="Noorullah.azizi2040@gmail.com" side="top">
                 <a
-                  href="mailto:support@yourdomain.com"
+                  href="mailto:Noorullah.azizi2040@gmail.com"
                   className="inline-flex items-center gap-2 link"
                 >
-                  <Mail className="h-4 w-4" /> support@yourdomain.com
+                  <Mail className="h-4 w-4" /> Noorullah.azizi2040@gmail.com
                 </a>
               </Tooltip>
             </div>

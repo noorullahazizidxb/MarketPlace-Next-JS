@@ -11,9 +11,11 @@ import {
   MapPin,
   LayoutList,
   Star,
-  BadgeCheck,
   Globe,
   Handshake,
+  Mail,
+  Phone,
+  ExternalLink,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
@@ -21,6 +23,7 @@ import { motion } from "framer-motion";
 import AboutCtaBanner from "@/components/ui/about-cta-banner";
 import { aboutImages } from "@/lib/public-images";
 import { Tooltip } from "@/components/ui/tooltip";
+import { AUTHOR, BRAND, ORGANIZATION_NAME } from "@/lib/site-config";
 
 export function AboutContent({
   marketplaceName,
@@ -30,6 +33,28 @@ export function AboutContent({
   const { t, isRtl } = useLanguage();
   return (
     <main dir={isRtl ? "rtl" : "ltr"} className="pb-20">
+      {/* Brand strip */}
+      <section className="pt-8 pb-2">
+        <div className="flex flex-wrap items-center justify-center gap-6 sm:gap-10">
+          <Image
+            src={BRAND.logo}
+            alt={`${ORGANIZATION_NAME} logo`}
+            width={240}
+            height={72}
+            className="h-14 sm:h-16 w-auto object-contain"
+            priority
+          />
+          <Image
+            src={BRAND.mark}
+            alt={`${ORGANIZATION_NAME} brand mark`}
+            width={120}
+            height={120}
+            className="h-16 sm:h-20 w-auto object-contain"
+            priority
+          />
+        </div>
+      </section>
+
       {/* Hero */}
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 z-0">
@@ -296,40 +321,57 @@ export function AboutContent({
         >
           {t("meetTheTeam")}
         </motion.h2>
-        <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {[
-            { name: t("teamAlexName"), title: t("teamAlexTitle") },
-            { name: t("teamSamiraName"), title: t("teamSamiraTitle") },
-            { name: t("teamDiegoName"), title: t("teamDiegoTitle") },
-          ].map((m, i) => (
-            <motion.article
-              key={m.name}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, amount: 0.2 }}
-              transition={{ duration: 0.5, delay: i * 0.08, ease: [0.22, 1, 0.36, 1] }}
-              className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 flex flex-col items-center text-center group hover:-translate-y-1 transition-transform duration-300"
+        <motion.article
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+          className="mt-6 max-w-xl mx-auto rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-6 md:p-8 flex flex-col items-center text-center"
+        >
+          <div className="relative">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(var(--primary))]/30 to-[hsl(var(--accent))]/20 blur-md" />
+            <Image
+              src={AUTHOR.image}
+              alt={`${AUTHOR.name}, ${AUTHOR.role}`}
+              className="relative h-32 w-32 rounded-full object-cover object-top ring-2 ring-[hsl(var(--border))]"
+              width={128}
+              height={128}
+              priority
+            />
+          </div>
+          <h3 className="mt-4 font-semibold text-lg">{AUTHOR.name}</h3>
+          <p className="text-sm text-[hsl(var(--primary))] font-medium mt-0.5">
+            {AUTHOR.role}
+          </p>
+          <p className="mt-2 text-sm text-[hsl(var(--foreground))]/70 leading-relaxed">
+            Founder of {ORGANIZATION_NAME} — building {marketplaceName} and digital products for Afghanistan.
+          </p>
+          <div className="mt-4 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 text-sm">
+            <Link
+              href={`mailto:${AUTHOR.email}`}
+              className="inline-flex items-center gap-2 text-[hsl(var(--primary))] hover:underline"
             >
-              <div className="relative">
-                <div className="absolute inset-0 rounded-full bg-gradient-to-br from-[hsl(var(--primary))]/30 to-[hsl(var(--accent))]/20 blur-md opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <Image
-                  src={aboutImages.team[i]}
-                  alt={m.name}
-                  className="relative h-24 w-24 rounded-full object-cover ring-2 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary))]/50 transition-all duration-300"
-                  width={96}
-                  height={96}
-                />
-              </div>
-              <h3 className="mt-4 font-semibold">{m.name}</h3>
-              <p className="text-sm text-[hsl(var(--primary))] font-medium mt-0.5">
-                {m.title}
-              </p>
-              <p className="mt-2 text-sm text-[hsl(var(--foreground))]/70 leading-relaxed">
-                {t("passionTagline")}
-              </p>
-            </motion.article>
-          ))}
-        </div>
+              <Mail className="size-4" aria-hidden />
+              {AUTHOR.email}
+            </Link>
+            <Link
+              href={`tel:${AUTHOR.phone}`}
+              className="inline-flex items-center gap-2 text-[hsl(var(--primary))] hover:underline"
+            >
+              <Phone className="size-4" aria-hidden />
+              {AUTHOR.phone}
+            </Link>
+            <Link
+              href={AUTHOR.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-[hsl(var(--primary))] hover:underline"
+            >
+              <ExternalLink className="size-4" aria-hidden />
+              Portfolio
+            </Link>
+          </div>
+        </motion.article>
       </section>
 
       {/* CTA */}

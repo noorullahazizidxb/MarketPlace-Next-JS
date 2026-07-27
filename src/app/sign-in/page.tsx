@@ -146,7 +146,7 @@ export default function SignInPage() {
           >
             <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] ring-1 ring-[hsl(var(--primary))]/20 dark:bg-white/95">
               <Image
-                src="/logo/logo.png"
+                src="/brand/devminds-logo.png"
                 alt="DevMinds"
                 width={156}
                 height={108}

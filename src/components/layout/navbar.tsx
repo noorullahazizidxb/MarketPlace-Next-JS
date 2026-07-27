@@ -44,12 +44,12 @@ export function Navbar({ className = "" }: { className?: string }) {
           <Link
             href="/admin"
             className="flex items-center gap-3 min-w-0 group"
-            aria-label="Dev Minds home"
+            aria-label="DevMinds home"
           >
             <div className="size-14 sm:size-16 rounded-squircle overflow-hidden bg-white/95 shadow-sm ring-1 ring-border/40 flex shrink-0 transition-transform duration-200 group-hover:scale-[1.03]">
               <Image
-                src="/logo/logo.png"
-                alt="Dev Minds"
+                src="/brand/devminds-logo.png"
+                alt="DevMinds"
                 width={64}
                 height={64}
                 sizes="64px"
@@ -62,7 +62,7 @@ export function Navbar({ className = "" }: { className?: string }) {
                 {t("marketplace")}
               </span>
               <span className="block text-xs text-muted-foreground truncate">
-                Dev Minds
+                DevMinds
               </span>
             </div>
           </Link>

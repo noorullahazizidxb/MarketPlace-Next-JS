@@ -22,6 +22,7 @@ import "@fontsource/noto-sans-arabic/700.css";
 import "@fontsource/noto-naskh-arabic/400.css";
 import "@fontsource/noto-naskh-arabic/700.css";
 
+import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { SkipLink } from "@/components/ui/skip-link";
 import { QueryProvider } from "@/components/providers/query-provider";
@@ -29,15 +30,11 @@ import { AppShell } from "@/components/layout/app-shell";
 import { LanguageProvider } from "@/components/providers/language-provider";
 import { AppToaster } from "@/components/ui/toaster";
 import SocialRealtimeClient from "@/components/providers/SocialRealtimeClient";
+import { SeoJsonLd } from "@/components/seo/seo-json-ld";
+import { rootMetadata } from "@/lib/site-config";
 import { getInitialThemeCss, getThemeModeInitScript } from "../theme/server-theme";
 
-export const metadata = {
-  title: "DevMinds.net Market Place For Everything",
-  description: "DevMinds.net Market Place For Everything Developed by Noorullah Azizi",
-  icons: {
-    icon: "/favicon.svg",
-  },
-} as const;
+export const metadata: Metadata = rootMetadata();
 
 export default async function RootLayout({
   children,
@@ -54,6 +51,7 @@ export default async function RootLayout({
         <script id="theme-mode-init" dangerouslySetInnerHTML={{ __html: themeModeScript }} />
       </head>
       <body>
+        <SeoJsonLd />
         <ThemeProvider>
           <QueryProvider>
             <LanguageProvider>

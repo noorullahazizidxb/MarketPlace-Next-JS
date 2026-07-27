@@ -1,6 +1,6 @@
 import * as React from "react";
 
-const DEFAULT_LOGO_SRC = "/logo/logo.png";
+const DEFAULT_LOGO_SRC = "/brand/devminds-logo.png";
 
 interface LogoProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   size?: number;
@@ -11,7 +11,7 @@ export function Logo({
   size = 24,
   src = DEFAULT_LOGO_SRC,
   className,
-  alt = "Dev Minds",
+  alt = "DevMinds",
   style,
   ...props
 }: LogoProps) {

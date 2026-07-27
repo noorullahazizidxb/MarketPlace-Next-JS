@@ -1,5 +1,14 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import type { Metadata } from "next";
+import { pageMetadata } from "@/lib/site-config";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Home",
+  description:
+    "DevMinds Marketplace — buy, sell, and rent across Afghanistan. Built by Noorullah Azizi, CEO of DevMinds.",
+  path: "/",
+});
 
 function extractOrigin(value: string | null) {
   if (!value) return null;
