@@ -2,12 +2,26 @@
 import React, { useState, useMemo } from "react";
 import { useCategories } from "./useCategoryData";
 import { CategoryRow } from "./CategoryRow";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/atoms/shadcn/table";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/atoms/shadcn/dialog";
+import { Plus, Search } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { CategoryCreateWizard } from "./CategoryCreateWizard";
-import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 
 interface Props {
   onChanged?: () => void;
@@ -22,7 +36,7 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
     if (!q) return flat;
     return flat.filter(
       (c) =>
-        c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q)
+        c.name.toLowerCase().includes(q) || c.slug.toLowerCase().includes(q),
     );
   }, [flat, query]);
 
@@ -34,12 +48,12 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap gap-3 items-center justify-between">
-        <div className="flex items-center gap-2">
-          <Input
+        <div className="w-64 max-w-full">
+          <TextInputField
+            label="Search categories"
             value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search categories..."
-            className="w-64"
+            onChange={setQuery}
+            icon={<Search className="size-4" />}
           />
         </div>
         <Dialog open={openCreate} onOpenChange={setOpenCreate}>
@@ -48,8 +62,10 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
               <Plus className="size-4" /> New Category
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-xl">
-            <h3 className="text-sm font-semibold mb-4">Create Category</h3>
+          <DialogContent className="max-w-xl md:w-[min(92vw,36rem)] lg:w-[min(92vw,36rem)] xl:w-[min(92vw,36rem)]">
+            <DialogHeader>
+              <DialogTitle>Create Category</DialogTitle>
+            </DialogHeader>
             <CategoryCreateWizard
               onCreated={refresh}
               onClose={() => setOpenCreate(false)}
@@ -59,20 +75,36 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
       </div>
       <div className="space-y-4">
         {isLoading && <p className="text-xs subtle">Loading categories…</p>}
-        <AnimatePresence initial={false}>
-          {filtered.map((node) => (
-            <motion.div
-              key={node.id}
-              layout
-              initial={{ opacity: 0, scale: 0.98 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.97 }}
-              transition={{ duration: 0.25 }}
-            >
-              <CategoryRow node={node} depth={node.depth} onChanged={refresh} />
-            </motion.div>
-          ))}
-        </AnimatePresence>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Category</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <AnimatePresence initial={false}>
+              {filtered.map((node) => (
+                <TableRow key={node.id} className="hover:bg-transparent border-0">
+                  <TableCell className="p-0 pb-4">
+                    <motion.div
+                      layout
+                      initial={{ opacity: 0, scale: 0.98 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0, scale: 0.97 }}
+                      transition={{ duration: 0.25 }}
+                    >
+                      <CategoryRow
+                        node={node}
+                        depth={node.depth}
+                        onChanged={refresh}
+                      />
+                    </motion.div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </AnimatePresence>
+          </TableBody>
+        </Table>
         {!isLoading && filtered.length === 0 && (
           <p className="text-xs subtle">No categories match that search.</p>
         )}

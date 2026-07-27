@@ -10,7 +10,6 @@ import {
 } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  Loader2,
   Plus,
   Trash2,
   UserPlus,
@@ -19,13 +18,50 @@ import {
   X,
   ArrowLeft,
   ArrowRight,
+  User,
+  Mail,
+  Phone,
+  Lock,
+  MapPin,
+  Building2,
+  Hash,
+  MessageCircle,
 } from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
 import { toastError, toastSuccess } from "@/lib/toast";
 import { cn } from "@/lib/cn";
 import { CreateUserFormValues, RoleOption, emptyRepProvince } from "./types";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
+import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
+import { Button } from "@/components/ui/button";
 
 const useFormContextSafe = () => useFormContext();
+
+function getFieldError(errors: any, name: string): string | undefined {
+  const parts = name.split(".");
+  let cur: any = errors;
+  for (const part of parts) {
+    if (!cur) return undefined;
+    cur = cur[part];
+  }
+  return cur?.message ? String(cur.message) : undefined;
+}
+
+function fieldIcon(name: string, type?: string) {
+  const n = name.toLowerCase();
+  if (type === "email" || n.includes("email")) return <Mail className="size-4" />;
+  if (n.includes("phone") || n.includes("whatsapp"))
+    return <Phone className="size-4" />;
+  if (n.includes("password")) return <Lock className="size-4" />;
+  if (n.includes("street") || n.includes("city") || n.includes("region") || n.includes("country") || n.includes("postal"))
+    return <MapPin className="size-4" />;
+  if (n.includes("company")) return <Building2 className="size-4" />;
+  if (n.includes("first") || n.includes("last") || n.includes("name"))
+    return <User className="size-4" />;
+  if (n.includes("postal")) return <Hash className="size-4" />;
+  return <MessageCircle className="size-4" />;
+}
 
 const TextField: React.FC<{
   name:
@@ -37,50 +73,44 @@ const TextField: React.FC<{
   required?: boolean;
   small?: boolean;
   rules?: any;
-}> = ({ name, label, type = "text", required, small, rules }) => {
+}> = ({ name, label, type = "text", required, rules }) => {
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContextSafe();
-  const err: any = errors as any;
+  const error = getFieldError(errors, name as string);
   return (
-    <label className={cn("flex flex-col gap-1", small && "text-xs")}>
-      <span className={cn("text-xs font-medium", small && "text-[11px]")}>
-        {label}
-        {required && <span className="text-red-500"> *</span>}
-      </span>
-      <input
-        type={type}
-        placeholder={label}
-        {...register(name as any, {
-          ...(required ? { required: `${label} is required` } : {}),
-          ...(rules || {}),
-        })}
-        className={cn(
-          "h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30",
-          small && "h-9"
-        )}
-      />
-      {err?.[name as any] && (
-        <span className="text-2xs text-red-500">
-          {String(err?.[name as any]?.message)}
-        </span>
+    <Controller
+      name={name as any}
+      control={control}
+      rules={{
+        ...(required ? { required: `${label} is required` } : {}),
+        ...(rules || {}),
+      }}
+      render={({ field }) => (
+        <TextInputField
+          label={required ? `${label} *` : label}
+          type={type}
+          value={field.value ?? ""}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+          error={error}
+          icon={fieldIcon(String(name), type)}
+        />
       )}
-    </label>
+    />
   );
 };
 
 const PasswordPair: React.FC = () => {
-  // useWatch for reactive updates and to drive the strength UI
   const {
-    register,
+    control,
     formState: { errors },
   } = useFormContextSafe();
   const password = useWatch({ name: "password" });
   const confirmPassword = useWatch({ name: "confirmPassword" });
   const err: any = errors;
 
-  // strength scoring
   const score = (() => {
     if (!password) return 0;
     let s = 0;
@@ -89,7 +119,7 @@ const PasswordPair: React.FC = () => {
     if (/[0-9]/.test(password)) s += 1;
     if (/[^A-Za-z0-9]/.test(password)) s += 1;
     if (password.length >= 12) s += 1;
-    return s; // 0-5
+    return s;
   })();
 
   const strengthPct = Math.round((score / 5) * 100);
@@ -113,7 +143,6 @@ const PasswordPair: React.FC = () => {
           : score === 4
             ? "bg-emerald-400"
             : "bg-green-500";
-  // Map score to tailwind width classes (discrete steps)
   const widthClass =
     score === 0
       ? "w-0"
@@ -130,20 +159,26 @@ const PasswordPair: React.FC = () => {
   return (
     <div className="md:col-span-2 grid md:grid-cols-2 gap-5">
       <div className="flex flex-col gap-2">
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium">Password *</span>
-          <input
-            type="password"
-            {...register("password", {
-              required: "Password is required",
-              minLength: { value: 8, message: "Minimum 8 characters" },
-            })}
-            placeholder="Create a secure password"
-            className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all placeholder:text-[hsl(var(--foreground))]/30"
-          />
-        </label>
+        <Controller
+          name="password"
+          control={control}
+          rules={{
+            required: "Password is required",
+            minLength: { value: 8, message: "Minimum 8 characters" },
+          }}
+          render={({ field }) => (
+            <TextInputField
+              label="Password *"
+              type="password"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={err?.password?.message}
+              icon={<Lock className="size-4" />}
+            />
+          )}
+        />
 
-        {/* strength meter */}
         <div className="mt-1">
           <div className="flex items-center justify-between text-2xs mb-1">
             <div className="flex items-center gap-2">
@@ -207,29 +242,30 @@ const PasswordPair: React.FC = () => {
               <span className="subtle">Symbol</span>
             </div>
           </div>
-
-          {err?.password && (
-            <div className="text-2xs text-red-500 mt-2">
-              {String(err.password.message)}
-            </div>
-          )}
         </div>
       </div>
 
       <div className="flex flex-col gap-2">
-        <label className="flex flex-col gap-1">
-          <span className="text-xs font-medium">Confirm Password *</span>
-          <input
-            type="password"
-            {...register("confirmPassword", {
-              required: "Confirm password",
-              validate: (v: string) =>
-                v === (password || "") || "Passwords do not match",
-            })}
-            placeholder="Repeat your password"
-            className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all placeholder:text-[hsl(var(--foreground))]/30"
-          />
-        </label>
+        <Controller
+          name="confirmPassword"
+          control={control}
+          rules={{
+            required: "Confirm password",
+            validate: (v: string) =>
+              v === (password || "") || "Passwords do not match",
+          }}
+          render={({ field }) => (
+            <TextInputField
+              label="Confirm Password *"
+              type="password"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={err?.confirmPassword?.message}
+              icon={<Lock className="size-4" />}
+            />
+          )}
+        />
 
         <div className="mt-3 flex items-center gap-3">
           {confirmPassword && confirmPassword === password ? (
@@ -244,32 +280,40 @@ const PasswordPair: React.FC = () => {
             </div>
           )}
         </div>
-
-        {err?.confirmPassword && (
-          <div className="text-2xs text-red-500 mt-2">
-            {String(err.confirmPassword.message)}
-          </div>
-        )}
       </div>
     </div>
   );
 };
 
+const ROLE_OPTIONS = [
+  { value: "USER", label: "USER" },
+  { value: "ADMIN", label: "ADMIN" },
+  { value: "REPRESENTATIVE", label: "REPRESENTATIVE" },
+] as const;
+
 const RoleSelect: React.FC = () => {
-  const { register } = useFormContextSafe();
+  const {
+    control,
+    formState: { errors },
+  } = useFormContextSafe();
   return (
-    <label className="flex flex-col gap-2">
-      <span className="text-xs font-medium">Role *</span>
-      <select
-        {...register("role", { required: "Role is required" })}
-        className="h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all"
-      >
-        <option value="">Select role</option>
-        <option value="USER">USER</option>
-        <option value="ADMIN">ADMIN</option>
-        <option value="REPRESENTATIVE">REPRESENTATIVE</option>
-      </select>
-    </label>
+    <Controller
+      name="role"
+      control={control}
+      rules={{ required: "Role is required" }}
+      render={({ field }) => (
+        <SelectField
+          label="Role *"
+          value={field.value ?? ""}
+          onChange={field.onChange}
+          onBlur={field.onBlur}
+          options={ROLE_OPTIONS}
+          placeholder="Select role"
+          error={(errors as any)?.role?.message}
+          required
+        />
+      )}
+    />
   );
 };
 
@@ -293,13 +337,14 @@ const PhotoUpload: React.FC<{ preview?: string }> = ({ preview }) => {
           )}
         </div>
         <div className="flex flex-col gap-2">
-          <button
+          <Button
             type="button"
+            variant="secondary"
+            size="sm"
             onClick={() => fileInputRef.current?.click()}
-            className="h-9 px-4 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium hover:bg-[hsl(var(--muted))]/20 transition-colors"
           >
             Upload
-          </button>
+          </Button>
           <input
             ref={fileInputRef}
             type="file"
@@ -351,20 +396,22 @@ const TagsInput: React.FC<{
             <X className="size-3 opacity-50 group-hover:opacity-90" />
           </button>
         ))}
-        <input
-          value={input}
-          onChange={(e) => setInput(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" || e.key === ",") {
-              e.preventDefault();
-              add();
-            } else if (e.key === "Backspace" && !input && tags.length) {
-              remove(tags.length - 1);
-            }
-          }}
-          placeholder={tags.length ? "Add tag" : "Add tags (Enter)"}
-          className="flex-1 min-w-[120px] bg-transparent focus:outline-none text-2xs px-1"
-        />
+        <div className="flex-1 min-w-[120px]">
+          <TextInputField
+            label="Add tag"
+            value={input}
+            onChange={setInput}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" || e.key === ",") {
+                e.preventDefault();
+                add();
+              } else if (e.key === "Backspace" && !input && tags.length) {
+                remove(tags.length - 1);
+              }
+            }}
+            icon={<Hash className="size-4" />}
+          />
+        </div>
       </div>
       <p className="text-2xs subtle">
         Press Enter to add, click a tag to remove.
@@ -598,40 +645,49 @@ const UserCreateWizard: React.FC<{
         {/* Mobile action bar (top) */}
         <div className="px-4 pt-3 flex items-center gap-2 sm:hidden sticky top-0 z-20 bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/85 border-b border-[hsl(var(--border))]/30">
           {step > 0 && (
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={prev}
-              className="h-9 px-3 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium flex items-center gap-1 hover:bg-[hsl(var(--muted))]/20 transition-colors"
+              LeftIcon={ArrowLeft}
             >
-              <ArrowLeft className="size-3" /> Back
-            </button>
+              Back
+            </Button>
           )}
           {step < steps.length - 1 && (
-            <button
+            <Button
               type="button"
+              variant="primary"
+              size="sm"
               disabled={!canNext}
               onClick={next}
-              className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold ml-auto flex items-center gap-1 disabled:opacity-40 transition-all"
+              RightIcon={ArrowRight}
+              className="ml-auto"
             >
-              Next <ArrowRight className="size-3" />
-            </button>
+              Next
+            </Button>
           )}
           {step === steps.length - 1 && (
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="sm"
               disabled={
                 !canNext ||
                 registerUser.isPending ||
                 registerAdmin.isPending ||
                 registerRep.isPending
               }
-              className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold ml-auto flex items-center gap-1.5 disabled:opacity-40 transition-all"
+              loading={
+                registerUser.isPending ||
+                registerAdmin.isPending ||
+                registerRep.isPending
+              }
+              className="ml-auto"
             >
-              {(registerUser.isPending || registerAdmin.isPending || registerRep.isPending) && (
-                <Loader2 className="size-3 animate-spin" />
-              )}
               Create
-            </button>
+            </Button>
           )}
         </div>
         <div className="flex-1 overflow-y-auto sm:overflow-visible p-6 min-h-0 pb-28 sm:pb-8 scroll-smooth overscroll-contain max-h-[calc(100vh-220px)] sm:max-h-none [@supports(height:100dvh)]:max-h-[calc(100dvh-220px)] sm:[@supports(height:100dvh)]:max-h-none">
@@ -826,13 +882,11 @@ const UserCreateWizard: React.FC<{
                             name={`representativeInfo.${index}.active`}
                             render={({ field }) => (
                               <label className="flex items-center gap-2 text-xs font-medium mt-6">
-                                <input
-                                  type="checkbox"
-                                  checked={field.value}
-                                  onChange={(e) =>
-                                    field.onChange(e.target.checked)
+                                <Checkbox
+                                  checked={!!field.value}
+                                  onCheckedChange={(v) =>
+                                    field.onChange(v === true)
                                   }
-                                  className="size-4 rounded border"
                                 />
                                 Active
                               </label>
@@ -840,24 +894,28 @@ const UserCreateWizard: React.FC<{
                           />
                           <div className="flex justify-end mt-6">
                             {repInfoArray.fields.length > 1 && (
-                              <button
+                              <Button
                                 type="button"
+                                variant="ghost"
+                                size="sm"
                                 onClick={() => repInfoArray.remove(index)}
-                                className="size-8 rounded-xl flex items-center justify-center text-[hsl(var(--foreground))]/40 hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                                className="size-8 p-0 text-[hsl(var(--foreground))]/40 hover:text-red-400 hover:bg-red-400/10"
                               >
                                 <Trash2 className="size-4" />
-                              </button>
+                              </Button>
                             )}
                           </div>
                         </div>
                       ))}
-                      <button
+                      <Button
                         type="button"
+                        variant="secondary"
+                        size="sm"
                         onClick={() => repInfoArray.append(emptyRepProvince())}
-                        className="h-9 px-4 rounded-xl bg-[hsl(var(--primary))]/10 text-[hsl(var(--primary))] text-xs font-semibold flex items-center gap-2 hover:bg-[hsl(var(--primary))]/20 transition-colors"
+                        LeftIcon={Plus}
                       >
-                        <Plus className="size-4" /> Add Province
-                      </button>
+                        Add Province
+                      </Button>
                     </div>
                   </motion.div>
                 )}
@@ -959,26 +1017,49 @@ const UserCreateWizard: React.FC<{
           </div>
         </div>
         <div className="hidden sm:flex sticky bottom-0 z-30 px-6 py-4 border-t border-[hsl(var(--border))]/30 bg-[hsl(var(--card))]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
-          <button type="button" onClick={onClose} className="h-9 px-3 rounded-xl text-sm text-[hsl(var(--foreground))]/50 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-colors">
+          <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
-          </button>
+          </Button>
           <div className="flex items-center gap-2">
             {step > 0 && (
-              <button type="button" onClick={prev} className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors">
-                <ArrowLeft className="size-3.5" /> Back
-              </button>
+              <Button
+                type="button"
+                variant="secondary"
+                onClick={prev}
+                LeftIcon={ArrowLeft}
+              >
+                Back
+              </Button>
             )}
             {step < steps.length - 1 ? (
-              <button type="button" disabled={!canNext} onClick={next} className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden">
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                Next <ArrowRight className="size-3.5" />
-              </button>
+              <Button
+                type="button"
+                variant="primary"
+                disabled={!canNext}
+                onClick={next}
+                RightIcon={ArrowRight}
+              >
+                Next
+              </Button>
             ) : (
-              <button type="submit" disabled={registerUser.isPending || registerAdmin.isPending || registerRep.isPending || !canNext} className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden">
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-                {(registerUser.isPending || registerAdmin.isPending || registerRep.isPending) ? <Loader2 className="size-4 animate-spin" /> : <UserPlus className="size-4" />}
+              <Button
+                type="submit"
+                variant="primary"
+                disabled={
+                  registerUser.isPending ||
+                  registerAdmin.isPending ||
+                  registerRep.isPending ||
+                  !canNext
+                }
+                loading={
+                  registerUser.isPending ||
+                  registerAdmin.isPending ||
+                  registerRep.isPending
+                }
+                LeftIcon={UserPlus}
+              >
                 Create User
-              </button>
+              </Button>
             )}
           </div>
         </div>

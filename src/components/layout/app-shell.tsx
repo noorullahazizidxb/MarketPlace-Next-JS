@@ -6,8 +6,7 @@ import { useAuth } from "@/lib/use-auth";
 import { usePrefetchOnIdle } from "@/lib/use-prefetch-on-idle";
 import { useUIStore } from "@/store/ui.store";
 import { usePathname, useRouter } from "next/navigation";
-import { Sidebar } from "@/components/layout/sidebar";
-import { Navbar } from "@/components/layout/navbar";
+import { AdminShell } from "@/components/layout/admin-shell";
 import { Topbar } from "@/components/layout/topbar";
 import BottomNavigation from "@/components/ui/BottomNavigation";
 import { PageTransition } from "@/components/ui/page-transition";
@@ -138,28 +137,9 @@ export function AppShell({ children }: PropsWithChildren) {
   /* ----------  ADMIN LAYOUT  ---------- */
   if (isAdmin) {
     return (
-      <div className="relative isolate min-h-screen flex flex-col">
-        <AnimatedBg />
-        <div className="relative z-10 flex-1 grid grid-cols-1 md:grid-cols-[280px_minmax(0,1fr)]">
-          <Sidebar />
-          <div className="flex flex-col min-h-full min-w-0 w-full">
-            <Navbar className="hidden md:block" />
-            <main
-              id="main-content"
-              className="flex-1 container-padded py-4 md:py-5"
-              dir="ltr"
-            >
-              <PageTransition>{children}</PageTransition>
-            </main>
-          </div>
-        </div>
-        <div className="relative z-10">
-          <Partners />
-          <SiteFooter />
-        </div>
-        <BottomNavigation />
-        <MobileQuickBar />
-      </div>
+      <AdminShell>
+        <PageTransition>{children}</PageTransition>
+      </AdminShell>
     );
   }
 

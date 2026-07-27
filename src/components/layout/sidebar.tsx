@@ -56,7 +56,7 @@ export function Sidebar({
     { href: "/admin/manage-content-status", label: "Content Status", Icon: LayoutGrid },
     { href: "/listings/create", label: t("newListing"), Icon: PlusCircle },
     { href: "/admin/stories", label: t("stories"), Icon: Megaphone },
-    { href: "/settings/themes", label: t("themes"), Icon: Layers },
+    { href: "/settings/appearance", label: t("themes"), Icon: Layers },
   ];
 
   return (
@@ -300,7 +300,7 @@ export function Sidebar({
                           className="pl-6 pr-3 overflow-hidden"
                         >
                           <Link
-                            href="/settings/themes"
+                            href="/settings/appearance"
                             onClick={() => onClose?.()}
                             className="flex items-center gap-3 h-10 text-sm"
                           >

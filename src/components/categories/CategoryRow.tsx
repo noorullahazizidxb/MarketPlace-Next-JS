@@ -6,7 +6,8 @@ import type { CategoryTreeNode, CategoryEntity } from "./types";
 import { cn } from "@/lib/cn";
 import { useUpdateCategory, useDeleteCategory } from "./useCategoryData";
 import { Button } from "@/components/ui/button";
-import { Switch } from "../ui/switch";
+import { Switch } from "@/components/ui/atoms/shadcn/switch";
+import { Badge } from "@/components/ui/atoms/shadcn/badge";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
 
@@ -29,15 +30,18 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   return (
     <div className="border rounded-xl bg-[hsl(var(--card))]/70 backdrop-blur divide-y">
       <div className="flex items-center gap-3 p-3">
-        <button
+        <Button
+          type="button"
+          variant="ghost"
+          size="sm"
           aria-label={open ? "Collapse" : "Expand"}
           onClick={toggle}
-          className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-[hsl(var(--muted))/0.4]"
+          className="size-8 p-0 rounded-lg border"
         >
           <motion.span animate={{ rotate: open ? 90 : 0 }}>
             <ChevronRight className="size-4" />
           </motion.span>
-        </button>
+        </Button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             {/** Indentation using utility classes mapping */}
@@ -60,9 +64,9 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               {node.name}
             </span>
             {!node.isActive && (
-              <span className="text-2xs px-1.5 py-0.5 rounded bg-amber-500/20 text-amber-600">
+              <Badge variant="warning" className="normal-case tracking-normal">
                 Inactive
-              </span>
+              </Badge>
             )}
           </div>
           <p className="text-2xs subtle">/{node.slug}</p>

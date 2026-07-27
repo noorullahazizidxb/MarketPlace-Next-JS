@@ -1,10 +1,20 @@
 "use client";
 
 import { useState } from "react";
-import { Loader2, Mail, MessageSquareText, PhoneCall } from "lucide-react";
+import {
+  Mail,
+  MessageSquareText,
+  PhoneCall,
+  UserRound,
+  Phone,
+} from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { Tooltip } from "@/components/ui/tooltip";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
+import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
+import { Button } from "@/components/ui/button";
 
 export default function ContactForm() {
   const { t, isRtl } = useLanguage();
@@ -12,37 +22,51 @@ export default function ContactForm() {
     "idle" | "loading" | "success" | "error"
   >("idle");
   const [message, setMessage] = useState<string>("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [subject, setSubject] = useState("");
+  const [phone, setPhone] = useState("");
+  const [body, setBody] = useState("");
 
   const createContact = useLocalMutation<any>("post", "/api/contacts");
 
-  async function onSubmit(formData: FormData) {
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
     setStatus("loading");
     setMessage("");
     try {
-      const body = {
-        name: formData.get("name") as string,
-        email: formData.get("email") as string,
-        subject: formData.get("subject") as string,
-        phone: (formData.get("phone") as string) || undefined,
-        message: formData.get("message") as string,
-      };
-      await createContact.mutateAsync(body);
+      await createContact.mutateAsync({
+        name,
+        email,
+        subject,
+        phone: phone || undefined,
+        message: body,
+      });
       setStatus("success");
       setMessage(t("sendMessageSuccess"));
-    } catch (e) {
+      setName("");
+      setEmail("");
+      setSubject("");
+      setPhone("");
+      setBody("");
+    } catch {
       setStatus("error");
       setMessage(t("sendMessageError"));
     }
   }
 
+  const subjectOptions = [
+    { value: "generalQuestion", label: t("generalQuestion") },
+    { value: "listingSupport", label: t("listingSupport") },
+    { value: "accountIssue", label: t("accountIssue") },
+    { value: "partnershipInquiry", label: t("partnershipInquiry") },
+  ] as const;
+
   return (
-    <section
-      dir={isRtl ? "rtl" : "ltr"}
-      className="w-full"
-    >
+    <section dir={isRtl ? "rtl" : "ltr"} className="w-full">
       <form
         className="space-y-5 rounded-[2rem] border border-[hsl(var(--border))] bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--background)))] p-6 shadow-[0_24px_60px_-32px_rgba(0,0,0,0.45)] sm:p-8"
-        action={onSubmit}
+        onSubmit={onSubmit}
       >
         <div className="space-y-2">
           <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[hsl(var(--accent))]">
@@ -78,87 +102,61 @@ export default function ContactForm() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("fullName")}</label>
-            <input
-              required
-              name="name"
-              type="text"
-              placeholder={t("signUpPlaceholderFullName")}
-              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
-            />
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("emailAddress")}</label>
-            <input
-              required
-              name="email"
-              type="email"
-              placeholder={t("emailPlaceholder")}
-              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("subject")}</label>
-            <select
-              name="subject"
-              required
-              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
-              defaultValue=""
-              aria-label="Subject"
-            >
-              <option value="" disabled>
-                {t("chooseSubject")}
-              </option>
-
-              <option value="generalQuestion">{t("generalQuestion")}</option>
-              <option value="listingSupport">{t("listingSupport")}</option>
-              <option value="accountIssue">{t("accountIssue")}</option>
-              <option value="partnershipInquiry">
-                {t("partnershipInquiry")}
-              </option>
-            </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium">{t("phoneOptional")}</label>
-            <input
-              name="phone"
-              type="tel"
-              placeholder={t("signUpPlaceholderPhone")}
-              className="w-full rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
-            />
-          </div>
-        </div>
-        <div>
-          <label className="mb-1 block text-sm font-medium">{t("message")}</label>
-          <textarea
+          <TextInputField
+            label={t("fullName")}
+            icon={<UserRound className="size-4" />}
+            type="text"
             required
-            name="message"
-            rows={6}
-            placeholder={t("messagePlaceholder")}
-            className="w-full rounded-[1.5rem] border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.8] px-4 py-3 outline-none transition focus:border-[hsl(var(--accent))/0.45] focus:ring-2 ring-[hsl(var(--primary))]/30"
+            value={name}
+            onChange={setName}
+          />
+          <TextInputField
+            label={t("emailAddress")}
+            icon={<Mail className="size-4" />}
+            type="email"
+            required
+            value={email}
+            onChange={setEmail}
           />
         </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <SelectField
+            label={t("subject")}
+            required
+            value={subject}
+            onChange={setSubject}
+            placeholder={t("chooseSubject")}
+            options={subjectOptions}
+          />
+          <TextInputField
+            label={t("phoneOptional")}
+            icon={<Phone className="size-4" />}
+            type="tel"
+            value={phone}
+            onChange={setPhone}
+          />
+        </div>
+        <TextareaField
+          label={t("message")}
+          icon={<MessageSquareText className="size-4" />}
+          required
+          rows={6}
+          value={body}
+          onChange={setBody}
+        />
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
           <div className="min-h-5 text-sm">
             {status === "success" && (
-              <span className="text-[hsl(140 60% 60%)]">{message}</span>
+              <span className="text-[hsl(140_60%_60%)]">{message}</span>
             )}
             {status === "error" && (
-              <span className="text-[hsl(0 70% 60%)]">{message}</span>
+              <span className="text-[hsl(0_70%_60%)]">{message}</span>
             )}
           </div>
           <Tooltip content={t("sendMessage")} side="top">
-            <button
-              type="submit"
-              disabled={status === "loading"}
-              className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[hsl(var(--primary))] px-6 py-3 text-sm font-semibold text-[hsl(var(--primary-foreground))] shadow-lg transition-all duration-200 hover:bg-[hsl(var(--primary))] hover:shadow-xl disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {status === "loading" && <Loader2 className="size-4 animate-spin" />}
+            <Button type="submit" loading={status === "loading"}>
               {status === "loading" ? t("sending") : t("sendMessage")}
-            </button>
+            </Button>
           </Tooltip>
         </div>
       </form>

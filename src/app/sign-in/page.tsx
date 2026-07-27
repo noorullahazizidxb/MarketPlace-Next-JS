@@ -6,7 +6,8 @@ import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
 import { useAuthStore } from "@/store/auth.store";
@@ -18,7 +19,6 @@ import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
-import { cn } from "@/lib/cn";
 
 type FormData = { email: string; password: string };
 
@@ -26,7 +26,12 @@ export default function SignInPage() {
   const { t, isRtl } = useLanguage();
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
-  const { register, handleSubmit } = useForm<FormData>();
+  const [rememberMe, setRememberMe] = useState(false);
+  const { handleSubmit, watch, setValue } = useForm<FormData>({
+    defaultValues: { email: "", password: "" },
+  });
+  const email = watch("email");
+  const password = watch("password");
   const { user } = useAuth();
   const router = useRouter();
   const setSession = useAuthStore((s) => s.setSession);
@@ -187,73 +192,60 @@ export default function SignInPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            {/* Email */}
-            <div className="space-y-1.5">
-              <Tooltip content={t("tooltipSignInEmail")} side="right">
-                <label
-                  htmlFor="sign-in-email"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--foreground))]/85 cursor-default"
-                >
-                  <Mail className="size-3.5 text-[hsl(var(--muted-foreground))]" />
-                  {t("email")}
-                </label>
-              </Tooltip>
-              <Input
-                id="sign-in-email"
-                {...register("email")}
-                type="email"
-                placeholder={t("emailPlaceholder")}
-                autoComplete="email"
-                className="h-11"
-              />
-            </div>
-
-            {/* Password */}
-            <div className="space-y-1.5">
-              <Tooltip content={t("tooltipSignInPassword")} side="right">
-                <label
-                  htmlFor="sign-in-password"
-                  className="inline-flex items-center gap-2 text-sm font-medium text-[hsl(var(--foreground))]/85 cursor-default"
-                >
-                  <Lock className="size-3.5 text-[hsl(var(--muted-foreground))]" />
-                  {t("password")}
-                </label>
-              </Tooltip>
-              <div className="relative">
-                <Input
-                  id="sign-in-password"
-                  {...register("password")}
-                  type={showPassword ? "text" : "password"}
-                  placeholder={t("passwordPlaceholder")}
-                  autoComplete="current-password"
-                  className={cn("h-11", isRtl ? "pl-10" : "pr-10")}
+            <Tooltip content={t("tooltipSignInEmail")} side="right">
+              <div>
+                <TextInputField
+                  id="sign-in-email"
+                  label={t("email")}
+                  icon={<Mail className="size-4" />}
+                  type="email"
+                  autoComplete="email"
+                  value={email}
+                  onChange={(v) => setValue("email", v, { shouldDirty: true })}
                 />
-                <Tooltip
-                  content={
-                    showPassword
-                      ? t("tooltipHidePassword")
-                      : t("tooltipShowPassword")
-                  }
-                  side="left"
-                >
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((v) => !v)}
-                    className={cn(
-                      "absolute top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors",
-                      isRtl ? "left-3" : "right-3"
-                    )}
-                    aria-label={showPassword ? "Hide password" : "Show password"}
-                  >
-                    {showPassword ? (
-                      <EyeOff className="size-4" />
-                    ) : (
-                      <Eye className="size-4" />
-                    )}
-                  </button>
-                </Tooltip>
               </div>
-            </div>
+            </Tooltip>
+
+            <Tooltip content={t("tooltipSignInPassword")} side="right">
+              <div>
+                <TextInputField
+                  id="sign-in-password"
+                  label={t("password")}
+                  icon={<Lock className="size-4" />}
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  value={password}
+                  onChange={(v) =>
+                    setValue("password", v, { shouldDirty: true })
+                  }
+                  suffix={
+                    <Tooltip
+                      content={
+                        showPassword
+                          ? t("tooltipHidePassword")
+                          : t("tooltipShowPassword")
+                      }
+                      side="left"
+                    >
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword((v) => !v)}
+                        className="text-muted-foreground hover:text-foreground transition-colors"
+                        aria-label={
+                          showPassword ? "Hide password" : "Show password"
+                        }
+                      >
+                        {showPassword ? (
+                          <EyeOff className="size-4" />
+                        ) : (
+                          <Eye className="size-4" />
+                        )}
+                      </button>
+                    </Tooltip>
+                  }
+                />
+              </div>
+            </Tooltip>
 
             {/* Error */}
             <AnimatePresence>
@@ -273,7 +265,13 @@ export default function SignInPage() {
             <div className="flex items-center justify-between">
               <Tooltip content={t("tooltipRememberMe")} side="top">
                 <label className="inline-flex items-center gap-2 text-sm cursor-pointer select-none">
-                  <input type="checkbox" className="rounded" />
+                  <Checkbox
+                    checked={rememberMe}
+                    onCheckedChange={(checked) =>
+                      setRememberMe(checked === true)
+                    }
+                    aria-label={t("rememberMe")}
+                  />
                   <span>{t("rememberMe")}</span>
                 </label>
               </Tooltip>

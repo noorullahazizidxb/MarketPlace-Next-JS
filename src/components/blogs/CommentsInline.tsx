@@ -1,15 +1,15 @@
 "use client";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import { useApiMutation } from "@/lib/api-hooks";
-import { mutate } from "@/lib/query-client";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/lib/use-auth";
 import { getSocket } from "@/lib/socket";
 import Link from "next/link";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
+import { MessageSquare } from "lucide-react";
 
 function deferCountSync(callback?: () => void) {
   if (!callback) return;
@@ -27,9 +27,8 @@ export default function CommentsInline({
 }) {
   const [value, setValue] = useState("");
   const [localComments, setLocalComments] = useState<any[]>(
-    () => comments || []
+    () => comments || [],
   );
-  // Keep local comments in sync when prop updates with new data
   React.useEffect(() => {
     if (Array.isArray(comments)) {
       const norm = comments.map((raw: any) => {
@@ -63,7 +62,6 @@ export default function CommentsInline({
 
   const { user } = useAuth();
 
-  // Realtime: directly listen for newComment to update local state (idempotent)
   React.useEffect(() => {
     const sock = getSocket();
     if (!sock) return;
@@ -75,7 +73,8 @@ export default function CommentsInline({
           .some(
             (c: any) =>
               String(c.id) === String(p.comment?.id) ||
-              (c.body === p.comment?.body && c.authorId === p.comment?.authorId)
+              (c.body === p.comment?.body &&
+                c.authorId === p.comment?.authorId),
           );
         if (exists) return prev;
         const next = [p.comment, ...(prev || [])];
@@ -87,7 +86,7 @@ export default function CommentsInline({
     return () => {
       try {
         sock.off("newComment", handler as any);
-      } catch { }
+      } catch {}
     };
   }, [blogId, onCommentCountChange]);
 
@@ -97,19 +96,24 @@ export default function CommentsInline({
     const body = value.trim();
     try {
       const created = await post.mutateAsync({ body });
-      const normalized = created && typeof created === "object"
-        ? {
-          ...(created as any),
-          author: (created as any).author || {
-            id: user?.id ? String(user.id) : undefined,
-            fullName: (user as any)?.fullName || (user as any)?.name || "",
-            photo: (user as any)?.photo || null,
-          },
-        }
-        : null;
+      const normalized =
+        created && typeof created === "object"
+          ? {
+              ...(created as any),
+              author: (created as any).author || {
+                id: user?.id ? String(user.id) : undefined,
+                fullName:
+                  (user as any)?.fullName || (user as any)?.name || "",
+                photo: (user as any)?.photo || null,
+              },
+            }
+          : null;
       if (normalized) {
         setLocalComments((prev) => {
-          const exists = prev.some((comment: any) => String(comment.id) === String((normalized as any).id));
+          const exists = prev.some(
+            (comment: any) =>
+              String(comment.id) === String((normalized as any).id),
+          );
           if (exists) return prev;
           const next = [normalized, ...prev];
           deferCountSync(() => onCommentCountChange?.(next.length));
@@ -117,28 +121,38 @@ export default function CommentsInline({
         });
       }
       setValue("");
-    } catch { }
+    } catch {}
   };
 
   return (
     <div className="mt-3">
       {user ? (
         <form onSubmit={onSubmit} className="flex items-center gap-2">
-          <Input
-            className="flex-1 h-10 rounded-xl bg-[hsl(var(--input))]/20 border-[hsl(var(--border))]/60"
-            value={value}
-            onChange={(e) => setValue(e.target.value)}
-            placeholder={t("messagePlaceholder") as string}
-            aria-label={t("message")}
-          />
-          <Button type="submit" size="sm" loading={post.isPending} variant="primary">
+          <div className="flex-1 min-w-0">
+            <TextInputField
+              label={String(t("message") || "Message")}
+              value={value}
+              onChange={setValue}
+              aria-label={t("message")}
+              icon={<MessageSquare className="size-4" />}
+            />
+          </div>
+          <Button
+            type="submit"
+            size="sm"
+            loading={post.isPending}
+            variant="primary"
+          >
             {t("post")}
           </Button>
         </form>
       ) : (
         <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--muted-foreground))] flex items-center justify-between gap-3">
           <span>{t("signInToComment")}</span>
-          <Link href="/sign-in" className="text-xs font-medium text-[hsl(var(--primary))] hover:underline underline-offset-2">
+          <Link
+            href="/sign-in"
+            className="text-xs font-medium text-[hsl(var(--primary))] hover:underline underline-offset-2"
+          >
             {t("signIn") || "Sign in"}
           </Link>
         </div>

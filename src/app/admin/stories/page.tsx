@@ -10,7 +10,9 @@ import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { Badge } from "@/components/ui/atoms/shadcn/badge";
+import { Search } from "lucide-react";
 import { asset } from "@/lib/assets";
 import { ImageSlider } from "@/components/ui/image-slider";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
@@ -56,10 +58,11 @@ const Hero: React.FC<{
         transition={{ duration: 0.34 }}
         className="flex items-center gap-2"
       >
-        <Input
+        <TextInputField
+          label="Search stories"
           value={q}
-          onChange={(e) => setQ(e.target.value)}
-          placeholder="Search stories..."
+          onChange={setQ}
+          icon={<Search className="size-4" />}
           className="h-11 rounded-xl bg-[hsl(var(--input))]/20 border-[hsl(var(--border))]/60"
         />
         <Button variant="accent" onClick={onCreate}>
@@ -127,9 +130,9 @@ const StoryCard: React.FC<{
           </time>
         )}
         {s.status && (
-          <span className="ml-auto inline-flex items-center px-2 h-6 rounded-lg text-[10px] font-semibold bg-[hsl(var(--muted))/0.35]">
+          <Badge variant="muted" className="ml-auto normal-case tracking-normal">
             {s.status}
-          </span>
+          </Badge>
         )}
       </div>
       <h3 className="mt-2 text-base font-semibold line-clamp-2">{s.title}</h3>

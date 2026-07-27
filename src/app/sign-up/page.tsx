@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { cn } from "@/lib/cn";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,9 +17,8 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Tooltip } from "@/components/ui/tooltip";
+
 const gradientBgClass = "gradient-bg";
-const inputClasses =
-  "h-11 rounded-2xl border border-[hsl(var(--border))/0.35] bg-[hsl(var(--card-bg,var(--card)))/0.55] text-[hsl(var(--foreground))] placeholder:text-[hsl(var(--foreground))/0.55] transition-all focus:border-transparent focus:bg-[hsl(var(--card-bg,var(--card)))/0.75] focus:ring-2 focus:ring-[hsl(var(--accent))] disabled:opacity-50";
 
 // Validation Schema
 const signUpSchema = z
@@ -52,20 +51,25 @@ const signUpSchema = z
 
 type SignUpValues = z.infer<typeof signUpSchema>;
 
+function translateError(
+  t: (key: string) => string,
+  message?: string
+): string | undefined {
+  if (!message) return undefined;
+  return (t as any)(message) || message;
+}
+
 export default function SignUpPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const { isRtl } = useLanguage();
   const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
-  const [focusedField, setFocusedField] = useState<keyof SignUpValues | null>(
-    null
-  );
   const [globalError, setGlobalError] = useState<string | null>(null);
 
   const {
-    register,
     handleSubmit,
     control,
+    setValue,
     formState: { errors, isValid, isSubmitting, touchedFields, dirtyFields },
     setError,
   } = useForm<SignUpValues>({
@@ -81,7 +85,12 @@ export default function SignUpPage() {
     },
   });
 
+  const fullName = useWatch({ control, name: "fullName" }) || "";
+  const email = useWatch({ control, name: "email" }) || "";
+  const phone = useWatch({ control, name: "phone" }) || "";
   const passwordValue = useWatch({ control, name: "password" }) || "";
+  const confirmPassword =
+    useWatch({ control, name: "confirmPassword" }) || "";
 
   // Simple password strength scoring (0-5)
   const passwordScore = (() => {
@@ -134,9 +143,14 @@ export default function SignUpPage() {
 
   const submitting = isSubmitting || registerMutation.isPending;
 
-  const handleFocus = (field: keyof SignUpValues) => () =>
-    setFocusedField(field);
-  const handleBlur = () => setFocusedField(null);
+  const fieldError = (
+    name: keyof SignUpValues,
+    touched?: boolean,
+    dirty?: boolean
+  ) => {
+    if (!(touched || dirty)) return undefined;
+    return translateError(t, errors[name]?.message as string | undefined);
+  };
 
   return (
     <div
@@ -232,221 +246,137 @@ export default function SignUpPage() {
             initial={false}
             noValidate
           >
-            <div className="space-y-2">
-              <Tooltip content={t("tooltipSignUpFullName")} side="right">
-                <label
-                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                  htmlFor="fullName"
-                >
-                  {t("fullName")}
-                </label>
-              </Tooltip>
-              <div className="group relative">
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-2xl bg-[hsl(var(--accent))/0.16] opacity-0 blur-xl"
-                  initial={false}
-                  animate={{ opacity: focusedField === "fullName" ? 0.7 : 0 }}
-                  transition={{ duration: 0.25 }}
-                />
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))/0.55] transition-colors group-focus-within:text-[hsl(var(--accent))]">
-                  <UserRound className="size-4" />
-                </span>
-                <Input
+            <Tooltip content={t("tooltipSignUpFullName")} side="right">
+              <div>
+                <TextInputField
                   id="fullName"
+                  label={t("fullName")}
+                  icon={<UserRound className="size-4" />}
                   type="text"
-                  placeholder={t("signUpPlaceholderFullName")}
                   autoComplete="name"
-                  {...register("fullName")}
-                  onFocus={handleFocus("fullName")}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.fullName}
-                  className={cn(
-                    inputClasses,
-                    "relative z-10 pl-12",
-                    errors.fullName && "ring-2 ring-red-500/70"
+                  required
+                  value={fullName}
+                  onChange={(v) =>
+                    setValue("fullName", v, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    })
+                  }
+                  error={fieldError(
+                    "fullName",
+                    touchedFields.fullName,
+                    dirtyFields.fullName
                   )}
                 />
-                <FieldMessages
-                  fieldError={errors.fullName?.message}
-                  touched={touchedFields.fullName || dirtyFields.fullName}
-                />
               </div>
-            </div>
+            </Tooltip>
 
-            <div className="space-y-2">
-              <Tooltip content={t("tooltipSignUpEmail")} side="right">
-                <label
-                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                  htmlFor="email"
-                >
-                  {t("emailAddress")}
-                </label>
-              </Tooltip>
-              <div className="group relative">
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-2xl bg-[hsl(var(--accent))/0.16] opacity-0 blur-xl"
-                  initial={false}
-                  animate={{ opacity: focusedField === "email" ? 0.7 : 0 }}
-                  transition={{ duration: 0.25 }}
-                />
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))/0.55] transition-colors group-focus-within:text-[hsl(var(--accent))]">
-                  <Mail className="size-4" />
-                </span>
-                <Input
+            <Tooltip content={t("tooltipSignUpEmail")} side="right">
+              <div>
+                <TextInputField
                   id="email"
+                  label={t("emailAddress")}
+                  icon={<Mail className="size-4" />}
                   type="email"
-                  placeholder={t("emailPlaceholder")}
                   autoComplete="email"
-                  {...register("email")}
-                  onFocus={handleFocus("email")}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.email}
-                  className={cn(
-                    inputClasses,
-                    "relative z-10 pl-12",
-                    errors.email && "ring-2 ring-red-500/70"
+                  required
+                  value={email}
+                  onChange={(v) =>
+                    setValue("email", v, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    })
+                  }
+                  error={fieldError(
+                    "email",
+                    touchedFields.email,
+                    dirtyFields.email
                   )}
                 />
-                <FieldMessages
-                  fieldError={errors.email?.message}
-                  touched={touchedFields.email || dirtyFields.email}
-                />
               </div>
-            </div>
+            </Tooltip>
 
-            <div className="space-y-2">
-              <Tooltip content={t("tooltipSignUpPhone")} side="right">
-                <label
-                  className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                  htmlFor="phone"
-                >
-                  {t("phoneOptional")}
-                </label>
-              </Tooltip>
-              <div className="group relative">
-                <motion.span
-                  aria-hidden
-                  className="pointer-events-none absolute inset-0 rounded-2xl bg-[hsl(var(--accent))/0.16] opacity-0 blur-xl"
-                  initial={false}
-                  animate={{ opacity: focusedField === "phone" ? 0.7 : 0 }}
-                  transition={{ duration: 0.25 }}
-                />
-                <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))/0.55] transition-colors group-focus-within:text-[hsl(var(--accent))]">
-                  <Phone className="size-4" />
-                </span>
-                <Input
+            <Tooltip content={t("tooltipSignUpPhone")} side="right">
+              <div>
+                <TextInputField
                   id="phone"
+                  label={t("phoneOptional")}
+                  icon={<Phone className="size-4" />}
                   type="tel"
-                  placeholder={t("signUpPlaceholderPhone")}
                   autoComplete="tel"
-                  {...register("phone")}
-                  onFocus={handleFocus("phone")}
-                  onBlur={handleBlur}
-                  aria-invalid={!!errors.phone}
-                  className={cn(
-                    inputClasses,
-                    "relative z-10 pl-12",
-                    errors.phone && "ring-2 ring-red-500/70"
+                  value={phone}
+                  onChange={(v) =>
+                    setValue("phone", v, {
+                      shouldValidate: true,
+                      shouldDirty: true,
+                      shouldTouch: true,
+                    })
+                  }
+                  error={fieldError(
+                    "phone",
+                    touchedFields.phone,
+                    dirtyFields.phone
                   )}
                 />
-                <FieldMessages
-                  fieldError={errors.phone?.message}
-                  touched={touchedFields.phone || dirtyFields.phone}
-                />
               </div>
-            </div>
+            </Tooltip>
 
             <div className="grid gap-5 sm:grid-cols-2">
               <div className="space-y-2">
                 <Tooltip content={t("tooltipSignUpPassword")} side="right">
-                  <label
-                    className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                    htmlFor="password"
-                  >
-                    {t("password")}
-                  </label>
+                  <div>
+                    <TextInputField
+                      id="password"
+                      label={t("password")}
+                      icon={<LockKeyhole className="size-4" />}
+                      type="password"
+                      autoComplete="new-password"
+                      required
+                      value={passwordValue}
+                      onChange={(v) =>
+                        setValue("password", v, {
+                          shouldValidate: true,
+                          shouldDirty: true,
+                          shouldTouch: true,
+                        })
+                      }
+                      error={fieldError(
+                        "password",
+                        touchedFields.password,
+                        dirtyFields.password
+                      )}
+                    />
+                  </div>
                 </Tooltip>
-                <div className="group relative">
-                  <motion.span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-2xl bg-[hsl(var(--accent))/0.16] opacity-0 blur-xl"
-                    initial={false}
-                    animate={{ opacity: focusedField === "password" ? 0.7 : 0 }}
-                    transition={{ duration: 0.25 }}
-                  />
-                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))/0.55] transition-colors group-focus-within:text-[hsl(var(--accent))]">
-                    <LockKeyhole className="size-4" />
-                  </span>
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    autoComplete="new-password"
-                    {...register("password")}
-                    onFocus={handleFocus("password")}
-                    onBlur={handleBlur}
-                    aria-invalid={!!errors.password}
-                    className={cn(
-                      inputClasses,
-                      "relative z-10 pl-12",
-                      errors.password && "ring-2 ring-red-500/70"
-                    )}
-                  />
-                  <PasswordStrength score={passwordScore} />
-                  <FieldMessages
-                    fieldError={errors.password?.message}
-                    touched={touchedFields.password || dirtyFields.password}
-                  />
-                </div>
+                <PasswordStrength score={passwordScore} />
               </div>
-              <div className="space-y-2">
-                <Tooltip content={t("tooltipSignUpConfirmPassword")} side="right">
-                  <label
-                    className="text-sm font-medium text-[hsl(var(--foreground))/0.85]"
-                    htmlFor="confirmPassword"
-                  >
-                    {t("confirmPassword")}
-                  </label>
-                </Tooltip>
-                <div className="group relative">
-                  <motion.span
-                    aria-hidden
-                    className="pointer-events-none absolute inset-0 rounded-2xl bg-[hsl(var(--accent))/0.16] opacity-0 blur-xl"
-                    initial={false}
-                    animate={{
-                      opacity: focusedField === "confirmPassword" ? 0.7 : 0,
-                    }}
-                    transition={{ duration: 0.25 }}
-                  />
-                  <span className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-[hsl(var(--foreground))/0.55] transition-colors group-focus-within:text-[hsl(var(--accent))]">
-                    <ShieldCheck className="size-4" />
-                  </span>
-                  <Input
+              <Tooltip content={t("tooltipSignUpConfirmPassword")} side="right">
+                <div>
+                  <TextInputField
                     id="confirmPassword"
+                    label={t("confirmPassword")}
+                    icon={<ShieldCheck className="size-4" />}
                     type="password"
-                    placeholder="••••••••"
                     autoComplete="new-password"
-                    {...register("confirmPassword")}
-                    onFocus={handleFocus("confirmPassword")}
-                    onBlur={handleBlur}
-                    aria-invalid={!!errors.confirmPassword}
-                    className={cn(
-                      inputClasses,
-                      "relative z-10 pl-12",
-                      errors.confirmPassword && "ring-2 ring-red-500/70"
+                    required
+                    value={confirmPassword}
+                    onChange={(v) =>
+                      setValue("confirmPassword", v, {
+                        shouldValidate: true,
+                        shouldDirty: true,
+                        shouldTouch: true,
+                      })
+                    }
+                    error={fieldError(
+                      "confirmPassword",
+                      touchedFields.confirmPassword,
+                      dirtyFields.confirmPassword
                     )}
                   />
-                  <FieldMessages
-                    fieldError={errors.confirmPassword?.message}
-                    touched={
-                      touchedFields.confirmPassword ||
-                      dirtyFields.confirmPassword
-                    }
-                  />
                 </div>
-              </div>
+              </Tooltip>
             </div>
 
             <AnimatePresence>
@@ -507,37 +437,7 @@ export default function SignUpPage() {
   );
 }
 
-// Field error / helper messages with subtle animation
-function FieldMessages({
-  fieldError,
-  touched,
-}: {
-  fieldError?: string;
-  touched?: boolean;
-}) {
-  const { t } = useLanguage();
-  return (
-    <AnimatePresence initial={false} mode="wait">
-      {fieldError && touched ? (
-        <motion.div
-          key="error"
-          initial={{ opacity: 0, y: -4 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -4 }}
-          className="mt-1 text-xs font-medium text-red-400"
-        >
-          {typeof fieldError === "string"
-            ? (t as any)(fieldError) || fieldError
-            : fieldError}
-        </motion.div>
-      ) : null}
-    </AnimatePresence>
-  );
-}
-
 function PasswordStrength({ score }: { score: number }) {
-  // Use dynamic import of language hook to avoid prop drilling
-  // reuse the already imported hook from top-level of this module
   const { t } = useLanguage();
   const labels = [t("tooWeak"), t("weak"), t("fair"), t("good"), t("strong")];
   const pct = (score / 5) * 100;

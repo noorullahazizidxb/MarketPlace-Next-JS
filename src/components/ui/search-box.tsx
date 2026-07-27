@@ -8,11 +8,13 @@ import {
   useCallback,
 } from "react";
 import { createPortal } from "react-dom";
+import { Search } from "lucide-react";
 import { useSWRGet } from "@/lib/api-hooks";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/cn";
 import { config as appConfig } from "@/lib/config";
 import { filterListingsByQuery } from "@/lib/search-utils";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 
 type SearchHit = any;
 type SearchResponse = { total: number; hits: SearchHit[] };
@@ -188,28 +190,16 @@ export function SearchBox({
       ref={boxRef}
       className={cn(isSheet ? "flex flex-col h-full" : "relative", className)}
     >
-      <div className="glass rounded-2xl px-3 h-12 flex items-center gap-3">
-        <svg
-          className="size-5 text-foreground/60"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-        >
-          <circle cx="11" cy="11" r="7" />
-          <line x1="21" y1="21" x2="16.65" y2="16.65" />
-        </svg>
-        <input
+      <div className={cn(isSheet ? "w-full" : "w-40 sm:w-56")}>
+        <TextInputField
           id="search-box-input"
           name="q"
           autoComplete="off"
-          className={cn(
-            "bg-transparent outline-none text-sm flex-1 min-w-0",
-            isSheet ? "w-full" : "w-40 sm:w-56"
-          )}
-          placeholder={placeholder}
+          label={placeholder}
+          icon={<Search className="size-4" />}
           value={q}
-          onChange={(e) => {
-            setQ(e.target.value);
+          onChange={(v) => {
+            setQ(v);
             setOpen(true);
           }}
           onFocus={() => setOpen(true)}

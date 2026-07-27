@@ -3,7 +3,17 @@ import { motion } from "framer-motion";
 import { useApiGet } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
+import { Badge } from "@/components/ui/atoms/shadcn/badge";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/atoms/shadcn/table";
 import { Card } from "@/components/ui/card";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
@@ -42,14 +52,13 @@ export default function AdminContactsPage() {
   const [q, setQ] = useState("");
   const [subjectFilter, setSubjectFilter] = useState<string>("");
   const [selectedContact, setSelectedContact] = useState<ContactItem | null>(
-    null
+    null,
   );
   const { data, isLoading } = useApiGet<ContactItem[]>(
     ["contacts"],
-    "/contacts"
+    "/contacts",
   );
 
-  // Map canonical subject values to localized labels
   const subjectLabel = (s?: string) => {
     switch (s) {
       case "General Question":
@@ -64,6 +73,13 @@ export default function AdminContactsPage() {
         return s || "";
     }
   };
+
+  const subjectOptions = [
+    { value: "General Question", label: t("generalQuestion") },
+    { value: "Listing Support", label: t("listingSupport") },
+    { value: "Account Issue", label: t("accountIssue") },
+    { value: "Partnership Inquiry", label: t("partnershipInquiry") },
+  ];
 
   const items = useMemo(() => {
     const list = Array.isArray(data) ? data : [];
@@ -93,123 +109,131 @@ export default function AdminContactsPage() {
               <p className="subtle text-sm">{t("contactInboxSubtitle")}</p>
             </div>
             <div className="hidden sm:flex items-center gap-2">
-              <Input
-                placeholder={t("searchContactsPlaceholder")}
-                value={q}
-                onChange={(e) => setQ(e.target.value)}
-                className="w-[260px]"
-              />
-              <select
-                aria-label={t("subjectLabel")}
-                className={
-                  "h-9 rounded-xl border px-3 text-sm " +
-                  (subjectFilter
-                    ? "bg-[hsl(var(--accent))] border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
-                    : "border-[hsl(var(--border))] bg-transparent")
-                }
-                value={subjectFilter}
-                onChange={(e) => setSubjectFilter(e.target.value)}
-              >
-                <option value="">{t("filterAllSubjects")}</option>
-                <option value="General Question">{t("generalQuestion")}</option>
-                <option value="Listing Support">{t("listingSupport")}</option>
-                <option value="Account Issue">{t("accountIssue")}</option>
-                <option value="Partnership Inquiry">
-                  {t("partnershipInquiry")}
-                </option>
-              </select>
+              <div className="w-[260px]">
+                <TextInputField
+                  label={t("searchContactsPlaceholder")}
+                  value={q}
+                  onChange={setQ}
+                  icon={<Search className="size-4" />}
+                />
+              </div>
+              <div className="w-[200px]">
+                <SelectField
+                  label={t("subjectLabel")}
+                  aria-label={t("subjectLabel")}
+                  value={subjectFilter}
+                  onChange={setSubjectFilter}
+                  options={subjectOptions}
+                  placeholder={t("filterAllSubjects")}
+                />
+              </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <Card className="lg:col-span-2 p-0 overflow-hidden">
               <div className="flex items-center gap-2 p-3 border-b border-[hsl(var(--border))] sm:hidden">
-                <div className="relative w-full">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 opacity-60" />
-                  <input
+                <div className="w-full">
+                  <TextInputField
+                    label={t("searchContactsPlaceholder")}
                     value={q}
-                    onChange={(e) => setQ(e.target.value)}
-                    placeholder={t("searchContactsPlaceholder")}
-                    className="w-full rounded-xl bg-transparent border border-[hsl(var(--border))] pl-9 pr-3 py-2 text-sm"
+                    onChange={setQ}
+                    icon={<Search className="size-4" />}
                   />
                 </div>
               </div>
-              <div className="divide-y divide-[hsl(var(--border))]">
-                {isLoading && <div className="p-6 subtle">Loading…</div>}
-                {!isLoading && items.length === 0 && (
-                  <div className="p-6 subtle">{t("noContactsYet")}</div>
-                )}
-                {items.map((c) => (
-                  <motion.div
-                    key={c.id}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.35 }}
-                    className="p-4 group hover:bg-white/5 cursor-pointer"
-                    onClick={() => setSelectedContact(c)}
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] grid place-items-center">
-                        {c.user?.avatarUrl ? (
-                          <Image
-                            src={asset(c.user?.avatarUrl) || "/favicon.svg"}
-                            alt="avatar"
-                            fill
-                            className="object-cover"
-                          />
-                        ) : (
-                          <User2 className="size-4 opacity-70" />
-                        )}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 flex-wrap">
-                          <div className="font-medium truncate max-w-[220px]">
-                            {c.name}
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>{t("contactMessages")}</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoading && (
+                    <TableRow>
+                      <TableCell className="p-6 subtle">Loading…</TableCell>
+                    </TableRow>
+                  )}
+                  {!isLoading && items.length === 0 && (
+                    <TableRow>
+                      <TableCell className="p-6 subtle">
+                        {t("noContactsYet")}
+                      </TableCell>
+                    </TableRow>
+                  )}
+                  {items.map((c) => (
+                    <TableRow
+                      key={c.id}
+                      className="cursor-pointer"
+                      onClick={() => setSelectedContact(c)}
+                    >
+                      <TableCell className="p-4">
+                        <motion.div
+                          initial={{ opacity: 0, y: 6 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          transition={{ duration: 0.35 }}
+                        >
+                          <div className="flex items-start gap-4">
+                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] grid place-items-center">
+                              {c.user?.avatarUrl ? (
+                                <Image
+                                  src={asset(c.user?.avatarUrl) || "/favicon.svg"}
+                                  alt="avatar"
+                                  fill
+                                  className="object-cover"
+                                />
+                              ) : (
+                                <User2 className="size-4 opacity-70" />
+                              )}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <div className="font-medium truncate max-w-[220px]">
+                                  {c.name}
+                                </div>
+                                <Badge
+                                  variant={c.handled ? "success" : "warning"}
+                                  className="normal-case tracking-normal"
+                                >
+                                  {c.handled ? t("handled") : t("unhandled")}
+                                </Badge>
+                                <span className="text-xs subtle">
+                                  {t("submittedAt")}:{" "}
+                                  {new Date(c.createdAt).toLocaleString()}
+                                </span>
+                              </div>
+                              <div className="mt-1 text-xs subtle">
+                                {t("subjectLabel")}: {subjectLabel(c.subject)}
+                              </div>
+                              <div className="mt-2 text-sm line-clamp-2 text-foreground/90">
+                                {c.message}
+                              </div>
+                              <div className="mt-3 flex items-center gap-2">
+                                {c.email && (
+                                  <a
+                                    href={`mailto:${c.email}`}
+                                    className="text-xs flex items-center gap-1 link"
+                                  >
+                                    <Mail className="size-3" /> {c.email}
+                                  </a>
+                                )}
+                                {c.phone && (
+                                  <a
+                                    href={`tel:${c.phone}`}
+                                    className="text-xs flex items-center gap-1 link"
+                                  >
+                                    <Phone className="size-3" /> {c.phone}
+                                  </a>
+                                )}
+                              </div>
+                            </div>
                           </div>
-                          <span
-                            className={
-                              "inline-flex items-center rounded-full border px-2 py-0.5 text-xs " +
-                              (c.handled
-                                ? "border-emerald-500/30 text-emerald-400 bg-emerald-500/10"
-                                : "border-amber-500/30 text-amber-400 bg-amber-500/10")
-                            }
-                          >
-                            {c.handled ? t("handled") : t("unhandled")}
-                          </span>
-                          <span className="text-xs subtle">
-                            {t("submittedAt")}:{" "}
-                            {new Date(c.createdAt).toLocaleString()}
-                          </span>
-                        </div>
-                        <div className="mt-1 text-xs subtle">
-                          {t("subjectLabel")}: {subjectLabel(c.subject)}
-                        </div>
-                        <div className="mt-2 text-sm line-clamp-2 text-foreground/90">
-                          {c.message}
-                        </div>
-                        <div className="mt-3 flex items-center gap-2">
-                          {c.email && (
-                            <a
-                              href={`mailto:${c.email}`}
-                              className="text-xs flex items-center gap-1 link"
-                            >
-                              <Mail className="size-3" /> {c.email}
-                            </a>
-                          )}
-                          {c.phone && (
-                            <a
-                              href={`tel:${c.phone}`}
-                              className="text-xs flex items-center gap-1 link"
-                            >
-                              <Phone className="size-3" /> {c.phone}
-                            </a>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  </motion.div>
-                ))}
-              </div>
+                        </motion.div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </Card>
 
             <Card className="p-6 bg-[linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)] border border-[hsl(var(--border))]">

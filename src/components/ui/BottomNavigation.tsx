@@ -37,6 +37,7 @@ import { ThemeToggle } from "../../theme/theme-toggle";
 import { SearchBox } from "@/components/ui/search-box";
 import { NotificationsPanel } from "@/components/ui/notifications-panel";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
+import { Button } from "@/components/ui/button";
 import { useNotificationsStore } from "@/store/notifications.store";
 import { asset } from "@/lib/assets";
 import { useUIStore } from "@/store/ui.store";
@@ -170,13 +171,16 @@ const CenterOverlay: React.FC<CenterOverlayProps> = ({
           >
             <div className="flex items-center justify-between">
               <p className="text-sm font-semibold tracking-wide">{title}</p>
-              <button
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
                 onClick={onClose}
-                className="size-8 rounded-xl bg-white/5 hover:bg-white/10 grid place-items-center"
+                className="size-8 p-0"
                 aria-label={t("close")}
               >
                 <X className="size-4" />
-              </button>
+              </Button>
             </div>
             {children}
           </motion.div>
@@ -429,7 +433,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           <ActionTile
             icon={Layers}
             label={t("themes")}
-            onClick={() => onNavigate("/settings/themes")}
+            onClick={() => onNavigate("/settings/appearance")}
           />
           <ActionTile
             icon={User2}
@@ -461,12 +465,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <span className="text-[10px] subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={toggleDensity}
-              className="size-10 grid place-items-center rounded-xl bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08] text-[10px]"
+              className="size-10 p-0 text-[10px]"
             >
               {density === "comfort" ? "Co" : "Cm"}
-            </button>
+            </Button>
             <span className="text-[10px] subtle">{t("density")}</span>
           </div>
         </div>
@@ -519,12 +526,15 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <span className="text-[10px] subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
-            <button
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
               onClick={toggleDensity}
-              className="size-10 grid place-items-center rounded-xl bg-white/5 hover:bg-white/10 text-[10px]"
+              className="size-10 p-0 text-[10px]"
             >
               {density === "comfort" ? "Co" : "Cm"}
-            </button>
+            </Button>
             <span className="text-[10px] subtle">{t("density")}</span>
           </div>
         </div>
@@ -651,17 +661,17 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
   };
   return (
     <div className="pt-2 flex justify-end">
-      <button
+      <Button
+        type="button"
+        variant="ghost"
         onClick={handleLogout}
-        className="inline-flex items-center gap-2 px-4 h-10 rounded-xl bg-red-500/15 text-red-400 hover:bg-red-500/25 text-sm font-medium"
+        disabled={isPending}
+        loading={isPending}
+        className="text-red-400 hover:text-red-300 hover:bg-red-500/15"
+        LeftIcon={LogOut}
       >
-        {isPending ? (
-          <span className="size-4 rounded-full border-2 border-red-300/50 border-t-red-400 animate-spin" />
-        ) : (
-          <LogOut className="size-4" />
-        )}
         {t("logout")}
-      </button>
+      </Button>
     </div>
   );
 };

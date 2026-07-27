@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="utf-8"/><title>Marketplace UI Migration Inventory</title></head>
+<body>
+<h1>Marketplace Front-end UI Migration Inventory</h1>
+<p>Replacement targets use <code>src/components/ui/atoms/shadcn/*</code> unless noted.</p>
+<table>
+  <thead><tr><th>Element</th><th>Source</th><th>Replacement</th></tr></thead>
+  <tbody>
+    <tr><td>button / Button</td><td>src/components/ui/button.tsx (legacy)</td><td>atoms/shadcn/button.tsx (re-export)</td></tr>
+    <tr><td>raw button</td><td>src/components/layout/navbar.tsx</td><td>atoms/shadcn/button + tooltip</td></tr>
+    <tr><td>raw button</td><td>src/components/layout/sidebar.tsx</td><td>AdminBaseLayout + AppSidebar (retire chrome)</td></tr>
+    <tr><td>raw button / input</td><td>src/components/layout/topbar.tsx</td><td>button / TextInputField</td></tr>
+    <tr><td>raw button</td><td>src/components/layout/footer.tsx</td><td>button</td></tr>
+    <tr><td>input / form</td><td>src/app/sign-in/page.tsx</td><td>TextInputField + button</td></tr>
+    <tr><td>input / form</td><td>src/app/sign-up/page.tsx</td><td>TextInputField + button</td></tr>
+    <tr><td>input / form</td><td>src/components/ui/contact-form.tsx</td><td>TextInputField + textarea + button</td></tr>
+    <tr><td>input / form</td><td>src/app/listings/create/page.tsx</td><td>TextInputField / SelectField / checkbox</td></tr>
+    <tr><td>input / form</td><td>src/app/profile/page.tsx</td><td>TextInputField + button</td></tr>
+    <tr><td>input / search</td><td>src/components/ui/search-box.tsx</td><td>TextInputField or input</td></tr>
+    <tr><td>input / filters</td><td>src/components/ui/filters-bar.tsx</td><td>TextInputField / select / button</td></tr>
+    <tr><td>table</td><td>src/components/categories/CategoriesTable.tsx</td><td>atoms/shadcn/table</td></tr>
+    <tr><td>table / wizard</td><td>src/components/users/users-dashboard.tsx</td><td>table + button + TextInputField</td></tr>
+    <tr><td>wizard inputs</td><td>src/components/users/user-create-wizard.tsx</td><td>TextInputField / SelectField</td></tr>
+    <tr><td>wizard inputs</td><td>src/components/blogs/BlogCreateWizard.tsx</td><td>TextInputField / textarea</td></tr>
+    <tr><td>wizard inputs</td><td>src/components/categories/CategoryCreateWizard.tsx</td><td>TextInputField / SelectField</td></tr>
+    <tr><td>admin page buttons</td><td>src/app/admin/page.tsx</td><td>button / card</td></tr>
+    <tr><td>admin notifications</td><td>src/app/admin/notifications/page.tsx</td><td>TextInputField / button / table</td></tr>
+    <tr><td>admin ads</td><td>src/app/admin/ads/page.tsx</td><td>button / SelectField / card</td></tr>
+    <tr><td>admin contacts</td><td>src/app/admin/contacts/page.tsx</td><td>table / button</td></tr>
+    <tr><td>admin stories</td><td>src/app/admin/stories/page.tsx</td><td>button / dialog</td></tr>
+    <tr><td>admin content status</td><td>src/app/admin/manage-content-status/page.tsx</td><td>table / tabs / button</td></tr>
+    <tr><td>pendings</td><td>src/app/pendings/page.tsx</td><td>table / button / badge</td></tr>
+    <tr><td>settings themes</td><td>src/app/settings/themes/page.tsx</td><td>button / card</td></tr>
+    <tr><td>settings</td><td>src/app/settings/page.tsx</td><td>button / TextInputField</td></tr>
+    <tr><td>dropdown</td><td>src/components/ui/language-dropdown.tsx</td><td>dropdown-menu</td></tr>
+    <tr><td>checkbox / switch</td><td>src/components/ads/switch.tsx</td><td>switch / checkbox</td></tr>
+    <tr><td>select</td><td>src/components/ads/placement-select.tsx</td><td>SelectField</td></tr>
+    <tr><td>dialog</td><td>src/components/ui/confirm-dialog.tsx</td><td>dialog</td></tr>
+    <tr><td>duplicate TextInputField</td><td>src/components/ui/TextInputField.tsx</td><td>re-export atoms/shadcn/TextInputField</td></tr>
+    <tr><td>admin layout</td><td>src/components/layout/app-shell.tsx</td><td>templates/admin-base-layout + organisms/app-sidebar</td></tr>
+    <tr><td>hero buttons/inputs</td><td>src/components/listings/HomeHero.tsx</td><td>button / TextInputField</td></tr>
+    <tr><td>hero buttons/inputs</td><td>src/components/blogs/BlogHero.tsx</td><td>button / TextInputField</td></tr>
+    <tr><td>comments</td><td>src/components/blogs/CommentsInline.tsx</td><td>TextInputField / button</td></tr>
+    <tr><td>autocomplete</td><td>src/components/categories/ParentAutocomplete.tsx</td><td>command / TextInputField</td></tr>
+    <tr><td>my listings</td><td>src/app/my-listings/page.tsx</td><td>button / card / badge</td></tr>
+    <tr><td>listing detail</td><td>src/app/listings/[id]/page.tsx</td><td>button / badge</td></tr>
+    <tr><td>listings page</td><td>src/app/listings/page.tsx</td><td>button / filters</td></tr>
+    <tr><td>blogs pages</td><td>src/app/blogs/page.tsx, src/app/blogs/[id]/page.tsx</td><td>button / TextInputField</td></tr>
+    <tr><td>story UI</td><td>src/components/stories/*, src/components/ui/StoryCreateModal.tsx</td><td>button / dialog / TextInputField</td></tr>
+    <tr><td>notifications panel</td><td>src/components/ui/notifications-panel.tsx</td><td>button / badge</td></tr>
+    <tr><td>bottom nav</td><td>src/components/ui/BottomNavigation.tsx</td><td>button</td></tr>
+    <tr><td>auth social</td><td>src/components/auth/SocialAuthButtons.tsx</td><td>button</td></tr>
+    <tr><td>follow</td><td>src/components/profile/FollowButton.tsx</td><td>button</td></tr>
+    <tr><td>legacy input</td><td>src/components/ui/input.tsx</td><td>atoms/shadcn/input or TextInputField</td></tr>
+  </tbody>
+</table>
+</body>
+</html>

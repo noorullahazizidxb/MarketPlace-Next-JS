@@ -1,5 +1,6 @@
 "use client";
 import * as React from "react";
+import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
 import { cn } from "@/lib/cn";
 
 const AD_PLACEMENTS = [
@@ -13,6 +14,11 @@ const AD_PLACEMENTS = [
 
 type AdPlacement = (typeof AD_PLACEMENTS)[number];
 
+const PLACEMENT_OPTIONS = AD_PLACEMENTS.map((p) => ({
+  value: p,
+  label: p.replace(/_/g, " "),
+}));
+
 interface PlacementSelectProps {
   value: AdPlacement | string;
   onChange: (value: AdPlacement) => void;
@@ -25,20 +31,17 @@ export const PlacementSelect: React.FC<PlacementSelectProps> = ({
   size = "md",
 }) => {
   return (
-    <select
-      value={value}
-      onChange={(e) => onChange(e.target.value as AdPlacement)}
-      className={cn(
-        "rounded-2xl bg-input/20 border border-white/10 outline-none focus:ring-2 focus:ring-primary/40 text-xs tracking-tight",
-        size === "sm" ? "h-8 px-2" : "h-10 px-3 text-sm"
-      )}
+    <SelectField
+      label="Placement"
       aria-label="Ad Placement"
-    >
-      {AD_PLACEMENTS.map((p) => (
-        <option key={p} value={p}>
-          {p.replace(/_/g, " ")}
-        </option>
-      ))}
-    </select>
+      value={value}
+      onChange={(v) => onChange(v as AdPlacement)}
+      options={PLACEMENT_OPTIONS}
+      placeholder="Select placement"
+      className={cn(
+        "rounded-2xl bg-input/20 text-xs tracking-tight",
+        size === "sm" ? "h-8 min-h-8 text-xs" : "h-10 min-h-10 text-sm",
+      )}
+    />
   );
 };

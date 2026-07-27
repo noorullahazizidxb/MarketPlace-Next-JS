@@ -1,10 +1,12 @@
 "use client";
 import React, { useState, useMemo } from "react";
-import { useForm, useWatch } from "react-hook-form";
+import { Controller, useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
-import { Switch } from "../ui/switch";
+import { Switch } from "@/components/ui/atoms/shadcn/switch";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { Button } from "@/components/ui/button";
 import { ParentAutocomplete } from "./ParentAutocomplete";
 import { useCreateCategory } from "./useCategoryData";
 import type { CreateCategoryInput } from "./types";
@@ -18,10 +20,8 @@ import {
   ClipboardCheck,
   ArrowLeft,
   ArrowRight,
-  Loader2,
   Check,
   Sparkles,
-  X,
 } from "lucide-react";
 
 const fireConfetti = () => {
@@ -76,9 +76,6 @@ const STEP_CONFIG = [
   { key: "review", label: "Review", icon: ClipboardCheck },
 ];
 
-const inputCls =
-  "w-full h-11 rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/60 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30";
-
 export const CategoryCreateWizard: React.FC<WizardProps> = ({
   onCreated,
   onClose,
@@ -86,7 +83,6 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
   const [autoSlug, setAutoSlug] = useState(true);
   const [step, setStep] = useState(0);
   const {
-    register,
     handleSubmit,
     control,
     setValue,
@@ -208,22 +204,49 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
         <AnimatePresence mode="wait">
           {curStep?.key === "name" && (
             <motion.div key="step-name" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Category Name *</label>
-              <input {...register("name")} placeholder="e.g. Electronics" className={inputCls} autoFocus />
-              {errors.name && <p className="text-xs text-red-400">{errors.name.message}</p>}
+              <Controller
+                name="name"
+                control={control}
+                render={({ field }) => (
+                  <TextInputField
+                    label="Category Name *"
+                    value={field.value ?? ""}
+                    onChange={field.onChange}
+                    onBlur={field.onBlur}
+                    autoFocus
+                    error={errors.name?.message}
+                    icon={<Type className="size-4" />}
+                  />
+                )}
+              />
             </motion.div>
           )}
           {curStep?.key === "slug" && (
             <motion.div key="step-slug" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">URL Slug *</label>
-              <div className="flex items-center gap-2">
-                <input {...register("slug")} disabled={autoSlug} placeholder="electronics" className={cn(inputCls, "flex-1", autoSlug && "opacity-60")} />
+              <div className="flex items-start gap-2">
+                <div className="flex-1 min-w-0">
+                  <Controller
+                    name="slug"
+                    control={control}
+                    render={({ field }) => (
+                      <TextInputField
+                        label="URL Slug *"
+                        value={field.value ?? ""}
+                        onChange={field.onChange}
+                        onBlur={field.onBlur}
+                        disabled={autoSlug}
+                        error={errors.slug?.message}
+                        icon={<Hash className="size-4" />}
+                        className={cn(autoSlug && "opacity-60")}
+                      />
+                    )}
+                  />
+                </div>
                 <div className="flex items-center gap-2 shrink-0 px-3 h-11 rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/40">
                   <Switch checked={autoSlug} onCheckedChange={setAutoSlug} id="autoslug" />
                   <label htmlFor="autoslug" className="text-xs font-medium cursor-pointer whitespace-nowrap">Auto</label>
                 </div>
               </div>
-              {errors.slug && <p className="text-xs text-red-400">{errors.slug.message}</p>}
             </motion.div>
           )}
           {curStep?.key === "options" && (
@@ -281,36 +304,35 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
 
       {/* Footer */}
       <div className="flex items-center justify-between pt-1">
-        <button
+        <Button
           type="button"
+          variant="secondary"
           disabled={step === 0}
           onClick={goPrev}
-          className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          LeftIcon={ArrowLeft}
         >
-          <ArrowLeft className="size-3.5" />
           Back
-        </button>
+        </Button>
         {step < steps.length - 1 ? (
-          <button
+          <Button
             type="button"
+            variant="primary"
             disabled={!nextAllowed()}
             onClick={goNext}
-            className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+            RightIcon={ArrowRight}
           >
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
             Next
-            <ArrowRight className="size-3.5" />
-          </button>
+          </Button>
         ) : (
-          <button
+          <Button
             type="submit"
+            variant="primary"
             disabled={create.isPending}
-            className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+            loading={create.isPending}
+            LeftIcon={create.isPending ? undefined : Sparkles}
           >
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-            {create.isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
             {create.isPending ? "Creating…" : "Create Category"}
-          </button>
+          </Button>
         )}
       </div>
     </form>

@@ -2,6 +2,7 @@
 import { ThemeToggle } from "../../theme/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
 import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { Button } from "@/components/ui/button";
 import { useUIStore } from "@/store/ui.store";
 import { Rows3, Monitor, Globe } from "lucide-react";
 import { motion } from "framer-motion";
@@ -29,18 +30,18 @@ export default function SettingsPage() {
       title: t("density"),
       description: null,
       control: (
-        <div className="flex gap-1 rounded-lg border border-[hsl(var(--border))] p-1">
+        <div className="flex gap-1 rounded-lg border border-border p-1">
           {(["comfort", "compact"] as const).map((d) => (
-            <button
+            <Button
               key={d}
+              type="button"
               onClick={() => setDensity(d)}
-              className={`px-3 py-1 text-sm rounded-md capitalize transition-colors ${density === d
-                  ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]"
-                  : "hover:bg-[hsl(var(--muted))]"
-                }`}
+              variant={density === d ? "primary" : "ghost"}
+              size="sm"
+              className="capitalize"
             >
               {d}
-            </button>
+            </Button>
           ))}
         </div>
       ),
@@ -61,7 +62,7 @@ export default function SettingsPage() {
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.05, ease: [0.22, 1, 0.36, 1] }}
-        className="card divide-y divide-[hsl(var(--border))]"
+        className="card divide-y divide-border"
       >
         {settingsRows.map(({ icon: Icon, title, description, control }, i) => (
           <div
@@ -69,8 +70,8 @@ export default function SettingsPage() {
             className="flex items-center justify-between py-4 first:pt-0 last:pb-0"
           >
             <div className="flex items-center gap-3">
-              <span className="size-9 rounded-xl bg-[hsl(var(--muted))] grid place-items-center">
-                <Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+              <span className="grid size-9 place-items-center rounded-xl bg-muted">
+                <Icon className="h-4 w-4 text-foreground/70" />
               </span>
               <div>
                 <p className="font-semibold text-sm">{title}</p>

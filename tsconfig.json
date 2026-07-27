@@ -19,6 +19,9 @@
     "jsx": "react-jsx",
     "incremental": true,
     "paths": {
+      "@/theme/*": [
+        "./src/theme/*"
+      ],
       "@/components/*": [
         "./src/components/*"
       ],
@@ -36,6 +39,30 @@
       ],
       "@/store/*": [
         "./src/store/*"
+      ],
+      "@repo/hooks": [
+        "./src/lib/repo/hooks.tsx"
+      ],
+      "@repo/hooks/motion": [
+        "./src/lib/repo/motion.ts"
+      ],
+      "@repo/hooks/src/theme/context/theme-context": [
+        "./src/lib/theme/theme-context.tsx"
+      ],
+      "@repo/constants": [
+        "./src/lib/repo/constants.ts"
+      ],
+      "@repo/types": [
+        "./src/lib/repo/types.ts"
+      ],
+      "@repo/types/ui-context": [
+        "./src/lib/theme/types.ts"
+      ],
+      "@repo/theme": [
+        "./src/lib/repo/theme.tsx"
+      ],
+      "@repo/ui": [
+        "./src/lib/repo/ui.ts"
       ]
     },
     "plugins": [

@@ -1,6 +1,5 @@
 "use client";
 
-import * as React from "react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { useForm, useWatch, type Resolver } from "react-hook-form";
@@ -24,9 +23,9 @@ import {
 import { Check } from "lucide-react";
 import { useApiMutation, useApiGet } from "@/lib/api-hooks";
 import { useAuthStore } from "@/store/auth.store";
-import { Input } from "@/components/ui/input";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { asset } from "@/lib/assets";
 
 import { Eye, EyeOff } from "lucide-react";
@@ -186,18 +185,29 @@ export default function ProfilePage() {
   );
 
   const {
-    register,
     handleSubmit,
     control,
-    formState: { errors, isSubmitting, dirtyFields },
+    setValue,
+    formState: { errors, isSubmitting },
     reset,
   } = useForm<FormData>({
     resolver: zodResolver(schema) as Resolver<FormData>,
     defaultValues,
   });
 
+  const setField =
+    (name: keyof FormData) =>
+    (value: string) => {
+      setValue(name, value, {
+        shouldDirty: true,
+        shouldValidate: true,
+        shouldTouch: true,
+      });
+    };
+
   const firstNameValue = useWatch({ control, name: "firstName" }) || "";
   const lastNameValue = useWatch({ control, name: "lastName" }) || "";
+  const fullNameValue = useWatch({ control, name: "fullName" }) || "";
   const emailValue = useWatch({ control, name: "email" }) || "";
   const phoneValue = useWatch({ control, name: "phone" }) || "";
   const whatsappValue = useWatch({ control, name: "whatsapp" }) || "";
@@ -539,11 +549,13 @@ export default function ProfilePage() {
             <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
               <Edit3 className="size-4" /> Quick Bio
             </h2>
-            <textarea
-              {...register("bio")}
+            <TextareaField
+              label={t("shortBioPlaceholder") || "Short bio"}
+              icon={<Edit3 className="size-4" />}
               rows={6}
-              placeholder="Tell people a little about yourself, your experience or interests..."
-              className="rounded-xl w-full resize-y min-h-[140px] p-3 border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm leading-relaxed placeholder:text-[hsl(var(--muted-foreground))]"
+              maxLength={260}
+              value={bioValue}
+              onChange={setField("bio")}
             />
             <p className="mt-2 text-2xs subtle text-right">
               {bioValue.length || 0}/260
@@ -579,113 +591,127 @@ export default function ProfilePage() {
             onSubmit={handleSubmit(onSubmit)}
             className="grid grid-cols-1 sm:grid-cols-2 gap-5"
           >
-            <TextField
+            <TextInputField
               label="First Name"
+              icon={<User2 className="size-4" />}
               error={errors.firstName?.message}
-              {...register("firstName")}
-              icon={User2}
+              value={firstNameValue}
+              onChange={setField("firstName")}
             />
-            <TextField
+            <TextInputField
               label="Last Name"
+              icon={<User2 className="size-4" />}
               error={errors.lastName?.message}
-              {...register("lastName")}
-              icon={User2}
+              value={lastNameValue}
+              onChange={setField("lastName")}
             />
-            <TextField
+            <TextInputField
               label="Full Name"
+              icon={<User2 className="size-4" />}
               error={errors.fullName?.message}
-              {...register("fullName")}
-              icon={User2}
+              value={fullNameValue}
+              onChange={setField("fullName")}
             />
-            <TextField
+            <TextInputField
               label="Email"
+              icon={<Mail className="size-4" />}
+              type="email"
               error={errors.email?.message}
-              {...register("email")}
-              icon={Mail}
+              value={emailValue}
+              onChange={setField("email")}
             />
-            <TextField
+            <TextInputField
               label="Phone"
+              icon={<Phone className="size-4" />}
+              type="tel"
               error={errors.phone?.message}
-              {...register("phone")}
-              icon={Phone}
+              value={phoneValue}
+              onChange={setField("phone")}
             />
-            <TextField
+            <TextInputField
               label="WhatsApp"
+              icon={<Phone className="size-4" />}
+              type="tel"
               error={errors.whatsapp?.message}
-              {...register("whatsapp")}
-              icon={Phone}
+              value={whatsappValue}
+              onChange={setField("whatsapp")}
             />
-            <TextField
+            <TextInputField
               label="City"
+              icon={<MapPin className="size-4" />}
               error={errors.city?.message}
-              {...register("city")}
-              icon={MapPin}
+              value={cityValue}
+              onChange={setField("city")}
             />
-            <TextField
+            <TextInputField
               label="Country"
+              icon={<MapPin className="size-4" />}
               error={errors.country?.message}
-              {...register("country")}
-              icon={MapPin}
+              value={countryValue}
+              onChange={setField("country")}
             />
-            <TextField
+            <TextInputField
               label="Street"
+              icon={<MapPin className="size-4" />}
               error={errors.street?.message}
-              {...register("street")}
-              icon={MapPin}
+              value={streetValue}
+              onChange={setField("street")}
             />
-            <TextField
+            <TextInputField
               label="Website"
+              icon={<Globe2 className="size-4" />}
               error={errors.website?.message}
-              {...register("website")}
-              icon={Globe2}
+              value={websiteValue}
+              onChange={setField("website")}
             />
-            <TextField
+            <TextInputField
               label="LinkedIn"
+              icon={<Linkedin className="size-4" />}
               error={errors.linkedin?.message}
-              {...register("linkedin")}
-              icon={Linkedin}
+              value={linkedinValue}
+              onChange={setField("linkedin")}
             />
-            <TextField
+            <TextInputField
               label="Facebook"
+              icon={<Facebook className="size-4" />}
               error={errors.facebook?.message}
-              {...register("facebook")}
-              icon={Facebook}
+              value={facebookValue}
+              onChange={setField("facebook")}
             />
-            <TextField
+            <TextInputField
               label="Instagram"
+              icon={<Instagram className="size-4" />}
               error={errors.instagram?.message}
-              {...register("instagram")}
-              icon={Instagram}
+              value={instagramValue}
+              onChange={setField("instagram")}
             />
             {/* Password fields */}
             <div className="sm:col-span-2">
-              <FieldLabel icon={ShieldCheck} label="Password" />
               <PasswordField
-                register={register}
+                value={passwordValue}
+                onChange={setField("password")}
                 error={errors.password?.message as any}
-                watchPassword={passwordValue}
               />
             </div>
             <div className="sm:col-span-2">
-              <FieldLabel
-                icon={ShieldCheck}
-                label={t("confirmPassword") || "Confirm Password"}
-              />
               <ConfirmPasswordField
-                register={register}
+                value={confirmPasswordValue}
+                onChange={setField("confirmPassword")}
                 error={errors.confirmPassword?.message as any}
                 passwordValue={passwordValue}
                 confirmValue={confirmPasswordValue}
+                label={t("confirmPassword") || "Confirm Password"}
               />
             </div>
             <div className="sm:col-span-2">
-              <FieldLabel icon={Edit3} label="Bio" />
-              <textarea
-                {...register("bio")}
+              <TextareaField
+                label="Bio"
+                icon={<Edit3 className="size-4" />}
                 rows={4}
                 maxLength={260}
-                className="mt-1 w-full rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 text-sm focus:ring-2 ring-[hsl(var(--accent))]/40 resize-y placeholder:text-[hsl(var(--muted-foreground))]"
-                placeholder="Short bio (max 260 chars)"
+                value={bioValue}
+                onChange={setField("bio")}
+                error={errors.bio?.message}
               />
               <p className="mt-1 text-2xs text-right subtle">
                 {bioValue.length || 0}/260
@@ -746,42 +772,17 @@ function DetailField({
   );
 }
 
-type TextFieldProps = React.InputHTMLAttributes<HTMLInputElement> & {
-  label: string;
-  error?: string;
-  icon?: any;
-};
-const TextField = React.forwardRef<HTMLInputElement, TextFieldProps>(
-  ({ label, error, icon: Icon, ...rest }, ref) => (
-    <div>
-      <FieldLabel icon={Icon || User2} label={label} />
-      <div className="relative mt-1">
-        {Icon && (
-          <Icon className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[hsl(var(--muted-foreground))]" />
-        )}
-        <Input
-          {...(rest as React.InputHTMLAttributes<HTMLInputElement>)}
-          ref={ref}
-          className="pl-10 h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm"
-        />
-      </div>
-      {error && <p className="mt-1 text-2xs text-red-500">{error}</p>}
-    </div>
-  )
-);
-TextField.displayName = "TextField";
-
 function PasswordField({
-  register,
+  value,
+  onChange,
   error,
-  watchPassword,
 }: {
-  register: any;
+  value: string;
+  onChange: (value: string) => void;
   error?: string | null;
-  watchPassword?: string;
 }) {
   const [visible, setVisible] = useState(false);
-  const strength = passwordStrength(String(watchPassword || ""));
+  const strength = passwordStrength(String(value || ""));
   const widthClass =
     ["w-0", "w-1/4", "w-1/2", "w-3/4", "w-full"][strength] || "w-0";
   const colorClass =
@@ -792,21 +793,30 @@ function PasswordField({
         : "bg-emerald-400";
 
   return (
-    <div className="relative mt-1">
-      <Input
-        {...register("password")}
+    <div>
+      <TextInputField
+        label="Password"
+        icon={<ShieldCheck className="size-4" />}
         type={visible ? "text" : "password"}
-        className="h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm pr-10"
+        value={value}
+        onChange={onChange}
+        error={error || undefined}
+        autoComplete="new-password"
+        suffix={
+          <button
+            type="button"
+            aria-label={visible ? "Hide password" : "Show password"}
+            onClick={() => setVisible((v) => !v)}
+            className="text-muted-foreground hover:text-foreground"
+          >
+            {visible ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
+        }
       />
-      <button
-        type="button"
-        aria-label={visible ? "Hide password" : "Show password"}
-        onClick={() => setVisible((v) => !v)}
-        className="absolute right-3 top-1/2 -translate-y-1/2 text-[hsl(var(--muted-foreground))]
-          hover:text-[hsl(var(--foreground))]"
-      >
-        {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-      </button>
       <div className="mt-2 flex items-center gap-2">
         <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
           <div
@@ -814,26 +824,29 @@ function PasswordField({
           />
         </div>
         <div className="text-2xs subtle w-20 text-right">
-          {watchPassword
+          {value
             ? ["Very weak", "Weak", "Okay", "Good", "Strong"][strength]
             : ""}
         </div>
       </div>
-      {error && <p className="mt-1 text-2xs text-red-500">{error}</p>}
     </div>
   );
 }
 
 function ConfirmPasswordField({
-  register,
+  value,
+  onChange,
   error,
   passwordValue,
   confirmValue,
+  label,
 }: {
-  register: any;
+  value: string;
+  onChange: (value: string) => void;
   error?: string | null;
   passwordValue?: string;
   confirmValue?: string;
+  label: string;
 }) {
   const [visible, setVisible] = useState(false);
   const { t } = useLanguage();
@@ -841,51 +854,49 @@ function ConfirmPasswordField({
   const matches = filled && String(passwordValue) === String(confirmValue);
 
   return (
-    <div className="relative mt-1">
-      <Input
-        {...register("confirmPassword")}
-        type={visible ? "text" : "password"}
-        className="h-11 rounded-xl border-[hsl(var(--border))] bg-[hsl(var(--card))] focus:ring-2 ring-[hsl(var(--accent))]/40 text-sm pr-28"
-        aria-invalid={Boolean(error || (filled && !matches))}
-        aria-describedby={error ? "confirm-error" : undefined}
-      />
-
-      <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
-        <div className="flex items-center gap-2 text-sm">
+    <TextInputField
+      label={label}
+      icon={<ShieldCheck className="size-4" />}
+      type={visible ? "text" : "password"}
+      value={value}
+      onChange={onChange}
+      error={error || undefined}
+      autoComplete="new-password"
+      aria-invalid={Boolean(error || (filled && !matches))}
+      suffix={
+        <div className="flex items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${!filled
-              ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
-              : matches
-                ? "bg-emerald-500/10 text-emerald-400"
-                : "bg-red-500/10 text-red-400"
-              }`}
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${
+              !filled
+                ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
+                : matches
+                  ? "bg-emerald-500/10 text-emerald-400"
+                  : "bg-red-500/10 text-red-400"
+            }`}
             aria-live="polite"
           >
             <Check className="size-3" />
             {filled ? (matches ? "Match" : "No match") : "—"}
           </span>
+          <button
+            type="button"
+            aria-label={
+              visible
+                ? t("hideConfirmPassword") || "Hide confirm password"
+                : t("showConfirmPassword") || "Show confirm password"
+            }
+            onClick={() => setVisible((v) => !v)}
+            className="text-muted-foreground hover:text-foreground p-1"
+          >
+            {visible ? (
+              <EyeOff className="size-4" />
+            ) : (
+              <Eye className="size-4" />
+            )}
+          </button>
         </div>
-
-        <button
-          type="button"
-          aria-label={
-            visible
-              ? t("hideConfirmPassword") || "Hide confirm password"
-              : t("showConfirmPassword") || "Show confirm password"
-          }
-          onClick={() => setVisible((v) => !v)}
-          className="text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] p-1"
-        >
-          {visible ? <EyeOff className="size-4" /> : <Eye className="size-4" />}
-        </button>
-      </div>
-
-      {error && (
-        <p id="confirm-error" className="mt-1 text-2xs text-red-500">
-          {error}
-        </p>
-      )}
-    </div>
+      }
+    />
   );
 }
 

@@ -1,9 +1,17 @@
 "use client";
 import * as React from "react";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogClose,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/atoms/shadcn/dialog";
 import { Button } from "@/components/ui/button";
-import { X } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
+import { X } from "lucide-react";
 
 export interface ConfirmDialogProps {
   open: boolean;
@@ -46,33 +54,36 @@ export function ConfirmDialog({
   const close = () => onOpenChange(false);
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-sm p-0 overflow-hidden">
-        <div className="p-5 pb-4">
+      <DialogContent
+        showCloseButton={false}
+        className="max-w-sm p-0 overflow-hidden md:w-[min(92vw,24rem)] lg:w-[min(92vw,24rem)] xl:w-[min(92vw,24rem)]"
+      >
+        <DialogHeader className="p-5 pb-4 text-left">
           <div className="flex items-start gap-3">
             {icon && <div className="mt-0.5">{icon}</div>}
-            <div className="min-w-0 flex-1">
-              <h3 className="text-base font-semibold leading-snug">{title}</h3>
+            <div className="min-w-0 flex-1 space-y-1">
+              <DialogTitle>{title}</DialogTitle>
               {description && (
-                <p className="mt-1 text-sm text-[hsl(var(--muted-foreground))]">
-                  {description}
-                </p>
+                <DialogDescription>{description}</DialogDescription>
               )}
             </div>
             <DialogClose asChild>
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 aria-label="Close"
-                className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
+                className="size-8 shrink-0 p-0"
                 onClick={() => {
                   onCancel?.();
                   close();
                 }}
               >
                 <X className="size-4" />
-              </button>
+              </Button>
             </DialogClose>
           </div>
-        </div>
-        <div className="px-5 pb-5 pt-2 flex justify-end gap-3 bg-[hsl(var(--muted))]/20">
+        </DialogHeader>
+        <DialogFooter className="px-5 pb-5 pt-2 flex-row justify-end gap-3 bg-muted/20 sm:justify-end">
           <DialogClose asChild>
             <Button
               variant="ghost"
@@ -89,17 +100,13 @@ export function ConfirmDialog({
             size="sm"
             onClick={handleConfirm}
             disabled={loading || submitting}
-            className={
-              tone === "danger"
-                ? "bg-red-600 hover:bg-red-500 text-white border-red-600"
-                : undefined
-            }
+            variant={tone === "danger" ? "destructive" : "primary"}
           >
             {loading || submitting
               ? t("pleaseWait")
               : confirmLabel || t("confirm")}
           </Button>
-        </div>
+        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

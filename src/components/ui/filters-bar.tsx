@@ -119,13 +119,13 @@ export function FiltersBar() {
     <>
       {/* Mobile trigger */}
       <div className="flex items-center gap-2 sm:hidden">
-        <motion.button
-          whileTap={{ scale: 0.96 }}
+        <Button
+          type="button"
+          variant="primary"
+          LeftIcon={SlidersHorizontal}
           onClick={() => setOpen(true)}
-          className="relative inline-flex items-center gap-2 h-10 px-4 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.45)] overflow-hidden"
+          className="relative h-10 px-4"
         >
-          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-          <SlidersHorizontal className="size-4" />
           <span className="text-sm font-semibold">
             {(t as any)("filters") || "Filters"}
           </span>
@@ -134,7 +134,7 @@ export function FiltersBar() {
               {activeCount}
             </span>
           )}
-        </motion.button>
+        </Button>
         {activeCount > 0 && (
           <motion.span
             initial={{ opacity: 0, x: -4 }}

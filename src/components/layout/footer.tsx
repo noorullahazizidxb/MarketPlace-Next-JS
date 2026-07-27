@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import QRCode from "react-qr-code";
@@ -19,6 +20,7 @@ import {
   LayoutList,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { useLanguage } from "@/components/providers/language-provider";
 
 const socials = [
@@ -47,6 +49,7 @@ const resources = [
 
 export default function Footer() {
   const { locale, t } = useLanguage();
+  const [newsletterEmail, setNewsletterEmail] = useState("");
 
   return (
     <footer className="relative mt-10 md:mt-12" dir={locale === "fa" ? "rtl" : "ltr"}>
@@ -175,21 +178,23 @@ export default function Footer() {
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
-                  const fd = new FormData(e.currentTarget as HTMLFormElement);
-                  const email = String(fd.get("email") || "");
-                  if (!email) return;
+                  if (!newsletterEmail) return;
                   // TODO: hook to your newsletter API
+                  setNewsletterEmail("");
                 }}
                 className="mt-3 flex items-center gap-2"
               >
                 <Tooltip content={t("subscribeEmail")} side="top">
-                  <input
-                    name="email"
-                    type="email"
-                    required
-                    placeholder="you@domain.com"
-                    className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
-                  />
+                  <div className="w-full">
+                    <TextInputField
+                      label={t("subscribeEmail")}
+                      type="email"
+                      required
+                      value={newsletterEmail}
+                      onChange={setNewsletterEmail}
+                      icon={<Mail className="size-4" />}
+                    />
+                  </div>
                 </Tooltip>
                 <Tooltip content={t("subscribe")} side="top">
                   <Button type="submit" size="sm" variant="primary">

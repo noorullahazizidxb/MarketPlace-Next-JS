@@ -2,7 +2,11 @@
 
 import { useRef, useState, useMemo, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
-import { useForm, type Resolver } from "react-hook-form";
+import { useForm, Controller, type Resolver } from "react-hook-form";
+import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
+import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
+import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
+import { Button } from "@/components/ui/button";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
@@ -15,15 +19,11 @@ import {
   Type as TypeIcon,
   FileText,
   DollarSign,
-  Coins,
-  MapPin,
   Home,
-  ChevronDown,
   Check,
   ArrowLeft,
   UploadCloud,
   X,
-  Loader2,
 } from "lucide-react";
 import { asset } from "@/lib/assets";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -81,7 +81,7 @@ export default function CreateListingPage() {
   }, [reps]);
 
   const {
-    register,
+    control,
     handleSubmit,
     formState: { errors, isSubmitting },
     reset,
@@ -322,13 +322,15 @@ export default function CreateListingPage() {
         ))}
       </div>
       <div>
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={() => setStep(1)}
-          className="h-9 px-3 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors"
+          LeftIcon={ArrowLeft}
         >
-          <ArrowLeft className="size-3.5" /> Back
-        </button>
+          Back
+        </Button>
       </div>
     </div>
   );
@@ -372,13 +374,14 @@ export default function CreateListingPage() {
             {t("listingsCreateImagesDragDrop")}
           </p>
           <div>
-            <button
+            <Button
               type="button"
+              variant="secondary"
+              size="sm"
               onClick={() => fileInputRef.current?.click()}
-              className="h-9 px-4 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium hover:bg-[hsl(var(--muted))]/20 transition-colors"
             >
               {t("listingsCreateImagesBrowse")}
-            </button>
+            </Button>
             <input
               ref={fileInputRef}
               type="file"
@@ -475,15 +478,19 @@ export default function CreateListingPage() {
         )}
       </div>
       <div className="flex gap-2">
-        <button
+        <Button
           type="button"
+          variant="secondary"
+          size="sm"
           onClick={() => setStep(2)}
-          className="h-9 px-3 rounded-xl border border-[hsl(var(--border))]/50 text-xs font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors"
+          LeftIcon={ArrowLeft}
         >
-          <ArrowLeft className="size-3.5" /> Back
-        </button>
-        <button
+          Back
+        </Button>
+        <Button
           type="button"
+          variant="primary"
+          size="sm"
           onClick={() => {
             if (imagesPreview.length === 0 && existingImages.length === 0) {
               setImagesLocalError("Add at least one image");
@@ -492,11 +499,9 @@ export default function CreateListingPage() {
             setImagesLocalError(null);
             setStep(4);
           }}
-          className="h-9 px-5 rounded-xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-xs font-semibold hover:brightness-110 transition-all relative overflow-hidden"
         >
-          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
           Continue
-        </button>
+        </Button>
       </div>
     </div>
   );
@@ -507,120 +512,135 @@ export default function CreateListingPage() {
       className="grid grid-cols-1 md:grid-cols-2 gap-4"
     >
       <div className="md:col-span-2">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Title
-        </label>
-        <div className="relative">
-          <TypeIcon className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <input
-            {...register("title")}
-            placeholder="2BR Apartment for Rent"
-            className={cn(inputCls, "pl-10")}
-          />
-        </div>
-        {errors.title && (
-          <p className="text-red-500 text-xs mt-1">{errors.title.message}</p>
-        )}
+        <Controller
+          name="title"
+          control={control}
+          render={({ field }) => (
+            <TextInputField
+              label="Title *"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.title?.message}
+              icon={<TypeIcon className="size-4" />}
+            />
+          )}
+        />
       </div>
       <div className="md:col-span-2">
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Description
-        </label>
-        <div className="relative">
-          <FileText className="absolute left-3 top-3 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <textarea
-            {...register("description")}
-            placeholder="Describe the property..."
-            rows={5}
-            className="w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm pl-10 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all resize-none placeholder:text-[hsl(var(--foreground))]/30"
-          />
-        </div>
-        {errors.description && (
-          <p className="text-red-500 text-xs mt-1">{errors.description.message}</p>
-        )}
+        <Controller
+          name="description"
+          control={control}
+          render={({ field }) => (
+            <TextareaField
+              label="Description *"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              rows={5}
+              error={errors.description?.message}
+              icon={<FileText className="size-4" />}
+            />
+          )}
+        />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Price
-        </label>
-        <div className="relative">
-          <DollarSign className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <input
-            type="number"
-            step="0.01"
-            {...register("price")}
-            className={cn(inputCls, "pl-10")}
-          />
-        </div>
+        <Controller
+          name="price"
+          control={control}
+          render={({ field }) => (
+            <TextInputField
+              label="Price *"
+              type="number"
+              step="0.01"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.price?.message}
+              icon={<DollarSign className="size-4" />}
+            />
+          )}
+        />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Currency
-        </label>
-        <div className="relative">
-          <Coins className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <select {...register("currency")} className={selectCls}>
-            <option value="USD">USD</option>
-            <option value="AFG">AFG</option>
-            <option value="EUR">EUR</option>
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-        </div>
+        <Controller
+          name="currency"
+          control={control}
+          render={({ field }) => (
+            <SelectField
+              label="Currency *"
+              value={field.value ?? "AFG"}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              options={[
+                { value: "USD", label: "USD" },
+                { value: "AFG", label: "AFG" },
+                { value: "EUR", label: "EUR" },
+              ]}
+              placeholder="Select currency"
+            />
+          )}
+        />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Location
-        </label>
-        <div className="relative">
-          <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <select {...register("location")} className={selectCls}>
-            <option value="">Select a region</option>
-            {regions.map((r) => (
-              <option key={r} value={r}>
-                {r}
-              </option>
-            ))}
-          </select>
-          <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-        </div>
+        <Controller
+          name="location"
+          control={control}
+          render={({ field }) => (
+            <SelectField
+              label="Location *"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.location?.message}
+              options={regions.map((r) => ({ value: r, label: r }))}
+              placeholder="Select a region"
+            />
+          )}
+        />
       </div>
       <div>
-        <label className="block text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50 mb-1.5">
-          Address
-        </label>
-        <div className="relative">
-          <Home className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[hsl(var(--foreground))]/30 pointer-events-none" />
-          <input
-            {...register("address")}
-            placeholder="Street 1, Near Market"
-            className={cn(inputCls, "pl-10")}
-          />
-        </div>
+        <Controller
+          name="address"
+          control={control}
+          render={({ field }) => (
+            <TextInputField
+              label="Address"
+              value={field.value ?? ""}
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              error={errors.address?.message}
+              icon={<Home className="size-4" />}
+            />
+          )}
+        />
       </div>
       {error && <p className="text-red-500 text-sm md:col-span-2">{error}</p>}
       <div className="md:col-span-2 flex gap-2 pt-1">
-        <button
+        <Button
           type="button"
+          variant="secondary"
           onClick={() => setStep(3)}
-          className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors"
+          LeftIcon={ArrowLeft}
         >
-          <ArrowLeft className="size-3.5" /> Back
-        </button>
-        <button
+          Back
+        </Button>
+        <Button
           type="submit"
+          variant="primary"
           disabled={
             isSubmitting ||
             createListing.isPending ||
             editListingMutation.isPending
           }
-          className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+          loading={
+            isSubmitting ||
+            createListing.isPending ||
+            editListingMutation.isPending
+          }
         >
-          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-          {(isSubmitting || createListing.isPending || editListingMutation.isPending) && (
-            <Loader2 className="size-4 animate-spin" />
-          )}
           {editId ? "Update" : "Create"}
-        </button>
+        </Button>
       </div>
     </form>
   );
@@ -633,10 +653,6 @@ export default function CreateListingPage() {
     t("listingsCreateStep3Title") || "Photos",
     t("listingsCreateStep4Title") || "Details",
   ];
-  const inputCls =
-    "h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30";
-  const selectCls =
-    "h-11 w-full rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/70 backdrop-blur-sm pl-10 pr-8 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 transition-all appearance-none";
 
   return (
     <div className="min-h-screen flex mt-32 justify-center px-4 sm:px-6">

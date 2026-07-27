@@ -1,0 +1,15 @@
+node_modules
+.next
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+coverage
+docker-configuration
+.DS_Store
+.specstory
+.vscode
+.github
+tmp
+*.log
