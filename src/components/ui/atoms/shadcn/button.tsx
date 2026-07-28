@@ -77,35 +77,35 @@ function Button({
     asChild?: boolean;
     loading?: boolean;
   }) {
-  const Comp = asChild ? Slot : "button";
+  const sharedProps = {
+    "data-slot": "button" as const,
+    className: cn(buttonVariants({ variant, size }), className),
+    disabled: disabled || loading,
+    style,
+    ...props,
+  };
+
+  // Radix Slot requires exactly one element child — never siblings or a Fragment.
+  if (asChild) {
+    return <Slot {...sharedProps}>{children}</Slot>;
+  }
 
   return (
-    <Comp
-      data-slot="button"
-      className={cn(buttonVariants({ variant, size }), className)}
-      disabled={disabled || loading}
-      style={style}
-      {...props}
-    >
+    <button {...sharedProps}>
       {loading ? (
-        <>
-          {/* Loader size follows button size tokens so it remains consistent with text/icon scale */}
-          <Loader2
-            className={cn(
-              "animate-spin",
-              size === "xs" || size === "sm"
-                ? "app-icon-xs"
-                : size === "icon"
-                  ? "size-full"
-                  : "app-icon-sm",
-            )}
-          />
-          {children}
-        </>
-      ) : (
-        children
-      )}
-    </Comp>
+        <Loader2
+          className={cn(
+            "animate-spin",
+            size === "xs" || size === "sm"
+              ? "app-icon-xs"
+              : size === "icon"
+                ? "size-full"
+                : "app-icon-sm",
+          )}
+        />
+      ) : null}
+      {children}
+    </button>
   );
 }
 

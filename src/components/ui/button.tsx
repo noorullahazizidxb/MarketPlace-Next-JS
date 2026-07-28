@@ -65,8 +65,26 @@ export function Button({
   loading = false,
   disabled,
   children,
+  asChild = false,
   ...props
 }: ButtonProps) {
+  // Radix Slot requires a single React element child. Icon/loader siblings
+  // turn `children` into an array and throw "Slot failed to slot onto its children".
+  if (asChild) {
+    return (
+      <ShadcnButton
+        variant={mapVariant(variant)}
+        size={mapSize(size)}
+        asChild
+        disabled={disabled || loading}
+        className={cn("[border-radius:var(--squircle-radius)]", className)}
+        {...props}
+      >
+        {children}
+      </ShadcnButton>
+    );
+  }
+
   return (
     <ShadcnButton
       variant={mapVariant(variant)}
