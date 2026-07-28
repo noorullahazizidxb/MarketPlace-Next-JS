@@ -57,7 +57,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         'disabled:opacity-50'
       ),
       danger: cn(
-        'bg-destructive text-white',
+        'bg-destructive text-destructive-foreground',
         'hover:bg-destructive/90 active:bg-destructive/80',
         'disabled:opacity-50'
       ),

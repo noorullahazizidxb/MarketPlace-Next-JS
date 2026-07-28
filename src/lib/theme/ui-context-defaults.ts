@@ -15,7 +15,7 @@ import type {
 
 // Map of font family option to CSS font-family value.
 export const fontFamilyValues: Record<FontFamilyOption, string> = {
-  inter: 'Inter, "Segoe UI", system-ui, -apple-system, sans-serif',
+  inter: 'var(--font-inter), "Inter Fallback", system-ui, -apple-system, sans-serif',
   roboto: "'Roboto', 'Helvetica Neue', Arial, sans-serif",
   "open-sans": "'Open Sans', 'Segoe UI', system-ui, -apple-system, sans-serif",
   poppins: "'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif",

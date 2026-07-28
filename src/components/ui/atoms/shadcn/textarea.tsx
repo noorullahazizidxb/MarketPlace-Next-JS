@@ -43,7 +43,7 @@ function Textarea({ className, style, ...props }: React.ComponentProps<"textarea
 
 type BaseTextareaFieldProps = Omit<
   TextareaHTMLAttributes<HTMLTextAreaElement>,
-  "onChange" | "value"
+  "onChange" | "value" | "placeholder"
 > & {
   label: string
   error?: string | boolean
@@ -148,11 +148,8 @@ const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
           className={cn(
             "peer w-full border bg-background outline-none",
             "transition-all duration-200",
-            // Vertical: top padding holds floating label
-            "pt-7 pb-3 min-h-[6rem] resize-y",
-            // Horizontal
-            hasIcon ? "ps-10 pe-4" : "px-4",
-            // Border / focus
+            "min-h-[6rem] resize-y rounded-squircle",
+            hasIcon ? "ps-10 pe-4" : "px-[var(--text-input-padding-inline)]",
             hasError
               ? "border-destructive/40 focus:border-destructive focus:ring-1 focus:ring-destructive/30"
               : "border-border/60 focus:border-ring focus:ring-1 focus:ring-ring/30",
@@ -160,8 +157,12 @@ const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
             "[field-sizing:content]",
             className,
           )}
-          // Single-space placeholder required for peer-[:not(:placeholder-shown)] trick
-          placeholder=" "
+          style={{
+            paddingTop: "var(--text-input-padding-block-start)",
+            paddingBottom: "var(--text-input-padding-block-end)",
+            fontSize: "var(--text-body)",
+            lineHeight: 1.4,
+          }}
           onChange={handleChange}
           onFocus={onFocus as React.FocusEventHandler<HTMLTextAreaElement>}
           onBlur={onBlur as React.FocusEventHandler<HTMLTextAreaElement>}
@@ -174,6 +175,7 @@ const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
                 : undefined
           }
           {...rest}
+          placeholder=" "
         />
 
         {/* Floating label */}
@@ -181,15 +183,13 @@ const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
           htmlFor={inputId}
           className={cn(
             "pointer-events-none absolute rounded px-1 transition-all duration-200 bg-transparent",
-            hasIcon ? "start-10" : "start-4",
-            // Default: sits inside the top padding area (acts as placeholder)
-            "top-0 translate-y-[14px] text-muted-foreground",
-            // Focused → float up + shrink
-            "peer-focus:translate-y-[6px] peer-focus:app-text-heading-sm peer-focus:text-foreground/70",
-            // Filled → stay floated
-            "peer-[:not(:placeholder-shown)]:translate-y-[6px] peer-[:not(:placeholder-shown)]:text-foreground/70",
-            // Controlled with value → always floated
-            hasValue && "translate-y-[6px] text-foreground/70",
+            hasIcon ? "start-10" : "start-[var(--text-input-padding-inline)]",
+            "top-[var(--text-input-label-float-y)] app-text-body text-muted-foreground",
+            "peer-placeholder-shown:top-1/2 peer-placeholder-shown:-translate-y-1/2",
+            "peer-focus:top-[var(--text-input-label-float-y)] peer-focus:translate-y-0 peer-focus:app-text-label peer-focus:text-foreground/70",
+            "peer-[:not(:placeholder-shown)]:top-[var(--text-input-label-float-y)] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:app-text-label peer-[:not(:placeholder-shown)]:text-foreground/70",
+            hasValue &&
+              "top-[var(--text-input-label-float-y)] translate-y-0 app-text-label text-foreground/70",
             hasError && "text-destructive peer-focus:text-destructive",
           )}
         >

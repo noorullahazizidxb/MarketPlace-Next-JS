@@ -41,7 +41,7 @@ const badgeVariants = cva(
         brand:
           "border-transparent brand-gradient hover-gradient brand-glow text-brand-foreground [a&]:hover:text-brand-foreground",
         destructive:
-          "border-transparent bg-destructive text-white [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
+          "border-transparent bg-destructive text-destructive-foreground [a&]:hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
           "text-foreground border-border/60 [a&]:hover:bg-accent [a&]:hover:text-accent-foreground",
         // New: soft muted variant used for neutral tags

@@ -1,26 +1,5 @@
 import "./globals.css";
-import "@fontsource/inter/400.css";
-import "@fontsource/inter/600.css";
-import "@fontsource/inter/700.css";
-import "@fontsource/montserrat/400.css";
-import "@fontsource/montserrat/600.css";
-import "@fontsource/nunito/400.css";
-import "@fontsource/nunito/600.css";
-import "@fontsource/work-sans/400.css";
-import "@fontsource/work-sans/600.css";
-import "@fontsource/poppins/400.css";
-import "@fontsource/poppins/600.css";
-import "@fontsource/roboto/400.css";
-import "@fontsource/open-sans/400.css";
-import "@fontsource/lato/400.css";
-import "@fontsource/vazirmatn/400.css";
-import "@fontsource/vazirmatn/700.css";
-import "@fontsource/cairo/400.css";
-import "@fontsource/cairo/700.css";
-import "@fontsource/noto-sans-arabic/400.css";
-import "@fontsource/noto-sans-arabic/700.css";
-import "@fontsource/noto-naskh-arabic/400.css";
-import "@fontsource/noto-naskh-arabic/700.css";
+import { inter } from "@/lib/fonts";
 
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -54,7 +33,7 @@ export default async function RootLayout({
   const themeModeScript = getThemeModeInitScript(initialThemeSettings.mode);
 
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className={inter.variable} suppressHydrationWarning>
       <head>
         <style
           id="app-inline-css"
@@ -66,7 +45,10 @@ export default async function RootLayout({
           dangerouslySetInnerHTML={{ __html: themeModeScript }}
         />
       </head>
-      <body className="bg-background text-foreground antialiased">
+      <body
+        className="bg-background text-foreground antialiased"
+        style={{ fontFamily: "var(--app-font-family)" }}
+      >
         <SeoJsonLd />
         <ThemeProvider initialThemeSettings={initialThemeSettings}>
           <QueryProvider>

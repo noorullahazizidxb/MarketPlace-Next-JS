@@ -204,7 +204,7 @@ export function Topbar() {
                       >
                         <Bell className="size-4" />
                         {unreadCount > 0 && (
-                          <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-[10px] font-semibold grid place-items-center">
+                          <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold grid place-items-center">
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
                         )}
@@ -241,7 +241,7 @@ export function Topbar() {
                       </span>
                       {counts?.listings > 0 && (
                         <span
-                          className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white app-text-caption font-semibold"
+                          className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground app-text-caption font-semibold"
                           aria-hidden
                         >
                           {counts.listings > 99 ? "99+" : counts.listings}

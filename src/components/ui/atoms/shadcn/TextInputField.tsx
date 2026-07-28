@@ -17,22 +17,24 @@ import {
 import { cn } from "../../lib/cn";
 
 /**
- * TextInputField — floating-label input atom (daily.dev-style).
- *
- * Shell: flex-row, bordered, icon vertically centered.
- * Rest: label + icon share vertical center.
- * Active (focus or value): label animates to top; input text sits below.
+ * TextInputField — floating-label input atom.
+ * `label` is the visual placeholder (floats on focus/value).
+ * Do not pass a user-facing `placeholder`; a space sentinel is locked in.
  */
 
 type BaseTextInputFieldProps = Omit<
   InputHTMLAttributes<HTMLInputElement>,
-  "onChange" | "value"
+  "onChange" | "value" | "placeholder"
 > & {
   label: string;
   error?: string | boolean;
   helperText?: string;
   icon?: ReactNode | null;
   suffix?: ReactNode | null;
+  /** Decorative classes for the bordered shell (not the inner input). */
+  className?: string;
+  /** Optional classes for the inner input only. */
+  inputClassName?: string;
 };
 
 type ControlledProps = BaseTextInputFieldProps & {
@@ -63,6 +65,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
       error,
       helperText,
       className,
+      inputClassName,
       onChange,
       onFocus,
       onBlur,
@@ -80,18 +83,15 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
     const [focused, setFocused] = useState(false);
     const [hasDOMValue, setHasDOMValue] = useState(false);
 
-    // Sync hasDOMValue with actual input value to handle programmatic changes (reset, etc.)
     useEffect(() => {
       const checkValue = () => {
         const val = inputRef.current?.value ?? "";
-        if ((val.length > 0) !== hasDOMValue) {
+        if (val.length > 0 !== hasDOMValue) {
           setHasDOMValue(val.length > 0);
         }
       };
 
       checkValue();
-
-      // Also check on a slight delay to capture async updates or browser autofill
       const timer = setTimeout(checkValue, 50);
       return () => clearTimeout(timer);
     }, [props, hasDOMValue]);
@@ -99,7 +99,6 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
     const errorMessage = typeof error === "string" ? error : undefined;
     const hasError = Boolean(error);
 
-    // Support both controlled value and uncontrolled DOM value
     const hasValue = isControlled(props)
       ? props.value?.toString().trim().length > 0
       : hasDOMValue;
@@ -107,7 +106,8 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
     const isActive = focused || hasValue;
     const hasIcon = icon !== undefined && icon !== null;
 
-    const inputId = id || `TextInputField-${label.toLowerCase().replace(/\s+/g, "-")}`;
+    const inputId =
+      id || `TextInputField-${label.toLowerCase().replace(/\s+/g, "-")}`;
 
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
       setHasDOMValue(e.target.value.trim().length > 0);
@@ -142,6 +142,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
               ? "border-destructive/40 group-focus-within:border-destructive group-focus-within:ring-1 group-focus-within:ring-destructive/30"
               : "border-border/60 group-focus-within:border-ring group-focus-within:ring-1 group-focus-within:ring-ring/30",
             disabled && "cursor-not-allowed opacity-50",
+            className,
           )}
         >
           {hasIcon && (
@@ -165,12 +166,13 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
               data-slot="input"
               disabled={disabled}
               className={cn(
-                "peer w-full border-0 bg-transparent outline-none",
+                "peer h-full w-full border-0 bg-transparent outline-none",
                 "text-foreground caret-primary",
                 "transition-[padding] duration-200 ease-[cubic-bezier(0.4,0,0.2,1)]",
-                rest.type === "number" && "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+                rest.type === "number" &&
+                  "[appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
                 disabled && "cursor-not-allowed",
-                className,
+                inputClassName,
               )}
               style={
                 {
@@ -185,7 +187,6 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
                   transition: "padding 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
                 } as CSSProperties
               }
-              placeholder=" "
               onChange={handleChange}
               onFocus={handleFocus}
               onBlur={handleBlur}
@@ -198,6 +199,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
                     : undefined
               }
               {...rest}
+              placeholder=" "
             />
 
             <label
@@ -207,7 +209,8 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
                 "start-0 top-1/2 -translate-y-1/2 app-text-body text-muted-foreground",
                 "peer-focus:top-[var(--text-input-label-float-y)] peer-focus:translate-y-0 peer-focus:app-text-label peer-focus:text-foreground/70",
                 "peer-[:not(:placeholder-shown)]:top-[var(--text-input-label-float-y)] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:app-text-label peer-[:not(:placeholder-shown)]:text-foreground/70",
-                isActive && "top-[var(--text-input-label-float-y)] translate-y-0 app-text-label text-foreground/70",
+                isActive &&
+                  "top-[var(--text-input-label-float-y)] translate-y-0 app-text-label text-foreground/70",
                 hasError && "text-destructive peer-focus:text-destructive",
               )}
             >
