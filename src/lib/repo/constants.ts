@@ -9,30 +9,45 @@ import {
   sidebarVariants,
 } from "../theme/presets/theme-customizer-constants";
 import { sidebarWidthValues } from "../theme/ui-context-defaults";
+import type { Country } from "./types";
+import { COUNTRIES } from "./phone-countries";
 
-export type Country = {
-  name: string;
-  iso: string;
-  dialCode: string;
-  flag?: string;
-};
+export type { Country } from "./types";
+export { COUNTRIES } from "./phone-countries";
 
-/** Minimal country list for CountryCodeSelector. */
-export const COUNTRIES: Country[] = [
-  { name: "Afghanistan", iso: "AF", dialCode: "+93" },
-  { name: "United States", iso: "US", dialCode: "+1" },
-  { name: "United Kingdom", iso: "GB", dialCode: "+44" },
-  { name: "Germany", iso: "DE", dialCode: "+49" },
-  { name: "Turkey", iso: "TR", dialCode: "+90" },
-  { name: "Iran", iso: "IR", dialCode: "+98" },
-  { name: "India", iso: "IN", dialCode: "+91" },
-  { name: "United Arab Emirates", iso: "AE", dialCode: "+971" },
-];
+const FLAG_ISO_PATTERN = /flagcdn\.com\/([a-z]{2})\.svg/i;
 
+/** Extracts ISO 3166-1 alpha-2 from a flagcdn.com flag URL. */
 export function getCountryIsoFromFlagUrl(url?: string | null): string | undefined {
   if (!url) return undefined;
-  const match = url.match(/\/([a-z]{2})\.(png|svg|webp)/i);
+  const match = url.match(FLAG_ISO_PATTERN) ?? url.match(/\/([a-z]{2})\.(png|svg|webp)/i);
   return match?.[1]?.toUpperCase();
+}
+
+function findCountriesByDialCode(dialCode: string, countries: Country[]): Country[] {
+  return countries.filter((item) => item.dialCode === dialCode);
+}
+
+/** Finds the best matching country entry for a dial code and optional ISO hint. */
+export function resolveCountryByDialCode(
+  dialCode: string,
+  countries: Country[] = COUNTRIES,
+  preferredCountryIso?: string | null,
+): Country | undefined {
+  const dialMatches = findCountriesByDialCode(dialCode, countries);
+  if (dialMatches.length === 1) return dialMatches[0];
+
+  const normalizedIso = preferredCountryIso?.trim().toUpperCase();
+  if (normalizedIso && dialMatches.length > 0) {
+    const byIso = dialMatches.find(
+      (item) => getCountryIsoFromFlagUrl(item.flag) === normalizedIso,
+    );
+    if (byIso) return byIso;
+  }
+
+  if (dialMatches.length > 0) return dialMatches[0];
+
+  return countries.find((item) => item.code === dialCode) ?? countries[0];
 }
 
 export type SidebarWidthKey = keyof typeof sidebarWidthValues;

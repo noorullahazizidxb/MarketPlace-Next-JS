@@ -1,8 +1,8 @@
 "use client";
 
 import * as React from "react";
-import { COUNTRIES } from "./constants";
-import type { Country } from "./constants";
+import { resolveCountryByDialCode } from "./constants";
+import type { Country } from "./types";
 import { ThemeProvider, useTheme } from "./theme";
 import { useCircularTransition } from "../theme/use-circular-transition";
 import { useThemeManager } from "../theme/use-theme-manager";
@@ -35,16 +35,50 @@ export function useSidebarConfig() {
   );
 }
 
-export function useCountrySelector(initialIso = "AF") {
-  const [iso, setIso] = React.useState(initialIso);
-  const selectedCountry =
-    COUNTRIES.find((country: Country) => country.iso === iso) ?? COUNTRIES[0];
+export function useCountrySelector({
+  countries,
+  selectedCode,
+  preferredCountryIso,
+  onSelect,
+}: {
+  countries: Country[];
+  selectedCode: string;
+  preferredCountryIso?: string | null;
+  onSelect: (country: Country) => void;
+}) {
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [searchTerm, setSearchTerm] = React.useState("");
+  const dropdownRef = React.useRef<HTMLDivElement>(null);
+
+  const selectedCountry = React.useMemo(() => {
+    return resolveCountryByDialCode(selectedCode, countries, preferredCountryIso);
+  }, [countries, preferredCountryIso, selectedCode]);
+
+  const filteredCountries = React.useMemo(() => {
+    const term = searchTerm.toLowerCase();
+    return countries.filter(
+      (c) =>
+        c.name.toLowerCase().includes(term) ||
+        c.dialCode.includes(searchTerm),
+    );
+  }, [countries, searchTerm]);
+
+  const toggleDropdown = () => setIsOpen((prev) => !prev);
+
+  const handleSelect = (country: Country) => {
+    onSelect(country);
+    setIsOpen(false);
+    setSearchTerm("");
+  };
 
   return {
-    iso,
-    setIso,
-    dialCode: selectedCountry?.dialCode ?? "+93",
-    open: false,
-    setOpen: (_v: boolean) => undefined,
+    isOpen,
+    searchTerm,
+    selectedCountry,
+    filteredCountries,
+    dropdownRef,
+    toggleDropdown,
+    handleSelect,
+    handleSearch: setSearchTerm,
   };
 }

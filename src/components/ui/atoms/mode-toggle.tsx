@@ -11,14 +11,32 @@ interface ModeToggleProps {
 }
 
 export function ModeToggle({ variant = "outline" }: ModeToggleProps) {
-  const { theme, resolvedTheme, setTheme } = useTheme();
+  const { theme, setTheme } = useTheme();
   const [mounted, setMounted] = React.useState(false);
+  const [isDark, setIsDark] = React.useState(false);
 
   React.useEffect(() => {
     setMounted(true);
   }, []);
 
-  const isDark = mounted && (resolvedTheme ?? theme) === "dark";
+  React.useEffect(() => {
+    if (!mounted) return;
+
+    if (theme === "dark") {
+      setIsDark(true);
+      return;
+    }
+    if (theme === "light") {
+      setIsDark(false);
+      return;
+    }
+
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const sync = () => setIsDark(media.matches);
+    sync();
+    media.addEventListener("change", sync);
+    return () => media.removeEventListener("change", sync);
+  }, [mounted, theme]);
 
   return (
     <div className="flex items-center border-l border-slate-200 pl-2 dark:border-slate-700">

@@ -171,7 +171,7 @@ export function DatePicker({
                 disabled={disabledMatcher}
                 fromYear={fromYear}
                 toYear={toYear}
-                initialFocus
+                autoFocus
               />
             </div>
 

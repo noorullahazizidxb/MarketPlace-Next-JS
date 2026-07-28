@@ -420,7 +420,7 @@ export function Calendar({
         ),
 
         // ── Grid ───────────────────────────────────────────────────────────
-        table: "w-full border-collapse",
+        month_grid: "w-full border-collapse",
 
         weekdays: cn("flex", defaultClassNames.weekdays),
 
