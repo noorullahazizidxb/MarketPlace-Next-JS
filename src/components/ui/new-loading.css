@@ -13,7 +13,7 @@
   display: grid;
   border: 4px solid transparent;
   border-radius: 50%;
-  border-color: hsl(var(--border)) transparent;
+  border-color: var(--border) transparent;
   animation: s-spin 1s infinite linear;
 }
 
@@ -27,7 +27,7 @@
 }
 
 .modern-spinner::before {
-  border-color: hsl(var(--primary)) transparent;
+  border-color: var(--primary) transparent;
   animation: inherit;
   animation-duration: .5s;
   animation-direction: reverse;
@@ -51,10 +51,10 @@
   font-weight: bold;
   text-transform: uppercase;
   color: transparent;
-  -webkit-text-stroke: 1px hsl(var(--muted-foreground) / 0.5);
+  -webkit-text-stroke: 1px color-mix(in oklab, var(--muted-foreground) 50%, transparent);
   background:
-    radial-gradient(0.71em at 50% 1em, hsl(var(--primary)) 99%, transparent 101%) calc(50% - 1em) 1em/2em 200% repeat-x,
-    radial-gradient(0.71em at 50% -0.5em, transparent 99%, hsl(var(--primary)) 101%) 50% 1.5em/2em 200% repeat-x;
+    radial-gradient(0.71em at 50% 1em, var(--primary) 99%, transparent 101%) calc(50% - 1em) 1em/2em 200% repeat-x,
+    radial-gradient(0.71em at 50% -0.5em, transparent 99%, var(--primary) 101%) 50% 1.5em/2em 200% repeat-x;
   background-clip: text;
   -webkit-background-clip: text;
   animation:

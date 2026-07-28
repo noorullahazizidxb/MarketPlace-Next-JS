@@ -130,7 +130,7 @@ export function DatePicker({
           >
             {/* Calendar icon */}
             <span className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-foreground">
-              <CalendarIcon className="admin-icon-sm" aria-hidden />
+              <CalendarIcon className="app-icon-sm" aria-hidden />
             </span>
 
             {/* Floating label */}
@@ -138,7 +138,7 @@ export function DatePicker({
               className={cn(
                 "pointer-events-none absolute start-10 transition-all duration-200",
                 hasValue
-                  ? "top-1.5 admin-text-heading-sm text-foreground/70"
+                  ? "top-1.5 app-text-heading-sm text-foreground/70"
                   : "top-1/2 -translate-y-1/2 text-muted-foreground",
               )}
               style={{ fontSize: hasValue
@@ -151,7 +151,7 @@ export function DatePicker({
             {/* Value */}
             <span
               className={cn(
-                "block truncate ps-6 admin-text-label text-foreground",
+                "block truncate ps-6 app-text-label text-foreground",
                 !hasValue && "opacity-0 select-none",
               )}
             >
@@ -179,9 +179,9 @@ export function DatePicker({
             {withTime && (
               <div className="border-t border-border/50 bg-muted/20 px-4 py-3 space-y-2">
                 <Label
-                  className="inline-flex items-center gap-1.5 admin-text-caption uppercase tracking-wide text-muted-foreground"
+                  className="inline-flex items-center gap-1.5 app-text-caption uppercase tracking-wide text-muted-foreground"
                 >
-                  <Clock3 className="admin-icon-xs" />
+                  <Clock3 className="app-icon-xs" />
                   {timeLabel}
                 </Label>
                 <Input
@@ -203,7 +203,7 @@ export function DatePicker({
                   className="w-full gap-1.5 text-muted-foreground hover:text-destructive"
                   onClick={() => { onChange?.(undefined); setOpen(false); }}
                 >
-                  <X className="admin-icon-xs" aria-hidden />
+                  <X className="app-icon-xs" aria-hidden />
                   Reset
                 </Button>
               </div>

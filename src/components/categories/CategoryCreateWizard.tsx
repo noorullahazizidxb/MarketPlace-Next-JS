@@ -33,7 +33,7 @@ const fireConfetti = () => {
     for (let i = 0; i < 40; i++) {
       const p = document.createElement("span");
       p.className = "absolute w-2 h-2 rounded-full";
-      p.style.background = "hsl(var(--accent))";
+      p.style.background = "var(--accent)";
       p.style.left = Math.random() * 100 + "%";
       p.style.top = "40%";
       const tx = (Math.random() - 0.5) * 300;
@@ -153,15 +153,15 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                   onClick={() => i < step && setStep(i)}
                   animate={{
                     backgroundColor: done
-                      ? "hsl(var(--primary))"
+                      ? "var(--primary)"
                       : active
-                        ? "hsl(var(--primary))"
-                        : "hsl(var(--muted))",
+                        ? "var(--primary)"
+                        : "var(--muted)",
                   }}
                   transition={{ duration: 0.2 }}
                   className={cn(
                     "size-8 rounded-xl flex items-center justify-center transition-opacity",
-                    (done || active) ? "text-[hsl(var(--primary-foreground))]" : "text-[hsl(var(--muted-foreground))]",
+                    (done || active) ? "text-[var(--primary-foreground)]" : "text-[var(--muted-foreground)]",
                     i > step ? "opacity-40" : "opacity-100",
                     i < step ? "cursor-pointer hover:brightness-110" : "cursor-default"
                   )}
@@ -181,9 +181,9 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                 </motion.button>
                 {i < steps.length - 1 && (
                   <div className="relative w-6 h-0.5">
-                    <div className="absolute inset-0 rounded-full bg-[hsl(var(--border))]/30" />
+                    <div className="absolute inset-0 rounded-full bg-[var(--border)]/30" />
                     <motion.div
-                      className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]"
+                      className="absolute inset-0 rounded-full bg-[var(--primary)]"
                       animate={{ scaleX: i < step ? 1 : 0 }}
                       style={{ originX: 0 }}
                       transition={{ duration: 0.25 }}
@@ -194,7 +194,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
             );
           })}
         </div>
-        <span className="text-[10px] text-[hsl(var(--foreground))]/35 font-medium tabular-nums">
+        <span className="text-[10px] text-[var(--foreground)]/35 font-medium tabular-nums">
           {step + 1} / {steps.length}
         </span>
       </div>
@@ -242,7 +242,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                     )}
                   />
                 </div>
-                <div className="flex items-center gap-2 shrink-0 px-3 h-11 rounded-2xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/40">
+                <div className="flex items-center gap-2 shrink-0 px-3 h-11 rounded-2xl border border-[var(--border)]/50 bg-[var(--card)]/40">
                   <Switch checked={autoSlug} onCheckedChange={setAutoSlug} id="autoslug" />
                   <label htmlFor="autoslug" className="text-xs font-medium cursor-pointer whitespace-nowrap">Auto</label>
                 </div>
@@ -251,7 +251,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
           )}
           {curStep?.key === "options" && (
             <motion.div key="step-opts" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-4">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Category Options</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">Category Options</label>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { id: "active", checked: isActive, onChange: (v: boolean) => setValue("isActive", v), label: "Active", desc: "Visible to users" },
@@ -260,12 +260,12 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                   <div key={opt.id} className={cn(
                     "flex items-center justify-between gap-3 p-4 rounded-2xl border cursor-pointer transition-all",
                     opt.checked
-                      ? "border-[hsl(var(--primary))]/40 bg-[hsl(var(--primary))]/5"
-                      : "border-[hsl(var(--border))]/50 hover:border-[hsl(var(--border))]"
+                      ? "border-[var(--primary)]/40 bg-[var(--primary)]/5"
+                      : "border-[var(--border)]/50 hover:border-[var(--border)]"
                   )} onClick={() => opt.onChange(!opt.checked)}>
                     <div>
                       <p className="text-sm font-medium">{opt.label}</p>
-                      <p className="text-[11px] text-[hsl(var(--foreground))]/45">{opt.desc}</p>
+                      <p className="text-[11px] text-[var(--foreground)]/45">{opt.desc}</p>
                     </div>
                     <Switch checked={opt.checked} onCheckedChange={opt.onChange} id={opt.id} />
                   </div>
@@ -275,15 +275,15 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
           )}
           {curStep?.key === "parent" && (
             <motion.div key="step-parent" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Parent Category *</label>
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">Parent Category *</label>
               <ParentAutocomplete value={parentId} onChange={(v) => setValue("parentId", v)} />
               {parentId == null && <p className="text-xs text-amber-400">Select a parent category to continue.</p>}
             </motion.div>
           )}
           {curStep?.key === "review" && (
             <motion.div key="step-review" initial={{ opacity: 0, x: 16 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -16 }} transition={{ duration: 0.2 }} className="space-y-3">
-              <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">Review & Create</label>
-              <div className="rounded-2xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--muted))]/10 divide-y divide-[hsl(var(--border))]/20 overflow-hidden">
+              <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">Review & Create</label>
+              <div className="rounded-2xl border border-[var(--border)]/40 bg-[var(--muted)]/10 divide-y divide-[var(--border)]/20 overflow-hidden">
                 {[
                   ["Name", name || "—"],
                   ["Slug", slug || "—"],
@@ -292,7 +292,7 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
                   ...(isSub ? [["Parent ID", String(parentId ?? "—")]] : []),
                 ].map(([k, v]) => (
                   <div key={k} className="flex items-center justify-between px-4 py-3 text-sm">
-                    <span className="text-[hsl(var(--foreground))]/50 font-medium">{k}</span>
+                    <span className="text-[var(--foreground)]/50 font-medium">{k}</span>
                     <span className="font-semibold">{v}</span>
                   </div>
                 ))}

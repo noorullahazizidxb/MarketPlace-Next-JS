@@ -134,9 +134,9 @@ export function ThemeCustomizer({
           >
             <div className="flex items-center gap-2">
               <div className="rounded-lg bg-primary/10 p-2">
-                <Settings className="admin-icon-sm" />
+                <Settings className="app-icon-sm" />
               </div>
-              <SheetTitle className="admin-typo-section-heading">
+              <SheetTitle className="app-typo-section-heading">
                 Customizer
               </SheetTitle>
               <div className="ml-auto flex items-center gap-2">
@@ -146,7 +146,7 @@ export function ThemeCustomizer({
                   onClick={handleReset}
                   className="cursor-pointer min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)]"
                 >
-                  <RotateCcw className="admin-icon-sm" />
+                  <RotateCcw className="app-icon-sm" />
                 </Button>
                 <Button
                   variant="outline"
@@ -154,11 +154,11 @@ export function ThemeCustomizer({
                   onClick={() => onOpenChange(false)}
                   className="cursor-pointer min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)]"
                 >
-                  <X className="admin-icon-sm" />
+                  <X className="app-icon-sm" />
                 </Button>
               </div>
             </div>
-            <SheetDescription className="admin-typo-filter-label text-muted-foreground sr-only">
+            <SheetDescription className="app-typo-filter-label text-muted-foreground sr-only">
               Customize the them and layout of your dashboard.
             </SheetDescription>
           </SheetHeader>
@@ -185,18 +185,18 @@ export function ThemeCustomizer({
                     value="theme"
                     className="cursor-pointer data-[state=active]:bg-background"
                   >
-                    <Palette className="admin-icon-sm mr-1" /> Theme
+                    <Palette className="app-icon-sm mr-1" /> Theme
                   </TabsTrigger>
                   <TabsTrigger
                     value="layout"
                     className="cursor-pointer data-[state=active]:bg-background"
                   >
-                    <Layout className="admin-icon-sm mr-1" /> Layout
+                    <Layout className="app-icon-sm mr-1" /> Layout
                   </TabsTrigger>
                 </TabsList>
                 {/* <TabsList className="grid w-full grid-cols-2 rounded-none min-h-[var(--ctrl-h)] p-1.5">
-                  <TabsTrigger value="theme" className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Palette className="admin-icon-sm mr-1" /> Theme</TabsTrigger>
-                  <TabsTrigger value="layout" className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Layout className="admin-icon-sm mr-1" /> Layout</TabsTrigger>
+                  <TabsTrigger value="theme" className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Palette className="app-icon-sm mr-1" /> Theme</TabsTrigger>
+                  <TabsTrigger value="layout" className="cursor-pointer data-[state=active]:bg-primary data-[state=active]:text-primary-foreground"><Layout className="app-icon-sm mr-1" /> Layout</TabsTrigger>
                 </TabsList> */}
               </div>
 
@@ -264,7 +264,7 @@ export function ThemeCustomizerTrigger({
         side === "left" ? "right-4" : "left-4",
       )}
     >
-      <Settings className="admin-icon-md" />
+      <Settings className="app-icon-md" />
     </Button>
   );
 }

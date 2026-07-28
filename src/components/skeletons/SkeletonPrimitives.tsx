@@ -3,13 +3,13 @@ import React from "react";
 import { cn } from "@/lib/cn";
 
 export const shimmer =
-  "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-[hsl(var(--foreground))]/10 before:to-transparent border border-[hsl(var(--border))]/50";
+  "relative overflow-hidden before:absolute before:inset-0 before:-translate-x-full before:animate-[shimmer_2s_infinite] before:bg-gradient-to-r before:from-transparent before:via-[var(--foreground)]/10 before:to-transparent border border-[var(--border)]/50";
 
 export function Skeleton({ className, style }: { className?: string; style?: React.CSSProperties }) {
   return (
     <div
       className={cn(
-        "rounded-xl bg-[hsl(var(--foreground))]/5 backdrop-blur-xl shadow-inner",
+        "rounded-xl bg-[var(--foreground)]/5 backdrop-blur-xl shadow-inner",
         shimmer,
         className
       )}

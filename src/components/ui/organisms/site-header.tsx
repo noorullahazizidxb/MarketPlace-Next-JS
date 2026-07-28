@@ -153,7 +153,7 @@ export function SiteHeader({
             <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
               <a href="/listings" className="dark:text-foreground">
                 <span className="inline-flex items-center gap-1.5">
-                  <Globe className="admin-icon-sm" aria-hidden="true" />
+                  <Globe className="app-icon-sm" aria-hidden="true" />
                   <span>Listings</span>
                 </span>
               </a>

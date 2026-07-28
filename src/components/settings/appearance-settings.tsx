@@ -226,7 +226,7 @@ function ThemePreviewCard({
                 </div>
               </div>
             </div>
-            <span className="admin-text-body">{title}</span>
+            <span className="app-text-body">{title}</span>
           </div>
         </div>
       </FormLabel>
@@ -244,12 +244,12 @@ function ComingSoonPanel({
   return (
     <div className="rounded-2xl border border-dashed border-border/70 bg-muted/20 p-6">
       <div className="space-y-2">
-        <p className="admin-text-heading-sm">{title}</p>
-        <p className="admin-text-body text-muted-foreground">{description}</p>
+        <p className="app-text-heading-sm">{title}</p>
+        <p className="app-text-body text-muted-foreground">{description}</p>
       </div>
       <div className="mt-4 rounded-xl border bg-background/70 p-4">
-        <p className="admin-text-label">Coming soon</p>
-        <p className="admin-text-body text-muted-foreground">
+        <p className="app-text-label">Coming soon</p>
+        <p className="app-text-body text-muted-foreground">
           This tab has been kept so the migrated settings IA stays stable while the standalone
           landing and footer controls are adapted.
         </p>
@@ -571,9 +571,9 @@ export default function AppearanceSettings() {
   ];
 
   return (
-    <div className="admin-shell-page flex min-w-0 flex-col gap-(--space-section)" data-admin-page="settings-appearance">
+    <div className="app-shell-page flex min-w-0 flex-col gap-(--space-section)" data-app-page="settings-appearance">
       <div>
-        <h1 className="admin-text-heading">{t("settings:appearance.title")}</h1>
+        <h1 className="app-text-heading">{t("settings:appearance.title")}</h1>
         <p className="text-muted-foreground">{t("settings:appearance.description")}</p>
       </div>
 
@@ -586,21 +586,21 @@ export default function AppearanceSettings() {
           className={`grid w-full rounded-lg bg-muted/60 p-1 ${canCustomiseTheme ? "grid-cols-4" : "grid-cols-3"}`}
         >
           <TabsTrigger value="appearance-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-            <SlidersHorizontal className="admin-icon-sm" />
+            <SlidersHorizontal className="app-icon-sm" />
             <span className="hidden sm:inline">{t("settings:appearance.tabs.appearance")}</span>
           </TabsTrigger>
           {canCustomiseTheme && (
             <TabsTrigger value="theme-customizer" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-              <Palette className="admin-icon-sm" />
+              <Palette className="app-icon-sm" />
               <span className="hidden sm:inline">{t("settings:appearance.tabs.theme")}</span>
             </TabsTrigger>
           )}
           <TabsTrigger value="landing-page-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-            <Layout className="admin-icon-sm" />
+            <Layout className="app-icon-sm" />
             <span className="hidden sm:inline">{t("settings:appearance.tabs.landingPage")}</span>
           </TabsTrigger>
           <TabsTrigger value="footer-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-            <Rows3 className="admin-icon-sm" />
+            <Rows3 className="app-icon-sm" />
             <span className="hidden sm:inline">{t("settings:appearance.tabs.footer")}</span>
           </TabsTrigger>
         </TabsList>
@@ -625,10 +625,10 @@ export default function AppearanceSettings() {
                     {/* Theme mode cards */}
                     <div className="min-w-0 flex-1 space-y-4">
                       <div>
-                        <h3 className="mb-1 admin-text-label">
+                        <h3 className="mb-1 app-text-label">
                           {t("settings:appearance.themeSection.title")}
                         </h3>
-                        <p className="admin-text-body text-muted-foreground">
+                        <p className="app-text-body text-muted-foreground">
                           {t("settings:appearance.themeSection.description")}
                         </p>
                       </div>
@@ -670,11 +670,11 @@ export default function AppearanceSettings() {
                     {/* Per-language fonts panel (moved here from right column) */}
                     <div className="w-full space-y-4 rounded-2xl border border-border/70 bg-muted/20 p-4 lg:w-80 xl:w-96">
                       <div>
-                        <h3 className="flex items-center gap-2 admin-text-heading-sm">
-                          <Languages className="admin-icon-sm text-muted-foreground" />
+                        <h3 className="flex items-center gap-2 app-text-heading-sm">
+                          <Languages className="app-icon-sm text-muted-foreground" />
                           {t("settings:appearance.languageFonts.title")}
                         </h3>
-                        <p className="mt-0.5 admin-text-body text-muted-foreground">
+                        <p className="mt-0.5 app-text-body text-muted-foreground">
                           {t("settings:appearance.languageFonts.description")}
                         </p>
                       </div>
@@ -686,17 +686,17 @@ export default function AppearanceSettings() {
                             className="rounded-xl border border-border/60 bg-background/70 p-3"
                           >
                             <div className="mb-2 flex items-center gap-2">
-                              <Globe2 className="admin-icon-xs text-muted-foreground" />
+                              <Globe2 className="app-icon-xs text-muted-foreground" />
                               <div>
-                                <p className="admin-text-caption">{fieldConfig.label}</p>
-                                <p className="admin-text-micro text-muted-foreground">{fieldConfig.description}</p>
+                                <p className="app-text-caption">{fieldConfig.label}</p>
+                                <p className="app-text-micro text-muted-foreground">{fieldConfig.description}</p>
                               </div>
                             </div>
                             <AppearanceSelectField
                               control={form.control}
                               name={fieldConfig.key}
                               label={t("settings:appearance.languageFonts.fontLabel")}
-                              icon={<Globe2 className="admin-icon-xs text-muted-foreground" />}
+                              icon={<Globe2 className="app-icon-xs text-muted-foreground" />}
                               placeholder={t("settings:appearance.placeholders.languageFont")}
                               options={fontFamilyOptions}
                             />
@@ -712,10 +712,10 @@ export default function AppearanceSettings() {
                   <div className="space-y-6 rounded-2xl border border-border/70 bg-muted/20 p-4 md:p-6">
                     <div className="flex flex-wrap items-start justify-between gap-4">
                       <div>
-                        <h3 className="admin-text-heading-sm">
+                        <h3 className="app-text-heading-sm">
                           {t("settings:appearance.fontSection.title")}
                         </h3>
-                        <p className="admin-text-body text-muted-foreground">
+                        <p className="app-text-body text-muted-foreground">
                           {t("settings:appearance.fontSection.description")}
                         </p>
                       </div>
@@ -726,7 +726,7 @@ export default function AppearanceSettings() {
                           control={form.control}
                           name="fontFamily"
                           label={t("settings:appearance.fontSection.defaultFont")}
-                          icon={<Type className="admin-icon-xs text-muted-foreground" />}
+                          icon={<Type className="app-icon-xs text-muted-foreground" />}
                           placeholder={t("settings:appearance.placeholders.fontFamily")}
                           options={fontFamilyOptions}
                         />
@@ -735,7 +735,7 @@ export default function AppearanceSettings() {
                           control={form.control}
                           name="headingTextDecoration"
                           label="Heading Text Decoration"
-                          icon={<Type className="admin-icon-xs text-muted-foreground" />}
+                          icon={<Type className="app-icon-xs text-muted-foreground" />}
                           placeholder="Choose heading decoration"
                           options={headingDecorationOptions}
                         />
@@ -752,7 +752,7 @@ export default function AppearanceSettings() {
                       control={form.control}
                       name="sidebarWidth"
                       label={t("settings:appearance.sidebarWidth.label")}
-                      icon={<PanelLeft className="admin-icon-xs text-muted-foreground" />}
+                      icon={<PanelLeft className="app-icon-xs text-muted-foreground" />}
                       placeholder={t("settings:appearance.placeholders.sidebarWidth")}
                       options={sidebarWidthOptions}
                     />
@@ -760,7 +760,7 @@ export default function AppearanceSettings() {
                       control={form.control}
                       name="contentWidth"
                       label={t("settings:appearance.contentWidth.label")}
-                      icon={<LayoutDashboard className="admin-icon-xs text-muted-foreground" />}
+                      icon={<LayoutDashboard className="app-icon-xs text-muted-foreground" />}
                       placeholder={t("settings:appearance.placeholders.contentWidth")}
                       options={contentWidthOptions}
                     />
@@ -810,10 +810,10 @@ export default function AppearanceSettings() {
             <div className="flex flex-col gap-6 p-4 md:p-6">
               <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h3 className="admin-text-heading-sm">
+                  <h3 className="app-text-heading-sm">
                     {t("settings:appearance.customizer.title")}
                   </h3>
-                  <p className="admin-text-body text-muted-foreground">
+                  <p className="app-text-body text-muted-foreground">
                     {t("settings:appearance.customizer.description")}
                   </p>
                 </div>
@@ -822,11 +822,11 @@ export default function AppearanceSettings() {
                   className="cursor-pointer"
                   onClick={() => setThemeCustomizerOpen(true)}
                 >
-                  <Palette className="mr-2 admin-icon-sm" />
+                  <Palette className="mr-2 app-icon-sm" />
                   {t("settings:appearance.customizer.open")}
                 </Button>
               </div>
-              <div className="rounded-lg border bg-muted/30 p-4 admin-text-body text-muted-foreground">
+              <div className="rounded-lg border bg-muted/30 p-4 app-text-body text-muted-foreground">
                 {t("settings:appearance.customizer.note")}
               </div>
             </div>
@@ -842,10 +842,10 @@ export default function AppearanceSettings() {
             className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm md:p-6"
           >
             <div className="mb-6">
-              <h3 className="admin-text-heading-sm">
+              <h3 className="app-text-heading-sm">
                 {t("settings:appearance.sections.landingPage.title")}
               </h3>
-              <p className="admin-text-body text-muted-foreground">
+              <p className="app-text-body text-muted-foreground">
                 {t("settings:appearance.sections.landingPage.description")}
               </p>
             </div>
@@ -864,10 +864,10 @@ export default function AppearanceSettings() {
             className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm md:p-6"
           >
             <div className="mb-6">
-              <h3 className="admin-text-heading-sm">
+              <h3 className="app-text-heading-sm">
                 {t("settings:appearance.sections.footer.title")}
               </h3>
-              <p className="admin-text-body text-muted-foreground">
+              <p className="app-text-body text-muted-foreground">
                 {t("settings:appearance.sections.footer.description")}
               </p>
             </div>

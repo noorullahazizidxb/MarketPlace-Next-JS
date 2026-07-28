@@ -1,0 +1,563 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   APP RESPONSIVE TOKENS
+   src/styles/responsive-tokens.css
+
+   App-specific responsive extensions on top of src/app/globals.css.
+   Imported AFTER the shared globals in apps/admin/app/globals.css so every
+   override is additive — never modifying the shared package.
+
+   Scope: marketplace app only.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Shared utilities and base typography live in src/app/globals.css.
+   This file contains only admin-specific component rules and responsive token values. */
+
+[data-status-pill] {
+  font-size: var(--text-badge);
+  min-height: var(--badge-h);
+  padding-inline: calc(var(--space-gap) * 0.5);
+  padding-block: calc(var(--space-gap) * 0.15);
+  border-radius: 9999px;
+  font-weight: 600;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  letter-spacing: 0.01em;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+     SECTION CARDS — override Tailwind's static app-text-heading / app-text-heading on CardTitle.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.section-cards-grid [data-slot="card-title"] {
+  font-size: var(--text-stat) !important;
+  line-height: 1.15;
+}
+
+.section-cards-grid [data-slot="card-description"] {
+  font-size: var(--text-body);
+}
+
+.section-cards-grid [data-slot="card-footer"] {
+  font-size: var(--text-body);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+     SEARCH INPUTS
+   ─────────────────────────────────────────────────────────────────────────── */
+
+input[data-slot="input"][type="search"],
+input[data-slot="input"][data-search] {
+  font-size: var(--text-body) !important;
+  min-height: var(--ctrl-h) !important;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+     ICON-ONLY BUTTON SIZING
+   ─────────────────────────────────────────────────────────────────────────── */
+
+[data-slot="button"][data-size="icon"] {
+  width: var(--ctrl-h-sm);
+  height: var(--ctrl-h-sm);
+  min-width: var(--ctrl-h-sm);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+     RESPONSIVE BREAKPOINTS Override only the~20 canonical design tokens per breakpoint. All legacy aliases in globals.css automatically follow these new values. Mobile-first — (:root) defaults in globals.css are the large-desktop base. Breakpoints: xs <640 | sm ≥640 | md ≥768 | lg ≥1024 | xl ≥1280
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* xs — phone (<640px)
+   Real-world baseline: minimum readable sizes for touch-first admin access.
+   Industry reference: Material Design 3 (body-medium=14sp mobile),
+   Adobe Spectrum mobile scale (base=17px), WCAG AA min body=12px.
+   App-specific: dense data must remain scannable; floor is 13px body. */
+@media (max-width: 639px) {
+
+  :root,
+  .dark {
+    --text-micro: 0.625rem;
+    /* 10px — min visible dense label */
+    --text-caption: 0.6875rem;
+    /* 11px */
+    --text-label: 0.75rem;
+    /* 12px — WCAG AA accessible minimum */
+    --text-body: 0.8125rem;
+    /* 13px — min readable admin body    */
+    --text-action: 0.8125rem;
+    /* 13px */
+    --text-badge: 0.6875rem;
+    /* 11px */
+    --text-mono: 0.75rem;
+    /* 12px */
+    --text-heading-sm: 0.9375rem;
+    /* 15px */
+    --text-heading: 1.0625rem;
+    /* 17px */
+    --text-h1: 1.375rem;
+    /* 22px */
+    --text-h2: 1.25rem;
+    /* 20px */
+    --text-h3: 1rem;
+    /* 16px */
+    --text-h4: 0.9375rem;
+    /* 15px */
+    --text-h5: 0.875rem;
+    /* 14px */
+    --text-h6: 0.8125rem;
+    /* 13px */
+    --text-small: 0.625rem;
+    /* 10px */
+    --text-stat: 1.125rem;
+    /* 18px */
+    --badge-h: 1.25rem;
+    --icon-xs: 0.875rem;
+    --icon-sm: 1rem;
+    --icon-md: 1.25rem;
+    --icon-lg: 1.5rem;
+    --ctrl-h: 2rem;
+    /* 32px — minimum WCAG touch target */
+    --ctrl-h-sm: 1.75rem;
+    --ctrl-px: 0.75rem;
+    --ctrl-py: 0.375rem;
+    --badge-px: 0.5rem;
+    --badge-py: 0.125rem;
+    --nav-item-px: 0.625rem;
+    --nav-item-py: 0.375rem;
+    --nav-icon-size: 1rem;
+    --card-gap: 0.75rem;
+    --hero-accent-h: 0.0625rem;
+    --hero-orb-lg: 8rem;
+    --hero-orb-sm: 5rem;
+    --hero-icon-pad: 0.5rem;
+    --space-page-x: 1rem;
+    --space-page-y: 0.75rem;
+    --space-section: 0.75rem;
+    --space-card: 0.875rem;
+    --space-filter: 0.75rem;
+    --space-gap: 0.625rem;
+    --table-head-text: 0.6875rem;
+    --table-cell-text: 0.75rem;
+    --table-head-h: 2rem;
+    --table-cell-py: 0.5rem;
+    --table-cell-px: 0.625rem;
+    /* sb-text-* intentionally omitted: aliased to --text-* in :root */
+    --shell-header-h: 2.75rem;
+    --pill-h: 1.75rem;
+    --pill-px: 0.5rem;
+    --loading-spinner-scale: 1;
+  }
+}
+
+/* sm — small tablet (≥640px)
+   Reference: Stripe/Linear/Vercel dashboard observed at 640–767px range.
+   Body held at 13px — same as desktop on these compact screens. */
+@media (min-width: 640px) {
+
+  :root,
+  .dark {
+    --text-micro: 0.625rem;
+    /* 10px */
+    --text-caption: 0.6875rem;
+    /* 11px */
+    --text-label: 0.75rem;
+    /* 12px */
+    --text-body: 0.8125rem;
+    /* 13px */
+    --text-action: 0.8125rem;
+    /* 13px */
+    --text-badge: 0.6875rem;
+    /* 11px */
+    --text-mono: 0.75rem;
+    /* 12px */
+    --text-heading-sm: 0.9375rem;
+    /* 15px */
+    --text-heading: 1.0625rem;
+    /* 17px */
+    --text-h1: 1.4375rem;
+    /* 23px */
+    --text-h2: 1.25rem;
+    /* 20px */
+    --text-h3: 1rem;
+    /* 16px */
+    --text-h4: 0.9375rem;
+    /* 15px */
+    --text-h5: 0.875rem;
+    /* 14px */
+    --text-h6: 0.8125rem;
+    /* 13px */
+    --text-small: 0.625rem;
+    /* 10px */
+    --text-stat: 1.125rem;
+    /* 18px */
+    --badge-h: 1.25rem;
+    --icon-xs: 0.875rem;
+    --icon-sm: 1rem;
+    --icon-md: 1.25rem;
+    --icon-lg: 1.5rem;
+    --ctrl-h: 2rem;
+    --ctrl-h-sm: 1.75rem;
+    --ctrl-px: 0.75rem;
+    --ctrl-py: 0.375rem;
+    --badge-px: 0.5rem;
+    --badge-py: 0.125rem;
+    --nav-item-px: 0.625rem;
+    --nav-item-py: 0.375rem;
+    --nav-icon-size: 1rem;
+    --card-gap: 0.75rem;
+    --hero-accent-h: 0.0625rem;
+    --hero-orb-lg: 10rem;
+    --hero-orb-sm: 6rem;
+    --hero-icon-pad: 0.5rem;
+    --space-page-x: 1rem;
+    --space-page-y: 0.875rem;
+    --space-section: 0.875rem;
+    --space-card: 0.875rem;
+    --space-filter: 0.75rem;
+    --space-gap: 0.625rem;
+    --table-head-text: 0.6875rem;
+    --table-cell-text: 0.75rem;
+    --table-head-h: 2rem;
+    --table-cell-py: 0.5rem;
+    --table-cell-px: 0.625rem;
+    /* sb-text-* intentionally omitted: aliased to --text-* in :root */
+    --shell-header-h: 2.75rem;
+    --pill-h: 1.5rem;
+    --pill-px: 0.5rem;
+    --loading-spinner-scale: 1;
+  }
+}
+
+/* md — tablet (≥768px)
+   Reference: GitHub Admin, AWS Console tablet view; body 13px is the
+   widely-used minimum for data-dense B2B interfaces on tablets. */
+@media (min-width: 768px) {
+
+  :root,
+  .dark {
+    --text-micro: 0.625rem;
+    /* 10px */
+    --text-caption: 0.6875rem;
+    /* 11px */
+    --text-label: 0.75rem;
+    /* 12px */
+    --text-body: 0.8125rem;
+    /* 13px */
+    --text-action: 0.8125rem;
+    /* 13px */
+    --text-badge: 0.6875rem;
+    /* 11px */
+    --text-mono: 0.8125rem;
+    /* 13px */
+    --text-heading-sm: 0.9375rem;
+    /* 15px */
+    --text-heading: 1.0625rem;
+    /* 17px */
+    --text-h1: 1.5rem;
+    /* 24px */
+    --text-h2: 1.3125rem;
+    /* 21px */
+    --text-h3: 1.0625rem;
+    /* 17px */
+    --text-h4: 1rem;
+    /* 16px */
+    --text-h5: 0.875rem;
+    /* 14px */
+    --text-h6: 0.875rem;
+    /* 14px */
+    --text-small: 0.625rem;
+    /* 10px */
+    --text-stat: 1.125rem;
+    /* 18px */
+    --badge-h: 1.25rem;
+    --icon-xs: 0.875rem;
+    --icon-sm: 1rem;
+    --icon-md: 1.25rem;
+    --icon-lg: 1.5rem;
+    --ctrl-h: 2.125rem;
+    --ctrl-h-sm: 1.875rem;
+    --ctrl-px: 0.875rem;
+    --ctrl-py: 0.4375rem;
+    --badge-px: 0.5rem;
+    --badge-py: 0.125rem;
+    --nav-item-px: 0.75rem;
+    --nav-item-py: 0.4375rem;
+    --nav-icon-size: 1rem;
+    --card-gap: 0.875rem;
+    --hero-accent-h: 0.125rem;
+    --hero-orb-lg: 12rem;
+    --hero-orb-sm: 7.5rem;
+    --hero-icon-pad: 0.625rem;
+    --space-page-x: 1.25rem;
+    --space-page-y: 1rem;
+    --space-section: 1rem;
+    --space-card: 1rem;
+    --space-filter: 0.875rem;
+    --space-gap: 0.75rem;
+    --table-head-text: 0.6875rem;
+    --table-cell-text: 0.8125rem;
+    --table-head-h: 2.25rem;
+    --table-cell-py: 0.5rem;
+    --table-cell-px: 0.75rem;
+    /* sb-text-* intentionally omitted: aliased to --text-* in :root */
+    --shell-header-h: 2.875rem;
+    --pill-h: 1.625rem;
+    --pill-px: 0.5rem;
+    --loading-spinner-scale: 1.5;
+  }
+}
+
+/* lg — desktop (≥1024px)
+   Reference: Stripe (14px), GitHub (14px), AWS Console (14px), Linear (14px).
+   14px is the standard body size for professional admin dashboards at 1024px+. */
+@media (min-width: 1024px) {
+
+  :root,
+  .dark {
+    --text-micro: 0.625rem;
+    /* 10px */
+    --text-caption: 0.6875rem;
+    /* 11px */
+    --text-label: 0.75rem;
+    /* 12px */
+    --text-body: 0.875rem;
+    /* 14px — industry standard desktop admin */
+    --text-action: 0.875rem;
+    /* 14px */
+    --text-badge: 0.6875rem;
+    /* 11px */
+    --text-mono: 0.875rem;
+    /* 14px */
+    --text-heading-sm: 0.9375rem;
+    /* 15px */
+    --text-heading: 1.0625rem;
+    /* 17px */
+    --text-h1: 1.563rem;
+    /* 25px */
+    --text-h2: 1.375rem;
+    /* 22px */
+    --text-h3: 1.125rem;
+    /* 18px */
+    --text-h4: 1.0625rem;
+    /* 17px */
+    --text-h5: 0.875rem;
+    /* 14px */
+    --text-h6: 0.875rem;
+    /* 14px */
+    --text-small: 0.625rem;
+    /* 10px */
+    --text-stat: 1.125rem;
+    /* 18px */
+    --badge-h: 1.375rem;
+    --icon-xs: 0.875rem;
+    --icon-sm: 1rem;
+    --icon-md: 1.25rem;
+    --icon-lg: 1.5rem;
+    --ctrl-h: 2.25rem;
+    --ctrl-h-sm: 2rem;
+    --ctrl-px: 0.875rem;
+    --ctrl-py: 0.4375rem;
+    --badge-px: 0.5625rem;
+    --badge-py: 0.125rem;
+    --nav-item-px: 0.8125rem;
+    --nav-item-py: 0.4375rem;
+    --nav-icon-size: 1rem;
+    --card-gap: 1rem;
+    --hero-accent-h: 0.125rem;
+    --hero-orb-lg: 14rem;
+    --hero-orb-sm: 9rem;
+    --hero-icon-pad: 0.75rem;
+    --space-page-x: 1.5rem;
+    --space-page-y: 1.25rem;
+    --space-section: 1.25rem;
+    --space-card: 1.25rem;
+    --space-filter: 1rem;
+    --space-gap: 0.875rem;
+    --table-head-text: 0.75rem;
+    --table-cell-text: 0.875rem;
+    --table-head-h: 2.5rem;
+    --table-cell-py: 0.625rem;
+    --table-cell-px: 0.875rem;
+    /* sb-text-* intentionally omitted: aliased to --text-* in :root */
+    --shell-header-h: 2.875rem;
+    --pill-h: 1.75rem;
+    --pill-px: 0.5625rem;
+    --loading-spinner-scale: 1.5;
+  }
+}
+
+/* xl — wide desktop (≥1280px)
+   Reference: Stripe Dashboard (14px body, 28px h1), Material Design 3 display scale,
+   Adobe Spectrum display-03=28px. Larger heading hierarchy at wide breakpoint. */
+@media (min-width: 1280px) {
+
+  :root,
+  .dark {
+    --text-micro: 0.625rem;
+    /* 10px */
+    --text-caption: 0.6875rem;
+    /* 11px */
+    --text-label: 0.75rem;
+    /* 12px */
+    --text-body: 0.875rem;
+    /* 14px */
+    --text-action: 0.875rem;
+    /* 14px */
+    --text-badge: 0.6875rem;
+    /* 11px */
+    --text-mono: 0.875rem;
+    /* 14px */
+    --text-heading-sm: 0.9375rem;
+    /* 15px */
+    --text-heading: 1.125rem;
+    /* 18px */
+    --text-h1: 1.75rem;
+    /* 28px — prominent display heading */
+    --text-h2: 1.5rem;
+    /* 24px */
+    --text-h3: 1.25rem;
+    /* 20px */
+    --text-h4: 1.0625rem;
+    /* 17px */
+    --text-h5: 0.875rem;
+    /* 14px */
+    --text-h6: 0.875rem;
+    /* 14px */
+    --text-small: 0.625rem;
+    /* 10px */
+    --text-stat: 1.25rem;
+    /* 20px */
+    --badge-h: 1.375rem;
+    --icon-xs: 1rem;
+    --icon-sm: 1.25rem;
+    --icon-md: 1.5rem;
+    --icon-lg: 1.75rem;
+    --ctrl-h: 2.25rem;
+    --ctrl-h-sm: 2rem;
+    --ctrl-px: 1rem;
+    --ctrl-py: 0.5rem;
+    --badge-px: 0.625rem;
+    --badge-py: 0.1875rem;
+    --nav-item-px: 0.875rem;
+    --nav-item-py: 0.4375rem;
+    --nav-icon-size: 1rem;
+    --card-gap: 1.25rem;
+    --hero-accent-h: 0.125rem;
+    --hero-orb-lg: 16rem;
+    --hero-orb-sm: 10rem;
+    --hero-icon-pad: 0.875rem;
+    --space-page-x: 2rem;
+    --space-page-y: 1.5rem;
+    --space-section: 2rem;
+    --space-card: 1.75rem;
+    --space-filter: 1.25rem;
+    --space-gap: 1rem;
+    --table-head-text: 0.75rem;
+    --table-cell-text: 0.875rem;
+    --table-head-h: 3rem;
+    --table-cell-py: 0.75rem;
+    --table-cell-px: 1rem;
+    /* sb-text-* intentionally omitted: aliased to --text-* in :root */
+    --shell-header-h: 3rem;
+    --pill-h: 1.875rem;
+    --pill-px: 0.625rem;
+    --loading-spinner-scale: 1.5;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DENSITY HELPERS (stat cards) — use new canonical --space-* tokens.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.app-density-stat-inner {
+  gap: var(--space-gap);
+}
+
+.app-density-stat-icon {
+  padding: var(--space-gap);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DENSE TABLE — apply .admin-table-dense to any table wrapper for compact mode.
+   No page-specific selectors: any component can opt in.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.admin-table-dense table {
+  font-size: calc(var(--table-cell-text) * var(--table-dense-scale, 0.75));
+}
+
+.admin-table-dense [data-slot="table-head"] {
+  padding-block: calc(var(--table-cell-py) * 0.75);
+  padding-inline: calc(var(--table-cell-px) * 0.75);
+}
+
+.admin-table-dense [data-slot="table-cell"] {
+  padding-block: calc(var(--table-cell-py) * 0.75);
+  padding-inline: calc(var(--table-cell-px) * 0.75);
+}
+
+/* Sort/action buttons inside dense table headers */
+.admin-table-dense [data-slot="table-head"] [data-slot="button"] {
+  height: auto;
+  min-height: unset;
+  padding-inline: 0;
+  padding-block: 0.125rem;
+  font-size: inherit;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   AMOUNT DIRECTION ICON — global utility, no page scope needed.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+.amount-direction-icon,
+.amount-direction-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  max-width: 1.25rem;
+  max-height: 1.25rem;
+  flex: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FINANCIAL / TREASURY UTILITIES
+   ─────────────────────────────────────────────────────────────────────────── */
+.admin-rate-value {
+  font-size: calc(var(--text-stat) * 0.9);
+  line-height: 1.2;
+  max-width: 18ch;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.treasury-dense-chip {
+  font-size: var(--text-badge);
+}
+
+.treasury-row-action-btn {
+  min-height: var(--ctrl-h-sm);
+  gap: 0.25rem;
+  font-size: var(--text-action);
+}
+
+.treasury-icon-action-btn {
+  min-height: var(--ctrl-h-sm);
+  min-width: var(--ctrl-h-sm);
+}
+
+.treasury-toast-warning {
+  border: 1px solid oklch(0.79 0.16 75);
+  background: oklch(0.98 0.03 75);
+  color: oklch(0.46 0.1 75);
+}
+
+.treasury-toast-info {
+  border: 1px solid oklch(0.71 0.15 250);
+  background: oklch(0.97 0.025 250);
+  color: oklch(0.38 0.1 250);
+}

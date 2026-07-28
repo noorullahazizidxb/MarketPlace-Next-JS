@@ -83,7 +83,7 @@ function CalendarChevron({
 }: React.ComponentProps<"svg"> & {
   orientation?: "left" | "right" | "up" | "down";
 }) {
-  const shared = cn("admin-icon-sm", className);
+  const shared = cn("app-icon-sm", className);
 
   if (orientation === "left")
     return <ChevronLeftIcon className={shared} {...props} />;
@@ -138,14 +138,14 @@ function Dropdown({
           type="button"
           className={cn(
             "relative z-10 inline-flex min-min-h-[var(--ctrl-h-sm)] cursor-pointer items-center gap-1 rounded-lg px-2 pr-1.5",
-            "admin-text-body text-foreground",
+            "app-text-body text-foreground",
             "transition-colors hover:bg-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring/50",
           )}
           aria-label={current?.label}
         >
           {current?.label}
           <ChevronDownIcon
-            className="admin-icon-xs text-muted-foreground/70"
+            className="app-icon-xs text-muted-foreground/70"
             aria-hidden
           />
         </button>
@@ -159,7 +159,7 @@ function Dropdown({
             className={cn(
               "cursor-pointer",
               String(option.value) === String(value) &&
-                "bg-accent admin-text-heading-sm text-accent-foreground",
+                "bg-accent app-text-heading-sm text-accent-foreground",
             )}
             onClick={() => handleSelect(option.value)}
           >
@@ -254,7 +254,7 @@ export function CalendarDayButton({
         "group-data-[focused=true]/day:ring-offset-1",
 
         // event badge
-        "[&>span]:admin-text-badge [&>span]:opacity-60",
+        "[&>span]:app-text-badge [&>span]:opacity-60",
 
         defaultClassNames.day,
         className,
@@ -393,19 +393,19 @@ export function Calendar({
         ),
 
         caption_label: cn(
-          "select-none admin-text-body",
+          "select-none app-text-body",
           captionLayout !== "label" && [
             "flex min-h-[var(--ctrl-h-sm)] items-center gap-1",
             "rounded-lg pl-2 pr-1",
             "hover:bg-accent transition-colors",
-            "[&>svg]:admin-icon-xs [&>svg]:text-muted-foreground",
+            "[&>svg]:app-icon-xs [&>svg]:text-muted-foreground",
           ],
           defaultClassNames.caption_label,
         ),
 
         // ── Dropdowns ──────────────────────────────────────────────────────
         dropdowns: cn(
-          "flex h-(--cell-size) w-full items-center justify-center gap-1.5 admin-text-body",
+          "flex h-(--cell-size) w-full items-center justify-center gap-1.5 app-text-body",
           defaultClassNames.dropdowns,
         ),
 
@@ -426,7 +426,7 @@ export function Calendar({
 
         weekday: cn(
           "flex-1 select-none rounded-md",
-          "admin-text-label text-muted-foreground",
+          "app-text-label text-muted-foreground",
           defaultClassNames.weekday,
         ),
 
@@ -438,7 +438,7 @@ export function Calendar({
         ),
 
         week_number: cn(
-          "select-none admin-text-caption text-muted-foreground",
+          "select-none app-text-caption text-muted-foreground",
           defaultClassNames.week_number,
         ),
 
@@ -467,7 +467,7 @@ export function Calendar({
 
         // ── State variants ─────────────────────────────────────────────────
         today: cn(
-          "rounded-xl admin-text-heading-sm",
+          "rounded-xl app-text-heading-sm",
           "bg-accent text-accent-foreground",
           "data-[selected=true]:bg-primary/50 data-[selected=true]:text-primary-foreground",
           defaultClassNames.today,

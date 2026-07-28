@@ -87,11 +87,11 @@ const TRIGGER_CLS =
 
 /** Floating micro-label above the date value */
 const MICRO_LABEL_CLS =
-  "block admin-text-micro uppercase leading-none tracking-wider text-muted-foreground";
+  "block app-text-micro uppercase leading-none tracking-wider text-muted-foreground";
 
 /** Clear (×) button inside each field */
 const CLEAR_BTN_CLS =
-  "flex admin-icon-md shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive";
+  "flex app-icon-md shrink-0 cursor-pointer items-center justify-center rounded-full text-muted-foreground/50 transition-colors hover:bg-destructive/10 hover:text-destructive";
 
 // ── Component ─────────────────────────────────────────────────────────────────
 
@@ -180,7 +180,7 @@ export function RangeDatePicker({
       if (icon && isValidElement(icon)) {
         const existingClassName = (icon.props as { className?: string }).className;
         return cloneElement(icon as ReactElement<{ className?: string; "aria-hidden"?: boolean }>, {
-          className: cn(existingClassName, "admin-icon-sm shrink-0 transition-colors", colorCls),
+          className: cn(existingClassName, "app-icon-sm shrink-0 transition-colors", colorCls),
           "aria-hidden": true,
         });
       }
@@ -194,7 +194,7 @@ export function RangeDatePicker({
       }
 
       const FallbackIcon = field === "departure" ? TbPlaneDeparture : TbPlaneArrival;
-      return <FallbackIcon className={cn("admin-icon-sm shrink-0 transition-colors", colorCls)} aria-hidden="true" />;
+      return <FallbackIcon className={cn("app-icon-sm shrink-0 transition-colors", colorCls)} aria-hidden="true" />;
     },
     [activeField, icon, open],
   );
@@ -204,21 +204,21 @@ export function RangeDatePicker({
       if (icon && isValidElement(icon)) {
         const existingClassName = (icon.props as { className?: string }).className;
         return cloneElement(icon as ReactElement<{ className?: string; "aria-hidden"?: boolean }>, {
-          className: cn(existingClassName, "admin-icon-xs"),
+          className: cn(existingClassName, "app-icon-xs"),
           "aria-hidden": true,
         });
       }
 
       if (icon) {
         return (
-          <span className="admin-icon-xs" aria-hidden="true">
+          <span className="app-icon-xs" aria-hidden="true">
             {icon}
           </span>
         );
       }
 
       const FallbackIcon = field === "departure" ? TbPlaneDeparture : TbPlaneArrival;
-      return <FallbackIcon className="admin-icon-xs" aria-hidden="true" />;
+      return <FallbackIcon className="app-icon-xs" aria-hidden="true" />;
     },
     [icon],
   );
@@ -319,7 +319,7 @@ export function RangeDatePicker({
                     !departureText
                       ? "text-muted-foreground/60"
                       : cn(
-                        "admin-text-label",
+                        "app-text-label",
                         open && activeField === "departure"
                           ? "text-violet-600 dark:text-violet-400"
                           : "text-foreground",
@@ -338,7 +338,7 @@ export function RangeDatePicker({
                   onClick={handleClearDeparture}
                   onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleClearDeparture(e); }}
                 >
-                  <X className="admin-icon-xs" aria-hidden />
+                  <X className="app-icon-xs" aria-hidden />
                 </span>
               )}
             </button>
@@ -378,7 +378,7 @@ export function RangeDatePicker({
                       !returnText
                         ? "text-muted-foreground/60"
                         : cn(
-                          "admin-text-label",
+                          "app-text-label",
                           open && activeField === "return"
                             ? "text-violet-600 dark:text-violet-400"
                             : "text-foreground",
@@ -397,7 +397,7 @@ export function RangeDatePicker({
                     onClick={handleClearReturn}
                     onKeyDown={(e) => { if (e.key === "Enter" || e.key === " ") handleClearReturn(e); }}
                   >
-                    <X className="admin-icon-xs" aria-hidden />
+                    <X className="app-icon-xs" aria-hidden />
                   </span>
                 )}
               </button>
@@ -416,7 +416,7 @@ export function RangeDatePicker({
                   "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/30",
                 )}
               >
-                <X className="admin-icon-sm" aria-hidden="true" />
+                <X className="app-icon-sm" aria-hidden="true" />
               </button>
             )}
           </div>
@@ -445,7 +445,7 @@ export function RangeDatePicker({
             )}
           >
             {/* Top accent strip */}
-            <div className="admin-hero-accent w-full brand-gradient" />
+            <div className="app-hero-accent w-full brand-gradient" />
 
             {/* Field-switcher tabs */}
             {showReturn && (
@@ -467,7 +467,7 @@ export function RangeDatePicker({
                     className={cn(
                       "flex flex-1 items-center justify-center gap-2",
                       "border-b-2 px-4 py-2.5 transition-colors",
-                      "admin-text-caption uppercase tracking-wide",
+                      "app-text-caption uppercase tracking-wide",
                       activeField === field
                         ? "border-primary text-primary"
                         : "border-transparent text-muted-foreground hover:text-foreground",
@@ -538,7 +538,7 @@ export function RangeDatePicker({
                 onClick={handleClear}
                 aria-label="Clear all selected dates"
               >
-                <X className="admin-icon-xs" aria-hidden="true" />
+                <X className="app-icon-xs" aria-hidden="true" />
                 Clear
               </Button>
             </div>

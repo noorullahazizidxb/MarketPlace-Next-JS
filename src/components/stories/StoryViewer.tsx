@@ -61,13 +61,13 @@ export function StoryViewer({
               role="dialog"
               aria-modal="true"
               aria-label={story.title}
-              className="relative w-[min(960px,92vw)] max-h-[90vh] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] z-[61]"
+              className="relative w-[min(960px,92vw)] max-h-[90vh] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] z-[61]"
               initial={{ scale: 0.98, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.98, opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
             >
-              <div className="flex items-center justify-between p-4 md:p-5 border-b border-[hsl(var(--border))]">
+              <div className="flex items-center justify-between p-4 md:p-5 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
                   <Link
                     href={
@@ -76,7 +76,7 @@ export function StoryViewer({
                     onClick={(e) => {
                       if (!story?.user?.id) e.preventDefault();
                     }}
-                    className="size-8 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center text-[hsl(var(--primary))] overflow-hidden hover:opacity-90"
+                    className="size-8 rounded-full bg-[var(--primary)]/15 grid place-items-center text-[var(--primary)] overflow-hidden hover:opacity-90"
                   >
                     <Image
                       src={asset(story.user?.photo)}
@@ -129,7 +129,7 @@ export function StoryViewer({
                   <ImageSlider images={slides} aspect="16/11" />
                 )}
                 {story.description && (
-                  <p className="mt-3 text-sm text-[hsl(var(--foreground))]/85 whitespace-pre-line">
+                  <p className="mt-3 text-sm text-[var(--foreground)]/85 whitespace-pre-line">
                     {story.description}
                   </p>
                 )}

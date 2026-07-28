@@ -66,7 +66,7 @@ function TabsTrigger({
         "inline-flex flex-1 items-center justify-center gap-1.5 whitespace-nowrap",
         "rounded-squircle border border-transparent px-[var(--ctrl-px,0.625rem)] h-full",
         // Typography — size controlled by style prop below
-        "admin-text-badge",
+        "app-text-badge",
         // Inactive state
         "text-muted-foreground/80",
         "transition-all duration-200",

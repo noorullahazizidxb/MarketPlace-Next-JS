@@ -54,7 +54,7 @@ function InputOTPSlot({
     <div
       data-slot="input-otp-slot"
       className={cn(
-        "relative flex min-h-[var(--ctrl-h)] min-w-[var(--ctrl-h)] items-center justify-center border-y border-r border-input admin-text-body admin-text-heading-sm shadow-xs transition-all first:rounded-l-md first:border-l last:rounded-r-md",
+        "relative flex min-h-[var(--ctrl-h)] min-w-[var(--ctrl-h)] items-center justify-center border-y border-r border-input app-text-body app-text-heading-sm shadow-xs transition-all first:rounded-l-md first:border-l last:rounded-r-md",
         slot.isActive && "z-10 border-ring ring-2 ring-ring/30",
         className
       )}

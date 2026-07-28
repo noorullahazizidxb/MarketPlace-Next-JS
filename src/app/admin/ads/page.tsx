@@ -152,13 +152,13 @@ export default function AdsManagementPage() {
   ];
 
   return (
-    <div className="space-y-8 pb-20">
+    <div className="space-y-8 pb-20 app-shell-page" data-app-page="admin-ads">
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-2xl font-semibold tracking-tight">
+          <h1 className="app-text-heading font-semibold tracking-tight">
             {t("adsManagement")}
           </h1>
-          <p className="text-sm text-muted-foreground mt-1">
+          <p className="app-text-body text-muted-foreground mt-1">
             {t("adsManagementSubtitle")}
           </p>
         </div>
@@ -186,14 +186,14 @@ export default function AdsManagementPage() {
             </Button>
           </DialogTrigger>
           <DialogContent
-            className="max-h-[90vh] overflow-y-auto rounded-[2rem] border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.35)] p-0"
+            className="max-h-[90vh] overflow-y-auto rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.35)] p-0"
             showCloseButton={false}
           >
             <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-t-[2rem]" />
-            <div className="px-6 pt-6 pb-4 border-b border-[hsl(var(--border))]/30 flex items-center justify-between">
+            <div className="px-6 pt-6 pb-4 border-b border-[var(--border)]/30 flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
-                  <Plus className="size-4 text-[hsl(var(--primary))]" />
+                <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center">
+                  <Plus className="size-4 text-[var(--primary)]" />
                 </div>
                 <DialogTitle className="text-base font-bold">
                   {editingAd ? t("editAd") : t("createNewAd")}
@@ -248,7 +248,7 @@ export default function AdsManagementPage() {
                 )}
               />
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[hsl(var(--foreground))]/60 uppercase tracking-wider">
+                <label className="text-xs font-semibold text-[var(--foreground)]/60 uppercase tracking-wider">
                   {t("placementLabel")}
                 </label>
                 <PlacementSelect
@@ -261,10 +261,10 @@ export default function AdsManagementPage() {
                   </p>
                 )}
               </div>
-              <div className="flex items-center justify-between rounded-2xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--muted))]/10 px-4 py-3.5">
+              <div className="flex items-center justify-between rounded-2xl border border-[var(--border)]/40 bg-[var(--muted)]/10 px-4 py-3.5">
                 <div className="space-y-0.5">
                   <p className="text-sm font-semibold">{t("activeLabel")}</p>
-                  <p className="text-xs text-[hsl(var(--foreground))]/45">
+                  <p className="text-xs text-[var(--foreground)]/45">
                     {t("activeHint")}
                   </p>
                 </div>

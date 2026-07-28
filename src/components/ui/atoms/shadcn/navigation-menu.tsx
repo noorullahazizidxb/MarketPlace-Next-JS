@@ -49,7 +49,7 @@ function NavigationMenuItem({ className, ...props }: React.ComponentProps<typeof
 const navigationMenuTriggerStyle = cva(
   [
     "group inline-flex min-h-[var(--ctrl-h-sm)] w-max items-center justify-center",
-    "rounded-xl bg-background px-4 py-2 admin-text-label",
+    "rounded-xl bg-background px-4 py-2 app-text-label",
     "hover:bg-accent hover:text-accent-foreground",
     "focus:bg-accent focus:text-accent-foreground",
     "disabled:pointer-events-none disabled:opacity-50",
@@ -69,7 +69,7 @@ function NavigationMenuTrigger({ className, style, children, ...props }: React.C
     >
       {children}
       <ChevronDownIcon
-        className="relative top-[1px] ms-1 admin-icon-xs transition duration-300 group-data-[state=open]:rotate-180"
+        className="relative top-[1px] ms-1 app-icon-xs transition duration-300 group-data-[state=open]:rotate-180"
         aria-hidden="true"
       />
     </NavigationMenuPrimitive.Trigger>
@@ -140,7 +140,7 @@ function NavigationMenuLink({ className, style, ...props }: React.ComponentProps
         "focus-visible:ring-ring/50 focus-visible:ring-[3px] focus-visible:outline-1",
         "data-[active=true]:bg-accent/50 data-[active=true]:text-accent-foreground",
         "[&_svg:not([class*='text-'])]:text-muted-foreground",
-        "[&_svg:not([class*='size-'])]:admin-icon-sm",
+        "[&_svg:not([class*='size-'])]:app-icon-sm",
         className
       )}
       {...props}

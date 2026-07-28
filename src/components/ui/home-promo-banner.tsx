@@ -30,20 +30,20 @@ export default function HomePromoBanner() {
           viewport={{ once: true, amount: 0 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-hidden rounded-3xl
-                       border border-[hsl(var(--border))]
-                       bg-gradient-to-br from-[hsl(var(--accent)/0.15)]
-                                         via-[hsl(var(--primary)/0.08)]
-                                         to-[hsl(var(--card))]
-                       shadow-lg shadow-[hsl(var(--accent)/0.2)] dark:shadow-none"
+                       border border-[var(--border)]
+                       bg-gradient-to-br from-[color-mix(in oklab, var(--accent) 15%, transparent)]
+                                         via-[color-mix(in oklab, var(--primary) 8%, transparent)]
+                                         to-[var(--card)]
+                       shadow-lg shadow-[color-mix(in oklab, var(--accent) 20%, transparent)] dark:shadow-none"
         >
           <div className="absolute inset-0 overflow-hidden rounded-3xl">
             {/* Decorative shapes — CSS float animation (GPU compositor) */}
             <div className="absolute -left-10 -top-10 animate-float" style={{ animationDuration: "5.5s" }}>
-              <Hexagon className="h-32 w-32 text-[hsl(var(--accent)/0.25)] opacity-60" />
+              <Hexagon className="h-32 w-32 text-[color-mix(in oklab, var(--accent) 25%, transparent)] opacity-60" />
             </div>
             <motion.svg
               viewBox="0 0 200 200"
-              className="absolute -bottom-16 -right-16 h-64 w-64 text-[hsl(var(--primary)/0.2)] opacity-50 animate-float"
+              className="absolute -bottom-16 -right-16 h-64 w-64 text-[color-mix(in oklab, var(--primary) 20%, transparent)] opacity-50 animate-float"
               style={{ animationDuration: "8s", animationDelay: "1s" }}
             >
               <path
@@ -60,8 +60,8 @@ export default function HomePromoBanner() {
                   : "grid items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10"}
               >
                 <div className={isRtl ? "hidden" : "hidden md:flex md:justify-start"}>
-                  <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[hsl(var(--accent))/0.2] bg-[hsl(var(--background))/0.55] shadow-inner backdrop-blur-sm">
-                    <ShoppingCart className="size-12 text-[hsl(var(--accent))] drop-shadow-xl" />
+                  <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[color-mix(in oklab, var(--accent) 20%, transparent)] bg-[color-mix(in oklab, var(--background) 55%, transparent)] shadow-inner backdrop-blur-sm">
+                    <ShoppingCart className="size-12 text-[var(--accent)] drop-shadow-xl" />
                   </div>
                 </div>
 
@@ -71,7 +71,7 @@ export default function HomePromoBanner() {
                     whileInView={{ x: 0 }}
                     viewport={{ once: true, amount: 0 }}
                     transition={{ delay: 0.15, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="heading-2xl text-[hsl(var(--foreground))] drop-shadow-md"
+                    className="heading-2xl text-[var(--foreground)] drop-shadow-md"
                   >
                     {(t as any)("homePromoTitle") || "تمام محصولات ما را ببینید!"}
                   </motion.h2>
@@ -80,7 +80,7 @@ export default function HomePromoBanner() {
                     whileInView={{ x: 0 }}
                     viewport={{ once: true, amount: 0 }}
                     transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-3 text-base text-[hsl(var(--foreground)/0.8)] max-w-2xl"
+                    className="mt-3 text-base text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl"
                   >
                     {(t as any)("homePromoSubtitle") ||
                       "پیش از صدها موبایل های جدید و مستعمل از بهترین فروشگاه های افغانستان در دسترس شما."}
@@ -97,8 +97,8 @@ export default function HomePromoBanner() {
                   <Link
                     href="/listings"
                     className="inline-flex items-center gap-3 px-6 py-3 rounded-2xl
-                               bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))]
-                               shadow-md shadow-[hsl(var(--primary)/0.3)]
+                               bg-[var(--primary)] text-[var(--primary-foreground)]
+                               shadow-md shadow-[color-mix(in oklab, var(--primary) 30%, transparent)]
                                hover:scale-105 active:scale-95
                                transition-all duration-200"
                     aria-label={(t as any)("viewAll") || "View all"}
@@ -112,9 +112,9 @@ export default function HomePromoBanner() {
                   <Link
                     href="/listings?sort=newest#listings"
                     className="inline-flex items-center gap-2 px-4 py-2 rounded-2xl
-                               bg-[hsl(var(--accent)/0.12)] text-[hsl(var(--accent))]
-                               border border-[hsl(var(--accent)/0.2)]
-                               hover:bg-[hsl(var(--accent)/0.2)] active:scale-95
+                               bg-[color-mix(in oklab, var(--accent) 12%, transparent)] text-[var(--accent)]
+                               border border-[color-mix(in oklab, var(--accent) 20%, transparent)]
+                               hover:bg-[color-mix(in oklab, var(--accent) 20%, transparent)] active:scale-95
                                transition-all duration-200"
                     aria-label={(t as any)("quickExplore") || "Quick explore"}
                   >

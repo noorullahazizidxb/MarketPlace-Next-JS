@@ -51,7 +51,7 @@ export function AdPlaceholder({ index }: { index: number }) {
   const url = ad.imageUrl || undefined;
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
       <div className="h-[150px] w-full">
         {url ? (
           <div className="relative h-full w-full">

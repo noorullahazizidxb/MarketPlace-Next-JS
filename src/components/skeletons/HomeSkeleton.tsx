@@ -6,8 +6,8 @@ export function HomeSkeleton() {
   return (
     <div className="min-h-screen space-y-8 pb-16">
       {/* Hero banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/60 backdrop-blur-xl p-6 sm:p-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/8 to-transparent pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)]/40 bg-[var(--card)]/60 backdrop-blur-xl p-6 sm:p-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/8 to-transparent pointer-events-none" />
         <Skeleton className="h-10 w-48 sm:w-64 rounded-2xl" />
         <Skeleton className="h-4 w-72 sm:w-96 mt-4 rounded-xl" />
         <div className="mt-8 flex flex-wrap gap-3">
@@ -41,7 +41,7 @@ export function HomeSkeleton() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-[1.5rem] border border-[hsl(var(--border))]/40 overflow-hidden bg-[hsl(var(--card))]/80 backdrop-blur-xl"
+            className="rounded-[1.5rem] border border-[var(--border)]/40 overflow-hidden bg-[var(--card)]/80 backdrop-blur-xl"
           >
             <Skeleton className="h-44 w-full rounded-none" />
             <div className="p-4 space-y-3">

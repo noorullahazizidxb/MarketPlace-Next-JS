@@ -73,20 +73,20 @@ function ListingDetailsContent() {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 app-shell-page" data-app-page="listing-detail">
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href="/listings"
           className="subtle inline-flex items-center gap-1"
         >
-          <ArrowLeft className="size-4" /> {t("back")}
+          <ArrowLeft className="app-icon-sm" /> {t("back")}
         </Link>
         <h1 className="heading-xl flex items-center gap-3">
           {listing?.title ?? t("listing")}
           {avgRating > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-2 py-1 text-sm">
+            <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 px-2 py-1 app-text-body">
               <Stars count={Math.round(avgRating)} />
-              <span className="text-xs">
+              <span className="app-text-caption">
                 {avgRating.toFixed(1)} ({reviewCount})
               </span>
             </span>
@@ -102,68 +102,68 @@ function ListingDetailsContent() {
       {!isLoading && !error && (
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           <div className="space-y-4 lg:col-span-2">
-            <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur overflow-hidden">
+            <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur overflow-hidden">
               <ImageSlider images={images} aspect="1/1" />
             </div>
             <div className="card p-5 space-y-4">
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
-                  <div className="px-3 py-1 rounded-xl tabular-nums text-sm border border-[hsl(var(--border))] bg-[hsl(var(--accent))]/10 text-[hsl(var(--accent))]">
-                    <CreditCard className="size-5 mr-1 inline-flex" />{" "}
+                  <div className="px-3 py-1 rounded-xl tabular-nums app-text-body border border-[var(--border)] bg-[var(--accent)]/10 text-[var(--accent)]">
+                    <CreditCard className="app-icon-md mr-1 inline-flex" />{" "}
                     {listing.price} {listing.currency}
                   </div>
                 )}
                 {listing?.listingType && (
-                  <span className="text-xs px-2 py-1 rounded-full bg-[hsl(var(--foreground))]/10 border border-[hsl(var(--border))]">
+                  <span className="app-text-caption px-2 py-1 rounded-full bg-[var(--foreground)]/10 border border-[var(--border)]">
                     {listing.listingType}
                   </span>
                 )}
                 {listing?.status && (
-                  <span className="inline-flex items-center gap-1 text-xs px-2 py-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10">
-                    <BadgeCheck className="size-3" /> {listing.status}
+                  <span className="inline-flex items-center gap-1 app-text-caption px-2 py-1 rounded-full border border-[var(--border)] bg-[var(--muted)]/10">
+                    <BadgeCheck className="app-icon-xs" /> {listing.status}
                   </span>
                 )}
                 {listing?.location && (
-                  <span className="inline-flex items-center gap-1 text-sm subtle">
-                    <MapPin className="size-4" /> {listing.location}
+                  <span className="inline-flex items-center gap-1 app-text-body subtle">
+                    <MapPin className="app-icon-sm" /> {listing.location}
                   </span>
                 )}
                 {listing?.category?.name && (
-                  <span className="inline-flex items-center gap-1 text-sm subtle">
-                    <Tag className="size-4" /> {listing.category.name}
+                  <span className="inline-flex items-center gap-1 app-text-body subtle">
+                    <Tag className="app-icon-sm" /> {listing.category.name}
                   </span>
                 )}
               </div>
               {listing?.description && (
-                <p className="text-sm leading-relaxed text-[hsl(var(--foreground))]/80">
+                <p className="app-text-body leading-relaxed text-[var(--foreground)]/80">
                   {listing.description}
                 </p>
               )}
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 text-xs">
+              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 app-text-caption">
                 {listing?.createdAt && (
                   <InfoPill
-                    icon={<Calendar className="size-3" />}
+                    icon={<Calendar className="app-icon-xs" />}
                     label={t("created")}
                     value={new Date(listing.createdAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.updatedAt && (
                   <InfoPill
-                    icon={<Calendar className="size-3" />}
+                    icon={<Calendar className="app-icon-xs" />}
                     label={t("updated") || "Updated"}
                     value={new Date(listing.updatedAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.approvedAt && (
                   <InfoPill
-                    icon={<Calendar className="size-3" />}
+                    icon={<Calendar className="app-icon-xs" />}
                     label={t("approvedAt") || "Approved"}
                     value={new Date(listing.approvedAt).toLocaleDateString()}
                   />
                 )}
                 {listing?.expiresAt && (
                   <InfoPill
-                    icon={<Calendar className="size-3" />}
+                    icon={<Calendar className="app-icon-xs" />}
                     label={t("expires")}
                     value={new Date(listing.expiresAt).toLocaleDateString()}
                   />
@@ -239,9 +239,9 @@ function InfoPill({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5 px-2 py-1.5">
+    <div className="rounded-lg border border-[var(--border)] bg-[var(--muted)]/5 px-2 py-1.5">
       <div className="flex items-center gap-2">
-        <span className="text-[hsl(var(--foreground))]/70">{icon}</span>
+        <span className="text-[var(--foreground)]/70">{icon}</span>
         <span className="subtle">{label}:</span>
         <span>{value}</span>
       </div>
@@ -255,7 +255,7 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <User className="size-4" /> {t("listingRepresentatives")}
+        <User className="app-icon-sm" /> {t("listingRepresentatives")}
       </h3>
       <div className="space-y-2">
         {reps.map((r, i) => {
@@ -267,25 +267,25 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
           return (
             <div
               key={i}
-              className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5 p-3"
+              className="flex items-center justify-between rounded-xl border border-[var(--border)] bg-[var(--muted)]/5 p-3"
             >
               <div className="flex min-w-0 items-center gap-3">
-                <div className="size-9 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center">
-                  <User className="size-4 text-[hsl(var(--primary))]" />
+                <div className="size-9 rounded-full bg-[var(--primary)]/15 grid place-items-center">
+                  <User className="app-icon-sm text-[var(--primary)]" />
                 </div>
                 <div className="min-w-0">
-                  <div className="text-sm font-medium truncate">
+                  <div className="app-text-body font-medium truncate">
                     {rep?.name ||
                       rep?.region ||
                       `Representative #${rep?.id ?? i + 1}`}
                   </div>
                   {rep?.region && (
-                    <div className="text-xs subtle">
+                    <div className="app-text-caption subtle">
                       {t("region")}: {rep.region}
                     </div>
                   )}
                   {phone && (
-                    <div className="text-xs subtle">
+                    <div className="app-text-caption subtle">
                       {t("whatsApp")}: {phone}
                     </div>
                   )}
@@ -299,7 +299,7 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
                     rel="noreferrer"
                     className="inline-flex items-center gap-1"
                   >
-                    <MessageCircle className="size-4" /> {t("chat")}
+                    <MessageCircle className="app-icon-sm" /> {t("chat")}
                   </a>
                 </Button>
               )}
@@ -317,7 +317,7 @@ function SellerCard({ user }: { user?: any }) {
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <User className="size-4" /> {t("seller")}
+        <User className="app-icon-sm" /> {t("seller")}
       </h3>
       <div className="flex items-center gap-3">
         <Link
@@ -325,7 +325,7 @@ function SellerCard({ user }: { user?: any }) {
           onClick={(e) => {
             if (!user?.id) e.preventDefault();
           }}
-          className="size-10 rounded-full bg-[hsl(var(--primary))]/15 grid place-items-center overflow-hidden hover:opacity-90"
+          className="size-10 rounded-full bg-[var(--primary)]/15 grid place-items-center overflow-hidden hover:opacity-90"
         >
           <Image
             src={asset(user.photo) || "/default-avatar.png"}
@@ -341,21 +341,21 @@ function SellerCard({ user }: { user?: any }) {
             onClick={(e) => {
               if (!user?.id) e.preventDefault();
             }}
-            className="text-sm font-medium hover:underline"
+            className="app-text-body font-medium hover:underline"
           >
             {user.firstName ||
               user.fullName ||
               user.email ||
               `User ${user.id?.slice?.(0, 6)}`}
           </Link>
-          <div className="text-xs subtle">ID: {user.id}</div>
+          <div className="app-text-caption subtle">ID: {user.id}</div>
           {user.contacts?.phone && (
-            <div className="text-xs subtle">
+            <div className="app-text-caption subtle">
               {t("phone")}: {user.contacts.phone}
             </div>
           )}
           {user.contacts?.whatsapp && (
-            <div className="text-xs subtle">
+            <div className="app-text-caption subtle">
               {t("whatsApp")}: {user.contacts.whatsapp}
             </div>
           )}
@@ -368,12 +368,12 @@ function SellerCard({ user }: { user?: any }) {
               href={`tel:${user.contacts.phone}`}
               className="inline-flex items-center gap-2 w-full justify-center"
             >
-              <Phone className="size-4" /> {t("call")}
+              <Phone className="app-icon-sm" /> {t("call")}
             </a>
           </Button>
         ) : (
           <Button size="sm" variant="primary" className="flex-1">
-            <Phone className="size-4" /> {t("contact")}
+            <Phone className="app-icon-sm" /> {t("contact")}
           </Button>
         )}
 
@@ -388,12 +388,12 @@ function SellerCard({ user }: { user?: any }) {
               rel="noreferrer"
               className="inline-flex items-center gap-2 w-full justify-center"
             >
-              <MessageCircle className="size-4" /> {t("whatsApp")}
+              <MessageCircle className="app-icon-sm" /> {t("whatsApp")}
             </a>
           </Button>
         ) : (
           <Button size="sm" variant="ghost" className="flex-1">
-            <MessageCircle className="size-4" /> {t("message")}
+            <MessageCircle className="app-icon-sm" /> {t("message")}
           </Button>
         )}
       </div>
@@ -420,7 +420,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
   return (
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
-        <Share2 className="size-4" /> {t("quickActions")}
+        <Share2 className="app-icon-sm" /> {t("quickActions")}
       </h3>
       <div className="grid grid-cols-2 gap-2">
         <Button
@@ -429,16 +429,16 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
           variant="secondary"
           className="w-full"
         >
-          <Share2 className="size-4" /> {t("shareText")}
+          <Share2 className="app-icon-sm" /> {t("shareText")}
         </Button>
         <Button onClick={copy} size="sm" variant="ghost" className="w-full">
-          <Copy className="size-4" /> {t("copyLink")}
+          <Copy className="app-icon-sm" /> {t("copyLink")}
         </Button>
         <Button size="sm" variant="ghost" className="w-full">
-          <Heart className="size-4" /> {t("save")}
+          <Heart className="app-icon-sm" /> {t("save")}
         </Button>
         <Button size="sm" variant="ghost" className="w-full">
-          <Flag className="size-4" /> {t("report") || "Report"}
+          <Flag className="app-icon-sm" /> {t("report") || "Report"}
         </Button>
       </div>
     </div>
@@ -454,11 +454,11 @@ function SocialsCard() {
           <Link
             href="#"
             aria-label="Follow on X"
-            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
           >
             <svg
               aria-hidden
-              className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+              className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]"
               viewBox="0 0 24 24"
             >
               <path
@@ -472,11 +472,11 @@ function SocialsCard() {
           <Link
             href="#"
             aria-label="Verified"
-            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
           >
             <svg
               aria-hidden
-              className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]"
+              className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]"
               viewBox="0 0 24 24"
             >
               <path
@@ -490,9 +490,9 @@ function SocialsCard() {
           <Link
             href="#"
             aria-label="Copy link"
-            className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5"
+            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
           >
-            <Link2 className="size-4 text-[hsl(var(--foreground))]/70 group-hover:text-[hsl(var(--primary))]" />
+            <Link2 className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]" />
           </Link>
         </Tooltip>
       </div>
@@ -505,7 +505,7 @@ function NewsletterCard() {
   return (
     <div className="card p-5 space-y-2">
       <h3 className="font-semibold">{t("newsletter")}</h3>
-      <p className="text-xs subtle">{t("subscribeBlurb")}</p>
+      <p className="app-text-caption subtle">{t("subscribeBlurb")}</p>
       <form
         onSubmit={(e) => {
           e.preventDefault();
@@ -520,7 +520,7 @@ function NewsletterCard() {
           type="email"
           required
           placeholder={t("emailPlaceholder")}
-          className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
+          className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 app-text-body outline-none transition focus:border-[var(--primary)]/50 focus:ring-2 focus:ring-[var(--primary)]/20"
         />
         <Button type="submit" size="sm" variant="primary">
           {t("subscribe")}
@@ -536,7 +536,7 @@ function QRCard({ url }: { url: string }) {
   return (
     <div className="card p-5">
       <h3 className="font-semibold">{t("scanVisit")}</h3>
-      <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
+      <div className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm dark:bg-white/90">
         <QRCode value={url} className="h-auto w-full" />
       </div>
     </div>
@@ -549,9 +549,9 @@ function Stars({ count }: { count: number }) {
       {Array.from({ length: 5 }).map((_, i) => (
         <Star
           key={i}
-          className={`size-4 ${i < count
+          className={`app-icon-sm ${i < count
             ? "fill-yellow-400 text-yellow-400"
-            : "text-[hsl(var(--primary))]/20"
+            : "text-[var(--primary)]/20"
             }`}
         />
       ))}
@@ -570,21 +570,21 @@ function FeedbacksSection({ feedbacks }: { feedbacks: any[] }) {
         {feedbacks?.map((r: any, i: number) => (
           <div
             key={i}
-            className="p-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/5"
+            className="p-3 rounded-xl border border-[var(--border)] bg-[var(--muted)]/5"
           >
-            <div className="flex items-center gap-3 text-sm">
+            <div className="flex items-center gap-3 app-text-body">
               <AvatarSmall user={r.user} />
               <span className="font-medium">
                 {r?.user?.fullName || r?.user?.name || "Anonymous"}
               </span>
               <Stars count={Number(r.rating) || 0} />
               {r.createdAt && (
-                <span className="subtle ml-auto text-xs">
+                <span className="subtle ml-auto app-text-caption">
                   {new Date(r.createdAt).toLocaleDateString()}
                 </span>
               )}
             </div>
-            {r.comment && <p className="text-sm mt-1">{r.comment}</p>}
+            {r.comment && <p className="app-text-body mt-1">{r.comment}</p>}
           </div>
         ))}
       </div>
@@ -606,7 +606,7 @@ function AvatarSmall({ user }: { user?: any }) {
       onClick={(e) => {
         if (!user?.id) e.preventDefault();
       }}
-      className="size-8 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--foreground))]/80 grid place-items-center overflow-hidden hover:opacity-90"
+      className="size-8 rounded-full border border-[var(--border)] bg-[var(--muted)]/20 text-[var(--foreground)]/80 grid place-items-center overflow-hidden hover:opacity-90"
     >
       {photo ? (
         <Image
@@ -617,7 +617,7 @@ function AvatarSmall({ user }: { user?: any }) {
           className="w-full h-full object-cover"
         />
       ) : (
-        <span className="text-[11px] font-medium">{initials}</span>
+        <span className="app-text-micro font-medium">{initials}</span>
       )}
     </Link>
   );
@@ -634,7 +634,7 @@ function AdPlaceholder({ index }: { index: number }) {
   const urls = listingPlaceholderImages.compact;
   const url = urls[index % urls.length];
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <div className="relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
       <div className="h-[150px] w-full">
         <div className="relative h-full w-full">
           <Image src={url} alt="Advertisement" className="object-cover" fill />
@@ -648,7 +648,7 @@ function LargeAdPlaceholder() {
   const urls = listingPlaceholderImages.large;
   const url = urls[0];
   return (
-    <div className="w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <div className="w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
       <div className="w-full h-[800px]">
         <div className="relative h-full w-full">
           <Image src={url} alt="Advertisement" className="object-cover" fill />
@@ -712,7 +712,7 @@ function FeedbackCreateForm({
     <div className="card p-5 space-y-3">
       <h3 className="font-semibold">Leave a feedback</h3>
       {!canPost ? (
-        <p className="text-sm subtle">
+        <p className="app-text-body subtle">
           Please{" "}
           <Link href="/sign-in" className="link">
             sign in
@@ -727,7 +727,7 @@ function FeedbackCreateForm({
               onChange={(v) => setRating(v)}
               onHover={(v) => setHover(v)}
             />
-            <span className="text-xs subtle">
+            <span className="app-text-caption subtle">
               {rating ? `${rating}/5` : "Select rating"}
             </span>
           </div>
@@ -737,7 +737,7 @@ function FeedbackCreateForm({
               value={comment}
               onChange={(e) => setComment(e.target.value)}
               placeholder="Say something about this listing"
-              className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 py-2 text-sm outline-none transition focus:border-[hsl(var(--primary))]/50 focus:ring-2 focus:ring-[hsl(var(--primary))]/20"
+              className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 py-2 app-text-body outline-none transition focus:border-[var(--primary)]/50 focus:ring-2 focus:ring-[var(--primary)]/20"
             />
             <Button
               type="submit"
@@ -782,10 +782,10 @@ function StarRatingInput({
             onMouseEnter={() => onHover?.(n)}
             onMouseLeave={() => onHover?.(0)}
             onClick={() => onChange(n)}
-            className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 rounded-md`}
+            className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 rounded-md`}
           >
             <Star
-              className={`size-6 ${active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
+              className={`app-icon-md ${active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
                 }`}
             />
           </button>

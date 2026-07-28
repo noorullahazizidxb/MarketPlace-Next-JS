@@ -129,8 +129,8 @@ export function PricingPlans({
         >
           {tier.popular && (
             <div className='absolute start-0 -top-3 w-full'>
-              <Badge className='mx-auto flex w-fit gap-1.5 rounded-full admin-text-label'>
-                <Sparkles className='!admin-icon-sm' />
+              <Badge className='mx-auto flex w-fit gap-1.5 rounded-full app-text-label'>
+                <Sparkles className='!app-icon-sm' />
                 {mode === 'pricing' && (
                   <span>{l.mostPopular}</span>
                 )}
@@ -144,20 +144,20 @@ export function PricingPlans({
             <CardTitle id={`${tier.id}-title`} className=''>
               {tier.name}
             </CardTitle>
-            <p className='text-muted-foreground admin-text-body text-balance'>{tier.description}</p>
+            <p className='text-muted-foreground app-text-body text-balance'>{tier.description}</p>
           </CardHeader>
           <CardContent className='flex flex-1 flex-col space-y-6'>
             <div className='flex items-baseline justify-center'>
-              <span className=' admin-text-heading'>{tier.price}</span>
-              <span className='text-muted-foreground admin-text-body'>{tier.frequency}</span>
+              <span className=' app-text-heading'>{tier.price}</span>
+              <span className='text-muted-foreground app-text-body'>{tier.frequency}</span>
             </div>
             <div className='space-y-2'>
               {tier.features.map(feature => (
                 <div key={feature} className='flex items-center gap-2'>
                   <div className='bg-muted rounded-full p-1'>
-                    <Check className='admin-icon-xs' />
+                    <Check className='app-icon-xs' />
                   </div>
-                  <span className='admin-text-body'>{feature}</span>
+                  <span className='app-text-body'>{feature}</span>
                 </div>
               ))}
             </div>

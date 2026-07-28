@@ -1,8 +1,9 @@
 "use client";
+
 import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useSyncExternalStore } from "react";
-import { useThemeStore } from "@/store/theme.store";
+import { useTheme } from "@/lib/theme/theme-context";
 
 type Props = {
   iconOnly?: boolean;
@@ -10,18 +11,20 @@ type Props = {
 };
 
 function subscribe() {
-  return () => { };
+  return () => {};
 }
 
 export function ThemeToggle({ iconOnly = false, className }: Props) {
-  const mode = useThemeStore((s) => s.mode);
-  const setMode = useThemeStore((s) => s.setMode);
+  const { theme, setTheme } = useTheme();
   const mounted = useSyncExternalStore(subscribe, () => true, () => false);
-  const isDark = mode === "dark";
+  const isDark = theme === "dark";
+
+  const toggle = () => setTheme(isDark ? "light" : "dark");
 
   if (!mounted) {
     if (iconOnly) {
-      const base = "glass size-9 rounded-xl grid place-items-center";
+      const base =
+        "glass size-[var(--ctrl-h-sm)] rounded-xl grid place-items-center";
       return <div className={className ? `${base} ${className}` : base} />;
     }
     return <Button variant="ghost" aria-label="Toggle theme" />;
@@ -29,14 +32,19 @@ export function ThemeToggle({ iconOnly = false, className }: Props) {
 
   if (iconOnly) {
     const base =
-      "glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20";
+      "glass size-[var(--ctrl-h-sm)] rounded-xl grid place-items-center hover:ring-1 ring-border/40";
     return (
       <button
+        type="button"
         aria-label="Toggle theme"
-        onClick={() => setMode(isDark ? "light" : "dark")}
+        onClick={toggle}
         className={className ? `${base} ${className}` : base}
       >
-        {isDark ? <Sun className="size-4" /> : <Moon className="size-4" />}
+        {isDark ? (
+          <Sun className="app-icon-sm" aria-hidden />
+        ) : (
+          <Moon className="app-icon-sm" aria-hidden />
+        )}
       </button>
     );
   }
@@ -45,7 +53,7 @@ export function ThemeToggle({ iconOnly = false, className }: Props) {
     <Button
       variant="ghost"
       aria-label="Toggle theme"
-      onClick={() => setMode(isDark ? "light" : "dark")}
+      onClick={toggle}
       LeftIcon={isDark ? Sun : Moon}
     >
       {isDark ? "Light" : "Dark"}

@@ -41,10 +41,10 @@ function Chip({
       animate={{ opacity: 1 }}
       onClick={onClick}
       className={cn(
-        "relative px-4 h-9 rounded-full text-sm font-medium inline-flex items-center gap-1.5 border transition-all duration-200 overflow-hidden select-none",
+        "relative px-4 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-full app-text-label font-medium inline-flex items-center gap-1.5 border transition-all duration-200 overflow-hidden select-none",
         active
-          ? "bg-[hsl(var(--primary))] border-[hsl(var(--primary))]/40 text-[hsl(var(--primary-foreground))] shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)]"
-          : "bg-[hsl(var(--card))]/60 backdrop-blur-sm border-[hsl(var(--border))]/60 text-[hsl(var(--foreground))]/70 hover:border-[hsl(var(--primary))]/40 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--card))]"
+          ? "bg-primary border-primary/40 text-primary-foreground shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)]"
+          : "bg-card/60 backdrop-blur-sm border-border/60 text-foreground/70 hover:border-primary/40 hover:text-foreground hover:bg-card"
       )}
     >
       {/* active shimmer */}
@@ -71,7 +71,7 @@ function Chip({
             exit={{ scale: 0.8, opacity: 0 }}
             transition={{ duration: 0.15 }}
           >
-            <Icon className="size-3.5 text-[hsl(var(--muted-foreground))]" />
+            <Icon className="size-3.5 text-muted-foreground" />
           </motion.span>
         ) : null}
       </AnimatePresence>
@@ -118,19 +118,19 @@ export function FiltersBar() {
   return (
     <>
       {/* Mobile trigger */}
-      <div className="flex items-center gap-2 sm:hidden">
+      <div className="flex items-center gap-[var(--space-gap)] sm:hidden">
         <Button
           type="button"
           variant="primary"
           LeftIcon={SlidersHorizontal}
           onClick={() => setOpen(true)}
-          className="relative h-10 px-4"
+          className="relative min-h-[var(--ctrl-h)] h-[var(--ctrl-h)] px-4"
         >
-          <span className="text-sm font-semibold">
+          <span className="app-text-label font-semibold">
             {(t as any)("filters") || "Filters"}
           </span>
           {activeCount > 0 && (
-            <span className="size-5 rounded-full bg-white/20 text-[10px] font-bold flex items-center justify-center">
+            <span className="size-5 rounded-full bg-white/20 app-text-caption font-bold flex items-center justify-center">
               {activeCount}
             </span>
           )}
@@ -139,7 +139,7 @@ export function FiltersBar() {
           <motion.span
             initial={{ opacity: 0, x: -4 }}
             animate={{ opacity: 1, x: 0 }}
-            className="text-xs text-[hsl(var(--primary))] font-medium"
+            className="app-text-caption text-primary font-medium"
           >
             {activeCount} {(t as any)("filtersActive") || "active"}
           </motion.span>
@@ -147,9 +147,9 @@ export function FiltersBar() {
       </div>
 
       {/* Desktop pill chips */}
-      <div className="hidden sm:flex flex-wrap items-center gap-2">
+      <div className="hidden sm:flex flex-wrap items-center gap-[var(--space-gap)]">
         {/* Divider label */}
-        <span className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/35 mr-1">
+        <span className="app-text-caption uppercase tracking-widest font-semibold text-foreground/35 mr-1">
           {t("typeLabel")}
         </span>
         <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="type-all" Icon={Home} />
@@ -157,9 +157,9 @@ export function FiltersBar() {
         <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="type-sale" Icon={Tag} />
 
         {/* Divider */}
-        <div className="mx-2 h-5 w-px rounded-full bg-[hsl(var(--border))]/50" />
+        <div className="mx-2 h-5 w-px rounded-full bg-border/50" />
 
-        <span className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/35 mr-1">
+        <span className="app-text-caption uppercase tracking-widest font-semibold text-foreground/35 mr-1">
           {t("categoryLabel")}
         </span>
         <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="category-all" Icon={Box} />
@@ -181,22 +181,22 @@ export function FiltersBar() {
         onOpenChange={setOpen}
         title={(t as any)("filters") || "Filters"}
       >
-        <div className="p-5 space-y-6">
+        <div className="p-[var(--space-card)] space-y-[var(--space-section)]">
           <div>
-            <p className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/40 mb-3">
+            <p className="app-text-caption uppercase tracking-widest font-semibold text-foreground/40 mb-3">
               {t("typeLabel")}
             </p>
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-[var(--space-gap)]">
               <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="m-type-all" Icon={Home} />
               <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="m-type-rent" Icon={Home} />
               <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="m-type-sale" Icon={Tag} />
             </div>
           </div>
           <div>
-            <p className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/40 mb-3">
+            <p className="app-text-caption uppercase tracking-widest font-semibold text-foreground/40 mb-3">
               {t("categoryLabel")}
             </p>
-            <div className="flex flex-wrap gap-2 max-h-60 overflow-y-auto pr-1">
+            <div className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto pr-1">
               <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="m-cat-all" Icon={Box} />
               {cats.map((c) => (
                 <Chip

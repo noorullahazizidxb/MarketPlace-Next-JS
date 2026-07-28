@@ -28,7 +28,7 @@ export default function MyListingsPage() {
     return <p className="subtle">{t("myListingsLoadingSession")}</p>;
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 app-shell-page" data-app-page="my-listings">
       <h2 className="heading-xl">{t("myListings")}</h2>
       <div className="card p-4">
         {items.length === 0 ? (
@@ -121,7 +121,7 @@ function ListingWithActions({ listing }: { listing: Listing }) {
 
   return (
     <div
-      className="relative group rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur overflow-hidden shadow-sm hover:shadow-lg transition-all"
+      className="relative group rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur overflow-hidden shadow-sm hover:shadow-lg transition-all"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
     >
@@ -193,9 +193,9 @@ function ActionButton({
     "inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-medium shadow-sm border backdrop-blur transition-all disabled:opacity-50";
   const variants: Record<string, string> = {
     default:
-      "bg-[hsl(var(--background))]/70 border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/40",
+      "bg-[var(--background)]/70 border-[var(--border)] hover:bg-[var(--muted)]/40",
     accent:
-      "bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/40 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/30",
+      "bg-[var(--accent)]/20 border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent)]/30",
     destructive:
       "bg-red-500/15 border-red-500/30 text-red-500 hover:bg-red-500/25",
   };

@@ -83,7 +83,7 @@ export function TablePagination({
       )}
     >
       <div className="order-2 flex flex-wrap items-center gap-2 text-muted-foreground sm:order-1">
-        <span className="rounded-lg border border-border/50 bg-muted/30 px-2 py-1 admin-text-label tabular-nums admin-text-label">
+        <span className="rounded-lg border border-border/50 bg-muted/30 px-2 py-1 app-text-label tabular-nums app-text-label">
           {showingLabel({ start: currentRangeStart, end: visibleRangeEnd, total })}
         </span>
 
@@ -94,7 +94,7 @@ export function TablePagination({
               onPageSizeChange(value === "all" ? "all" : Number(value))
             }
           >
-            <SelectTrigger className="min-h-[var(--ctrl-h-sm)] min-w-[4.5rem] rounded-lg px-2 py-1 admin-text-action">
+            <SelectTrigger className="min-h-[var(--ctrl-h-sm)] min-w-[4.5rem] rounded-lg px-2 py-1 app-text-action">
               <SelectValue placeholder={String(pageSize ?? perPage)} />
             </SelectTrigger>
             <SelectContent className="min-w-[4.5rem]">
@@ -118,7 +118,7 @@ export function TablePagination({
             aria-label={previousLabel}
             className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-lg sm:rounded-xl"
           >
-            <ChevronLeft className="admin-icon-sm" />
+            <ChevronLeft className="app-icon-sm" />
           </Button>
 
           <div className="hidden items-center gap-0.5 px-1 sm:flex">
@@ -128,12 +128,12 @@ export function TablePagination({
                   variant="ghost"
                   size="icon"
                   onClick={() => handlePageChange(1)}
-                  className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl admin-text-label"
+                  className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl app-text-label"
                 >
                   1
                 </Button>
                 {startPage > 2 && (
-                  <span className="px-1 admin-text-label text-muted-foreground/60">…</span>
+                  <span className="px-1 app-text-label text-muted-foreground/60">…</span>
                 )}
               </>
             )}
@@ -145,7 +145,7 @@ export function TablePagination({
                 size="icon"
                 onClick={() => handlePageChange(p)}
                 className={cn(
-                  "h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl admin-text-label",
+                  "h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl app-text-label",
                   p === currentPage &&
                   "bg-primary text-primary-foreground shadow-sm border border-primary/30 hover:bg-primary/90",
                 )}
@@ -157,13 +157,13 @@ export function TablePagination({
             {endPage < pageCount && (
               <>
                 {endPage < pageCount - 1 && (
-                  <span className="px-1 admin-text-label text-muted-foreground/60">…</span>
+                  <span className="px-1 app-text-label text-muted-foreground/60">…</span>
                 )}
                 <Button
                   variant="ghost"
                   size="icon"
                   onClick={() => handlePageChange(pageCount)}
-                  className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl admin-text-label"
+                  className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-xl app-text-label"
                 >
                   {pageCount}
                 </Button>
@@ -171,7 +171,7 @@ export function TablePagination({
             )}
           </div>
 
-          <div className="px-3 admin-text-stat tabular-nums admin-text-action sm:hidden">
+          <div className="px-3 app-text-stat tabular-nums app-text-action sm:hidden">
             {currentPage} / {pageCount}
           </div>
 
@@ -183,7 +183,7 @@ export function TablePagination({
             aria-label={nextLabel}
             className="h-[var(--ctrl-h-sm)] w-[var(--ctrl-h-sm)] rounded-lg sm:rounded-xl"
           >
-            <ChevronRight className="admin-icon-sm" />
+            <ChevronRight className="app-icon-sm" />
           </Button>
         </nav>
       </div>

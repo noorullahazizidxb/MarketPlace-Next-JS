@@ -59,7 +59,7 @@ export function ApprovalCard({
   return (
     <div
       className={twMerge(
-        "group rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-[0_8px_30px_rgba(0,0,0,0.12)]",
+        "group rounded-2xl border border-[var(--border)] bg-[var(--card)] shadow-[0_8px_30px_rgba(0,0,0,0.12)]",
         "transition-transform duration-300 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(0,0,0,0.24)]"
       )}
     >
@@ -76,7 +76,7 @@ export function ApprovalCard({
             onClick={(e) => {
               if (!author?.id) e.preventDefault();
             }}
-            className="rounded-full border border-[hsl(var(--border))] overflow-hidden hover:opacity-90"
+            className="rounded-full border border-[var(--border)] overflow-hidden hover:opacity-90"
           >
             <Image
               src={asset(author?.avatarUrl || author?.photo) || "/favicon.svg"}
@@ -96,11 +96,11 @@ export function ApprovalCard({
             >
               {author?.fullName || author?.name || author?.email}
             </Link>
-            <div className="text-white/70 text-xs truncate">
+            <div className="text-white/70 app-text-caption truncate">
               {listing?.category?.name || listing?.categoryName || "Category"}
             </div>
           </div>
-          <div className="ml-auto text-white/80 text-sm backdrop-blur-sm rounded-full px-3 py-1 border border-white/20">
+          <div className="ml-auto text-white/80 app-text-body backdrop-blur-sm rounded-full px-3 py-1 border border-white/20">
             {priceTag}
           </div>
         </div>
@@ -109,43 +109,43 @@ export function ApprovalCard({
       <div className="p-4 space-y-3">
         <div className="flex items-start justify-between gap-3">
           <div>
-            <h3 className="text-base font-semibold line-clamp-1">
+            <h3 className="app-text-body font-semibold line-clamp-1">
               {listing?.title || t("untitled")}
             </h3>
-            <p className="text-sm subtle line-clamp-2">
+            <p className="app-text-body subtle line-clamp-2">
               {listing?.description || t("noDescriptionProvided")}
             </p>
             <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs">
-              <span className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]">
+              <span className="px-2 py-0.5 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                 {status}
               </span>
               {listing?.listingType && (
-                <span className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]">
+                <span className="px-2 py-0.5 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                   {listing.listingType}
                 </span>
               )}
               {listing?.location && (
-                <span className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]">
+                <span className="px-2 py-0.5 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                   {listing.location}
                 </span>
               )}
               {expiresAt && (
                 <span
                   title="Expires"
-                  className="px-2 py-0.5 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4]"
+                  className="px-2 py-0.5 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)]"
                 >
                   {t("expires")} {expiresAt.toLocaleDateString()}
                 </span>
               )}
             </div>
           </div>
-          <button onClick={() => setOpen(true)} className="link text-sm">
+          <button onClick={() => setOpen(true)} className="link app-text-body">
             {t("view")}
           </button>
         </div>
 
         <div className="flex items-start justify-between gap-2">
-          <div className="text-xs subtle">
+          <div className="app-text-caption subtle">
             {createdAt ? `${t("created")} ${createdAt.toLocaleString()}` : null}
           </div>
           <div className="flex items-center gap-2 flex-wrap justify-end w-full sm:w-auto">
@@ -156,7 +156,7 @@ export function ApprovalCard({
                 onChange={(e) =>
                   setContactVisibility(e.target.value as ContactVisibility)
                 }
-                className="text-xs rounded-lg bg-[hsl(var(--muted))] border border-[hsl(var(--border))] px-2 py-1 w-full"
+                className="app-text-caption rounded-lg bg-[var(--muted)] border border-[var(--border)] px-2 py-1 w-full"
               >
                 <option value="HIDE_SELLER">{t("hideSeller")}</option>
                 <option value="SHOW_SELLER">{t("showSeller")}</option>
@@ -191,13 +191,13 @@ export function ApprovalCard({
 
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="w-full max-w-4xl max-h-[85vh] overflow-y-auto p-0">
-          <div className="sticky top-0 z-10 flex items-center justify-end p-3 border-b border-[hsl(var(--border))] bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/80 rounded-t-2xl">
+          <div className="sticky top-0 z-10 flex items-center justify-end p-3 border-b border-[var(--border)] bg-[var(--card)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--card)]/80 rounded-t-2xl">
             <DialogClose asChild>
               <button
                 aria-label="Close modal"
                 className="glass size-8 rounded-xl grid place-items-center"
               >
-                <X className="size-4" />
+                <X className="app-icon-sm" />
               </button>
             </DialogClose>
           </div>
@@ -212,17 +212,17 @@ export function ApprovalCard({
                 }
                 width={64}
                 height={64}
-                className="rounded-xl border border-[hsl(var(--border))]"
+                className="rounded-xl border border-[var(--border)]"
               />
               <div className="min-w-0">
-                <div className="text-lg font-semibold line-clamp-1">
+                <div className="app-text-heading-sm font-semibold line-clamp-1">
                   {author?.fullName || author?.name || author?.email}
                 </div>
-                <div className="text-sm subtle line-clamp-2">
+                <div className="app-text-body subtle line-clamp-2">
                   {author?.email}
                 </div>
                 {author?.address && (
-                  <div className="text-sm subtle line-clamp-2">
+                  <div className="app-text-body subtle line-clamp-2">
                     {[
                       author.address.street,
                       author.address.city,
@@ -239,9 +239,9 @@ export function ApprovalCard({
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
-                <div className="text-sm font-medium">{t("listingDetails")}</div>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+              <div className="rounded-xl border border-[var(--border)] p-4 space-y-3">
+                <div className="app-text-body font-medium">{t("listingDetails")}</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 app-text-body">
                   <span className="subtle">{t("id")}</span>
                   <span className="truncate">{listing?.id}</span>
                   <span className="subtle">{t("type")}</span>
@@ -269,14 +269,14 @@ export function ApprovalCard({
                   <span className="subtle">{t("approvedBy")}</span>
                   <span>{listing?.approvedById || "-"}</span>
                 </div>
-                <div className="text-sm subtle whitespace-pre-wrap mt-2">
+                <div className="app-text-body subtle whitespace-pre-wrap mt-2">
                   {listing?.description || t("noDescription")}
                 </div>
               </div>
 
-              <div className="rounded-xl border border-[hsl(var(--border))] p-4 space-y-3">
-                <div className="text-sm font-medium">Seller & Contacts</div>
-                <div className="grid grid-cols-2 gap-x-3 gap-y-2 text-sm">
+              <div className="rounded-xl border border-[var(--border)] p-4 space-y-3">
+                <div className="app-text-body font-medium">Seller & Contacts</div>
+                <div className="grid grid-cols-2 gap-x-3 gap-y-2 app-text-body">
                   <span className="subtle">Name</span>
                   <span className="truncate">
                     {author?.fullName || author?.name || "-"}
@@ -324,14 +324,14 @@ export function ApprovalCard({
                 </div>
                 {reps.length > 0 && (
                   <div className="mt-3">
-                    <div className="text-sm font-medium mb-1">
+                    <div className="app-text-body font-medium mb-1">
                       Representatives
                     </div>
                     <div className="flex flex-wrap gap-2">
                       {reps.map((r, i) => (
                         <span
                           key={r.id || i}
-                          className="px-2 py-1 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4] text-2xs"
+                          className="px-2 py-1 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)] text-2xs"
                         >
                           {r?.representative?.region || "Region"} ·{" "}
                           {r?.representative?.whatsappNumber || "N/A"}
@@ -340,7 +340,7 @@ export function ApprovalCard({
                     </div>
                   </div>
                 )}
-                <div className="mt-3 text-sm subtle">
+                <div className="mt-3 app-text-body subtle">
                   Reviews: {reviews.average?.toFixed?.(1) || 0} ⭐ (
                   {reviews.count})
                 </div>
@@ -348,8 +348,8 @@ export function ApprovalCard({
             </div>
 
             {gallery.length > 0 && (
-              <div className="rounded-xl border border-[hsl(var(--border))] p-4">
-                <div className="text-sm font-medium mb-3">Gallery</div>
+              <div className="rounded-xl border border-[var(--border)] p-4">
+                <div className="app-text-body font-medium mb-3">Gallery</div>
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                   {gallery.map((img, idx) => (
                     <div
@@ -368,9 +368,9 @@ export function ApprovalCard({
               </div>
             )}
 
-            <div className="rounded-xl border border-[hsl(var(--border))] p-4">
-              <div className="text-sm font-medium mb-2">Metadata</div>
-              <pre className="text-xs subtle overflow-auto max-h-48">
+            <div className="rounded-xl border border-[var(--border)] p-4">
+              <div className="app-text-body font-medium mb-2">Metadata</div>
+              <pre className="app-text-caption subtle overflow-auto max-h-48">
                 {JSON.stringify(listing?.metadata ?? {}, null, 2)}
               </pre>
             </div>

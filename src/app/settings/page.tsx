@@ -49,7 +49,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-2xl">
+    <div className="space-y-6 max-w-2xl app-shell-page" data-app-page="settings">
       <motion.h2
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -71,11 +71,11 @@ export default function SettingsPage() {
           >
             <div className="flex items-center gap-3">
               <span className="grid size-9 place-items-center rounded-xl bg-muted">
-                <Icon className="h-4 w-4 text-foreground/70" />
+                <Icon className="app-icon-sm text-foreground/70" />
               </span>
               <div>
-                <p className="font-semibold text-sm">{title}</p>
-                {description && <p className="subtle text-xs">{description}</p>}
+                <p className="font-semibold app-text-body">{title}</p>
+                {description && <p className="subtle app-text-caption">{description}</p>}
               </div>
             </div>
             {control}

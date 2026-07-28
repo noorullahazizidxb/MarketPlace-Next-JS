@@ -32,7 +32,14 @@ import { AppToaster } from "@/components/ui/toaster";
 import SocialRealtimeClient from "@/components/providers/SocialRealtimeClient";
 import { SeoJsonLd } from "@/components/seo/seo-json-ld";
 import { rootMetadata } from "@/lib/site-config";
-import { getInitialThemeCss, getThemeModeInitScript } from "../theme/server-theme";
+import { UiContextGate } from "@/lib/theme/ui-context/ui-context-gate";
+import { ThemeBootFallback } from "@/components/ui/atoms/theme-boot-fallback";
+import {
+  getInitialThemeCss,
+  getInitialThemeSettings,
+  getThemeModeInitScript,
+  getUiContextState,
+} from "../theme/server-theme";
 
 export const metadata: Metadata = rootMetadata();
 
@@ -41,25 +48,35 @@ export default async function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const uiContext = await getUiContextState();
+  const initialThemeSettings = uiContext.theme ?? (await getInitialThemeSettings());
   const initialThemeCss = await getInitialThemeCss();
-  const themeModeScript = getThemeModeInitScript();
+  const themeModeScript = getThemeModeInitScript(initialThemeSettings.mode);
 
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        <style id="initial-theme-vars" dangerouslySetInnerHTML={{ __html: initialThemeCss }} />
-        <script id="theme-mode-init" dangerouslySetInnerHTML={{ __html: themeModeScript }} />
+        <style
+          id="app-inline-css"
+          suppressHydrationWarning
+          dangerouslySetInnerHTML={{ __html: initialThemeCss }}
+        />
+        <script
+          id="theme-mode-init"
+          dangerouslySetInnerHTML={{ __html: themeModeScript }}
+        />
       </head>
-      <body>
+      <body className="bg-background text-foreground antialiased">
         <SeoJsonLd />
-        <ThemeProvider>
+        <ThemeProvider initialThemeSettings={initialThemeSettings}>
           <QueryProvider>
             <LanguageProvider>
-              <SkipLink />
-              <SocialRealtimeClient />
-              {/** Background now rendered from AppShell to reduce layout.js payload */}
-              <AppShell>{children}</AppShell>
-              <AppToaster />
+              <UiContextGate fallback={<ThemeBootFallback />}>
+                <SkipLink />
+                <SocialRealtimeClient />
+                <AppShell>{children}</AppShell>
+                <AppToaster />
+              </UiContextGate>
             </LanguageProvider>
           </QueryProvider>
         </ThemeProvider>

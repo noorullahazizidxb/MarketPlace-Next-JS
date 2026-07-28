@@ -300,9 +300,9 @@ export function AppSidebar({
                     })()}
                   />
                 </div>
-                <div className="grid flex-1 text-start admin-text-body leading-tight">
-                  <span className="truncate admin-text-label">{user.name}</span>
-                  <span className="truncate admin-text-caption">{brandSubtitle}</span>
+                <div className="grid flex-1 text-start app-text-body leading-tight">
+                  <span className="truncate app-text-label">{user.name}</span>
+                  <span className="truncate app-text-caption">{brandSubtitle}</span>
                 </div>
               </Link>
             </SidebarMenuButton>

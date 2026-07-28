@@ -117,7 +117,7 @@ export function AppShell({ children }: PropsWithChildren) {
   if (loading || redirecting)
     return (
       <div
-        className="fixed inset-0 grid place-items-center overflow-hidden bg-[hsl(var(--background))]"
+        className="fixed inset-0 grid place-items-center overflow-hidden bg-background"
         aria-busy="true"
         aria-live="polite"
       >

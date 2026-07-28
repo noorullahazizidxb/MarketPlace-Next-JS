@@ -16,17 +16,17 @@ export function HomeHero() {
   const { user } = useAuth();
 
   return (
-    <section className="relative overflow-hidden mt-2 md:mt-3 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]">
+    <section className="relative overflow-hidden mt-2 md:mt-3 rounded-3xl border border-border bg-card">
       {/* ----------  accent gradients + glass shapes ---------- */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,hsl(var(--accent)/.3),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,color-mix(in oklab, var(--accent) 30%, transparent),transparent_50%)]" />
         <motion.div
-          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[hsl(var(--accent)/.12)] backdrop-blur-2xl border border-white/10"
+          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl border border-white/10"
           animate={{ rotate: [40, 58, 40], y: [0, 12, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[hsl(var(--accent)/.1)] backdrop-blur-2xl border border-white/10"
+          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[color-mix(in oklab, var(--accent) 10%, transparent)] backdrop-blur-2xl border border-white/10"
           animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
           transition={{ duration: 9.2, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -44,7 +44,7 @@ export function HomeHero() {
             className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroHeadline")}
-            <span className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-[hsl(var(--accent))] ${isRtl ? "right-0" : "left-0"}`} />
+            <span className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-accent ${isRtl ? "right-0" : "left-0"}`} />
           </motion.h1>
 
           <motion.p
@@ -52,7 +52,7 @@ export function HomeHero() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className={`mt-4 max-w-xl text-sm sm:text-base text-[hsl(var(--muted-foreground))] ${isRtl ? "mr-auto" : "ml-0"}`}
+            className={`mt-4 max-w-xl text-sm sm:text-base text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroSubheadline")}
           </motion.p>

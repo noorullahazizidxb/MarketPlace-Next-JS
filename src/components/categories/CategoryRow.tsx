@@ -28,7 +28,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   const del = useDeleteCategory(node.id, onChanged);
 
   return (
-    <div className="border rounded-xl bg-[hsl(var(--card))]/70 backdrop-blur divide-y">
+    <div className="border rounded-xl bg-[var(--card)]/70 backdrop-blur divide-y">
       <div className="flex items-center gap-3 p-3">
         <Button
           type="button"
@@ -109,7 +109,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
             transition={{ duration: 0.35, ease: "easeInOut" }}
             className="overflow-hidden"
           >
-            <div className="p-4 space-y-6 bg-[hsl(var(--muted))/0.25]">
+            <div className="p-4 space-y-6 bg-[color-mix(in oklab, var(--muted) 25%, transparent)]">
               {/* Listings preview */}
               {(node.listings?.length ?? 0) > 0 && (
                 <div className="space-y-3">
@@ -120,7 +120,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
                     {node.listings?.slice(0, 6).map((ls) => (
                       <div
                         key={ls.id}
-                        className="rounded-xl border p-3 space-y-2 bg-[hsl(var(--card))]/70"
+                        className="rounded-xl border p-3 space-y-2 bg-[var(--card)]/70"
                       >
                         <div className="flex items-start gap-2">
                           <div className="flex -space-x-2">
@@ -174,7 +174,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
                     {node.children?.map((c) => (
                       <div
                         key={c.id}
-                        className="flex items-center gap-3 p-2 rounded-lg border bg-[hsl(var(--card))]/60"
+                        className="flex items-center gap-3 p-2 rounded-lg border bg-[var(--card)]/60"
                       >
                         <span className="text-xs font-medium flex-1 truncate">
                           {c.name}

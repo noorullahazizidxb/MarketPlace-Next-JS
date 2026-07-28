@@ -7,13 +7,13 @@ export function CopyrightBar() {
       <div className="container mx-auto mt-2 px-4 py-5">
         <div className="flex justify-between items-center">
           <div>
-            <p className="block sm:hidden flex admin-text-body">
+            <p className="block sm:hidden flex app-text-body">
               All rights reserved.{" "}
               <span className="text-primary whitespace-nowrap">
                 {COPYRIGHT_BRAND} @{new Date().getFullYear()}
               </span>
             </p>
-            <p className="hidden sm:block sm:admin-text-body">
+            <p className="hidden sm:block sm:app-text-body">
               All rights reserved.{" "}
               <span className="text-primary">
                 {COPYRIGHT_BRAND} @{new Date().getFullYear()}

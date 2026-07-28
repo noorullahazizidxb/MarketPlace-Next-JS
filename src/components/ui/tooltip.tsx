@@ -34,10 +34,10 @@ const sideMap: Record<TooltipSide, string> = {
 };
 
 const arrowMap: Record<TooltipSide, string> = {
-  top: "top-full left-1/2 -translate-x-1/2 border-t-[hsl(var(--card))] border-l-transparent border-r-transparent border-b-transparent border-[5px]",
-  bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-[hsl(var(--card))] border-l-transparent border-r-transparent border-t-transparent border-[5px]",
-  left: "left-full top-1/2 -translate-y-1/2 border-l-[hsl(var(--card))] border-t-transparent border-b-transparent border-r-transparent border-[5px]",
-  right: "right-full top-1/2 -translate-y-1/2 border-r-[hsl(var(--card))] border-t-transparent border-b-transparent border-l-transparent border-[5px]",
+  top: "top-full left-1/2 -translate-x-1/2 border-t-[var(--card)] border-l-transparent border-r-transparent border-b-transparent border-[5px]",
+  bottom: "bottom-full left-1/2 -translate-x-1/2 border-b-[var(--card)] border-l-transparent border-r-transparent border-t-transparent border-[5px]",
+  left: "left-full top-1/2 -translate-y-1/2 border-l-[var(--card)] border-t-transparent border-b-transparent border-r-transparent border-[5px]",
+  right: "right-full top-1/2 -translate-y-1/2 border-r-[var(--card)] border-t-transparent border-b-transparent border-l-transparent border-[5px]",
 };
 
 const motionVariants = {
@@ -105,7 +105,7 @@ export function Tooltip({
               "pointer-events-none absolute z-[300] max-w-[260px]",
               // Visual — premium glassmorphic surface
               "rounded-xl border border-white/10",
-              "bg-[hsl(var(--card))]/95 text-[hsl(var(--foreground))]",
+              "bg-[var(--card)]/95 text-[var(--foreground)]",
               "shadow-[0_8px_32px_-6px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl",
               // Typography
               "px-3 py-1.5 text-[11px] font-medium leading-snug whitespace-normal",

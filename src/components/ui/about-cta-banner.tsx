@@ -25,19 +25,19 @@ export function AboutCtaBanner() {
         whileInView={{ y: 0 }}
         viewport={{ once: true, amount: 0 }}
         transition={{ duration: 0.6, ease: "easeOut" }}
-        className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-gradient-to-br from-[hsl(var(--accent)/0.15)] via-[hsl(var(--primary)/0.08)] to-[hsl(var(--card))] shadow-lg shadow-[hsl(var(--accent)/0.2)] dark:shadow-none"
+        className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-gradient-to-br from-[color-mix(in oklab, var(--accent) 15%, transparent)] via-[color-mix(in oklab, var(--primary) 8%, transparent)] to-[var(--card)] shadow-lg shadow-[color-mix(in oklab, var(--accent) 20%, transparent)] dark:shadow-none"
       >
         <motion.div
           className="absolute -left-10 -top-10"
           animate={{ rotate: [8, 20, 8], y: [0, -6, 0] }}
           transition={{ duration: 5.8, repeat: Infinity, ease: "easeInOut" }}
         >
-          <Hexagon className="w-32 h-32 text-[hsl(var(--accent)/0.25)] opacity-60" />
+          <Hexagon className="w-32 h-32 text-[color-mix(in oklab, var(--accent) 25%, transparent)] opacity-60" />
         </motion.div>
 
         <motion.svg
           viewBox="0 0 200 200"
-          className="absolute -bottom-16 -right-16 w-64 h-64 text-[hsl(var(--primary)/0.2)] opacity-50"
+          className="absolute -bottom-16 -right-16 w-64 h-64 text-[color-mix(in oklab, var(--primary) 20%, transparent)] opacity-50"
           animate={{ rotate: [0, -10, 0], x: [0, 8, 0], y: [0, -8, 0] }}
           transition={{ duration: 8.4, repeat: Infinity, ease: "easeInOut" }}
         >
@@ -55,16 +55,16 @@ export function AboutCtaBanner() {
               : "grid items-center gap-8 md:grid-cols-[auto_minmax(0,1fr)_auto] md:gap-10"}
           >
             <div className={isRtl ? "hidden" : "hidden md:flex md:justify-start"}>
-              <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[hsl(var(--accent))/0.18] bg-[hsl(var(--background))/0.56] shadow-inner backdrop-blur-sm">
-                <ShoppingCart className="size-12 text-[hsl(var(--accent))]" />
+              <div className="flex h-24 w-24 items-center justify-center rounded-[2rem] border border-[color-mix(in oklab, var(--accent) 18%, transparent)] bg-[color-mix(in oklab, var(--background) 56%, transparent)] shadow-inner backdrop-blur-sm">
+                <ShoppingCart className="size-12 text-[var(--accent)]" />
               </div>
             </div>
 
             <div className={`flex-1 ${isRtl ? "text-center md:text-right" : "text-center md:text-left"}`} dir={isRtl ? "rtl" : "ltr"}>
-              <h2 className="heading-2xl text-[hsl(var(--foreground))] drop-shadow-md">
+              <h2 className="heading-2xl text-[var(--foreground)] drop-shadow-md">
                 {t("joinCommunity")}
               </h2>
-              <p className="mt-3 text-base text-[hsl(var(--foreground)/0.8)] max-w-2xl">
+              <p className="mt-3 text-base text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl">
                 {t("joinCommunityText")}
               </p>
             </div>

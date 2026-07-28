@@ -185,7 +185,7 @@ export default function BlogCard({
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] hover:shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition-shadow duration-200">
+    <article className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition-shadow duration-200">
       {/* Top: media clickable */}
       <div
         role="button"
@@ -198,7 +198,7 @@ export default function BlogCard({
             onMediaActivate(event);
           }
         }}
-        className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
+        className="block w-full text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in oklab, var(--accent) 35%, transparent)]"
         onMouseEnter={() => setIsImageEngaged(true)}
         onMouseLeave={() => setIsImageEngaged(false)}
         onFocus={() => setIsImageEngaged(true)}
@@ -247,7 +247,7 @@ export default function BlogCard({
                   type="button"
                   onClick={() => router.push(`/blogs/${blog.id}`)}
                   aria-label={t("openBlog")}
-                  className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[hsl(var(--accent)/0.18)] hover:scale-105 transform-gpu transition-all duration-200"
+                  className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[color-mix(in oklab, var(--accent) 18%, transparent)] hover:scale-105 transform-gpu transition-all duration-200"
                 >
                   <h3 className="text-lg font-semibold leading-tight line-clamp-2">
                     {blog.title}
@@ -354,7 +354,7 @@ export default function BlogCard({
                             setShareOpen(false);
                             // optional: window.open to share intent
                           }}
-                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                           disabled={shareMut.isPending}
                         >
                           <Facebook className="size-4" /> {t("facebook")}
@@ -365,7 +365,7 @@ export default function BlogCard({
                             doShare();
                             setShareOpen(false);
                           }}
-                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                           disabled={shareMut.isPending}
                         >
                           <Instagram className="size-4" /> {t("instagram")}
@@ -376,7 +376,7 @@ export default function BlogCard({
                             doShare();
                             setShareOpen(false);
                           }}
-                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                          className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                           disabled={shareMut.isPending}
                         >
                           <MessageSquareShare className="size-4" />{" "}
@@ -406,7 +406,7 @@ export default function BlogCard({
       ) : (
         // Default variant: original bottom content
         <div className="p-4">
-          <div className="flex items-center gap-2 text-[11px] text-[hsl(var(--foreground))/75]">
+          <div className="flex items-center gap-2 text-[11px] text-[color-mix(in oklab, var(--foreground) 75%, transparent)]">
             <Tooltip content={t("viewAuthorProfile")} side="bottom">
               <Link
                 href={authorId ? `/profile/${authorId}` : "#"}
@@ -415,7 +415,7 @@ export default function BlogCard({
                 }}
                 className="inline-flex items-center gap-2 hover:opacity-90"
               >
-                <div className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 grid place-items-center text-[hsl(var(--foreground))]">
+                <div className="size-8 rounded-full overflow-hidden bg-[var(--muted)]/10 grid place-items-center text-[var(--foreground)]">
                   {blog.author?.photo ? (
                     <Image
                       src={asset(blog.author.photo)}
@@ -446,11 +446,11 @@ export default function BlogCard({
           </div>
           {variant === "default" && (
             <>
-              <h3 className="mt-2 text-lg font-semibold leading-tight text-[hsl(var(--foreground))] line-clamp-2">
+              <h3 className="mt-2 text-lg font-semibold leading-tight text-[var(--foreground)] line-clamp-2">
                 {blog.title}
               </h3>
               {blog.excerpt && (
-                <p className="mt-1 text-sm text-[hsl(var(--foreground))/80] line-clamp-2">
+                <p className="mt-1 text-sm text-[color-mix(in oklab, var(--foreground) 80%, transparent)] line-clamp-2">
                   {blog.excerpt}
                 </p>
               )}
@@ -460,7 +460,7 @@ export default function BlogCard({
             <Tooltip content={canInteract ? t("like") : t("signInToInteract")} side="top">
               <button
                 onClick={onLike}
-                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 60%, transparent)] backdrop-blur text-[color-mix(in oklab, var(--foreground) 85%, transparent)]"
                 aria-label={t("like")}
                 disabled={!canInteract || likeMut.isPending}
                 title={!canInteract ? t("signInToInteract") : undefined}
@@ -473,7 +473,7 @@ export default function BlogCard({
                 <DialogTrigger asChild>
                   <button
                     onClick={() => setShareOpen(true)}
-                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 60%, transparent)] backdrop-blur text-[color-mix(in oklab, var(--foreground) 85%, transparent)]"
                     aria-label="Share"
                     disabled={!canInteract || shareMut.isPending}
                     title={!canInteract ? t("signInToInteract") : undefined}
@@ -492,7 +492,7 @@ export default function BlogCard({
                       setShareOpen(false);
                       // optional: window.open to share intent
                     }}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                     disabled={shareMut.isPending}
                   >
                     <Facebook className="size-4" /> {t("facebook")}
@@ -503,7 +503,7 @@ export default function BlogCard({
                       doShare();
                       setShareOpen(false);
                     }}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                     disabled={shareMut.isPending}
                   >
                     <Instagram className="size-4" /> {t("instagram")}
@@ -514,7 +514,7 @@ export default function BlogCard({
                       doShare();
                       setShareOpen(false);
                     }}
-                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/20"
+                    className="inline-flex items-center gap-2 px-3 py-2 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/20"
                     disabled={shareMut.isPending}
                   >
                     <MessageSquareShare className="size-4" /> {t("whatsapp")}
@@ -528,7 +528,7 @@ export default function BlogCard({
                 onClick={() =>
                   onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`)
                 }
-                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.6] backdrop-blur text-[hsl(var(--foreground))/85]"
+                className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 60%, transparent)] backdrop-blur text-[color-mix(in oklab, var(--foreground) 85%, transparent)]"
                 aria-label={t("commentsLabel")}
               >
                 <MessageCircle className="size-4" /> {commentCount || 0}

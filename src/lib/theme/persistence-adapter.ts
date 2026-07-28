@@ -1,4 +1,3 @@
-import { config } from "@/lib/config";
 import { defaultUiContextState } from "@repo/constants";
 import type { UiContextState } from "@repo/types";
 
@@ -115,46 +114,9 @@ const writeLocalStorageState = (state: UiContextState) => {
   }
 };
 
-const readThemeFileUiContextState = async (): Promise<UiContextState | null> => {
-  try {
-    const response = await fetch(config.themeFileRoute, { cache: "no-store" });
-    if (!response.ok) return null;
-
-    const payload = (await response.json()) as unknown;
-    const firstEntry = Array.isArray(payload) ? payload[0] : payload;
-    if (
-      !firstEntry ||
-      typeof firstEntry !== "object" ||
-      !("uiContext" in firstEntry)
-    ) {
-      return null;
-    }
-
-    const uiContext = (firstEntry as { uiContext?: Partial<UiContextState> })
-      .uiContext;
-    return uiContext ? normalizeUiContextState(uiContext) : null;
-  } catch {
-    return null;
-  }
-};
-
-const syncThemeFileUiContextState = async (state: UiContextState) => {
-  try {
-    await fetch(config.themeFileRoute, {
-      method: "PUT",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        uiContext: state,
-        updatedAt: new Date().toISOString(),
-      }),
-    });
-  } catch {
-    // Local file API is the source of truth; theme-file sync is best-effort.
-  }
-};
-
 export const resolveUiContextUrl = () => UI_CONTEXT_API_PATH;
 
+/** Client fetch — source of truth is `/api/ui-context` → `.data/ui-context.json`. */
 export const fetchUiContextState = async (): Promise<UiContextState> => {
   try {
     const response = await fetch(resolveUiContextUrl(), { cache: "no-store" });
@@ -172,12 +134,6 @@ export const fetchUiContextState = async (): Promise<UiContextState> => {
   const localState = readLocalStorageState();
   if (localState) {
     return localState;
-  }
-
-  const themeFileState = await readThemeFileUiContextState();
-  if (themeFileState) {
-    writeLocalStorageState(themeFileState);
-    return themeFileState;
   }
 
   return normalizeUiContextState();
@@ -202,7 +158,6 @@ export const patchUiContextState = async (
     });
 
     if (!response.ok) {
-      await syncThemeFileUiContextState(nextState);
       return nextState;
     }
 
@@ -210,10 +165,8 @@ export const patchUiContextState = async (
       (await response.json()) as Partial<UiContextState>,
     );
     writeLocalStorageState(persisted);
-    await syncThemeFileUiContextState(persisted);
     return persisted;
   } catch {
-    await syncThemeFileUiContextState(nextState);
     return nextState;
   }
 };

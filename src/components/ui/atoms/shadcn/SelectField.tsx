@@ -65,7 +65,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
         </select>
         <label
           className={cn(
-            "absolute left-4 -top-2.5 bg-background rounded px-1 admin-text-label",
+            "absolute left-4 -top-2.5 bg-background rounded px-1 app-text-label",
             hasError ? "text-destructive" : "text-muted-foreground",
           )}
         >
@@ -76,7 +76,7 @@ export const SelectField = forwardRef<HTMLSelectElement, SelectFieldProps>(
         </label>
         {/* Chevron icon */}
         <svg
-          className="absolute right-2.5 top-1/2 admin-icon-sm -translate-y-1/2 pointer-events-none text-muted-foreground"
+          className="absolute right-2.5 top-1/2 app-icon-sm -translate-y-1/2 pointer-events-none text-muted-foreground"
           fill="none"
           stroke="currentColor"
           viewBox="0 0 24 24"

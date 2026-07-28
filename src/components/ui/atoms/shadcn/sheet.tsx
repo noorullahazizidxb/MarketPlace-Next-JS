@@ -62,7 +62,7 @@ function SheetContent({
         <SheetPrimitive.Close
           className={cn(
             "absolute top-4 right-4 z-10",
-            "flex admin-icon-md items-center justify-center",
+            "flex app-icon-md items-center justify-center",
             "rounded-lg border border-border/50 bg-muted/40",
             "text-muted-foreground opacity-80",
             "transition-all duration-150",
@@ -71,7 +71,7 @@ function SheetContent({
             "disabled:pointer-events-none"
           )}
         >
-          <XIcon className="admin-icon-sm" />
+          <XIcon className="app-icon-sm" />
           <span className="sr-only">Close</span>
         </SheetPrimitive.Close>
       </SheetPrimitive.Content>
@@ -103,7 +103,7 @@ function SheetTitle({ className, style, ...props }: React.ComponentProps<typeof 
   return (
     <SheetPrimitive.Title
       data-slot="sheet-title"
-      className={cn("admin-text-heading-sm text-foreground leading-tight", className)}
+      className={cn("app-text-heading-sm text-foreground leading-tight", className)}
       {...props}
     />
   )
@@ -113,7 +113,7 @@ function SheetDescription({ className, style, ...props }: React.ComponentProps<t
   return (
     <SheetPrimitive.Description
       data-slot="sheet-description"
-      className={cn("admin-text-body text-muted-foreground", className)}
+      className={cn("app-text-body text-muted-foreground", className)}
       {...props}
     />
   )

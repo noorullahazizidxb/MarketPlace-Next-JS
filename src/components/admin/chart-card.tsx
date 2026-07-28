@@ -25,11 +25,11 @@ export function ChartCard({
     <Card className={cn("p-5 flex flex-col gap-3", className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium tracking-wide text-[hsl(var(--foreground))]/90">
+          <h3 className="text-sm font-medium tracking-wide text-[var(--foreground)]/90">
             {title}
           </h3>
           {description && (
-            <p className="text-[11px] uppercase tracking-wide text-[hsl(var(--foreground))]/50">
+            <p className="text-[11px] uppercase tracking-wide text-[var(--foreground)]/50">
               {description}
             </p>
           )}
@@ -38,8 +38,8 @@ export function ChartCard({
       </div>
       <div className="relative min-h-[180px] flex-1">
         {isLoading && (
-          <div className="absolute inset-0 grid place-items-center bg-[hsl(var(--card))]/40 backdrop-blur-sm rounded-xl">
-            <Loader2 className="size-5 animate-spin text-[hsl(var(--primary))]" />
+          <div className="absolute inset-0 grid place-items-center bg-[var(--card)]/40 backdrop-blur-sm rounded-xl">
+            <Loader2 className="size-5 animate-spin text-[var(--primary)]" />
           </div>
         )}
         {children}

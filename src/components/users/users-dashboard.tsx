@@ -130,7 +130,7 @@ const UsersDashboard: React.FC = () => {
       <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div className="space-y-2">
           <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
-            <Users className="size-6 text-[hsl(var(--accent))]" /> Users
+            <Users className="size-6 text-[var(--accent)]" /> Users
           </h1>
           <p className="subtle max-w-prose">
             Manage platform users, roles and related activity. Search also scans
@@ -146,7 +146,7 @@ const UsersDashboard: React.FC = () => {
                 setPage(1);
               }}
               placeholder="Search users, listings, notifications…"
-              className="h-11 w-72 max-w-[80vw] rounded-xl border bg-[hsl(var(--card))] pl-4 pr-11 text-sm"
+              className="h-11 w-72 max-w-[80vw] rounded-xl border bg-[var(--card)] pl-4 pr-11 text-sm"
               aria-label="Search users"
             />
             <SearchIcon className="size-4 absolute right-4 top-1/2 -translate-y-1/2 opacity-60" />
@@ -158,7 +158,7 @@ const UsersDashboard: React.FC = () => {
               setRoleFilter(e.target.value || null);
               setPage(1);
             }}
-            className="h-11 rounded-xl border bg-[hsl(var(--card))] px-3 text-sm"
+            className="h-11 rounded-xl border bg-[var(--card)] px-3 text-sm"
           >
             <option value="">All roles</option>
             <option value="ADMIN">ADMIN</option>
@@ -187,8 +187,8 @@ const UsersDashboard: React.FC = () => {
           aria-label="Users table. Scroll horizontally on small screens."
         >
           <table className="w-full table-auto">
-            <thead className="bg-[hsl(var(--card))]/90 backdrop-blur border-b sticky top-0 z-10">
-              <tr className="text-xs font-semibold text-[hsl(var(--muted-foreground))] uppercase tracking-wide">
+            <thead className="bg-[var(--card)]/90 backdrop-blur border-b sticky top-0 z-10">
+              <tr className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wide">
                 <th className="px-4 py-3 text-left">User</th>
                 <th className="px-4 py-3 text-left">Roles</th>
                 <th className="px-4 py-3 text-center">Activity</th>
@@ -196,7 +196,7 @@ const UsersDashboard: React.FC = () => {
                 <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="bg-[hsl(var(--card))]">
+            <tbody className="bg-[var(--card)]">
               {isLoading && (
                 <tr>
                   <td colSpan={5} className="p-8 text-center">
@@ -228,8 +228,8 @@ const UsersDashboard: React.FC = () => {
                   <React.Fragment key={u.id}>
                     <tr
                       className={cn(
-                        "border-b transition-colors hover:bg-[hsl(var(--muted))]/5",
-                        isExpanded && "bg-[hsl(var(--muted))]/10"
+                        "border-b transition-colors hover:bg-[var(--muted)]/5",
+                        isExpanded && "bg-[var(--muted)]/10"
                       )}
                     >
                       <td className="px-4 py-3 align-middle">
@@ -241,7 +241,7 @@ const UsersDashboard: React.FC = () => {
                             }}
                             className="flex items-center gap-3 hover:opacity-80 transition-opacity"
                           >
-                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))] shrink-0">
+                            <div className="relative size-10 rounded-xl overflow-hidden border border-[var(--border)] shrink-0">
                               <Image
                                 src={avatar}
                                 alt={u.fullName || u.email}
@@ -254,11 +254,11 @@ const UsersDashboard: React.FC = () => {
                               <div className="text-sm font-semibold truncate max-w-[160px]">
                                 {u.fullName || u.firstName || u.email}
                               </div>
-                              <div className="text-xs text-[hsl(var(--muted-foreground))] truncate max-w-[160px]">
+                              <div className="text-xs text-[var(--muted-foreground)] truncate max-w-[160px]">
                                 {u.email}
                               </div>
                               {u.phone && (
-                                <div className="text-xs text-[hsl(var(--muted-foreground))]/70 truncate">
+                                <div className="text-xs text-[var(--muted-foreground)]/70 truncate">
                                   {u.phone}
                                 </div>
                               )}
@@ -287,7 +287,7 @@ const UsersDashboard: React.FC = () => {
                                 key={key}
                                 className={cn(
                                   "px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wide",
-                                  colorMap[label] ?? "bg-[hsl(var(--muted))]/40 border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))]"
+                                  colorMap[label] ?? "bg-[var(--muted)]/40 border-[var(--border)] text-[var(--muted-foreground)]"
                                 )}
                               >
                                 {label}
@@ -297,24 +297,24 @@ const UsersDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <div className="flex items-center justify-center gap-3 text-xs text-[hsl(var(--muted-foreground))]">
+                        <div className="flex items-center justify-center gap-3 text-xs text-[var(--muted-foreground)]">
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.listings || []).length || 0}</span>
+                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.listings || []).length || 0}</span>
                             <span className="text-[10px] uppercase tracking-wide">Listings</span>
                           </span>
-                          <span className="w-px h-6 bg-[hsl(var(--border))]" />
+                          <span className="w-px h-6 bg-[var(--border)]" />
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.notifications || []).length || 0}</span>
+                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.notifications || []).length || 0}</span>
                             <span className="text-[10px] uppercase tracking-wide">Notifs</span>
                           </span>
-                          <span className="w-px h-6 bg-[hsl(var(--border))]" />
+                          <span className="w-px h-6 bg-[var(--border)]" />
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[hsl(var(--foreground))]">{(u.feedbacks || []).length || 0}</span>
+                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.feedbacks || []).length || 0}</span>
                             <span className="text-[10px] uppercase tracking-wide">Feedbacks</span>
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 align-middle text-sm text-[hsl(var(--muted-foreground))] whitespace-nowrap">
+                      <td className="px-4 py-3 align-middle text-sm text-[var(--muted-foreground)] whitespace-nowrap">
                         {u.createdAt
                           ? new Date(u.createdAt).toLocaleDateString()
                           : "—"}
@@ -368,7 +368,7 @@ const UsersDashboard: React.FC = () => {
           >
             Prev
           </Button>
-          <div className="px-3 py-1 rounded-xl border text-sm bg-[hsl(var(--accent))/0.12] border-[hsl(var(--accent))/0.35] text-[hsl(var(--accent-foreground))]">
+          <div className="px-3 py-1 rounded-xl border text-sm bg-[color-mix(in oklab, var(--accent) 12%, transparent)] border-[color-mix(in oklab, var(--accent) 35%, transparent)] text-[var(--accent-foreground)]">
             {currentPage} / {pages}
           </div>
           <Button

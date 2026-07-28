@@ -17,7 +17,7 @@ import { cn } from "../../lib/cn";
 import Link from "next/link";
 
 const MOBILE_LINK_CLASS =
-  "flex cursor-pointer items-center rounded-lg px-4 py-3 admin-text-label ui-typo-mobile-nav-primary hover:bg-accent hover:text-accent-foreground";
+  "flex cursor-pointer items-center rounded-lg px-4 py-3 app-text-label ui-typo-mobile-nav-primary hover:bg-accent hover:text-accent-foreground";
 
 const MOBILE_SUB_LINK_CLASS =
   "flex cursor-pointer items-center rounded-lg px-4 py-2 ui-typo-mobile-nav-secondary hover:bg-accent hover:text-accent-foreground";
@@ -36,11 +36,11 @@ export function MobileSolutionsMenu({
 }: SolutionsMenuProps) {
   return (
     <Collapsible open={open} onOpenChange={onOpenChange}>
-      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-4 py-3 admin-text-label ui-typo-mobile-nav-primary hover:bg-accent hover:text-accent-foreground">
+      <CollapsibleTrigger className="flex w-full items-center justify-between rounded-lg px-4 py-3 app-text-label ui-typo-mobile-nav-primary hover:bg-accent hover:text-accent-foreground">
         Solutions
         <ChevronDown
           className={cn(
-            "admin-icon-sm shrink-0 transition-transform",
+            "app-icon-sm shrink-0 transition-transform",
             open && "rotate-180",
           )}
         />
@@ -51,7 +51,7 @@ export function MobileSolutionsMenu({
           item.kind === "header" ? (
             <div
               key={`h-${i}`}
-              className="mt-5 px-4 py-2 admin-typo-eyebrow uppercase tracking-wider text-muted-foreground/50"
+              className="mt-5 px-4 py-2 app-typo-eyebrow uppercase tracking-wider text-muted-foreground/50"
             >
               {item.title}
             </div>
@@ -100,7 +100,7 @@ export function MobileSheetHeader({ onClose }: { onClose: () => void }) {
         <div className="rounded-lg bg-primary/10 p-2">
           <Logo size={16} />
         </div>
-        <SheetTitle className="admin-typo-section-heading font-semibold">
+        <SheetTitle className="app-typo-section-heading font-semibold">
           {brandName}
         </SheetTitle>
 
@@ -111,7 +111,7 @@ export function MobileSheetHeader({ onClose }: { onClose: () => void }) {
             className="min-h-[var(--ctrl-h-sm)] w-9"
             onClick={onClose}
           >
-            <X className="admin-icon-sm" />
+            <X className="app-icon-sm" />
             <span className="sr-only">Close menu</span>
           </Button>
         </div>

@@ -186,9 +186,9 @@ export function ImageSlider({
                 event.stopPropagation();
                 setIndex((i) => (i - 1 + slides.length) % slides.length);
               }}
-              className={`absolute left-3 top-1/2 -translate-y-1/2 bg-[hsl(var(--background))]/60 backdrop-blur-md hover:bg-[hsl(var(--background))]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
             >
-              <ChevronLeft className="size-5 text-[hsl(var(--foreground))]" />
+              <ChevronLeft className="size-5 text-[var(--foreground)]" />
             </button>
           </Tooltip>
           <Tooltip content="Next image" side="left">
@@ -200,9 +200,9 @@ export function ImageSlider({
                 event.stopPropagation();
                 setIndex((i) => (i + 1) % slides.length);
               }}
-              className={`absolute right-3 top-1/2 -translate-y-1/2 bg-[hsl(var(--background))]/60 backdrop-blur-md hover:bg-[hsl(var(--background))]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-white/20 hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
             >
-              <ChevronRight className="size-5 text-[hsl(var(--foreground))]" />
+              <ChevronRight className="size-5 text-[var(--foreground)]" />
             </button>
           </Tooltip>
           <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-2 z-30 px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md">
@@ -249,9 +249,9 @@ function SlideImage({
       {!loaded && (
         <span
           aria-hidden="true"
-          className="absolute inset-0 flex items-center justify-center bg-[hsl(var(--muted))]/50 z-10"
+          className="absolute inset-0 flex items-center justify-center bg-[var(--muted)]/50 z-10"
         >
-          <LoaderIcon className="animate-spin size-6 text-[hsl(var(--muted-foreground))]" />
+          <LoaderIcon className="animate-spin size-6 text-[var(--muted-foreground)]" />
         </span>
       )}
       <Image

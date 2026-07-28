@@ -136,13 +136,13 @@ function AutoCompleteUsers({
 
   return (
     <div className="relative">
-      <div className="flex flex-wrap items-center gap-2 p-2 border rounded-xl bg-[hsl(var(--card))]">
+      <div className="flex flex-wrap items-center gap-2 p-2 border rounded-xl bg-[var(--card)]">
         {selected.map((s) => (
           <span
             key={s.id || s.userId}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--muted))]"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--muted)]"
           >
-            <span className="text-sm">
+            <span className="app-text-body">
               {s.fullName || s.name || s.email || s.userId}
             </span>
             <button
@@ -150,7 +150,7 @@ function AutoCompleteUsers({
               aria-label="remove"
               className="opacity-70 hover:opacity-100"
             >
-              <X className="size-3" />
+              <X className="app-icon-xs" />
             </button>
           </span>
         ))}
@@ -159,26 +159,26 @@ function AutoCompleteUsers({
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 h-9 min-w-[12rem] bg-transparent outline-none"
+          className="flex-1 h-[var(--ctrl-h)] min-w-[12rem] bg-transparent outline-none"
         />
       </div>
       {q.trim().length > 0 && !disabled && (
-        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[hsl(var(--card))] shadow-lg max-h-60 overflow-auto">
+        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[var(--card)] shadow-lg max-h-60 overflow-auto">
           {isLoading ? (
-            <div className="p-3 text-sm subtle">Loading…</div>
+            <div className="p-3 app-text-body subtle">Loading…</div>
           ) : suggestionStrings.length === 0 && suggestionUsers.length === 0 ? (
-            <div className="p-3 text-sm subtle">No users</div>
+            <div className="p-3 app-text-body subtle">No users</div>
           ) : (
             <ul>
               {suggestionStrings.length > 0 &&
                 suggestionStrings.map((s: string) => (
                   <li key={s}>
                     <button
-                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      className="w-full text-left p-3 hover:bg-[var(--muted)]/5"
                       onClick={() => addUser(s)}
                     >
                       <div className="font-medium">{s}</div>
-                      <div className="text-xs subtle">{s}</div>
+                      <div className="app-text-caption subtle">{s}</div>
                     </button>
                   </li>
                 ))}
@@ -187,13 +187,13 @@ function AutoCompleteUsers({
                 suggestionUsers.map((u: any) => (
                   <li key={u.id || u.userId || u._id || u.email}>
                     <button
-                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      className="w-full text-left p-3 hover:bg-[var(--muted)]/5"
                       onClick={() => addUser(u)}
                     >
                       <div className="font-medium">
                         {u.fullName || u.name || u.email}
                       </div>
-                      <div className="text-xs subtle">
+                      <div className="app-text-caption subtle">
                         {u.email || u.userId}
                       </div>
                     </button>
@@ -304,10 +304,10 @@ const MOCK: Notification[] = [
 
 function ChannelIcon({ channel }: { channel?: string }) {
   const c = (channel || "").toUpperCase();
-  if (c === "EMAIL") return <Mail className="size-4" />;
-  if (c === "ALERT") return <AlertTriangle className="size-4" />;
-  if (c === "SECURITY") return <Shield className="size-4" />;
-  return <Info className="size-4" />;
+  if (c === "EMAIL") return <Mail className="app-icon-sm" />;
+  if (c === "ALERT") return <AlertTriangle className="app-icon-sm" />;
+  if (c === "SECURITY") return <Shield className="app-icon-sm" />;
+  return <Info className="app-icon-sm" />;
 }
 
 export default function NotificationsAdminPage() {
@@ -409,14 +409,14 @@ export default function NotificationsAdminPage() {
   }
 
   return (
-    <div className="container-padded py-8">
+    <div className="container-padded py-8 app-shell-page" data-app-page="admin-notifications">
       <div className="mb-6 space-y-4">
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
+            <h1 className="app-text-heading font-semibold tracking-tight">
               Notifications
             </h1>
-            <p className="text-sm subtle mt-1">
+            <p className="app-text-body subtle mt-1">
               Manage notifications, recipients and delivery state
             </p>
           </div>
@@ -427,10 +427,10 @@ export default function NotificationsAdminPage() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder="Search title, message, id..."
-                className="h-10 w-64 max-w-[70vw] px-3 pr-10 rounded-xl border bg-[hsl(var(--card))]"
+                className="h-[var(--ctrl-h)] w-64 max-w-[70vw] px-3 pr-10 rounded-xl border bg-[var(--card)]"
               />
               <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-60">
-                <Search className="size-4" />
+                <Search className="app-icon-sm" />
               </div>
             </div>
             <select
@@ -438,7 +438,7 @@ export default function NotificationsAdminPage() {
               title="Filter by channel"
               value={channelFilter ?? ""}
               onChange={(e) => setChannelFilter(e.target.value || null)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
             >
               <option value="">All channels</option>
               <option value="SYSTEM">SYSTEM</option>
@@ -451,7 +451,7 @@ export default function NotificationsAdminPage() {
               title="Filter by target"
               value={targetFilter ?? ""}
               onChange={(e) => setTargetFilter(e.target.value || null)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
             >
               <option value="">{t("allTargets")}</option>
               <option value="USER">USER</option>
@@ -468,14 +468,14 @@ export default function NotificationsAdminPage() {
             </Button>
           </div>
         </div>
-        <div className="flex flex-wrap gap-3 text-xs subtle">
-          <span className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--muted))] px-3 py-1">
+        <div className="flex flex-wrap gap-3 app-text-caption subtle">
+          <span className="inline-flex items-center gap-1 rounded-full bg-[var(--muted)] px-3 py-1">
             {t("totalLabel")}: {total}
           </span>
           {channelFilter && (
             <button
               onClick={() => setChannelFilter(null)}
-              className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] px-3 py-1"
+              className="inline-flex items-center gap-1 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] px-3 py-1"
             >
               Channel: {channelFilter} ✕
             </button>
@@ -483,7 +483,7 @@ export default function NotificationsAdminPage() {
           {targetFilter && (
             <button
               onClick={() => setTargetFilter(null)}
-              className="inline-flex items-center gap-1 rounded-full bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] px-3 py-1"
+              className="inline-flex items-center gap-1 rounded-full bg-[var(--accent)]/20 text-[var(--accent)] px-3 py-1"
             >
               Target: {targetFilter} ✕
             </button>
@@ -500,7 +500,7 @@ export default function NotificationsAdminPage() {
             aria-label="Notifications table, scroll horizontally on small screens"
           >
             <table className="w-full table-auto min-w-[920px] md:min-w-full">
-              <thead className="bg-[hsl(var(--card))] border-b">
+              <thead className="bg-[var(--card)] border-b">
                 <tr>
                   <th className="text-left p-3 whitespace-nowrap">
                     {t("titleLabel")}
@@ -527,22 +527,22 @@ export default function NotificationsAdminPage() {
                   <th className="p-3 whitespace-nowrap">{t("actionsLabel")}</th>
                 </tr>
               </thead>
-              <tbody className="bg-[hsl(var(--card))]">
+              <tbody className="bg-[var(--card)]">
                 {current.map((n) => (
                   <React.Fragment key={n.id}>
                     <tr
-                      className="border-b hover:bg-[hsl(var(--muted))]/5 transition-colors"
+                      className="border-b hover:bg-[var(--muted)]/5 transition-colors"
                     >
                       <td className="p-3 align-top whitespace-nowrap">
                         <div className="font-semibold">{n.title}</div>
-                        <div className="text-xs subtle">{n.id}</div>
+                        <div className="app-text-caption subtle">{n.id}</div>
                       </td>
                       <td className="p-3 align-top max-w-[28rem]">
-                        <div className="line-clamp-2 text-sm">{n.message}</div>
+                        <div className="line-clamp-2 app-text-body">{n.message}</div>
                       </td>
                       <td className="p-3 align-top flex items-center gap-2 whitespace-nowrap">
                         <ChannelIcon channel={n.channel} />
-                        <span className="text-sm">{n.channel}</span>
+                        <span className="app-text-body">{n.channel}</span>
                       </td>
                       <td className="p-3 align-top whitespace-nowrap">
                         {n.targetType}
@@ -566,31 +566,31 @@ export default function NotificationsAdminPage() {
                             size="sm"
                             onClick={() => setViewing(n)}
                           >
-                            <Eye className="size-4" />
+                            <Eye className="app-icon-sm" />
                           </Button>
                           <Button
                             variant="secondary"
                             size="sm"
                             onClick={() => setEditing(n)}
                           >
-                            <Edit3 className="size-4" />
+                            <Edit3 className="app-icon-sm" />
                           </Button>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => setConfirmDelete(n)}
                           >
-                            <Trash2 className="size-4 text-red-500" />
+                            <Trash2 className="app-icon-sm text-red-500" />
                           </Button>
                           <button
                             onClick={() => toggleExpand(n.id)}
                             aria-label="expand recipients"
-                            className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
+                            className="p-2 rounded-full hover:bg-[var(--muted)]"
                           >
                             {expanded[n.id] ? (
-                              <ChevronUp className="size-4" />
+                              <ChevronUp className="app-icon-sm" />
                             ) : (
-                              <ChevronDown className="size-4" />
+                              <ChevronDown className="app-icon-sm" />
                             )}
                           </button>
                         </div>
@@ -598,20 +598,20 @@ export default function NotificationsAdminPage() {
                     </tr>
 
                     {expanded[n.id] && (
-                      <tr className="bg-[hsl(var(--card))]">
+                      <tr className="bg-[var(--card)]">
                         <td colSpan={9} className="p-4">
                           <div className="rounded-xl border p-3 overflow-x-auto">
                             <div className="mb-3 flex items-center justify-between">
                               <div className="font-medium">
                                 {t("recipients")} ({n.recipients?.length ?? 0})
                               </div>
-                              <div className="text-xs subtle">
+                              <div className="app-text-caption subtle">
                                 {t("recipientsActions")}
                               </div>
                             </div>
-                            <table className="w-full text-sm min-w-[720px]">
+                            <table className="w-full app-text-body min-w-[720px]">
                               <thead>
-                                <tr className="text-xs subtle">
+                                <tr className="app-text-caption subtle">
                                   <th className="text-left p-2">
                                     {t("idLabel")}
                                   </th>
@@ -638,14 +638,14 @@ export default function NotificationsAdminPage() {
                                   n.recipients.map((r) => (
                                     <tr
                                       key={r.id}
-                                      className="border-t hover:bg-[hsl(var(--muted))]/5"
+                                      className="border-t hover:bg-[var(--muted)]/5"
                                     >
                                       <td className="p-2 align-top">{r.id}</td>
                                       <td className="p-2 align-top">
                                         <div className="font-medium">
                                           {r.user?.fullName || r.userId}
                                         </div>
-                                        <div className="text-xs subtle">
+                                        <div className="app-text-caption subtle">
                                           {r.user?.email || ""}
                                         </div>
                                       </td>
@@ -664,7 +664,7 @@ export default function NotificationsAdminPage() {
                                           ).toLocaleString()
                                           : "—"}
                                       </td>
-                                      <td className="p-2 align-top text-sm text-red-600">
+                                      <td className="p-2 align-top app-text-body text-red-600">
                                         {r.deliveryError || ""}
                                       </td>
                                       <td className="p-2 align-top">
@@ -716,7 +716,7 @@ export default function NotificationsAdminPage() {
       </div>
 
       <div className="mt-4 flex items-center justify-between">
-        <div className="text-sm subtle">
+        <div className="app-text-body subtle">
           Showing {Math.min(page * perPage, total)} of {total}
         </div>
         <div className="flex items-center gap-2">
@@ -727,7 +727,7 @@ export default function NotificationsAdminPage() {
           >
             Prev
           </Button>
-          <div className="px-3 py-1 rounded-xl border bg-[hsl(var(--accent))/0.12] text-[hsl(var(--accent))]">
+          <div className="px-3 py-1 rounded-xl border bg-[color-mix(in oklab, var(--accent) 12%, transparent)] text-[var(--accent)]">
             {page} / {pages}
           </div>
           <Button
@@ -745,8 +745,8 @@ export default function NotificationsAdminPage() {
         <DialogContent>
           {viewing && (
             <div>
-              <h2 className="text-lg font-semibold">{viewing.title}</h2>
-              <p className="text-sm subtle mt-1">ID: {viewing.id}</p>
+              <h2 className="app-text-heading-sm font-semibold">{viewing.title}</h2>
+              <p className="app-text-body subtle mt-1">ID: {viewing.id}</p>
               <div className="mt-4">
                 <p className="whitespace-pre-wrap">{viewing.message}</p>
               </div>
@@ -786,10 +786,10 @@ export default function NotificationsAdminPage() {
         <DialogContent>
           {confirmDelete && (
             <div>
-              <h3 className="text-lg font-semibold">
+              <h3 className="app-text-heading-sm font-semibold">
                 {t("deleteNotificationConfirm")}
               </h3>
-              <p className="text-sm subtle mt-2">
+              <p className="app-text-body subtle mt-2">
                 {t("deleteNotificationBody").replace(
                   "{title}",
                   `"${confirmDelete.title}"`
@@ -877,16 +877,16 @@ function EditForm({
   const [message, setMessage] = useState(notification.message || "");
   return (
     <div>
-      <h3 className="text-lg font-semibold">Edit Notification</h3>
+      <h3 className="app-text-heading-sm font-semibold">Edit Notification</h3>
       <div className="mt-3 grid gap-3">
-        <label className="text-sm font-medium">Title</label>
+        <label className="app-text-body font-medium">Title</label>
         <input
           title="Notification title"
-          className="h-10 rounded-xl border px-3"
+          className="h-[var(--ctrl-h)] rounded-xl border px-3"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
         />
-        <label className="text-sm font-medium">Message</label>
+        <label className="app-text-body font-medium">Message</label>
         <textarea
           title="Notification message"
           className="rounded-xl border p-3 min-h-[120px]"
@@ -1024,10 +1024,10 @@ function CreateForm({
 
   return (
     <div className="max-h-[80vh] overflow-y-auto pr-2">
-      <h3 className="text-lg font-semibold">{t("createNotification")}</h3>
-      <p className="text-xs subtle mt-1">{t("createNotificationHint")}</p>
+      <h3 className="app-text-heading-sm font-semibold">{t("createNotification")}</h3>
+      <p className="app-text-caption subtle mt-1">{t("createNotificationHint")}</p>
       {errors.length > 0 && (
-        <ul className="mt-3 space-y-1 text-xs text-red-500">
+        <ul className="mt-3 space-y-1 app-text-caption text-red-500">
           {errors.map((e) => (
             <li key={e}>{e}</li>
           ))}
@@ -1035,7 +1035,7 @@ function CreateForm({
       )}
       <div className="mt-4 grid gap-4">
         <div className="grid gap-1">
-          <label className="text-xs font-medium" htmlFor="title">
+          <label className="app-text-caption font-medium" htmlFor="title">
             {t("titleLabel")}
           </label>
           <input
@@ -1043,11 +1043,11 @@ function CreateForm({
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             placeholder={t("notificationTitlePlaceholder")}
-            className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+            className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
           />
         </div>
         <div className="grid gap-1">
-          <label className="text-xs font-medium" htmlFor="message">
+          <label className="app-text-caption font-medium" htmlFor="message">
             {t("messageLabel")}
           </label>
           <textarea
@@ -1055,19 +1055,19 @@ function CreateForm({
             value={message}
             onChange={(e) => setMessage(e.target.value)}
             placeholder={t("notificationMessagePlaceholder")}
-            className="rounded-xl border p-3 min-h-[120px] bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+            className="rounded-xl border p-3 min-h-[120px] bg-[var(--card)] text-[var(--text)]"
           />
         </div>
         <div className="grid gap-3 md:grid-cols-3">
           <div className="grid gap-1">
-            <label className="text-xs font-medium" htmlFor="channel">
+            <label className="app-text-caption font-medium" htmlFor="channel">
               {t("channelLabel")}
             </label>
             <select
               id="channel"
               value={channel}
               onChange={(e) => setChannel(e.target.value)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
             >
               <option value="SYSTEM">SYSTEM</option>
               <option value="EMAIL">EMAIL</option>
@@ -1076,14 +1076,14 @@ function CreateForm({
             </select>
           </div>
           <div className="grid gap-1">
-            <label className="text-xs font-medium" htmlFor="target">
+            <label className="app-text-caption font-medium" htmlFor="target">
               {t("targetTypeLabel")}
             </label>
             <select
               id="target"
               value={targetType}
               onChange={(e) => setTargetType(e.target.value)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
             >
               <option value="USER">USER</option>
               <option value="ROLE">ROLE</option>
@@ -1092,7 +1092,7 @@ function CreateForm({
             </select>
           </div>
           <div className="grid gap-1">
-            <label className="text-xs font-medium" htmlFor="trigger">
+            <label className="app-text-caption font-medium" htmlFor="trigger">
               {t("triggerEventLabel")}
             </label>
             <input
@@ -1100,12 +1100,12 @@ function CreateForm({
               value={triggerEvent}
               onChange={(e) => setTriggerEvent(e.target.value)}
               placeholder="USER_REGISTERED"
-              className="h-10 rounded-xl border px-3"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3"
             />
           </div>
         </div>
         <div className="grid gap-1">
-          <label className="text-xs font-medium" htmlFor="recipients">
+          <label className="app-text-caption font-medium" htmlFor="recipients">
             Recipients
           </label>
           {targetType === "USER" && (
@@ -1128,7 +1128,7 @@ function CreateForm({
               aria-label="Select role"
               value={selectedRole ?? ""}
               onChange={(e) => setSelectedRole(e.target.value || null)}
-              className="h-10 rounded-xl border px-3 bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+              className="h-[var(--ctrl-h)] rounded-xl border px-3 bg-[var(--card)] text-[var(--text)]"
             >
               <option value="">{t("selectRole")}</option>
               <option value={Role.ADMIN}>{Role.ADMIN}</option>
@@ -1148,22 +1148,22 @@ function CreateForm({
           )}
         </div>
         <div className="grid gap-1">
-          <label className="text-xs font-medium" htmlFor="meta">
+          <label className="app-text-caption font-medium" htmlFor="meta">
             Meta JSON (optional)
           </label>
           <textarea
             id="meta"
             value={metaRaw}
             onChange={(e) => setMetaRaw(e.target.value)}
-            className="rounded-xl border p-3 font-mono text-xs min-h-[140px] bg-[hsl(var(--card))] text-[hsl(var(--text))]"
+            className="rounded-xl border p-3 font-mono app-text-caption min-h-[140px] bg-[var(--card)] text-[var(--text)]"
           />
         </div>
-        <label className="inline-flex items-center gap-2 text-xs font-medium select-none">
+        <label className="inline-flex items-center gap-2 app-text-caption font-medium select-none">
           <input
             type="checkbox"
             checked={sendNow}
             onChange={(e) => setSendNow(e.target.checked)}
-            className="size-4 rounded border"
+            className="app-icon-sm rounded border"
           />
           {t("sendImmediately")}
         </label>
@@ -1271,19 +1271,19 @@ function AutoCompleteListings({
 
   return (
     <div className="relative">
-      <div className="flex flex-wrap items-center gap-2 p-2 border rounded-xl bg-[hsl(var(--card))]">
+      <div className="flex flex-wrap items-center gap-2 p-2 border rounded-xl bg-[var(--card)]">
         {selected.map((s) => (
           <span
             key={s.id || s._id}
-            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[hsl(var(--muted))]"
+            className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[var(--muted)]"
           >
-            <span className="text-sm">{s.title || s.name || s.id}</span>
+            <span className="app-text-body">{s.title || s.name || s.id}</span>
             <button
               onClick={() => removeListing(s.id || s._id)}
               aria-label="remove"
               className="opacity-70 hover:opacity-100"
             >
-              <X className="size-3" />
+              <X className="app-icon-xs" />
             </button>
           </span>
         ))}
@@ -1291,27 +1291,27 @@ function AutoCompleteListings({
           value={q}
           onChange={(e) => setQ(e.target.value)}
           placeholder={placeholder}
-          className="flex-1 h-9 min-w-[12rem] bg-transparent outline-none"
+          className="flex-1 h-[var(--ctrl-h)] min-w-[12rem] bg-transparent outline-none"
         />
       </div>
       {q.trim().length > 0 && (
-        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[hsl(var(--card))] shadow-lg max-h-60 overflow-auto">
+        <div className="absolute left-0 right-0 mt-2 z-50 rounded-xl border bg-[var(--card)] shadow-lg max-h-60 overflow-auto">
           {isLoading ? (
-            <div className="p-3 text-sm subtle">Loading…</div>
+            <div className="p-3 app-text-body subtle">Loading…</div>
           ) : suggestionStrings.length === 0 &&
             suggestionListings.length === 0 ? (
-            <div className="p-3 text-sm subtle">No listings</div>
+            <div className="p-3 app-text-body subtle">No listings</div>
           ) : (
             <ul>
               {suggestionStrings.length > 0 &&
                 suggestionStrings.map((s: string) => (
                   <li key={s}>
                     <button
-                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      className="w-full text-left p-3 hover:bg-[var(--muted)]/5"
                       onClick={() => addListing(s)}
                     >
                       <div className="font-medium">{s}</div>
-                      <div className="text-xs subtle">{s}</div>
+                      <div className="app-text-caption subtle">{s}</div>
                     </button>
                   </li>
                 ))}
@@ -1319,13 +1319,13 @@ function AutoCompleteListings({
                 suggestionListings.map((u: any) => (
                   <li key={u.id || u._id || u.title}>
                     <button
-                      className="w-full text-left p-3 hover:bg-[hsl(var(--muted))]/5"
+                      className="w-full text-left p-3 hover:bg-[var(--muted)]/5"
                       onClick={() => addListing(u)}
                     >
                       <div className="font-medium">
                         {u.title || u.name || u.id}
                       </div>
-                      <div className="text-xs subtle">{u.id || u._id}</div>
+                      <div className="app-text-caption subtle">{u.id || u._id}</div>
                     </button>
                   </li>
                 ))}

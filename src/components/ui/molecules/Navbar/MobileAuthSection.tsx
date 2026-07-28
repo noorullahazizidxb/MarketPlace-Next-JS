@@ -40,7 +40,7 @@ export function MobileAuthSection({
           onClose();
         }}
       >
-        <LogIn className="mr-2 admin-icon-sm" />
+        <LogIn className="mr-2 app-icon-sm" />
         Login / Sign Up
       </Button>
     );
@@ -51,7 +51,7 @@ export function MobileAuthSection({
   return (
     <div className="space-y-2">
       <div className="mb-4 flex items-center gap-3 px-1">
-        <UserAvatar className="admin-text-heading" />
+        <UserAvatar className="app-text-heading" />
         <UserInfoBlock user={user} />
       </div>
 
@@ -71,7 +71,7 @@ export function MobileAuthSection({
                 onClose();
               }}
             >
-              <item.icon className="mr-2 admin-icon-sm" />
+              <item.icon className="mr-2 app-icon-sm" />
               {item.label}
             </span>
           ) : (
@@ -80,7 +80,7 @@ export function MobileAuthSection({
               onClick={onClose}
               className="flex items-center"
             >
-              <item.icon className="mr-2 admin-icon-sm" />
+              <item.icon className="mr-2 app-icon-sm" />
               {item.label}
             </Link>
           )}
@@ -95,7 +95,7 @@ export function MobileAuthSection({
           await onLogout();
         }}
       >
-        <LogOut className="mr-2 admin-icon-sm" />
+        <LogOut className="mr-2 app-icon-sm" />
         Log out
       </Button>
     </div>

@@ -51,7 +51,7 @@ export function DetailAdSlot({
   return (
     <div
       className={
-        "relative w-full overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] " +
+        "relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] " +
         (className || "")
       }
     >

@@ -29,7 +29,7 @@ export interface RemRangeSliderProps {
 }
 
 const VALUE_BADGE_CLASS =
-  "min-w-12 rounded-md border border-border/60 bg-primary/10 px-1 py-0.5 text-center font-mono admin-text-micro tabular-nums text-primary";
+  "min-w-12 rounded-md border border-border/60 bg-primary/10 px-1 py-0.5 text-center font-mono app-text-micro tabular-nums text-primary";
 
 function parseNumericInput(raw: string): number | null {
   const cleaned = raw.trim().toLowerCase().replace(/rem/g, "").trim();
@@ -221,13 +221,13 @@ export function RemRangeSlider({
       <div className="flex items-center justify-between gap-1.5">
         <div className="flex min-w-0 items-center gap-1.5">
           {icon && (
-            <span className="shrink-0 text-muted-foreground group-hover:text-primary transition-colors [&_svg]:admin-icon-xs">
+            <span className="shrink-0 text-muted-foreground group-hover:text-primary transition-colors [&_svg]:app-icon-xs">
               {icon}
             </span>
           )}
           <label
             htmlFor={id}
-            className="truncate admin-text-caption text-foreground cursor-pointer select-none"
+            className="truncate app-text-caption text-foreground cursor-pointer select-none"
           >
             {label}
           </label>
@@ -243,7 +243,7 @@ export function RemRangeSlider({
             disabled={currentIndex <= 0}
             aria-label={`Decrease ${label} by one step (${stepLabel})`}
           >
-            <Minus className="admin-icon-xs" aria-hidden />
+            <Minus className="app-icon-xs" aria-hidden />
           </Button>
 
           <EditableRangeValue
@@ -265,19 +265,19 @@ export function RemRangeSlider({
             disabled={currentIndex >= maxIndex}
             aria-label={`Increase ${label} by one step (${stepLabel})`}
           >
-            <Plus className="admin-icon-xs" aria-hidden />
+            <Plus className="app-icon-xs" aria-hidden />
           </Button>
         </div>
       </div>
 
       {description && (
-        <p className="admin-text-micro leading-snug text-muted-foreground/80 line-clamp-2">
+        <p className="app-text-micro leading-snug text-muted-foreground/80 line-clamp-2">
           {description}
         </p>
       )}
 
       <div className="relative flex items-center gap-1.5">
-        <span className="w-8 shrink-0 text-right font-mono admin-text-micro text-muted-foreground/60 tabular-nums">
+        <span className="w-8 shrink-0 text-right font-mono app-text-micro text-muted-foreground/60 tabular-nums">
           {formatRangeValue(min, unit)}
         </span>
 
@@ -325,7 +325,7 @@ export function RemRangeSlider({
           />
         </div>
 
-        <span className="w-8 shrink-0 font-mono admin-text-micro text-muted-foreground/60 tabular-nums">
+        <span className="w-8 shrink-0 font-mono app-text-micro text-muted-foreground/60 tabular-nums">
           {formatRangeValue(max, unit)}
         </span>
       </div>

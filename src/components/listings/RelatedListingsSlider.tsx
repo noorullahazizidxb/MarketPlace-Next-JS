@@ -153,8 +153,8 @@ function HeroCarousel({
     >
       {/* Ambient background */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-x-0 -top-10 h-[220px] bg-[radial-gradient(80%_60%_at_50%_0%,hsl(var(--primary)/0.15),transparent_60%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[180px] bg-[radial-gradient(60%_50%_at_50%_100%,hsl(var(--accent)/0.15),transparent_60%)]" />
+        <div className="absolute inset-x-0 -top-10 h-[220px] bg-[radial-gradient(80%_60%_at_50%_0%,color-mix(in oklab, var(--primary) 15%, transparent),transparent_60%)]" />
+        <div className="absolute inset-x-0 bottom-0 h-[180px] bg-[radial-gradient(60%_50%_at_50%_100%,color-mix(in oklab, var(--accent) 15%, transparent),transparent_60%)]" />
       </div>
 
       <div className="mb-4 flex items-center justify-between px-1">
@@ -166,7 +166,7 @@ function HeroCarousel({
             <button
               aria-label="Previous"
               onClick={prev}
-              className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+              className="size-10 rounded-full grid place-items-center bg-background/50 border border-border/40 hover:bg-foreground/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -175,7 +175,7 @@ function HeroCarousel({
             <button
               aria-label="Next"
               onClick={next}
-              className="size-10 rounded-full grid place-items-center bg-[hsl(var(--background))]/50 border border-[hsl(var(--border))]/40 hover:bg-[hsl(var(--foreground))]/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
+              className="size-10 rounded-full grid place-items-center bg-background/50 border border-border/40 hover:bg-foreground/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
             >
               <ChevronRight className="size-4" />
             </button>
@@ -183,7 +183,7 @@ function HeroCarousel({
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 supports-[backdrop-filter]:bg-[hsl(var(--card))]/60">
+      <div className="relative overflow-hidden rounded-3xl border border-border bg-card/80 supports-[backdrop-filter]:bg-card/60">
         <CarouselTrack
           index={index}
           dir={dir}
@@ -233,8 +233,8 @@ function TabbedHeroCarousel({
           <button
             onClick={() => setTab("related")}
             className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "related"
-              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              ? "bg-card text-accent border border-accent/20"
+              : "bg-card text-foreground border border-border"
               }`}
           >
             <TagIcon className="size-5" />
@@ -244,8 +244,8 @@ function TabbedHeroCarousel({
           <button
             onClick={() => setTab("top")}
             className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "top"
-              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              ? "bg-card text-accent border border-accent/20"
+              : "bg-card text-foreground border border-border"
               }`}
           >
             <Star className="size-4 text-amber-400" />
@@ -255,8 +255,8 @@ function TabbedHeroCarousel({
           <button
             onClick={() => setTab("promoted")}
             className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "promoted"
-              ? "bg-[hsl(var(--card))] text-[hsl(var(--accent))] border border-[hsl(var(--accent))/20]"
-              : "bg-[hsl(var(--card))] text-[hsl(var(--foreground))] border border-[hsl(var(--border))]"
+              ? "bg-card text-accent border border-accent/20"
+              : "bg-card text-foreground border border-border"
               }`}
           >
             <ShieldCheck className="size-4 text-emerald-500" />
@@ -307,7 +307,7 @@ function CarouselTrack({
               else if (offset > 80 || velocity > 600) onSwipePrev();
             }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 p-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-gap)] app-density-grid-gap p-[var(--space-card)]">
               {slice3(items, index).map((it, i) => (
                 <TiltCard key={`${String(it.id)}-${i}`} item={it} rank={i} />
               ))}
@@ -360,12 +360,12 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       style={{
         transform: `perspective(900px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
       }}
-      className="relative h-[360px] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)]"
+      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)]"
     >
       {/* Glow */}
       <div className="pointer-events-none absolute -inset-10 opacity-60 mix-blend-soft-light">
-        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_10%_-10%,hsl(var(--primary)/0.25),transparent_70%)]" />
-        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_90%_120%,hsl(var(--accent)/0.22),transparent_70%)]" />
+        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_10%_-10%,color-mix(in oklab, var(--primary) 25%, transparent),transparent_70%)]" />
+        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_90%_120%,color-mix(in oklab, var(--accent) 22%, transparent),transparent_70%)]" />
       </div>
 
       <div className="relative h-[60%]">
@@ -378,10 +378,10 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
           className={`object-cover transition-all duration-500 will-change-transform hover:scale-[1.03] ${imgLoaded ? "opacity-100" : "opacity-0"}`}
           onLoad={() => setImgLoaded(true)}
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--background))/0.85] via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[color-mix(in oklab, var(--background) 85%, transparent)] via-transparent to-transparent" />
         {/* Price pill */}
         {price && (
-          <div className="absolute top-3 left-3 rounded-full bg-[hsl(var(--background))/0.8] backdrop-blur px-3 py-1 text-xs border border-[hsl(var(--border))] shadow-sm">
+          <div className="absolute top-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 app-text-caption border border-border shadow-sm">
             <span className="tabular-nums font-medium">
               {price} {ccy}
             </span>
@@ -389,7 +389,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
         )}
       </div>
 
-      <div className="relative h-[40%] p-4 flex flex-col">
+      <div className="relative h-[40%] p-[var(--space-card)] flex flex-col">
         <h4 className="text-sm md:text-base font-semibold line-clamp-2 pr-8">
           {item.title || "Untitled"}
         </h4>
@@ -402,7 +402,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
           <div className="inline-flex items-center gap-1 text-[11px]">
             {rating != null ? (
               <>
-                <Star className="size-3 text-[hsl(var(--accent))]" />
+                <Star className="size-3 text-accent" />
                 <span className="tabular-nums">{rating.toFixed(1)}</span>
                 {reviews != null && <span className="subtle">({reviews})</span>}
               </>
@@ -412,7 +412,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
           </div>
           <Link
             href={`/listings/${item.id}`}
-            className="inline-flex items-center gap-1 text-[11px] font-medium px-3 py-1 rounded-full border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.06] transition-colors"
+            className="inline-flex items-center gap-1 app-text-caption font-medium px-3 py-1 rounded-full border border-border hover:bg-foreground/5 transition-colors"
           >
             View <ArrowRight className="size-3" />
           </Link>
@@ -422,10 +422,10 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       {/* Rank accent */}
       <div
         className={`pointer-events-none absolute -right-6 -top-6 size-20 rounded-full blur-2xl opacity-40 ${rank === 0
-          ? "bg-[hsl(var(--primary))]"
+          ? "bg-primary"
           : rank === 1
-            ? "bg-[hsl(var(--accent))]"
-            : "bg-[hsl(var(--secondary,var(--accent)))]"
+            ? "bg-accent"
+            : "bg-secondary"
           }`}
       />
     </motion.article>
@@ -449,8 +449,8 @@ function ProgressDots({
           onClick={() => onDot(i)}
           aria-label={`Go to slide ${i + 1}`}
           className={`h-1.5 rounded-full transition-all go-to-slide ${i === index
-            ? "w-6 bg-[hsl(var(--accent))]"
-            : "w-3 bg-[hsl(var(--foreground))/0.3] hover:bg-[hsl(var(--foreground))/0.5]"
+            ? "w-6 bg-accent"
+            : "w-3 bg-[color-mix(in oklab, var(--foreground) 30%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 50%, transparent)]"
             }`}
         />
       ))}

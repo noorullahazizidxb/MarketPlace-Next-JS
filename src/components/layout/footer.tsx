@@ -56,18 +56,18 @@ export default function Footer() {
       {/* Background scene — only CSS vars, no hardcoded palette colors */}
       <div className="pointer-events-none absolute inset-0 -z-10">
         <div className="absolute -top-24 left-1/2 size-[28rem] -translate-x-1/2 rounded-full blur-3xl opacity-60"
-          style={{ background: "conic-gradient(from 180deg, hsl(var(--primary)/0.18), hsl(var(--accent)/0.14), hsl(var(--secondary)/0.14))" }}
+          style={{ background: "conic-gradient(from 180deg, color-mix(in oklab, var(--primary) 18%, transparent), color-mix(in oklab, var(--accent) 14%, transparent), color-mix(in oklab, var(--secondary) 14%, transparent))" }}
         />
         <div className="absolute -bottom-14 -left-10 size-56 rounded-full blur-2xl"
-          style={{ background: "radial-gradient(ellipse at center, hsl(var(--accent)/0.16), transparent 60%)" }}
+          style={{ background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--accent) 16%, transparent), transparent 60%)" }}
         />
         <div className="absolute top-10 right-10 size-44 rounded-full blur-2xl"
-          style={{ background: "radial-gradient(ellipse at center, hsl(var(--primary)/0.14), transparent 60%)" }}
+          style={{ background: "radial-gradient(ellipse at center, color-mix(in oklab, var(--primary) 14%, transparent), transparent 60%)" }}
         />
       </div>
 
       <div className="mx-auto max-w-8xl px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[hsl(var(--border))]/20">
+        <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-xl shadow-[0_10px_40px_-20px_rgba(0,0,0,0.5)] ring-1 ring-[var(--border)]/20">
           <div className="grid grid-cols-1 gap-6 p-5 sm:grid-cols-2 lg:grid-cols-5 lg:p-8">
             {/* Brand */}
             <div>
@@ -79,12 +79,12 @@ export default function Footer() {
                   <div className="text-base font-semibold tracking-tight">
                     {t("marketplace")}
                   </div>
-                  <div className="text-xs text-[hsl(var(--foreground))]/70">
+                  <div className="text-xs text-[var(--foreground)]/70">
                     {t("premiumTagline")}
                   </div>
                 </div>
               </div>
-              <p className="mt-4 text-sm text-[hsl(var(--foreground))]/80">
+              <p className="mt-4 text-sm text-[var(--foreground)]/80">
                 {t("platformMissionShort")}
               </p>
               <div className="mt-4 flex items-center gap-2">
@@ -108,7 +108,7 @@ export default function Footer() {
 
             {/* Navigation */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
+              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("explore")}
               </div>
               <ul className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-2">
@@ -120,7 +120,7 @@ export default function Footer() {
                         className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
                       >
                         {n.Icon ? (
-                          <n.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                          <n.Icon className="h-4 w-4 text-[var(--foreground)]/70" />
                         ) : null}
                         <span>{t(n.key as any)}</span>
                       </Link>
@@ -136,9 +136,9 @@ export default function Footer() {
                       aria-label={label}
                       target="_blank"
                       rel="noreferrer"
-                      className="group rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-2 transition-all hover:-translate-y-0.5 hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--primary))]/10 hover:shadow-md"
+                      className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5 hover:border-[var(--primary)]/40 hover:bg-[var(--primary)]/10 hover:shadow-md"
                     >
-                      <Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70 transition-colors group-hover:text-[hsl(var(--primary))]" />
+                      <Icon className="h-4 w-4 text-[var(--foreground)]/70 transition-colors group-hover:text-[var(--primary)]" />
                     </Link>
                   </Tooltip>
                 ))}
@@ -147,7 +147,7 @@ export default function Footer() {
 
             {/* Resources */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
+              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 Resources
               </div>
               <ul className="mt-3 space-y-1 text-sm">
@@ -158,7 +158,7 @@ export default function Footer() {
                         href={r.href}
                         className="inline-flex items-center gap-2 rounded-xl px-2 py-1.5 transition-all hover:translate-x-0.5 link"
                       >
-                        <r.Icon className="h-4 w-4 text-[hsl(var(--foreground))]/70" />
+                        <r.Icon className="h-4 w-4 text-[var(--foreground)]/70" />
                         <span>{t(r.key as any)}</span>
                       </Link>
                     </Tooltip>
@@ -169,10 +169,10 @@ export default function Footer() {
 
             {/* Newsletter */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
+              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("newsletter")}
               </div>
-              <p className="mt-3 text-sm text-[hsl(var(--foreground))]/80">
+              <p className="mt-3 text-sm text-[var(--foreground)]/80">
                 {t("subscribeBlurb")}
               </p>
               <form
@@ -206,23 +206,23 @@ export default function Footer() {
 
             {/* QR Code */}
             <div className="flex flex-col items-start">
-              <div className="text-sm font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/80">
+              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("scanVisit")}
               </div>
-              <div className="mt-3 rounded-2xl border border-[hsl(var(--border))] bg-white p-3 shadow-sm dark:bg-white/90">
+              <div className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm dark:bg-white/90">
                 <QRCode
                   value="https://noorullah-azizi.my.canva.site"
                   className="h-auto w-full"
                 />
               </div>
-              <p className="mt-2 text-xs text-[hsl(var(--foreground))]/70">
+              <p className="mt-2 text-xs text-[var(--foreground)]/70">
                 {t("scanToOpen")}
               </p>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-[hsl(var(--border))] px-6 py-4 text-xs text-[hsl(var(--foreground))]/70 sm:flex-row lg:px-10">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[var(--border)] px-6 py-4 text-xs text-[var(--foreground)]/70 sm:flex-row lg:px-10">
             <div>
               © {new Date().getFullYear()} {t("marketplace")}.{" "}
               {t("allRightsReserved")}

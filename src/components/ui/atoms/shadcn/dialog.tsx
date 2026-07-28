@@ -87,7 +87,7 @@ function DialogContent({
         {...props}
       >
         {/* Top accent strip */}
-        <div className="pointer-events-none absolute inset-x-0 top-0 admin-hero-accent rounded-t-2xl brand-gradient" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 app-hero-accent rounded-t-2xl brand-gradient" />
 
         {children}
 
@@ -96,14 +96,14 @@ function DialogContent({
             data-slot="dialog-close"
             className={cn(
               "absolute top-4 right-4 z-10",
-              "flex admin-icon-md items-center justify-center",
+              "flex app-icon-md items-center justify-center",
               "rounded-lg border border-border/50 bg-muted/40",
               "text-muted-foreground opacity-80",
               "transition-all duration-150",
               "hover:border-border hover:bg-muted hover:opacity-100 hover:text-foreground",
               "focus:outline-none focus:ring-2 focus:ring-ring/50",
               "disabled:pointer-events-none",
-              "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm"
+              "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm"
             )}
           >
             <XIcon />
@@ -146,7 +146,7 @@ function DialogTitle({
   return (
     <DialogPrimitive.Title
       data-slot="dialog-title"
-      className={cn("admin-text-heading-sm leading-tight text-foreground", className)}
+      className={cn("app-text-heading-sm leading-tight text-foreground", className)}
       {...props}
     />
   )
@@ -160,7 +160,7 @@ function DialogDescription({
   return (
     <DialogPrimitive.Description
       data-slot="dialog-description"
-      className={cn("admin-text-body text-muted-foreground", className)}
+      className={cn("app-text-body text-muted-foreground", className)}
       {...props}
     />
   )

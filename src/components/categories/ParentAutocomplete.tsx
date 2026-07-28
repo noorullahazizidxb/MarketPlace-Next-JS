@@ -32,7 +32,7 @@ export const ParentAutocomplete: React.FC<ParentAutocompleteProps> = ({
     <div className="space-y-2">
       <div className="flex items-center gap-2">
         <div className="flex-1">
-          <Command className="rounded-xl border bg-[hsl(var(--card))]/60">
+          <Command className="rounded-xl border bg-[var(--card)]/60">
             <CommandInput
               value={query}
               onValueChange={setQuery}
@@ -55,12 +55,12 @@ export const ParentAutocomplete: React.FC<ParentAutocompleteProps> = ({
                       disabled && "opacity-50"
                     )}
                   >
-                    <span className="inline-flex items-center justify-center size-5 rounded-md border text-[10px] font-medium bg-[hsl(var(--muted))/0.4]">
+                    <span className="inline-flex items-center justify-center size-5 rounded-md border text-[10px] font-medium bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                       {cat.depth + 1}
                     </span>
                     <span className="flex-1 truncate">{cat.path}</span>
                     {value === cat.id && (
-                      <Check className="size-4 text-[hsl(var(--accent))]" />
+                      <Check className="size-4 text-[var(--accent)]" />
                     )}
                   </CommandItem>
                 );
@@ -71,7 +71,7 @@ export const ParentAutocomplete: React.FC<ParentAutocompleteProps> = ({
         {value != null && (
           <button
             onClick={() => onChange(null)}
-            className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-[hsl(var(--muted))/0.4]"
+            className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-[color-mix(in oklab, var(--muted) 40%, transparent)]"
             aria-label="Clear parent"
           >
             <X className="size-4" />

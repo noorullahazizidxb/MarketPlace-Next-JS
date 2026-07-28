@@ -149,7 +149,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
               className={cn(
                 "flex shrink-0 items-center justify-center text-muted-foreground/60 transition-colors duration-200",
                 "group-focus-within:text-foreground",
-                "[&_svg]:admin-icon-sm",
+                "[&_svg]:app-icon-sm",
                 hasError && "text-destructive",
               )}
               aria-hidden="true"
@@ -204,10 +204,10 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
               htmlFor={inputId}
               className={cn(
                 "pointer-events-none absolute leading-none transition-all duration-200",
-                "start-0 top-1/2 -translate-y-1/2 admin-text-body text-muted-foreground",
-                "peer-focus:top-[var(--text-input-label-float-y)] peer-focus:translate-y-0 peer-focus:admin-text-label peer-focus:text-foreground/70",
-                "peer-[:not(:placeholder-shown)]:top-[var(--text-input-label-float-y)] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:admin-text-label peer-[:not(:placeholder-shown)]:text-foreground/70",
-                isActive && "top-[var(--text-input-label-float-y)] translate-y-0 admin-text-label text-foreground/70",
+                "start-0 top-1/2 -translate-y-1/2 app-text-body text-muted-foreground",
+                "peer-focus:top-[var(--text-input-label-float-y)] peer-focus:translate-y-0 peer-focus:app-text-label peer-focus:text-foreground/70",
+                "peer-[:not(:placeholder-shown)]:top-[var(--text-input-label-float-y)] peer-[:not(:placeholder-shown)]:translate-y-0 peer-[:not(:placeholder-shown)]:app-text-label peer-[:not(:placeholder-shown)]:text-foreground/70",
+                isActive && "top-[var(--text-input-label-float-y)] translate-y-0 app-text-label text-foreground/70",
                 hasError && "text-destructive peer-focus:text-destructive",
               )}
             >
@@ -237,7 +237,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
         {errorMessage && (
           <p
             id={`${inputId}-error`}
-            className="mt-1 ps-[var(--text-input-padding-inline)] admin-text-label text-destructive"
+            className="mt-1 ps-[var(--text-input-padding-inline)] app-text-label text-destructive"
             role="alert"
           >
             {errorMessage}
@@ -246,7 +246,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
         {!hasError && helperText && (
           <p
             id={`${inputId}-helper`}
-            className="mt-1 ps-[var(--text-input-padding-inline)] admin-text-label text-muted-foreground"
+            className="mt-1 ps-[var(--text-input-padding-inline)] app-text-label text-muted-foreground"
           >
             {helperText}
           </p>

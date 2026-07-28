@@ -11,7 +11,7 @@ export const Card = React.forwardRef<
     className={cn(
       // base glass surface
       "relative overflow-hidden rounded-[1.5rem]",
-      "bg-[hsl(var(--card))]/80 backdrop-blur-xl",
+      "bg-[var(--card)]/80 backdrop-blur-xl",
       "border border-white/[0.08]",
       "shadow-[0_4px_24px_-8px_rgba(0,0,0,0.18),inset_0_1px_0_rgba(255,255,255,0.07)]",
       // hover lift
@@ -61,7 +61,7 @@ export const CardDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <p
     ref={ref}
-    className={cn("text-sm text-[hsl(var(--muted-foreground))]", className)}
+    className={cn("text-sm text-[var(--muted-foreground)]", className)}
     {...props}
   />
 ));
@@ -84,7 +84,7 @@ export const CardFooter = React.forwardRef<
   <div
     ref={ref}
     className={cn(
-      "flex items-center px-6 py-4 border-t border-[hsl(var(--border))]/40",
+      "flex items-center px-6 py-4 border-t border-[var(--border)]/40",
       className
     )}
     {...props}

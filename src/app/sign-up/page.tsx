@@ -17,6 +17,7 @@ import { useLanguage } from "@/components/providers/language-provider";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Tooltip } from "@/components/ui/tooltip";
+import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
 
 const gradientBgClass = "gradient-bg";
 
@@ -155,28 +156,15 @@ export default function SignUpPage() {
   return (
     <div
       dir={isRtl ? "rtl" : "ltr"}
+      data-app-page="sign-up"
       className={cn(
         gradientBgClass,
-        "flex items-center justify-center p-4 sm:p-6 lg:p-10"
+        "relative flex items-center justify-center p-4 sm:p-6 lg:p-10",
       )}
     >
-      <div className="absolute inset-0 -z-10">
-        <motion.div
-          className="absolute inset-0 bg-[linear-gradient(135deg,_hsl(var(--primary))/0.12,_transparent_40%,_hsl(var(--secondary))/0.16)]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        />
-        <motion.div
-          className="absolute top-24 -left-16 h-56 w-56 rounded-full bg-[hsl(var(--primary))/0.2] blur-3xl"
-          animate={{ y: [0, 12, -6, 0] }}
-          transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute bottom-24 -right-12 h-64 w-64 rounded-full bg-[hsl(var(--secondary))/0.22] blur-3xl"
-          animate={{ y: [0, -10, 8, 0], x: [0, 6, -4, 0] }}
-          transition={{ duration: 14, repeat: Infinity, ease: "easeInOut" }}
-        />
+      <AmbientCanvas variant="orbs" intensity={0.3} className="absolute inset-0" />
+      <div className="absolute inset-0 -z-10 opacity-40">
+        {/* Kept as soft wash; primary motion is AmbientCanvas */}
       </div>
 
       <motion.section
@@ -187,16 +175,16 @@ export default function SignUpPage() {
       >
         <motion.div
           className={cn(
-            "relative overflow-hidden rounded-3xl border border-[hsl(var(--card-border,var(--border)))/0.45] bg-[hsl(var(--card-bg,var(--card)))/0.9] p-8 shadow-[0_32px_70px_-40px_hsl(var(--primary)/0.55)] backdrop-blur-2xl",
-            "text-[hsl(var(--card-fg,var(--foreground)))]"
+            "relative overflow-hidden rounded-3xl border border-[var(--card-border,var(--border))/0.45] bg-[var(--card-bg,var(--card))/0.9] p-8 shadow-[0_32px_70px_-40px_color-mix(in oklab, var(--primary) 55%, transparent)] backdrop-blur-2xl",
+            "text-[var(--card-fg,var(--foreground))]"
           )}
           animate={errors ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 16 }}
         >
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.5] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.4] to-transparent" />
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 50%, transparent)] to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 40%, transparent)] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
-            <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] ring-1 ring-[hsl(var(--primary))]/20 dark:bg-white/95">
+            <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-white/95">
               <Image
                 src="/brand/devminds-logo.png"
                 alt="DevMinds"
@@ -208,7 +196,7 @@ export default function SignUpPage() {
               />
             </div>
             <motion.h1
-              className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]"
+              className="text-2xl font-semibold tracking-tight text-[var(--foreground)]"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
@@ -216,7 +204,7 @@ export default function SignUpPage() {
               {t("createAccount")}
             </motion.h1>
             <motion.p
-              className="text-sm text-[hsl(var(--foreground))/0.7]"
+              className="text-sm text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18, duration: 0.4 }}
@@ -231,11 +219,11 @@ export default function SignUpPage() {
                 googleUrl={config.googleAuthUrl}
                 facebookUrl={config.facebookAuthUrl}
               />
-              <div className="relative text-center text-xs text-[hsl(var(--foreground))/0.6]">
-                <span className="relative z-10 bg-[hsl(var(--card-bg,var(--card)))/0.95] px-3">
+              <div className="relative text-center text-xs text-[color-mix(in oklab, var(--foreground) 60%, transparent)]">
+                <span className="relative z-10 bg-[var(--card-bg,var(--card))/0.95] px-3">
                   {t("orContinueWithEmail")}
                 </span>
-                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
+                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[var(--border)]" />
               </div>
             </div>
           )}
@@ -382,7 +370,7 @@ export default function SignUpPage() {
             <AnimatePresence>
               {(globalError || errors.root?.message) && (
                 <motion.p
-                  className="rounded-2xl border border-[hsl(var(--accent))/0.35] bg-[hsl(var(--accent))/0.12] px-3.5 py-2 text-sm text-[hsl(var(--accent))]"
+                  className="rounded-2xl border border-[color-mix(in oklab, var(--accent) 35%, transparent)] bg-[color-mix(in oklab, var(--accent) 12%, transparent)] px-3.5 py-2 text-sm text-[var(--accent)]"
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -396,7 +384,7 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 disabled={submitting || !isValid}
-                className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_hsl(var(--btn-primary-bg,var(--primary)))_0%,_hsl(var(--accent))_55%,_hsl(var(--secondary))_100%)] text-base font-semibold text-[hsl(var(--btn-primary-fg,var(--primary-foreground)))] shadow-[0_18px_48px_-20px_hsl(var(--primary)/0.6)] transition-all hover:shadow-[0_22px_60px_-18px_hsl(var(--secondary)/0.55)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))] focus-visible:ring-offset-2 focus-visible:ring-offset-[hsl(var(--card-bg,var(--card)))] disabled:cursor-not-allowed disabled:opacity-70"
+                className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_var(--btn-primary-bg,var(--primary))_0%,_var(--accent)_55%,_var(--secondary)_100%)] text-base font-semibold text-[var(--btn-primary-fg,var(--primary-foreground))] shadow-[0_18px_48px_-20px_color-mix(in oklab, var(--primary) 60%, transparent)] transition-all hover:shadow-[0_22px_60px_-18px_color-mix(in oklab, var(--secondary) 55%, transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card-bg,var(--card))] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <motion.span
                   animate={submitting ? { opacity: 0.6 } : { opacity: 1 }}
@@ -405,7 +393,7 @@ export default function SignUpPage() {
                   {submitting ? t("creatingAccount") : t("createAccountCta")}
                 </motion.span>
                 <motion.span
-                  className="absolute inset-0 rounded-2xl bg-[hsl(var(--btn-primary-fg,var(--primary-foreground)))/0.16]"
+                  className="absolute inset-0 rounded-2xl bg-[var(--btn-primary-fg,var(--primary-foreground))/0.16]"
                   initial={{ opacity: 0 }}
                   whileHover={{ opacity: 0.25 }}
                   transition={{ duration: 0.25 }}
@@ -416,7 +404,7 @@ export default function SignUpPage() {
           </motion.form>
 
           <motion.div
-            className="mt-6 text-center text-sm text-[hsl(var(--foreground))/0.7]"
+            className="mt-6 text-center text-sm text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4 }}
@@ -425,7 +413,7 @@ export default function SignUpPage() {
             <Tooltip content={t("tooltipGoToSignIn")} side="top">
               <Link
                 href="/sign-in"
-                className="font-semibold text-[hsl(var(--accent))] transition-colors hover:text-[hsl(var(--accent))/0.8]"
+                className="font-semibold text-[var(--accent)] transition-colors hover:text-[color-mix(in oklab, var(--accent) 80%, transparent)]"
               >
                 {t("logIn")}
               </Link>
@@ -443,15 +431,15 @@ function PasswordStrength({ score }: { score: number }) {
   const pct = (score / 5) * 100;
   const colorClass =
     score <= 1
-      ? "bg-[hsl(var(--accent))]"
+      ? "bg-[var(--accent)]"
       : score === 2
-        ? "bg-[hsl(var(--primary))]"
+        ? "bg-[var(--primary)]"
         : score === 3
-          ? "bg-[hsl(var(--secondary))]"
-          : "bg-[hsl(var(--btn-primary-bg,var(--primary)))]";
+          ? "bg-[var(--secondary)]"
+          : "bg-[var(--btn-primary-bg,var(--primary))]";
   return (
     <div className="mt-2 space-y-1">
-      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[hsl(var(--border))/0.4]">
+      <div className="h-1.5 w-full overflow-hidden rounded-full bg-[color-mix(in oklab, var(--border) 40%, transparent)]">
         <motion.div
           className={`h-full rounded-full ${colorClass}`}
           initial={false}
@@ -460,7 +448,7 @@ function PasswordStrength({ score }: { score: number }) {
         />
       </div>
       {score > 0 && (
-        <div className="text-[10px] uppercase tracking-wide text-[hsl(var(--foreground))/0.55]">
+        <div className="text-[10px] uppercase tracking-wide text-[color-mix(in oklab, var(--foreground) 55%, transparent)]">
           {labels[score - 1]}
         </div>
       )}

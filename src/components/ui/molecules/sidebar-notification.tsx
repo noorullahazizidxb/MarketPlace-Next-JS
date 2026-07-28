@@ -20,12 +20,12 @@ export function SidebarNotification() {
           className="absolute top-2 right-2 h-6 w-6 p-0 hover:bg-neutral-200 dark:hover:bg-neutral-700"
           onClick={() => setIsVisible(false)}
         >
-          <X className="admin-icon-xs" />
+          <X className="app-icon-xs" />
           <span className="sr-only">Close notification</span>
         </Button>
 
         <div className="pr-6">
-          <h3 className="flex items-center gap-3 admin-text-heading-sm text-neutral-900 dark:text-neutral-100 mb-2 mt-1">
+          <h3 className="flex items-center gap-3 app-text-heading-sm text-neutral-900 dark:text-neutral-100 mb-2 mt-1">
             <Logo size={42} className="-mt-1" />
             <div>
               Welcome to{" "}
@@ -39,7 +39,7 @@ export function SidebarNotification() {
               </a>
             </div>
           </h3>
-          <p className="admin-text-body text-muted-foreground dark:text-neutral-400 leading-relaxed">
+          <p className="app-text-body text-muted-foreground dark:text-neutral-400 leading-relaxed">
             Explore our premium Shadcn UI{" "}
             <a
               href="https://OTA Tickets.com/blocks"

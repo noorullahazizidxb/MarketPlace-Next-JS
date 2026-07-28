@@ -36,10 +36,10 @@ function StepDots({ current, total }: { current: number; total: number }) {
             width: i === current ? "1.5rem" : "0.5rem",
             backgroundColor:
               i < current
-                ? "hsl(var(--primary))"
+                ? "var(--primary)"
                 : i === current
-                  ? "hsl(var(--primary))"
-                  : "hsl(var(--border))",
+                  ? "var(--primary)"
+                  : "var(--border)",
             opacity: i === current ? 1 : i < current ? 0.7 : 0.35,
           }}
           transition={{ duration: 0.25 }}
@@ -138,7 +138,7 @@ export default function BlogCreateWizard({
   };
 
   const inputCls =
-    "w-full h-11 rounded-2xl border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/60 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/30 focus:border-[hsl(var(--primary))]/50 transition-all placeholder:text-[hsl(var(--foreground))]/30";
+    "w-full h-11 rounded-2xl border border-[var(--border)]/60 bg-[var(--card)]/60 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)]/50 transition-all placeholder:text-[var(--foreground)]/30";
 
   return (
     <div className="flex flex-col h-full min-h-0 max-h-[calc(100vh-96px)] relative">
@@ -146,17 +146,17 @@ export default function BlogCreateWizard({
       <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent z-10" />
 
       {/* Header */}
-      <div className="px-6 pt-5 pb-4 border-b border-[hsl(var(--border))]/30">
+      <div className="px-6 pt-5 pb-4 border-b border-[var(--border)]/30">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2.5">
-            <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
-              <Newspaper className="size-4.5 text-[hsl(var(--primary))]" />
+            <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center">
+              <Newspaper className="size-4.5 text-[var(--primary)]" />
             </div>
             <div>
               <h2 className="text-base font-bold leading-tight">
                 {blogId ? (t("edit") as string) : (t("createBlog") as string) || (blogId ? "Edit Blog" : "New Blog Post")}
               </h2>
-              <p className="text-[11px] text-[hsl(var(--foreground))]/40">
+              <p className="text-[11px] text-[var(--foreground)]/40">
                 {step === 0 ? "Write your post details" : "Add images to your post"}
               </p>
             </div>
@@ -164,7 +164,7 @@ export default function BlogCreateWizard({
           <button
             type="button"
             onClick={onClose}
-            className="size-8 rounded-xl border border-[hsl(var(--border))]/40 flex items-center justify-center text-[hsl(var(--foreground))]/50 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-all"
+            className="size-8 rounded-xl border border-[var(--border)]/40 flex items-center justify-center text-[var(--foreground)]/50 hover:text-[var(--foreground)] hover:bg-[var(--muted)]/20 transition-all"
           >
             <X className="size-4" />
           </button>
@@ -173,14 +173,14 @@ export default function BlogCreateWizard({
         {/* Step line */}
         <div className="flex items-center gap-3">
           <StepDots current={step} total={STEPS.length} />
-          <div className="flex-1 h-1 rounded-full bg-[hsl(var(--muted))]/20 overflow-hidden">
+          <div className="flex-1 h-1 rounded-full bg-[var(--muted)]/20 overflow-hidden">
             <motion.div
-              className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary))]/70"
+              className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/70"
               animate={{ width: `${((step + 1) / STEPS.length) * 100}%` }}
               transition={{ type: "spring", stiffness: 140, damping: 22 }}
             />
           </div>
-          <span className="text-[10px] font-medium text-[hsl(var(--foreground))]/40 tabular-nums">
+          <span className="text-[10px] font-medium text-[var(--foreground)]/40 tabular-nums">
             {step + 1} / {STEPS.length}
           </span>
         </div>
@@ -203,7 +203,7 @@ export default function BlogCreateWizard({
                 className="space-y-4"
               >
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
                     {t("title") || "Title"}
                   </label>
                   <input
@@ -217,7 +217,7 @@ export default function BlogCreateWizard({
                   )}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wide text-[hsl(var(--foreground))]/45">
+                  <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
                     {t("description") || "Content"}
                   </label>
                   <textarea
@@ -244,15 +244,15 @@ export default function BlogCreateWizard({
                 <div
                   onDrop={onDrop}
                   onDragOver={onDragOver}
-                  className="group rounded-2xl border-2 border-dashed border-[hsl(var(--border))]/50 hover:border-[hsl(var(--primary))]/50 bg-[hsl(var(--muted))]/10 hover:bg-[hsl(var(--primary))]/5 p-8 text-center cursor-pointer transition-all"
+                  className="group rounded-2xl border-2 border-dashed border-[var(--border)]/50 hover:border-[var(--primary)]/50 bg-[var(--muted)]/10 hover:bg-[var(--primary)]/5 p-8 text-center cursor-pointer transition-all"
                   onClick={() => document.getElementById("blog-images-input")?.click()}
                 >
-                  <UploadCloud className="size-8 mx-auto mb-2 text-[hsl(var(--foreground))]/25 group-hover:text-[hsl(var(--primary))]/60 transition-colors" />
-                  <p className="text-sm text-[hsl(var(--foreground))]/50 group-hover:text-[hsl(var(--foreground))]/70">
+                  <UploadCloud className="size-8 mx-auto mb-2 text-[var(--foreground)]/25 group-hover:text-[var(--primary)]/60 transition-colors" />
+                  <p className="text-sm text-[var(--foreground)]/50 group-hover:text-[var(--foreground)]/70">
                     Drag & drop images, or{" "}
-                    <span className="text-[hsl(var(--primary))] font-medium">browse files</span>
+                    <span className="text-[var(--primary)] font-medium">browse files</span>
                   </p>
-                  <p className="text-xs text-[hsl(var(--foreground))]/30 mt-1">PNG, JPG, WebP supported</p>
+                  <p className="text-xs text-[var(--foreground)]/30 mt-1">PNG, JPG, WebP supported</p>
                   <input
                     id="blog-images-input"
                     type="file"
@@ -285,7 +285,7 @@ export default function BlogCreateWizard({
                     })}
                   </div>
                 )}
-                <p className="text-xs text-[hsl(var(--foreground))]/35 text-center">
+                <p className="text-xs text-[var(--foreground)]/35 text-center">
                   {images.length > 0 ? `${images.length} image${images.length > 1 ? "s" : ""} selected` : "No images selected yet — this step is optional"}
                 </p>
               </motion.div>
@@ -294,11 +294,11 @@ export default function BlogCreateWizard({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-[hsl(var(--border))]/30 flex items-center justify-between">
+        <div className="px-6 py-4 border-t border-[var(--border)]/30 flex items-center justify-between">
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-3 rounded-xl text-sm text-[hsl(var(--foreground))]/50 hover:text-[hsl(var(--foreground))] hover:bg-[hsl(var(--muted))]/20 transition-colors"
+            className="h-9 px-3 rounded-xl text-sm text-[var(--foreground)]/50 hover:text-[var(--foreground)] hover:bg-[var(--muted)]/20 transition-colors"
           >
             {t("cancel") || "Cancel"}
           </button>
@@ -307,7 +307,7 @@ export default function BlogCreateWizard({
               <button
                 type="button"
                 onClick={prev}
-                className="h-10 px-4 rounded-2xl border border-[hsl(var(--border))]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[hsl(var(--muted))]/20 transition-colors"
+                className="h-10 px-4 rounded-2xl border border-[var(--border)]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[var(--muted)]/20 transition-colors"
               >
                 <ArrowLeft className="size-3.5" />
                 {t("back") || "Back"}
@@ -318,7 +318,7 @@ export default function BlogCreateWizard({
                 type="button"
                 disabled={!canNext}
                 onClick={next}
-                className="h-10 px-5 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+                className="h-10 px-5 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
               >
                 <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                 {t("next") || "Next"}
@@ -328,7 +328,7 @@ export default function BlogCreateWizard({
               <button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-2xl bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_hsl(var(--primary)/0.5)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+                className="h-10 px-6 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
               >
                 <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
                 {isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}

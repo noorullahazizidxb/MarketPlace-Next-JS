@@ -185,7 +185,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <motion.div
             ref={sheetRef}
             className={
-              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[hsl(var(--background))]/90 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
+              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[var(--background)]/90 backdrop-blur-xl border border-[var(--border)] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
               className +
               " sheet-dynamic-height"
             }
@@ -225,7 +225,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
               {closable && (
                 <button
                   onClick={close}
-                  className="size-9 shrink-0 rounded-xl bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08] grid place-items-center"
+                  className="size-9 shrink-0 rounded-xl bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)] grid place-items-center"
                   aria-label="Close"
                 >
                   <X className="size-4" />

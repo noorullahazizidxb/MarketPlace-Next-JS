@@ -68,13 +68,13 @@ export function NavUser({
               <div className="flex min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)] items-center justify-center rounded-lg">
                 < Logo size={28} />
               </div>
-              <div className="grid flex-1 text-start admin-text-body leading-tight">
-                <span className="truncate admin-text-label">{user.name}</span>
-                <span className="text-muted-foreground truncate admin-text-caption">
+              <div className="grid flex-1 text-start app-text-body leading-tight">
+                <span className="truncate app-text-label">{user.name}</span>
+                <span className="text-muted-foreground truncate app-text-caption">
                   {user.email}
                 </span>
               </div>
-              <EllipsisVertical className="ms-auto admin-icon-sm" />
+              <EllipsisVertical className="ms-auto app-icon-sm" />
             </SidebarMenuButton>
           </DropdownMenuTrigger>
           <DropdownMenuContent
@@ -84,13 +84,13 @@ export function NavUser({
             sideOffset={4}
           >
             <DropdownMenuLabel className="p-0 font-normal">
-              <div className="flex items-center gap-2 px-1 py-1.5 text-start admin-text-body">
+              <div className="flex items-center gap-2 px-1 py-1.5 text-start app-text-body">
                 <div className="min-h-[var(--ctrl-h-sm)] w-8 rounded-lg">
                   < Logo size={28} />
                 </div>
-                <div className="grid flex-1 text-start admin-text-body leading-tight">
-                  <span className="truncate admin-text-label">{user.name}</span>
-                  <span className="text-muted-foreground truncate admin-text-caption">
+                <div className="grid flex-1 text-start app-text-body leading-tight">
+                  <span className="truncate app-text-label">{user.name}</span>
+                  <span className="text-muted-foreground truncate app-text-caption">
                     {user.email}
                   </span>
                 </div>

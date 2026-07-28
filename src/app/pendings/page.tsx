@@ -69,9 +69,9 @@ function PendingBlogCard({
   const [coverLoaded, setCoverLoaded] = useState(false);
 
   return (
-    <div className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] overflow-hidden flex flex-col">
+    <div className="rounded-2xl border border-[var(--border)] bg-[var(--card)] overflow-hidden flex flex-col">
       {cover && (
-        <div className="relative h-44 w-full bg-[hsl(var(--muted))]">
+        <div className="relative h-44 w-full bg-[var(--muted)]">
           {!coverLoaded && <ImageSpinner />}
           <Image
             src={cover}
@@ -100,7 +100,7 @@ function PendingBlogCard({
               className="rounded-full object-cover size-6"
             />
           ) : (
-            <span className="size-6 rounded-full bg-[hsl(var(--muted))] flex items-center justify-center text-[10px] font-bold uppercase">
+            <span className="size-6 rounded-full bg-[var(--muted)] flex items-center justify-center text-[10px] font-bold uppercase">
               {authorName[0]}
             </span>
           )}
@@ -203,8 +203,8 @@ export default function PendingsPageClient() {
   ).map((c: any) => ({ value: c, label: c }));
 
   return (
-    <div className="min-h-screen p-6">
-      <div className="glass rounded-2xl p-6 border border-[hsl(var(--border))] w-full max-w-8xl mx-auto">
+    <div className="min-h-screen p-6 app-shell-page" data-app-page="pendings">
+      <div className="glass rounded-2xl p-6 border border-[var(--border)] w-full max-w-8xl mx-auto">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <h1 className="text-2xl font-semibold">{t("pendingsHeading")}</h1>
           <div className="flex items-center gap-2 flex-wrap">

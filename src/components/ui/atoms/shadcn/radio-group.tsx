@@ -25,7 +25,7 @@ function RadioGroupItem({
     <RadioGroupPrimitive.Item
       data-slot="radio-group-item"
       className={cn(
-        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square admin-icon-sm shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        "border-input text-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive dark:bg-input/30 aspect-square app-icon-sm shrink-0 rounded-full border shadow-xs transition-[color,box-shadow] outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -34,7 +34,7 @@ function RadioGroupItem({
         data-slot="radio-group-indicator"
         className="relative flex items-center justify-center"
       >
-        <CircleIcon className="fill-primary absolute top-1/2 left-1/2 admin-icon-xs -translate-x-1/2 -translate-y-1/2" />
+        <CircleIcon className="fill-primary absolute top-1/2 left-1/2 app-icon-xs -translate-x-1/2 -translate-y-1/2" />
       </RadioGroupPrimitive.Indicator>
     </RadioGroupPrimitive.Item>
   )
@@ -69,7 +69,7 @@ function RadioGroupField({
 
   return (
     <div className="space-y-2">
-      <div className="admin-text-body text-foreground">
+      <div className="app-text-body text-foreground">
         <span className="inline-flex items-center gap-1">
           <span>{label}</span>
           {requiredMark && (
@@ -97,17 +97,17 @@ function RadioGroupField({
                 value={option.value}
                 disabled={option.disabled}
               />
-              <span className="admin-text-body text-foreground">{option.label}</span>
+              <span className="app-text-body text-foreground">{option.label}</span>
             </label>
           )
         })}
       </RadioGroup>
       {errorMessage ? (
-        <p className="text-destructive admin-text-label" role="alert">
+        <p className="text-destructive app-text-label" role="alert">
           {errorMessage}
         </p>
       ) : helperText ? (
-        <p className="text-muted-foreground admin-text-label">
+        <p className="text-muted-foreground app-text-label">
           {helperText}
         </p>
       ) : null}

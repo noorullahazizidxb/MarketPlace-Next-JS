@@ -16,12 +16,12 @@ import { cn } from "../../lib/cn";
  */
 const buttonVariants = cva(
   [
-    "inline-flex items-center justify-center gap-2 whitespace-nowrap admin-text-label",
+    "inline-flex items-center justify-center gap-2 whitespace-nowrap app-text-label",
     "rounded-squircle",
     "transition-all duration-200",
     "active:scale-[0.97]",
     "disabled:pointer-events-none disabled:opacity-50",
-    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:admin-icon-xs shrink-0 [&_svg]:shrink-0",
+    "[&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:app-icon-xs shrink-0 [&_svg]:shrink-0",
     "outline-none",
     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -48,11 +48,11 @@ const buttonVariants = cva(
       },
       size: {
         default:
-          "min-h-[var(--ctrl-h-sm)] h-auto px-[var(--ctrl-px)] py-2 has-[>svg]:px-3 [&_svg:not([class*='size-'])]:admin-icon-sm",
-        sm: "min-h-[var(--ctrl-h-sm)] h-auto gap-1.5 px-3 py-1.5 has-[>svg]:px-2.5 [&_svg:not([class*='size-'])]:admin-icon-xs",
-        lg: "min-h-[var(--ctrl-h)] h-auto px-6 py-2.5 has-[>svg]:px-4 [&_svg:not([class*='size-'])]:admin-icon-sm",
+          "min-h-[var(--ctrl-h-sm)] h-auto px-[var(--ctrl-px)] py-2 has-[>svg]:px-3 [&_svg:not([class*='size-'])]:app-icon-sm",
+        sm: "min-h-[var(--ctrl-h-sm)] h-auto gap-1.5 px-3 py-1.5 has-[>svg]:px-2.5 [&_svg:not([class*='size-'])]:app-icon-xs",
+        lg: "min-h-[var(--ctrl-h)] h-auto px-6 py-2.5 has-[>svg]:px-4 [&_svg:not([class*='size-'])]:app-icon-sm",
         icon: "size-[var(--ctrl-h-sm)] min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)] p-0 [&_svg:not([class*='size-'])]:size-full",
-        xs: "min-h-7 h-auto gap-1 px-2.5 py-1 has-[>svg]:px-2 [&_svg:not([class*='size-'])]:admin-icon-xs",
+        xs: "min-h-7 h-auto gap-1 px-2.5 py-1 has-[>svg]:px-2 [&_svg:not([class*='size-'])]:app-icon-xs",
       },
     },
     defaultVariants: {
@@ -94,10 +94,10 @@ function Button({
             className={cn(
               "animate-spin",
               size === "xs" || size === "sm"
-                ? "admin-icon-xs"
+                ? "app-icon-xs"
                 : size === "icon"
                   ? "size-full"
-                  : "admin-icon-sm",
+                  : "app-icon-sm",
             )}
           />
           {children}

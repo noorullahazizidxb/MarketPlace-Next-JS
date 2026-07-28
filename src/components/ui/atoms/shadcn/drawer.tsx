@@ -86,7 +86,7 @@ function DrawerTitle({ className, style, ...props }: React.ComponentProps<typeof
   return (
     <DrawerPrimitive.Title
       data-slot="drawer-title"
-      className={cn("admin-text-heading-sm text-foreground leading-tight", className)}
+      className={cn("app-text-heading-sm text-foreground leading-tight", className)}
       {...props}
     />
   )
@@ -96,7 +96,7 @@ function DrawerDescription({ className, style, ...props }: React.ComponentProps<
   return (
     <DrawerPrimitive.Description
       data-slot="drawer-description"
-      className={cn("admin-text-body text-muted-foreground", className)}
+      className={cn("app-text-body text-muted-foreground", className)}
       {...props}
     />
   )

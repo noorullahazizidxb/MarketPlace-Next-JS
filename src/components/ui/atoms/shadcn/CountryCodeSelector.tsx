@@ -24,10 +24,10 @@ function CountryFlag({ country }: { country: Country }) {
   if (failed) {
     return (
       <span
-        className="flex admin-icon-md shrink-0 items-center justify-center rounded-sm bg-muted ring-1 ring-border/30"
+        className="flex app-icon-md shrink-0 items-center justify-center rounded-sm bg-muted ring-1 ring-border/30"
         aria-hidden
       >
-        <Globe className="admin-icon-xs text-muted-foreground" />
+        <Globe className="app-icon-xs text-muted-foreground" />
       </span>
     )
   }
@@ -39,7 +39,7 @@ function CountryFlag({ country }: { country: Country }) {
       aria-hidden
       width={20}
       height={15}
-      className="admin-icon-md shrink-0 rounded-sm object-cover shadow-sm ring-1 ring-border/30"
+      className="app-icon-md shrink-0 rounded-sm object-cover shadow-sm ring-1 ring-border/30"
       loading="lazy"
       decoding="async"
       onError={() => setFailed(true)}
@@ -89,11 +89,11 @@ export function CountryCodeSelector({
         <div className="flex items-center gap-2.5">
           <CountryFlag country={selectedCountry} />
           <div className="text-left">
-            <div className="admin-text-body text-foreground">{selectedCountry.dialCode}</div>
-            <div className="admin-typo-eyebrow text-muted-foreground">{selectedCountry.name}</div>
+            <div className="app-text-body text-foreground">{selectedCountry.dialCode}</div>
+            <div className="app-typo-eyebrow text-muted-foreground">{selectedCountry.name}</div>
           </div>
         </div>
-        <ChevronDown className={cn('admin-icon-sm text-muted-foreground transition-transform', isOpen && 'rotate-180')} />
+        <ChevronDown className={cn('app-icon-sm text-muted-foreground transition-transform', isOpen && 'rotate-180')} />
       </button>
 
       {isOpen && (
@@ -101,7 +101,7 @@ export function CountryCodeSelector({
           <div className="border-b border-border/60 p-3">
             <TextInputField
               label="Search country or code"
-              icon={<Search className="admin-icon-sm" />}
+              icon={<Search className="app-icon-sm" />}
               value={searchTerm}
               onChange={handleSearch}
               autoFocus
@@ -130,19 +130,19 @@ export function CountryCodeSelector({
                     <div className="flex items-center gap-3">
                       <CountryFlag country={country} />
                       <div>
-                        <div className="admin-text-body">{country.name}</div>
-                        <div className={cn('admin-text-caption', active ? 'text-primary-foreground/80' : 'text-muted-foreground')}>
+                        <div className="app-text-body">{country.name}</div>
+                        <div className={cn('app-text-caption', active ? 'text-primary-foreground/80' : 'text-muted-foreground')}>
                           {country.dialCode} · {country.name}
                         </div>
                       </div>
                     </div>
-                    {active ? <Check className="admin-icon-sm shrink-0" /> : null}
+                    {active ? <Check className="app-icon-sm shrink-0" /> : null}
                   </button>
                 )
               })}
 
               {filteredCountries.length === 0 && (
-                <div className="px-4 py-6 text-center admin-text-body text-muted-foreground">No countries found</div>
+                <div className="px-4 py-6 text-center app-text-body text-muted-foreground">No countries found</div>
               )}
             </div>
           </ScrollArea>

@@ -231,7 +231,7 @@ export function CountryFlag({
         title={country?.name ?? upper}
       />
       {showCode && (
-        <span className="admin-text-caption tabular-nums text-foreground/80">
+        <span className="app-text-caption tabular-nums text-foreground/80">
           {upper}
         </span>
       )}
@@ -335,7 +335,7 @@ export function CountrySelectField({
   return (
     <div ref={rootRef} className={cn("relative flex flex-col gap-1", className)} data-country-select="">
       {label && (
-        <label className="admin-text-caption text-muted-foreground">{label}</label>
+        <label className="app-text-caption text-muted-foreground">{label}</label>
       )}
 
       {/* Trigger button */}
@@ -343,7 +343,7 @@ export function CountrySelectField({
         type="button"
         onClick={open ? handleClose : handleOpen}
         className={cn(
-          "flex min-h-[var(--ctrl-h-sm)] w-full items-center gap-2 rounded-md border border-input bg-background px-3 py-1 admin-text-body text-left",
+          "flex min-h-[var(--ctrl-h-sm)] w-full items-center gap-2 rounded-md border border-input bg-background px-3 py-1 app-text-body text-left",
           "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
           "transition-colors hover:border-ring/50",
           error && "border-destructive/60",
@@ -360,13 +360,13 @@ export function CountrySelectField({
               style={{ width: "1.1em", height: "1.1em" }}
               aria-hidden
             />
-            <span className="flex-1 truncate admin-text-body">{selected.name}</span>
-            <span className="admin-text-caption text-muted-foreground tabular-nums">
+            <span className="flex-1 truncate app-text-body">{selected.name}</span>
+            <span className="app-text-caption text-muted-foreground tabular-nums">
               {selected.iso2}
             </span>
           </>
         ) : (
-          <span className="flex-1 text-muted-foreground/60 admin-text-body">{placeholder}</span>
+          <span className="flex-1 text-muted-foreground/60 app-text-body">{placeholder}</span>
         )}
 
         <span className="flex items-center gap-0.5 ml-auto shrink-0">
@@ -382,12 +382,12 @@ export function CountrySelectField({
               }}
               aria-label="Clear country selection"
             >
-              <X className="admin-icon-xs" />
+              <X className="app-icon-xs" />
             </span>
           )}
           <ChevronDown
             className={cn(
-              "admin-icon-xs text-muted-foreground transition-transform duration-200",
+              "app-icon-xs text-muted-foreground transition-transform duration-200",
               open && "rotate-180",
             )}
           />
@@ -396,7 +396,7 @@ export function CountrySelectField({
 
       {/* Error */}
       {typeof error === "string" && error && (
-        <p className="admin-ui-admin-text-caption text-destructive">{error}</p>
+        <p className="app-text-caption text-destructive">{error}</p>
       )}
 
       {/* Dropdown */}
@@ -416,24 +416,24 @@ export function CountrySelectField({
             aria-label="Select country"
           >
             <div className="flex items-center gap-2 border-b border-border/50 px-3 py-2">
-              <Search className="admin-icon-xs shrink-0 text-muted-foreground" />
+              <Search className="app-icon-xs shrink-0 text-muted-foreground" />
               <input
                 ref={searchRef}
-                className="flex-1 bg-transparent admin-text-body outline-none placeholder:text-muted-foreground/60"
+                className="flex-1 bg-transparent app-text-body outline-none placeholder:text-muted-foreground/60"
                 placeholder="Search country…"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
               {search && (
                 <button type="button" onClick={() => setSearch("")} className="text-muted-foreground hover:text-foreground">
-                  <X className="admin-icon-xs" />
+                  <X className="app-icon-xs" />
                 </button>
               )}
             </div>
 
             <div className="max-h-52 overflow-y-auto py-1">
               {filtered.length === 0 ? (
-                <div className="px-3 py-4 text-center admin-text-caption text-muted-foreground">
+                <div className="px-3 py-4 text-center app-text-caption text-muted-foreground">
                   No countries match &ldquo;{search}&rdquo;
                 </div>
               ) : (
@@ -444,7 +444,7 @@ export function CountrySelectField({
                     role="option"
                     aria-selected={value === country.iso2}
                     className={cn(
-                      "flex w-full items-center gap-2.5 px-3 py-2 admin-text-body hover:bg-accent transition-colors text-left",
+                      "flex w-full items-center gap-2.5 px-3 py-2 app-text-body hover:bg-accent transition-colors text-left",
                       value === country.iso2 && "bg-accent/60",
                     )}
                     onClick={() => handleSelect(country)}
@@ -457,7 +457,7 @@ export function CountrySelectField({
                       aria-hidden
                     />
                     <span className="flex-1 truncate">{country.name}</span>
-                    <span className="admin-text-caption tabular-nums text-muted-foreground/70 w-7 text-right">
+                    <span className="app-text-caption tabular-nums text-muted-foreground/70 w-7 text-right">
                       {country.iso2}
                     </span>
                   </button>

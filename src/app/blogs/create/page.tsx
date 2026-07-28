@@ -14,10 +14,12 @@ export default function BlogCreatePage() {
   };
   const onClose = () => router.push("/blogs");
   return (
-    <Dialog open onOpenChange={(open: boolean) => !open && onClose()}>
-      <DialogContent className="w-full max-w-3xl p-0 overflow-hidden">
-        <BlogCreateWizard onClose={onClose} blogId={id} initial={initial} />
-      </DialogContent>
-    </Dialog>
+    <div className="app-shell-page" data-app-page="blogs-create">
+      <Dialog open onOpenChange={(open: boolean) => !open && onClose()}>
+        <DialogContent className="w-full max-w-3xl p-0 overflow-hidden">
+          <BlogCreateWizard onClose={onClose} blogId={id} initial={initial} />
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

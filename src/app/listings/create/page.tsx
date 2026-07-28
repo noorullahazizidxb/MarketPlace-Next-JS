@@ -249,7 +249,7 @@ export default function CreateListingPage() {
 
   const renderStep1 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))]/50">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep1Title")}
       </h2>
       <div className="grid grid-cols-2 gap-3">
@@ -259,10 +259,10 @@ export default function CreateListingPage() {
             type="button"
             whileTap={{ scale: 0.97 }}
             className={cn(
-              "h-20 rounded-2xl border-2 bg-[hsl(var(--card))]/60 backdrop-blur-sm hover:bg-[hsl(var(--primary))]/5 transition-all relative overflow-hidden",
+              "h-20 rounded-2xl border-2 bg-[var(--card)]/60 backdrop-blur-sm hover:bg-[var(--primary)]/5 transition-all relative overflow-hidden",
               pickedType === typeKey
-                ? "border-[hsl(var(--primary))]/60 bg-[hsl(var(--primary))]/5 shadow-[0_0_0_4px_hsl(var(--primary)/0.08)]"
-                : "border-[hsl(var(--border))]/40"
+                ? "border-[var(--primary)]/60 bg-[var(--primary)]/5 shadow-[0_0_0_4px_color-mix(in oklab, var(--primary) 8%, transparent)]"
+                : "border-[var(--border)]/40"
             )}
             onClick={() => {
               setPickedType(typeKey);
@@ -271,14 +271,14 @@ export default function CreateListingPage() {
             }}
           >
             {pickedType === typeKey && (
-              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--primary))]/40 to-transparent" />
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
             )}
             <span
               className={cn(
                 "text-sm font-bold",
                 pickedType === typeKey
-                  ? "text-[hsl(var(--primary))]"
-                  : "text-[hsl(var(--foreground))]"
+                  ? "text-[var(--primary)]"
+                  : "text-[var(--foreground)]"
               )}
             >
               {typeKey === "RENT"
@@ -293,7 +293,7 @@ export default function CreateListingPage() {
 
   const renderStep2 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))]/50">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep2Title")}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -303,10 +303,10 @@ export default function CreateListingPage() {
             type="button"
             whileTap={{ scale: 0.97 }}
             className={cn(
-              "h-14 rounded-2xl border-2 text-sm bg-[hsl(var(--card))]/60 backdrop-blur-sm hover:bg-[hsl(var(--primary))]/5 transition-all relative overflow-hidden",
+              "h-14 rounded-2xl border-2 text-sm bg-[var(--card)]/60 backdrop-blur-sm hover:bg-[var(--primary)]/5 transition-all relative overflow-hidden",
               pickedCategory === c.id
-                ? "border-[hsl(var(--primary))]/60 bg-[hsl(var(--primary))]/5 font-semibold text-[hsl(var(--primary))]"
-                : "border-[hsl(var(--border))]/40 font-medium"
+                ? "border-[var(--primary)]/60 bg-[var(--primary)]/5 font-semibold text-[var(--primary)]"
+                : "border-[var(--border)]/40 font-medium"
             )}
             onClick={() => {
               setPickedCategory(c.id);
@@ -315,7 +315,7 @@ export default function CreateListingPage() {
             }}
           >
             {pickedCategory === c.id && (
-              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--primary))]/40 to-transparent" />
+              <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[var(--primary)]/40 to-transparent" />
             )}
             {c.name}
           </motion.button>
@@ -337,13 +337,13 @@ export default function CreateListingPage() {
 
   const renderStep3 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--foreground))]/50">
+      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep3Title")}
       </h2>
       <div
         className={cn(
-          "p-8 rounded-2xl border-2 border-dashed bg-[hsl(var(--card))]/40 backdrop-blur-sm transition-colors",
-          imagesLocalError ? "border-red-500/60" : "border-[hsl(var(--border))]/40 hover:border-[hsl(var(--primary))]/30"
+          "p-8 rounded-2xl border-2 border-dashed bg-[var(--card)]/40 backdrop-blur-sm transition-colors",
+          imagesLocalError ? "border-red-500/60" : "border-[var(--border)]/40 hover:border-[var(--primary)]/30"
         )}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
@@ -369,8 +369,8 @@ export default function CreateListingPage() {
         }}
       >
         <div className="text-center space-y-3">
-          <UploadCloud className="size-8 mx-auto text-[hsl(var(--foreground))]/25" />
-          <p className="text-sm text-[hsl(var(--foreground))]/50">
+          <UploadCloud className="size-8 mx-auto text-[var(--foreground)]/25" />
+          <p className="text-sm text-[var(--foreground)]/50">
             {t("listingsCreateImagesDragDrop")}
           </p>
           <div>
@@ -418,7 +418,7 @@ export default function CreateListingPage() {
               return (
                 <div
                   key={i}
-                  className="relative rounded-xl overflow-hidden border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))] shadow-sm"
+                  className="relative rounded-xl overflow-hidden border border-[var(--border)]/40 bg-[var(--card)] shadow-sm"
                 >
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
@@ -428,7 +428,7 @@ export default function CreateListingPage() {
                   />
                   <button
                     type="button"
-                    className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[hsl(var(--background))]/80 backdrop-blur border border-[hsl(var(--border))]/50 flex items-center justify-center text-[hsl(var(--foreground))]/50 hover:text-red-400 transition-colors"
+                    className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-red-400 transition-colors"
                     onClick={() => {
                       const next = imagesPreview.filter((_, idx) => idx !== i);
                       setImagesPreview(next);
@@ -447,7 +447,7 @@ export default function CreateListingPage() {
             {existingImages.map((img: ExistingImage, i: number) => (
               <div
                 key={img.url + i}
-                className="relative rounded-xl overflow-hidden border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))] shadow-sm"
+                className="relative rounded-xl overflow-hidden border border-[var(--border)]/40 bg-[var(--card)] shadow-sm"
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
@@ -457,7 +457,7 @@ export default function CreateListingPage() {
                 />
                 <button
                   type="button"
-                  className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[hsl(var(--background))]/80 backdrop-blur border border-[hsl(var(--border))]/50 flex items-center justify-center text-[hsl(var(--foreground))]/50 hover:text-red-400 transition-colors"
+                  className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-red-400 transition-colors"
                   onClick={() => {
                     const marker = img.id ? String(img.id) : `url:${img.url}`;
                     setRemovedExisting((s) =>
@@ -655,22 +655,22 @@ export default function CreateListingPage() {
   ];
 
   return (
-    <div className="min-h-screen flex mt-32 justify-center px-4 sm:px-6">
+    <div className="min-h-screen flex mt-32 justify-center px-4 sm:px-6 app-shell-page" data-app-page="listings-create">
       <div className="w-full max-w-3xl">
-        <Card className="relative overflow-hidden p-6 rounded-[2rem] border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)]">
+        <Card className="relative overflow-hidden p-6 rounded-[2rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)]">
           {/* shimmer top line */}
           <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
 
           {/* Header */}
           <div className="flex items-center gap-3 mb-5">
-            <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center shrink-0">
-              <TypeIcon className="size-4 text-[hsl(var(--primary))]" />
+            <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center shrink-0">
+              <TypeIcon className="size-4 text-[var(--primary)]" />
             </div>
             <div>
               <h1 className="text-base font-bold leading-tight">
                 {editId ? t("editListing") || "Edit Listing" : t("createListing") || "Create Listing"}
               </h1>
-              <p className="text-[11px] text-[hsl(var(--foreground))]/40">
+              <p className="text-[11px] text-[var(--foreground)]/40">
                 {stepLabels[step - 1]} — Step {step} of 4
               </p>
             </div>
@@ -685,9 +685,9 @@ export default function CreateListingPage() {
                     <motion.div
                       animate={{
                         backgroundColor:
-                          i <= step ? "hsl(var(--primary))" : "transparent",
+                          i <= step ? "var(--primary)" : "transparent",
                         borderColor:
-                          i <= step ? "hsl(var(--primary))" : "hsl(var(--border))",
+                          i <= step ? "var(--primary)" : "var(--border)",
                       }}
                       transition={{ duration: 0.2 }}
                       className="size-7 rounded-xl border-2 flex items-center justify-center text-[11px] font-bold shrink-0"
@@ -696,10 +696,10 @@ export default function CreateListingPage() {
                         animate={{ opacity: 1 }}
                         className={
                           i < step
-                            ? "text-[hsl(var(--primary-foreground))]"
+                            ? "text-[var(--primary-foreground)]"
                             : i === step
-                              ? "text-[hsl(var(--primary-foreground))]"
-                              : "text-[hsl(var(--foreground))]/40"
+                              ? "text-[var(--primary-foreground)]"
+                              : "text-[var(--foreground)]/40"
                         }
                       >
                         {i < step ? <Check className="size-3" /> : i}
@@ -709,8 +709,8 @@ export default function CreateListingPage() {
                       className={cn(
                         "text-[10px] hidden sm:block whitespace-nowrap",
                         i === step
-                          ? "text-[hsl(var(--foreground))] font-medium"
-                          : "text-[hsl(var(--foreground))]/35"
+                          ? "text-[var(--foreground)] font-medium"
+                          : "text-[var(--foreground)]/35"
                       )}
                     >
                       {stepLabels[i - 1]}
@@ -718,9 +718,9 @@ export default function CreateListingPage() {
                   </div>
                   {idx < 3 && (
                     <div className="relative flex-1 h-0.5 mx-2 mb-4">
-                      <div className="absolute inset-0 rounded-full bg-[hsl(var(--border))]/25" />
+                      <div className="absolute inset-0 rounded-full bg-[var(--border)]/25" />
                       <motion.div
-                        className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]"
+                        className="absolute inset-0 rounded-full bg-[var(--primary)]"
                         animate={{ scaleX: i < step ? 1 : 0 }}
                         style={{ originX: 0 }}
                         transition={{ duration: 0.25 }}
@@ -730,11 +730,11 @@ export default function CreateListingPage() {
                 </div>
               ))}
             </div>
-            <div className="h-1 rounded-full bg-[hsl(var(--muted))]/20 overflow-hidden">
+            <div className="h-1 rounded-full bg-[var(--muted)]/20 overflow-hidden">
               <motion.div
                 animate={{ width: progressPct }}
                 transition={{ type: "spring", stiffness: 120, damping: 20 }}
-                className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary))]/60"
+                className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/60"
               />
             </div>
           </div>

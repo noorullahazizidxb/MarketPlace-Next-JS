@@ -52,9 +52,9 @@ export function LayoutTab() {
       <div className="space-y-3">
         {/* Sidebar Variant */}
         <div>
-          <Label className="admin-text-body">Sidebar Variant</Label>
+          <Label className="app-text-body">Sidebar Variant</Label>
           {sidebarConfig.variant && (
-            <p className="admin-text-caption text-muted-foreground mt-1">
+            <p className="app-text-caption text-muted-foreground mt-1">
               {sidebarConfig.variant === "sidebar" &&
                 "Default: Standard sidebar layout"}
               {sidebarConfig.variant === "floating" &&
@@ -80,7 +80,7 @@ export function LayoutTab() {
             >
               {/* Visual representation of sidebar variant */}
               <div className="space-y-2">
-                <div className="admin-text-caption text-center">
+                <div className="app-text-caption text-center">
                   {variant.name}
                 </div>
                 <div
@@ -96,10 +96,10 @@ export function LayoutTab() {
                       }`}
                   >
                     {/* Menu icon representations - clearer and more visible */}
-                    <div className="admin-hero-accent w-full bg-foreground/60 rounded"></div>
-                    <div className="admin-hero-accent w-3/4 bg-foreground/50 rounded"></div>
-                    <div className="admin-hero-accent w-2/3 bg-foreground/40 rounded"></div>
-                    <div className="admin-hero-accent w-3/4 bg-foreground/30 rounded"></div>
+                    <div className="app-hero-accent w-full bg-foreground/60 rounded"></div>
+                    <div className="app-hero-accent w-3/4 bg-foreground/50 rounded"></div>
+                    <div className="app-hero-accent w-2/3 bg-foreground/40 rounded"></div>
+                    <div className="app-hero-accent w-3/4 bg-foreground/30 rounded"></div>
                   </div>
                   {/* Main content area - larger and more prominent */}
                   <div
@@ -117,11 +117,11 @@ export function LayoutTab() {
       {/* Sidebar Collapsible Mode */}
       <div className="space-y-3">
         <div>
-          <Label className="admin-text-body">
+          <Label className="app-text-body">
             Sidebar Collapsible Mode
           </Label>
           {sidebarConfig.collapsible && (
-            <p className="admin-text-caption text-muted-foreground mt-1">
+            <p className="app-text-caption text-muted-foreground mt-1">
               {sidebarConfig.collapsible === "offcanvas" &&
                 "Off Canvas: Slides out of view"}
               {sidebarConfig.collapsible === "icon" &&
@@ -146,7 +146,7 @@ export function LayoutTab() {
             >
               {/* Visual representation of collapsible mode */}
               <div className="space-y-2">
-                <div className="admin-text-caption text-center">
+                <div className="app-text-caption text-center">
                   {option.name}
                 </div>
                 <div className="flex min-h-[var(--ctrl-h)] rounded border bg-background">
@@ -155,9 +155,9 @@ export function LayoutTab() {
                     // Off-canvas: Show collapsed state with hamburger menu
                     <div className="flex-1 bg-background/50 m-1 rounded-sm border-dashed border border-muted-foreground/20 flex items-center justify-start pl-2">
                       <div className="flex flex-col gap-0.5">
-                        <div className="w-3 admin-hero-accent bg-foreground/60 rounded"></div>
-                        <div className="w-3 admin-hero-accent bg-foreground/60 rounded"></div>
-                        <div className="w-3 admin-hero-accent bg-foreground/60 rounded"></div>
+                        <div className="w-3 app-hero-accent bg-foreground/60 rounded"></div>
+                        <div className="w-3 app-hero-accent bg-foreground/60 rounded"></div>
+                        <div className="w-3 app-hero-accent bg-foreground/60 rounded"></div>
                       </div>
                     </div>
                   ) : option.value === "icon" ? (
@@ -174,10 +174,10 @@ export function LayoutTab() {
                     // None: Always show full sidebar - more proportional
                     <>
                       <div className="w-6 flex-shrink-0 bg-muted flex flex-col gap-0.5 p-1 border-r">
-                        <div className="admin-hero-accent w-full bg-foreground/60 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/50 rounded"></div>
-                        <div className="admin-hero-accent w-2/3 bg-foreground/40 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/30 rounded"></div>
+                        <div className="app-hero-accent w-full bg-foreground/60 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/50 rounded"></div>
+                        <div className="app-hero-accent w-2/3 bg-foreground/40 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/30 rounded"></div>
                       </div>
                       <div className="flex-1 bg-background/50 m-1 rounded-sm border-dashed border border-muted-foreground/20"></div>
                     </>
@@ -194,9 +194,9 @@ export function LayoutTab() {
       {/* Sidebar Side */}
       <div className="space-y-3">
         <div>
-          <Label className="admin-text-body">Sidebar Position</Label>
+          <Label className="app-text-body">Sidebar Position</Label>
           {effectiveSide && (
-            <p className="admin-text-caption text-muted-foreground mt-1">
+            <p className="app-text-caption text-muted-foreground mt-1">
               {effectiveSide === "left" &&
                 "Left: Sidebar positioned on the left side"}
               {effectiveSide === "right" &&
@@ -218,7 +218,7 @@ export function LayoutTab() {
             >
               {/* Visual representation of sidebar side */}
               <div className="space-y-2">
-                <div className="admin-text-caption text-center">
+                <div className="app-text-caption text-center">
                   {side.name}
                 </div>
                 <div className="flex min-h-[var(--ctrl-h)] rounded border bg-background">
@@ -226,10 +226,10 @@ export function LayoutTab() {
                     // Left sidebar layout - more proportional
                     <>
                       <div className="w-6 flex-shrink-0 bg-muted flex flex-col gap-0.5 p-1 border-r">
-                        <div className="admin-hero-accent w-full bg-foreground/60 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/50 rounded"></div>
-                        <div className="admin-hero-accent w-2/3 bg-foreground/40 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/30 rounded"></div>
+                        <div className="app-hero-accent w-full bg-foreground/60 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/50 rounded"></div>
+                        <div className="app-hero-accent w-2/3 bg-foreground/40 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/30 rounded"></div>
                       </div>
                       <div className="flex-1 bg-background/50 m-1 rounded-sm border-dashed border border-muted-foreground/20"></div>
                     </>
@@ -238,10 +238,10 @@ export function LayoutTab() {
                     <>
                       <div className="flex-1 bg-background/50 m-1 rounded-sm border-dashed border border-muted-foreground/20"></div>
                       <div className="w-6 flex-shrink-0 bg-muted flex flex-col gap-0.5 p-1 border-l">
-                        <div className="admin-hero-accent w-full bg-foreground/60 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/50 rounded"></div>
-                        <div className="admin-hero-accent w-2/3 bg-foreground/40 rounded"></div>
-                        <div className="admin-hero-accent w-3/4 bg-foreground/30 rounded"></div>
+                        <div className="app-hero-accent w-full bg-foreground/60 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/50 rounded"></div>
+                        <div className="app-hero-accent w-2/3 bg-foreground/40 rounded"></div>
+                        <div className="app-hero-accent w-3/4 bg-foreground/30 rounded"></div>
                       </div>
                     </>
                   )}

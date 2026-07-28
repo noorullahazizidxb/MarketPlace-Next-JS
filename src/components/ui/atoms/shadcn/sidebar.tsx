@@ -375,7 +375,7 @@ function SidebarGroupLabel({
       data-slot="sidebar-group-label"
       data-sidebar="group-label"
       className={cn(
-        "text-sidebar-foreground/60 ring-sidebar-ring flex shrink-0 items-center rounded-lg px-2 admin-text-caption uppercase tracking-wider outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2",
+        "text-sidebar-foreground/60 ring-sidebar-ring flex shrink-0 items-center rounded-lg px-2 app-text-caption uppercase tracking-wider outline-hidden transition-[margin,opacity] duration-200 ease-linear focus-visible:ring-2",
         "h-[var(--ctrl-h-sm,1.75rem)] text-[var(--sb-text-label,0.75rem)]",
         "[&>svg]:size-[var(--icon-sm,1rem)] [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:-mt-8 group-data-[collapsible=icon]:opacity-0",
@@ -401,7 +401,7 @@ function SidebarGroupAction({
         "text-sidebar-foreground ring-sidebar-ring hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
         "absolute top-3.5 end-3 flex aspect-square w-5 items-center justify-center",
         "rounded-lg p-0 outline-hidden transition-transform focus-visible:ring-2",
-        "[&>svg]:admin-icon-sm [&>svg]:shrink-0",
+        "[&>svg]:app-icon-sm [&>svg]:shrink-0",
         "after:absolute after:-inset-2 md:after:hidden",
         "group-data-[collapsible=icon]:hidden",
         className,
@@ -459,7 +459,7 @@ const sidebarMenuButtonVariants = cva(
     "group-has-data-[sidebar=menu-action]/menu-item:pr-8",
     "aria-disabled:pointer-events-none aria-disabled:opacity-50",
     // Active: brand-tinted background + medium weight
-    "data-[active=true]:bg-sidebar-accent data-[active=true]:admin-text-heading-sm data-[active=true]:text-sidebar-accent-foreground",
+    "data-[active=true]:bg-sidebar-accent data-[active=true]:app-text-heading-sm data-[active=true]:text-sidebar-accent-foreground",
     "data-[state=open]:hover:bg-sidebar-accent data-[state=open]:hover:text-sidebar-accent-foreground",
     "group-data-[collapsible=icon]:size-[var(--ctrl-h,2rem)]! group-data-[collapsible=icon]:p-2!",
     "text-[var(--sb-text-item,0.875rem)]",
@@ -472,7 +472,7 @@ const sidebarMenuButtonVariants = cva(
         brand:
           "text-foreground hover:bg-primary/10 data-[active=true]:brand-gradient data-[active=true]:hover-gradient data-[active=true]:brand-glow data-[active=true]:text-brand-foreground",
         outline:
-          "bg-background shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]",
+          "bg-background shadow-[0_0_0_1px_var(--sidebar-border)] hover:bg-sidebar-accent hover:text-sidebar-accent-foreground hover:shadow-[0_0_0_1px_var(--sidebar-accent)]",
       },
       size: {
         default: "min-h-[var(--ctrl-h,2rem)]",
@@ -539,7 +539,7 @@ function SidebarMenuAction({
         "peer-hover/menu-button:text-sidebar-accent-foreground",
         "absolute top-1.5 end-1 flex aspect-square w-5 items-center justify-center",
         "rounded-lg p-0 outline-hidden transition-transform focus-visible:ring-2",
-        "[&>svg]:admin-icon-sm [&>svg]:shrink-0",
+        "[&>svg]:app-icon-sm [&>svg]:shrink-0",
         "after:absolute after:-inset-2 md:after:hidden",
         "peer-data-[size=sm]/menu-button:top-1 peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
@@ -561,7 +561,7 @@ function SidebarMenuBadge({ className, style, ...props }: React.ComponentProps<"
       data-sidebar="menu-badge"
       className={cn(
         "text-sidebar-foreground pointer-events-none absolute end-1 flex h-5 min-w-5 items-center justify-center",
-        "rounded-full border border-sidebar-border/40 bg-sidebar-accent/60 px-1 admin-text-stat tabular-nums select-none",
+        "rounded-full border border-sidebar-border/40 bg-sidebar-accent/60 px-1 app-text-stat tabular-nums select-none",
         "peer-hover/menu-button:text-sidebar-accent-foreground peer-data-[active=true]/menu-button:text-sidebar-accent-foreground",
         "peer-data-[size=sm]/menu-button:top-1 peer-data-[size=default]/menu-button:top-1.5 peer-data-[size=lg]/menu-button:top-2.5",
         "group-data-[collapsible=icon]:hidden",
@@ -586,7 +586,7 @@ function SidebarMenuSkeleton({
       className={cn("flex min-h-[var(--ctrl-h-sm)] items-center gap-2 rounded-xl px-2", className)}
       {...props}
     >
-      {showIcon && <Skeleton className="admin-icon-sm rounded-lg" data-sidebar="menu-skeleton-icon" />}
+      {showIcon && <Skeleton className="app-icon-sm rounded-lg" data-sidebar="menu-skeleton-icon" />}
       <Skeleton
         className="h-4 max-w-(--skeleton-width) flex-1 rounded-lg"
         data-sidebar="menu-skeleton-text"
@@ -675,8 +675,8 @@ function SidebarMenuSubButton({
         "transition-colors duration-150 ease-in-out",
         "disabled:pointer-events-none disabled:opacity-50",
         "aria-disabled:pointer-events-none aria-disabled:opacity-50",
-        "data-[active=true]:bg-sidebar-accent data-[active=true]:admin-text-heading-sm data-[active=true]:text-sidebar-accent-foreground",
-        "[&>span:last-child]:truncate [&>svg]:admin-icon-sm [&>svg]:shrink-0",
+        "data-[active=true]:bg-sidebar-accent data-[active=true]:app-text-heading-sm data-[active=true]:text-sidebar-accent-foreground",
+        "[&>span:last-child]:truncate [&>svg]:app-icon-sm [&>svg]:shrink-0",
         "group-data-[collapsible=icon]:hidden",
         className,
       )}

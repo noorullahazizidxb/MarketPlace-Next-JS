@@ -41,7 +41,7 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
           <Button
             asChild
             variant="ghost"
-            className="group size-14 rounded-full border-[hsl(var(--border))] bg-transparent hover:bg-[hsl(var(--accent)/0.15)] hover:border-[hsl(var(--accent))] hover:shadow-[0_4px_12px_hsl(var(--accent)/0.2)] transition-all duration-300"
+            className="group size-14 rounded-full border-[var(--border)] bg-transparent hover:bg-[color-mix(in oklab, var(--accent) 15%, transparent)] hover:border-[var(--accent)] hover:shadow-[0_4px_12px_color-mix(in oklab, var(--accent) 20%, transparent)] transition-all duration-300"
           >
             <Link href={googleUrl} aria-label={t("continueWithGoogle")}>
               <GoogleIcon />
@@ -54,7 +54,7 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
           <Button
             asChild
             variant="ghost"
-            className="group size-14 rounded-full border-[hsl(var(--border))] bg-transparent hover:bg-[#1877F2]/10 hover:border-[#1877F2] hover:shadow-[0_4px_12px_rgba(24,119,242,0.2)] transition-all duration-300"
+            className="group size-14 rounded-full border-[var(--border)] bg-transparent hover:bg-[#1877F2]/10 hover:border-[#1877F2] hover:shadow-[0_4px_12px_rgba(24,119,242,0.2)] transition-all duration-300"
           >
             <Link href={facebookUrl} aria-label={t("continueWithFacebook")}>
               <span className="text-[#1877F2]">
@@ -66,7 +66,7 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
         ) : null}
       </div>
 
-      <p className="text-center text-xs text-[hsl(var(--muted-foreground))]">
+      <p className="text-center text-xs text-[var(--muted-foreground)]">
         {t("socialAuthPrompt")}
       </p>
     </div>

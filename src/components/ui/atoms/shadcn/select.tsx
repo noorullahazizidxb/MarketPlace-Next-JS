@@ -61,15 +61,15 @@ function SelectTrigger({
         // Value slot
         "*:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center *:data-[slot=select-value]:gap-2",
         // SVG
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm",
-        "admin-text-action",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm",
+        "app-text-action",
         className
       )}
       {...props}
     >
       {children}
       <SelectPrimitive.Icon asChild>
-        <ChevronDownIcon className="admin-icon-sm opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
+        <ChevronDownIcon className="app-icon-sm opacity-50 transition-transform duration-200 group-data-[state=open]:rotate-180" />
       </SelectPrimitive.Icon>
     </SelectPrimitive.Trigger>
   )
@@ -135,7 +135,7 @@ function SelectLabel({
     <SelectPrimitive.Label
       data-slot="select-label"
       className={cn(
-        "px-2 py-1.5 admin-text-caption uppercase tracking-wide",
+        "px-2 py-1.5 app-text-caption uppercase tracking-wide",
         error ? "text-destructive" : "text-muted-foreground",
         className
       )}
@@ -169,15 +169,15 @@ function SelectItem({
         "focus:bg-accent focus:text-accent-foreground",
         "[&_svg:not([class*='text-'])]:text-muted-foreground",
         "data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
-        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm",
-        "admin-text-action",
+        "[&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm",
+        "app-text-action",
         className
       )}
       {...props}
     >
-      <span className="absolute end-2 flex admin-icon-xs items-center justify-center">
+      <span className="absolute end-2 flex app-icon-xs items-center justify-center">
         <SelectPrimitive.ItemIndicator>
-          <CheckIcon className="admin-icon-xs text-primary" />
+          <CheckIcon className="app-icon-xs text-primary" />
         </SelectPrimitive.ItemIndicator>
       </span>
       <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
@@ -202,7 +202,7 @@ function SelectScrollUpButton({ className, ...props }: React.ComponentProps<type
       className={cn("flex cursor-default items-center justify-center py-1 text-muted-foreground", className)}
       {...props}
     >
-      <ChevronUpIcon className="admin-icon-sm" />
+      <ChevronUpIcon className="app-icon-sm" />
     </SelectPrimitive.ScrollUpButton>
   )
 }
@@ -214,7 +214,7 @@ function SelectScrollDownButton({ className, ...props }: React.ComponentProps<ty
       className={cn("flex cursor-default items-center justify-center py-1 text-muted-foreground", className)}
       {...props}
     >
-      <ChevronDownIcon className="admin-icon-sm" />
+      <ChevronDownIcon className="app-icon-sm" />
     </SelectPrimitive.ScrollDownButton>
   )
 }

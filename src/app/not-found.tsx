@@ -29,7 +29,7 @@ export default function NotFound() {
           repeatType: "reverse",
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="pointer-events-none absolute -top-32 -right-24 size-[420px] rounded-full bg-[radial-gradient(circle_at_30%_30%,hsl(var(--primary)/0.25),transparent_60%)] blur-3xl"
+        className="pointer-events-none absolute -top-32 -right-24 size-[420px] rounded-full bg-[radial-gradient(circle_at_30%_30%,color-mix(in oklab, var(--primary) 25%, transparent),transparent_60%)] blur-3xl"
       />
       <motion.div
         aria-hidden
@@ -42,7 +42,7 @@ export default function NotFound() {
           repeatType: "reverse",
           ease: [0.22, 1, 0.36, 1],
         }}
-        className="pointer-events-none absolute -bottom-40 -left-24 size-[520px] rounded-full bg-[radial-gradient(circle_at_70%_70%,hsl(var(--accent)/0.22),transparent_60%)] blur-3xl"
+        className="pointer-events-none absolute -bottom-40 -left-24 size-[520px] rounded-full bg-[radial-gradient(circle_at_70%_70%,color-mix(in oklab, var(--accent) 22%, transparent),transparent_60%)] blur-3xl"
       />
 
       {/* Subtle animated wireframe ring */}
@@ -61,8 +61,8 @@ export default function NotFound() {
       >
         <defs>
           <linearGradient id="ring" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0%" stopColor="hsl(var(--primary))" />
-            <stop offset="100%" stopColor="hsl(var(--muted-foreground))" />
+            <stop offset="0%" stopColor="var(--primary)" />
+            <stop offset="100%" stopColor="var(--muted-foreground)" />
           </linearGradient>
         </defs>
         <circle
@@ -98,10 +98,10 @@ export default function NotFound() {
         transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
         className="relative z-10 mx-auto w-full max-w-3xl px-6"
       >
-        <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))] bg-[linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)] p-8 sm:p-12 shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl border border-[var(--border)] bg-[linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))] p-8 sm:p-12 shadow-2xl">
           {/* Decorative sparkle */}
-          <div className="pointer-events-none absolute -top-6 -left-6 flex size-20 items-center justify-center rounded-2xl bg-[hsl(var(--primary))/0.1] backdrop-blur-xl">
-            <Sparkles className="size-6 text-[hsl(var(--primary))]" />
+          <div className="pointer-events-none absolute -top-6 -left-6 flex size-20 items-center justify-center rounded-2xl bg-[color-mix(in oklab, var(--primary) 10%, transparent)] backdrop-blur-xl">
+            <Sparkles className="size-6 text-[var(--primary)]" />
           </div>
 
           <div className="text-center">
@@ -109,7 +109,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))/0.12] bg-[hsl(var(--background))/0.06] px-3 py-1 text-xs text-[hsl(var(--muted-foreground))] backdrop-blur"
+              className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in oklab, var(--border) 12%, transparent)] bg-[color-mix(in oklab, var(--background) 6%, transparent)] px-3 py-1 text-xs text-[var(--muted-foreground)] backdrop-blur"
             >
               <Stars className="size-3" />
               {t("notFoundTitle")}
@@ -123,7 +123,7 @@ export default function NotFound() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="mt-4 text-[7rem] sm:text-[9rem] md:text-[11rem] leading-none font-black tracking-tighter bg-gradient-to-br from-[hsl(var(--primary))] via-[hsl(var(--secondary))] to-[hsl(var(--accent))] bg-clip-text text-transparent drop-shadow-2xl"
+              className="mt-4 text-[7rem] sm:text-[9rem] md:text-[11rem] leading-none font-black tracking-tighter bg-gradient-to-br from-[var(--primary)] via-[var(--secondary)] to-[var(--accent)] bg-clip-text text-transparent drop-shadow-2xl"
             >
               404
             </motion.h1>
@@ -132,7 +132,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="mx-auto mt-4 max-w-xl text-sm sm:text-base text-[hsl(var(--muted-foreground))]"
+              className="mx-auto mt-4 max-w-xl text-sm sm:text-base text-[var(--muted-foreground)]"
             >
               {t("notFoundDescription")}
             </motion.p>
@@ -155,7 +155,7 @@ export default function NotFound() {
           </div>
 
           {/* Subtle corner highlight */}
-          <div className="pointer-events-none absolute -bottom-8 -right-8 size-40 rounded-full bg-[hsl(var(--primary))/0.2] blur-3xl" />
+          <div className="pointer-events-none absolute -bottom-8 -right-8 size-40 rounded-full bg-[color-mix(in oklab, var(--primary) 20%, transparent)] blur-3xl" />
         </div>
       </motion.div>
     </section>

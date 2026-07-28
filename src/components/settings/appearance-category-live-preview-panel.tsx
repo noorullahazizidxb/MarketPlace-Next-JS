@@ -60,8 +60,8 @@ export function AppearanceCategoryLivePreviewPanel({
     return (
         <section className="flex min-w-0 flex-col gap-2 overflow-hidden rounded-xl border border-border/60 bg-background/85 p-2.5">
             <div className="flex shrink-0 items-center gap-2">
-                <p className="admin-text-label">Category Live Preview</p>
-                <Badge variant="secondary" className="ml-auto px-1.5 admin-text-micro">
+                <p className="app-text-label">Category Live Preview</p>
+                <Badge variant="secondary" className="ml-auto px-1.5 app-text-micro">
                     {category}
                 </Badge>
             </div>

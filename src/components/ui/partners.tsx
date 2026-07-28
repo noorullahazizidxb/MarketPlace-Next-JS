@@ -91,33 +91,33 @@ export function Partners() {
     <section className="relative py-12 md:py-14 overflow-hidden">
       {/* Ambient radial glow — compositor-only, no layout cost */}
       <div aria-hidden="true" className="absolute inset-0 pointer-events-none overflow-hidden">
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[260px] rounded-full bg-[hsl(var(--primary)/0.07)] blur-3xl" />
-        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[280px] h-[180px] rounded-full bg-[hsl(var(--secondary)/0.05)] blur-3xl" />
-        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[240px] h-[160px] rounded-full bg-[hsl(var(--accent)/0.04)] blur-3xl" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[260px] rounded-full bg-[color-mix(in oklab, var(--primary) 7%, transparent)] blur-3xl" />
+        <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[280px] h-[180px] rounded-full bg-[color-mix(in oklab, var(--secondary) 5%, transparent)] blur-3xl" />
+        <div className="absolute top-1/2 right-1/4 -translate-y-1/2 w-[240px] h-[160px] rounded-full bg-[color-mix(in oklab, var(--accent) 4%, transparent)] blur-3xl" />
       </div>
 
       <div className="container mx-auto px-4 relative">
         {/* ── Heading ──────────────────────────────────────────────────────── */}
         <div className="text-center mb-8 md:mb-10 space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-[hsl(var(--primary))]">
+          <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-[var(--primary)]">
             Our Partners
           </p>
-          <h4 className="heading-lg bg-gradient-to-r from-[hsl(var(--primary))] via-[hsl(var(--foreground))] to-[hsl(var(--secondary))] bg-clip-text text-transparent">
+          <h4 className="heading-lg bg-gradient-to-r from-[var(--primary)] via-[var(--foreground)] to-[var(--secondary)] bg-clip-text text-transparent">
             Trusted by leading companies worldwide
           </h4>
           {/* Decorative divider */}
           <div className="flex items-center justify-center gap-3 pt-0.5">
-            <span className="block h-px w-14 bg-gradient-to-r from-transparent to-[hsl(var(--primary)/0.55)] rounded-full" />
-            <span className="block w-1.5 h-1.5 rounded-full bg-[hsl(var(--primary))] shadow-[0_0_8px_hsl(var(--primary)/0.7)]" />
-            <span className="block h-px w-14 bg-gradient-to-l from-transparent to-[hsl(var(--primary)/0.55)] rounded-full" />
+            <span className="block h-px w-14 bg-gradient-to-r from-transparent to-[color-mix(in oklab, var(--primary) 55%, transparent)] rounded-full" />
+            <span className="block w-1.5 h-1.5 rounded-full bg-[var(--primary)] shadow-[0_0_8px_color-mix(in oklab, var(--primary) 70%, transparent)]" />
+            <span className="block h-px w-14 bg-gradient-to-l from-transparent to-[color-mix(in oklab, var(--primary) 55%, transparent)] rounded-full" />
           </div>
         </div>
 
         {/* ── Scrolling carousel ───────────────────────────────────────────── */}
         <div className="relative overflow-hidden">
           {/* Side gradient fades */}
-          <div className="pointer-events-none absolute left-0 top-0 h-full w-32 z-10 bg-gradient-to-r from-[hsl(var(--background))] to-transparent" />
-          <div className="pointer-events-none absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-[hsl(var(--background))] to-transparent" />
+          <div className="pointer-events-none absolute left-0 top-0 h-full w-32 z-10 bg-gradient-to-r from-[var(--background)] to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 h-full w-32 z-10 bg-gradient-to-l from-[var(--background)] to-transparent" />
 
           {/* Track — duplicated 2× so translateX(-50%) loops seamlessly */}
           <div className="flex animate-logo-scroll py-10 md:py-12">
@@ -129,11 +129,11 @@ export function Partners() {
                 {/* Glow halo — appears on hover, blurred behind the card */}
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[hsl(var(--primary)/0.22)] blur-xl scale-110"
+                  className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[color-mix(in oklab, var(--primary) 22%, transparent)] blur-xl scale-110"
                 />
 
                 {/* Glass card body */}
-                <div className="relative h-full flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[hsl(var(--border)/0.5)] bg-[hsl(var(--card)/0.45)] backdrop-blur-sm overflow-hidden transition-all duration-300 ease-premium group-hover:border-[hsl(var(--primary)/0.55)] group-hover:bg-[hsl(var(--card)/0.75)] group-hover:-translate-y-0.5 group-hover:shadow-[0_8px_32px_-4px_hsl(var(--primary)/0.22)]">
+                <div className="relative h-full flex flex-col items-center justify-center gap-2.5 rounded-2xl border border-[color-mix(in oklab, var(--border) 50%, transparent)] bg-[color-mix(in oklab, var(--card) 45%, transparent)] backdrop-blur-sm overflow-hidden transition-all duration-300 ease-premium group-hover:border-[color-mix(in oklab, var(--primary) 55%, transparent)] group-hover:bg-[color-mix(in oklab, var(--card) 75%, transparent)] group-hover:-translate-y-0.5 group-hover:shadow-[0_8px_32px_-4px_color-mix(in oklab, var(--primary) 22%, transparent)]">
                   {/* Shimmer sweep — slides left-to-right on hover */}
                   <div
                     aria-hidden="true"
@@ -141,15 +141,15 @@ export function Partners() {
                   />
 
                   {/* Icon ring */}
-                  <div className="relative w-10 h-10 flex items-center justify-center rounded-full border border-[hsl(var(--border)/0.6)] bg-[hsl(var(--card)/0.7)] transition-all duration-300 group-hover:border-[hsl(var(--primary)/0.5)] group-hover:bg-[hsl(var(--primary)/0.1)] group-hover:shadow-[0_0_14px_hsl(var(--primary)/0.35)]">
+                  <div className="relative w-10 h-10 flex items-center justify-center rounded-full border border-[color-mix(in oklab, var(--border) 60%, transparent)] bg-[color-mix(in oklab, var(--card) 70%, transparent)] transition-all duration-300 group-hover:border-[color-mix(in oklab, var(--primary) 50%, transparent)] group-hover:bg-[color-mix(in oklab, var(--primary) 10%, transparent)] group-hover:shadow-[0_0_14px_color-mix(in oklab, var(--primary) 35%, transparent)]">
                     <SimpleIcon
                       name={company.icon}
-                      className="w-5 h-5 text-[hsl(var(--foreground)/0.45)] group-hover:text-[hsl(var(--primary))] transition-colors duration-300"
+                      className="w-5 h-5 text-[color-mix(in oklab, var(--foreground) 45%, transparent)] group-hover:text-[var(--primary)] transition-colors duration-300"
                     />
                   </div>
 
                   {/* Company name */}
-                  <span className="text-[11px] font-medium tracking-wide text-[hsl(var(--foreground)/0.45)] group-hover:text-[hsl(var(--foreground)/0.9)] transition-colors duration-300">
+                  <span className="text-[11px] font-medium tracking-wide text-[color-mix(in oklab, var(--foreground) 45%, transparent)] group-hover:text-[color-mix(in oklab, var(--foreground) 90%, transparent)] transition-colors duration-300">
                     {company.name}
                   </span>
                 </div>

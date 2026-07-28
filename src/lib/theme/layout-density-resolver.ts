@@ -394,8 +394,10 @@ export const buildResolvedViewportDensity = (
 /** Builds `@media` blocks with fully resolved per-viewport token values. */
 export const buildLayoutDensityOverrideCss = (
   density: ResponsiveLayoutDensity | null | undefined,
+  options?: { selector?: string },
 ): string => {
   if (!density) return "";
+  const selector = options?.selector?.trim() || ":root";
   const resolvedByViewport = buildResolvedViewportDensity(density);
   return densityViewportKeys
     .map((viewport) => {
@@ -403,7 +405,7 @@ export const buildLayoutDensityOverrideCss = (
       if (!tokens || Object.keys(tokens).length === 0) return "";
       const block = formatDensityTokenCssDeclarations(tokens);
       if (!block) return "";
-      return `@media ${LAYOUT_DENSITY_VIEWPORT_MEDIA_QUERY[viewport]} {\n  :root {\n${block}\n  }\n}`;
+      return `@media ${LAYOUT_DENSITY_VIEWPORT_MEDIA_QUERY[viewport]} {\n  ${selector} {\n${block}\n  }\n}`;
     })
     .filter(Boolean)
     .join("\n\n");

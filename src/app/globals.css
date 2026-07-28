@@ -1,452 +1,1538 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 @import "../lib/theme/circular-transition.css";
+@import "../styles/responsive-tokens.css";
 
 @source "../**/*.{ts,tsx}";
 @config "../../tailwind.config.ts";
 
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *, [data-theme=dark] *));
 
-@theme inline {
-  --color-background: hsl(var(--background));
-  --color-foreground: hsl(var(--foreground));
-  --color-card: hsl(var(--card));
-  --color-card-foreground: hsl(var(--card-foreground, var(--foreground)));
-  --color-popover: hsl(var(--popover));
-  --color-popover-foreground: hsl(var(--popover-foreground));
-  --color-primary: hsl(var(--primary));
-  --color-primary-foreground: hsl(var(--primary-foreground));
-  --color-secondary: hsl(var(--secondary));
-  --color-secondary-foreground: hsl(var(--secondary-foreground));
-  --color-muted: hsl(var(--muted));
-  --color-muted-foreground: hsl(var(--muted-foreground));
-  --color-accent: hsl(var(--accent));
-  --color-accent-foreground: hsl(var(--accent-foreground));
-  --color-destructive: hsl(var(--destructive));
-  --color-destructive-foreground: hsl(var(--destructive-foreground));
-  --color-border: hsl(var(--border));
-  --color-input: hsl(var(--input));
-  --color-ring: hsl(var(--ring));
-  --color-chart-1: hsl(var(--chart-1));
-  --color-chart-2: hsl(var(--chart-2));
-  --color-chart-3: hsl(var(--chart-3));
-  --color-chart-4: hsl(var(--chart-4));
-  --color-chart-5: hsl(var(--chart-5));
-  --color-sidebar: hsl(var(--sidebar));
-  --color-sidebar-foreground: hsl(var(--sidebar-foreground));
-  --color-sidebar-primary: hsl(var(--sidebar-primary));
-  --color-sidebar-primary-foreground: hsl(var(--sidebar-primary-foreground));
-  --color-sidebar-accent: hsl(var(--sidebar-accent));
-  --color-sidebar-accent-foreground: hsl(var(--sidebar-accent-foreground));
-  --color-sidebar-border: hsl(var(--sidebar-border));
-  --color-sidebar-ring: hsl(var(--sidebar-ring));
-  --color-success: hsl(var(--success));
-  --color-warning: hsl(var(--warning));
-  --color-info: hsl(var(--info));
-  --radius-squircle: var(--squircle-radius);
-}
-
-/* Subtle grid overlay used in AnimatedBg (moved from inline styles to satisfy lint rules) */
-.bg-grid-overlay {
-  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.06) 1px, transparent 1px),
-    linear-gradient(rgba(255, 255, 255, 0.06) 1px, transparent 1px);
-  background-size: 80px 80px;
-}
-
-.bg-aurora-one {
-  background: radial-gradient(closest-side, #60a5fa, transparent 70%);
-}
-
-.bg-aurora-two {
-  background: radial-gradient(closest-side, #a78bfa, transparent 70%);
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
-  }
-}
-
-/* ── Marquee: CSS-only partners scroll (GPU compositor thread, no JS) ─────── */
-@keyframes marquee {
-  from {
-    transform: translateX(0);
-  }
-
-  to {
-    transform: translateX(-50%);
-  }
-}
-
-.animate-marquee {
-  animation: marquee 28s linear infinite;
-}
-
-.animate-marquee:hover {
-  animation-play-state: paused;
-}
-
-/* ── Slow spin for AnimatedBg conic layer ────────────────────────────────── */
-@keyframes spin-slow {
-  from {
-    transform: rotate(0deg);
-  }
-
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-.animate-spin-slow {
-  animation: spin-slow 60s linear infinite;
-}
-
-/* ── Slow drift for AnimatedBg ribbon blobs ─────────────────────────────── */
-@keyframes drift-a {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  33% {
-    transform: translate(20px, -10px);
-  }
-
-  66% {
-    transform: translate(-10px, 15px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-@keyframes drift-b {
-  0% {
-    transform: translate(0, 0);
-  }
-
-  33% {
-    transform: translate(-16px, 12px);
-  }
-
-  66% {
-    transform: translate(12px, -8px);
-  }
-
-  100% {
-    transform: translate(0, 0);
-  }
-}
-
-.animate-drift-a {
-  animation: drift-a 20s ease-in-out infinite;
-}
-
-.animate-drift-b {
-  animation: drift-b 22s ease-in-out infinite;
-}
-
-
-/* Local font faces */
+/* LOCAL FONTS — marketplace */
 @font-face {
   font-family: 'PoppinsLocal';
   src: url('../english_font/Poppins-Regular.woff2') format('woff2');
   font-display: swap;
 }
-
 @font-face {
   font-family: 'Coolvetica';
   src: url('../english_font/Coolvetica Rg.otf') format('truetype');
   font-display: swap;
 }
-
 @font-face {
   font-family: 'Yekan';
   src: url('../persian_font/Yekan.woff2') format('woff2'), url('../persian_font/Yekan.woff') format('woff');
   font-display: swap;
 }
-
 @font-face {
   font-family: 'HSDream';
   src: url('../persian_font/HSDreamRegular.woff2') format('woff2'), url('../persian_font/HSDreamRegular.woff') format('woff');
   font-display: swap;
 }
 
-/* English (default) fonts */
-html[lang="en"] body {
-  font-family: var(--font-family-english, var(--font-family, Inter, PoppinsLocal, ui-sans-serif, system-ui));
-  font-size: var(--font-size-body, var(--font-size-base, 1rem));
+/* ─────────────────────────────────────────────────────────────────────────────
+   THEME — all design tokens live here.
+   Tailwind v4 reads these via @theme inline so every token is available as a
+   utility class (e.g. bg-background, text-primary, rounded-lg, etc.)
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@theme inline {
+  /* Typography */
+  --font-sans: var(--app-font-family, Inter, PoppinsLocal, ui-sans-serif, system-ui, sans-serif);
+  --app-font-family: Inter, PoppinsLocal, ui-sans-serif, system-ui, sans-serif;
+  /* Typography scale — resolved at runtime from :root canonical --text-* vars */
+  --app-font-size: var(--text-body);
+  --app-heading-font-size: var(--text-heading);
+
+  /* Layout */
+  --app-content-width: 100%;
+  --app-sidebar-width: 16rem;
+
+  /* Radius scale — all derived from --radius so one variable controls the whole scale */
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
+
+  /* ── Semantic colour aliases (resolved at runtime from :root or .dark) ── */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-success: var(--success);
+  --color-success-foreground: var(--success-foreground);
+  --color-warning: var(--warning);
+  --color-warning-foreground: var(--warning-foreground);
+  --color-info: var(--info);
+  --color-info-foreground: var(--info-foreground);
+  --color-price: var(--price);
+  --color-chip: var(--chip);
+  --color-chip-foreground: var(--chip-foreground);
+  --radius-squircle: var(--squircle-radius);
+
 }
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   LIGHT MODE
+   ───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+  /* Base radius token — all others are computed from this */
+  --radius: 0.625rem;
+  /*
+   * Squircle geometry: corner-shape needs a large border-radius relative to the
+   * control size. Scale --radius by 125 so theme steps map as:
+   * 0rem→0, 0.3rem→37.5rem, 0.5rem→62.5rem, 0.75rem→93.75rem, 1rem→125rem.
+   */
+  --squircle-radius: calc(var(--radius) * 125);
+
+  /* Colour palette — oklch for perceptually uniform colour */
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.205 0 0);
+  --primary-foreground: oklch(0.985 0 0);
+  --secondary: oklch(0.97 0 0);
+  --secondary-foreground: oklch(0.205 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --ring: oklch(0.708 0 0);
+
+  /* Charts */
+  --chart-1: oklch(0.646 0.222 41.116);
+  --chart-2: oklch(0.6 0.118 184.704);
+  --chart-3: oklch(0.398 0.07 227.392);
+  --chart-4: oklch(0.828 0.189 84.429);
+  --chart-5: oklch(0.769 0.188 70.08);
+
+  /* Sidebar */
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-primary: oklch(0.205 0 0);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.97 0 0);
+  --sidebar-accent-foreground: oklch(0.205 0 0);
+  --sidebar-border: oklch(0.922 0 0);
+  --sidebar-ring: oklch(0.708 0 0);
+
+  /* ─────────────────────────────────────────────────────────────────────────
+             CANONICAL DESIGN TOKENS — one flat value per semantic level.
+             No clamp() here. Responsive overrides live in responsive-tokens.css.
+             ───────────────────────────────────────────────────────────────────────── */
+
+  /* ── Layout ── */
+  --app-content-width: min(100%, 90rem);
+  --app-sidebar-width: 16rem;
+  --sidebar-width: var(--app-sidebar-width);
+
+  /* ── Typography — one variable per semantic level ──────────────────────── */
+  --text-micro: 0.625rem;
+  /* ~10px — dense badges, audit labels        */
+  --text-caption: 0.6875rem;
+  /* ~11px — eyebrow caps, secondary info      */
+  --text-label: 0.75rem;
+  /* ~12px — form labels, filter field labels  */
+  --text-body: 0.8125rem;
+  /* ~13px — body copy, input text             */
+  --text-action: 0.8125rem;
+  /* ~13px — button / CTA labels               */
+  --text-badge: 0.6875rem;
+  /* ~11px — status badge / chip text          */
+  --text-mono: 0.8125rem;
+  /* ~13px — monospaced code / data blocks     */
+  --text-heading-sm: 0.9375rem;
+  /* ~15px — card/section headings             */
+  --text-heading: 1.125rem;
+  /* ~18px — page-level headings               */
+  --text-h1: 1.75rem;
+  /* 28px — semantic h1                        */
+  --text-h2: 1.5rem;
+  /* 24px — semantic h2                        */
+  --text-h3: 1.25rem;
+  /* 20px — semantic h3                        */
+  --text-h4: 1.0625rem;
+  /* 17px — semantic h4                        */
+  --text-h5: 0.875rem;
+  /* 14px — semantic h5                        */
+  --text-h6: 0.875rem;
+  /* 14px — semantic h6                        */
+  --text-stat: 1rem;
+  /* ~16px — stat / KPI hero numbers           */
+  --heading-text-decoration: none;
+  --badge-h: 1.25rem;
+  /* badge / pill min-height                   */
+
+  /* ── Icon sizes ── */
+  --icon-xs: 0.875rem;
+  /* 14px — compact / inline icon */
+  --icon-sm: 1rem;
+  /* 16px — standard icon         */
+  --icon-md: 1.25rem;
+  /* 20px — medium icon           */
+  --icon-lg: 1.5rem;
+  /* 24px — large / decorative    */
+
+  /* ── Form controls ── */
+  --ctrl-h: 2.25rem;
+  /* standard interactive control height */
+  --ctrl-h-sm: 2rem;
+  /* small variant control height        */
+  --ctrl-px: 0.875rem;
+  /* horizontal padding for controls     */
+
+  /* ── Shell spacing ── */
+  --space-page-x: 1.75rem;
+  /* page horizontal gutter    */
+  --space-page-y: 1.5rem;
+  /* page vertical gutter      */
+  --space-section: 1.5rem;
+  /* gap between page sections */
+  --space-card: 1.5rem;
+  /* card inner padding        */
+  --space-filter: 1.25rem;
+  /* filter bar inner padding  */
+  --space-gap: 1rem;
+  /* generic component gap     */
+
+  /* ── Table ── */
+  --table-head-text: 0.75rem;
+  /* column header font size */
+  --table-cell-text: 0.8125rem;
+  /* data row font size      */
+  --table-head-h: 2.75rem;
+  /* header row height       */
+  --table-cell-py: 0.75rem;
+  /* cell vertical padding   */
+  --table-cell-px: 1rem;
+  /* cell horizontal padding */
+  --table-cell-leading: 1.45;
+  /* table cell line-height  */
+  --table-head-tracking: 0.02em;
+  /* table header letter-spacing */
+  --table-cell-tracking: 0em;
+  /* table cell letter-spacing   */
+
+  /* ── Typography leading (line-height) ── */
+  --leading-body: 1.5;
+  --leading-heading: 1.2;
+  --leading-heading-sm: 1.25;
+  --leading-caption: 1.35;
+  --leading-label: 1.25;
+  --leading-action: 1.25;
+  --leading-badge: 1.2;
+  --leading-stat: 1.15;
+  --leading-mono: 1.45;
+  --leading-micro: 1.3;
+  --leading-h1: 1.2;
+  --leading-h2: 1.25;
+  --leading-h3: 1.3;
+  --leading-h4: 1.35;
+  --leading-h5: 1.4;
+  --leading-h6: 1.4;
+
+  /* ── Letter-spacing (tracking) ── */
+  --tracking-body: 0em;
+  --tracking-heading: -0.01em;
+  --tracking-heading-sm: -0.005em;
+  --tracking-caps: 0.06em;
+  --tracking-mono: 0em;
+  --tracking-badge: 0.01em;
+  --tracking-label: 0em;
+
+  /* ── Sidebar text ── */
+  --sb-text-label: 0.8125rem;
+  --sb-text-item: 1rem;
+  --sb-text-sub: 0.9375rem;
+  --sb-text-badge: 0.8125rem;
+
+  /* ── Mobile / shared UI ── */
+  --pill-h: 1.75rem;
+  --pill-px: 0.625rem;
+  /* Rem component adjusted in Appearance; production min-width applies 70vmin cap */
+  --table-pair-col-rem: 22rem;
+  --table-pair-col: min(var(--table-pair-col-rem), 70vmin);
+  --loading-spinner-scale: 1;
+
+  /* TextField floating-label geometry (component-level constants) */
+  --text-input-label-float-y: 0.25rem;
+  --text-input-label-height: calc(var(--text-label) * 1.33);
+  --text-input-label-input-gap: 0.125rem;
+  --text-input-padding-block-start: calc(0.25rem + calc(var(--text-label) * 1.33) + 0.125rem);
+  --text-input-padding-block-start-rest: calc((var(--ctrl-h) - 1.25em) / 2);
+  --text-input-padding-block-end: calc(var(--ctrl-h) * 0.125);
+  --text-input-padding-inline: var(--ctrl-px);
+  --text-input-padding-inline-with-icon: calc(var(--ctrl-px) + var(--icon-sm) + 0.375rem);
+  --text-input-icon-inline-start: calc(var(--ctrl-px) + 0.1rem);
+  --text-input-label-inline-start: var(--ctrl-px);
+  --text-input-label-inline-start-with-icon: calc(var(--ctrl-px) + var(--icon-sm) + 0.375rem);
+  --text-input-label-transition: top 0.2s cubic-bezier(0.4, 0, 0.2, 1), transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), font-size 0.2s cubic-bezier(0.4, 0, 0.2, 1), color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* ── Brand accent gradient ── */
+  --brand-gradient-start: oklch(0.54 0.24 280);
+  --brand-gradient-end: oklch(0.46 0.26 265);
+  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  --hover-gradient-start: oklch(0.58 0.24 280);
+  --hover-gradient-end: oklch(0.5 0.26 265);
+  --hover-gradient: linear-gradient(135deg, var(--hover-gradient-start), var(--hover-gradient-end));
+  --brand-glow: oklch(0.54 0.24 280 / 0.25);
+
+  /* Semantic + marketplace OTA extras (from theme-data defaults) */
+  --success: oklch(0.55 0.16 155);
+  --success-foreground: oklch(0.98 0 0);
+  --warning: oklch(0.75 0.15 70);
+  --warning-foreground: oklch(0.25 0.05 70);
+  --info: oklch(0.55 0.15 240);
+  --info-foreground: oklch(0.98 0 0);
+  --price: oklch(0.45 0.14 155);
+  --price-sale: oklch(0.55 0.2 25);
+  --price-original: oklch(0.55 0 0);
+  --price-highlight-bg: oklch(0.92 0.05 155);
+  --chip: oklch(0.965 0 0);
+  --chip-foreground: oklch(0.3 0 0);
+  --chip-selected: oklch(0.65 0.2 42);
+  --chip-selected-foreground: oklch(0.98 0 0);
+  --skeleton: oklch(0.94 0 0);
+  --skeleton-shimmer: oklch(0.98 0 0);
+  --scrollbar-track: oklch(0.96 0 0);
+  --scrollbar-thumb: oklch(0.85 0 0);
+  --scrollbar-thumb-hover: oklch(0.75 0 0);
+  --font-family-english: Inter, PoppinsLocal, Roboto, Open Sans, Lato, ui-sans-serif, system-ui;
+  --font-family-persian: Vazirmatn, Yekan, HSDream, Tahoma, sans-serif;
+  --font-family-heading: Poppins, PoppinsLocal, Inter, ui-sans-serif, system-ui;
+  --font-family-heading-persian: HSDream, Vazirmatn, Yekan, sans-serif;
+  --app-heading-mask-image: url('/mask.png');
+  --text-small: 0.75rem;
+  --shell-header-h: 3.5rem;
+
+
+  /* ── Font weights ── */
+  --weight-body: 400;
+  /* regular body / table cells */
+  --weight-label: 500;
+  /* form labels, filter labels */
+  --weight-heading: 600;
+  /* card/section headings */
+  --weight-h1: 700;
+  --weight-h2: 700;
+  --weight-h3: 600;
+  --weight-h4: 600;
+  --weight-h5: 500;
+  --weight-h6: 500;
+  --weight-action: 500;
+  /* button labels */
+  --weight-badge: 500;
+  /* badge/chip text */
+  --weight-table-head: 600;
+  /* table column headers */
+
+  /* ── Control vertical padding ── */
+  --ctrl-py: 0.5rem;
+  /* vertical padding inside controls */
+
+  /* ── Badge spacing ── */
+  --badge-px: 0.5rem;
+  /* badge horizontal padding */
+  --badge-py: 0.125rem;
+  /* badge vertical padding */
+
+  /* ── Nav / sidebar item spacing ── */
+  --nav-item-px: 0.75rem;
+  /* sidebar nav item horizontal padding */
+  --nav-item-py: 0.5rem;
+  /* sidebar nav item vertical padding */
+  --nav-icon-size: var(--icon-sm);
+  /* sidebar nav icon size */
+
+  /* ── Card inner gap ── */
+  --card-gap: 1rem;
+  /* gap between card content sections */
+
+  /* ── Decorative hero elements ── */
+  --hero-accent-h: 0.125rem;
+  /* accent bar height (replaces h-0.5) */
+  --hero-orb-lg: 16rem;
+  /* large blur orb (replaces h-64 w-64) */
+  --hero-orb-sm: 10rem;
+  /* small blur orb (replaces h-40 w-40) */
+  --hero-icon-pad: 0.75rem;
+  /* padding inside hero icon box */
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DARK MODE
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.205 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --popover: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.922 0 0);
+  --primary-foreground: oklch(0.205 0 0);
+  --secondary: oklch(0.269 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.269 0 0);
+  --muted-foreground: oklch(0.708 0 0);
+  --accent: oklch(0.269 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --border: oklch(1 0 0 / 10%);
+  --input: oklch(1 0 0 / 15%);
+  --ring: oklch(0.556 0 0);
+  --chart-1: oklch(0.488 0.243 264.376);
+  --chart-2: oklch(0.696 0.17 162.48);
+  --chart-3: oklch(0.769 0.188 70.08);
+  --chart-4: oklch(0.627 0.265 303.9);
+  --chart-5: oklch(0.645 0.246 16.439);
+  --sidebar: oklch(0.205 0 0);
+  --sidebar-foreground: oklch(0.985 0 0);
+  --sidebar-primary: oklch(0.488 0.243 264.376);
+  --sidebar-primary-foreground: oklch(0.985 0 0);
+  --sidebar-accent: oklch(0.269 0 0);
+  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.556 0 0);
+
+  /* Dark mode brand overrides */
+  --brand-gradient-start: oklch(0.73 0.18 272);
+  --brand-gradient-end: oklch(0.63 0.2 248);
+  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  --hover-gradient-start: oklch(0.77 0.18 272);
+  --hover-gradient-end: oklch(0.67 0.2 248);
+  --hover-gradient: linear-gradient(135deg, var(--hover-gradient-start), var(--hover-gradient-end));
+  --brand-glow: oklch(0.73 0.18 272 / 0.3);
+
+  --success: oklch(0.65 0.18 155);
+  --success-foreground: oklch(0.15 0.05 155);
+  --warning: oklch(0.75 0.15 85);
+  --warning-foreground: oklch(0.2 0.05 85);
+  --info: oklch(0.65 0.15 240);
+  --info-foreground: oklch(0.15 0.05 240);
+  --price: oklch(0.75 0.16 145);
+  --price-sale: oklch(0.7 0.18 45);
+  --price-original: oklch(0.55 0.02 250);
+  --price-highlight-bg: oklch(0.28 0.03 260);
+  --chip: oklch(0.28 0.02 260);
+  --chip-foreground: oklch(0.9 0 0);
+  --chip-selected: oklch(0.7 0.18 45);
+  --chip-selected-foreground: oklch(0.15 0 0);
+  --skeleton: oklch(0.25 0.02 260);
+  --skeleton-shimmer: oklch(0.32 0.02 260);
+  --scrollbar-track: oklch(0.18 0.02 260);
+  --scrollbar-thumb: oklch(0.32 0.02 260);
+  --scrollbar-thumb-hover: oklch(0.42 0.02 260);
+
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   BASE LAYER
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@layer base {
+  html {
+    font-family: var(--app-font-family);
+    font-size: 100%;
+    scroll-behavior: smooth;
+    /* Prevent layout shift from scrollbar */
+    scrollbar-gutter: stable;
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+    font-synthesis: none;
+    font-kerning: normal;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+  }
+
+  :where(h1, h2, h3, h4, h5, h6) {
+    font-weight: var(--weight-heading);
+    letter-spacing: var(--tracking-heading, -0.01em);
+    text-decoration: var(--heading-text-decoration, none);
+    text-decoration-thickness: from-font;
+    text-underline-offset: 0.12em;
+  }
+
+  h1,
+  .h1 {
+    font-size: var(--text-h1);
+    line-height: var(--leading-h1, var(--leading-heading, 1.2));
+    font-weight: var(--weight-h1);
+    letter-spacing: -0.01em;
+  }
+
+  h2,
+  .h2 {
+    font-size: var(--text-h2);
+    line-height: var(--leading-h2, var(--leading-heading, 1.25));
+    font-weight: var(--weight-h2);
+    letter-spacing: -0.005em;
+  }
+
+  h3,
+  .h3 {
+    font-size: var(--text-h3);
+    line-height: var(--leading-h3, var(--leading-heading-sm, 1.3));
+    font-weight: var(--weight-h3);
+  }
+
+  h4,
+  .h4 {
+    font-size: var(--text-h4);
+    line-height: var(--leading-h4, var(--leading-heading-sm, 1.35));
+    font-weight: var(--weight-h4);
+  }
+
+  h5,
+  .h5 {
+    font-size: var(--text-h5);
+    line-height: var(--leading-h5, var(--leading-heading-sm, 1.4));
+    font-weight: var(--weight-h5);
+  }
+
+  h6,
+  .h6 {
+    font-size: var(--text-h6);
+    line-height: var(--leading-h6, var(--leading-heading-sm, 1.4));
+    font-weight: var(--weight-h6);
+  }
+
+  p {
+    font-size: var(--text-body);
+    line-height: 1.55;
+  }
+
+  small {
+    font-size: var(--text-small);
+    line-height: 1.4;
+  }
+
+  a:not([class]) {
+    color: var(--primary);
+    text-underline-offset: 2px;
+    text-decoration-thickness: 0.5px;
+    transition: opacity 0.15s ease;
+  }
+
+  a:not([class]):hover {
+    opacity: 0.8;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    font-family: var(--app-font-family);
+    font-size: var(--text-body);
+    line-height: var(--leading-body, 1.5);
+    letter-spacing: var(--tracking-body, 0em);
+    text-rendering: optimizeLegibility;
+    font-optical-sizing: auto;
+    font-synthesis: none;
+    font-kerning: normal;
+    font-feature-settings: "kern" 1, "liga" 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  /* ── Scrollbar styling — minimal, matches card/border colours ── */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: oklch(from var(--border) l c h / 0.7);
+    border-radius: 999px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--muted-foreground);
+  }
+
+  /* ── Focus visible — ring uses --ring token ── */
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   UTILITY CLASSES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* App shell */
+@utility app-shell {
+  width: 100%;
+  max-width: var(--app-content-width);
+  margin-inline: auto;
+}
+
+@utility squircle {
+  corner-shape: squircle;
+  border-radius: var(--squircle-radius);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEMANTIC TYPOGRAPHY — one class per intent, each backed by a CSS variable.
+   Use these instead of bare Tailwind `text-xs`/`text-sm` so appearance
+   settings propagate correctly everywhere.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@utility app-text-micro {
+  font-size: var(--text-micro);
+  line-height: var(--leading-micro, 1.3);
+  font-weight: var(--weight-badge);
+  letter-spacing: var(--tracking-caps, 0em);
+}
+
+@utility app-text-caption {
+  font-size: var(--text-caption);
+  line-height: var(--leading-caption, 1.35);
+  font-weight: var(--weight-body);
+  letter-spacing: var(--tracking-body, 0em);
+}
+
+@utility app-text-label {
+  font-size: var(--text-label);
+  line-height: var(--leading-label, 1.25);
+  font-weight: var(--weight-label);
+  letter-spacing: var(--tracking-label, 0em);
+}
+
+@utility app-text-body {
+  font-size: var(--text-body);
+  line-height: var(--leading-body, 1.5);
+  font-weight: var(--weight-body);
+  letter-spacing: var(--tracking-body, 0em);
+}
+
+@utility app-text-action {
+  font-size: var(--text-action);
+  line-height: var(--leading-action, 1.25);
+  font-weight: var(--weight-action);
+  letter-spacing: var(--tracking-body, 0em);
+}
+
+@utility app-text-badge {
+  font-size: var(--text-badge);
+  line-height: var(--leading-badge, 1.2);
+  font-weight: var(--weight-badge);
+  letter-spacing: var(--tracking-badge, 0.01em);
+}
+
+@utility app-text-mono {
+  font-size: var(--text-mono);
+  font-family: ui-monospace, monospace;
+  line-height: var(--leading-mono, 1.45);
+  font-weight: var(--weight-body);
+  letter-spacing: var(--tracking-mono, 0em);
+}
+
+@utility app-text-stat {
+  font-size: var(--text-stat);
+  line-height: var(--leading-stat, 1.15);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--tracking-heading, -0.01em);
+}
+
+@utility app-text-heading-sm {
+  font-size: var(--text-heading-sm);
+  line-height: var(--leading-heading-sm, 1.25);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--tracking-heading-sm, -0.005em);
+}
+
+@utility app-text-heading {
+  font-size: var(--text-heading);
+  line-height: var(--leading-heading, 1.2);
+  font-weight: var(--weight-heading);
+  letter-spacing: var(--tracking-heading, -0.01em);
+}
+
+/* Independent type axes for the few elements that only change weight,
+   leading, or tracking without choosing another semantic font size. */
+@utility app-weight-body {
+  font-weight: var(--weight-body);
+}
+
+@utility app-weight-label {
+  font-weight: var(--weight-label);
+}
+
+@utility app-weight-heading {
+  font-weight: var(--weight-heading);
+}
+
+@utility app-weight-action {
+  font-weight: var(--weight-action);
+}
+
+@utility app-weight-badge {
+  font-weight: var(--weight-badge);
+}
+
+@utility app-leading-body {
+  line-height: var(--leading-body);
+}
+
+@utility app-leading-heading {
+  line-height: var(--leading-heading);
+}
+
+@utility app-leading-heading-sm {
+  line-height: var(--leading-heading-sm);
+}
+
+@utility app-tracking-body {
+  letter-spacing: var(--tracking-body);
+}
+
+@utility app-tracking-heading {
+  letter-spacing: var(--tracking-heading);
+}
+
+@utility app-tracking-caps {
+  letter-spacing: var(--tracking-caps);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SEMANTIC ICON SIZES — use var(--icon-*) so tokens propagate from settings.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@utility app-icon-xs {
+  width: var(--icon-xs);
+  height: var(--icon-xs);
+  flex-shrink: 0;
+}
+
+@utility app-icon-sm {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  flex-shrink: 0;
+}
+
+@utility app-icon-md {
+  width: var(--icon-md);
+  height: var(--icon-md);
+  flex-shrink: 0;
+}
+
+@utility app-icon-lg {
+  width: var(--icon-lg);
+  height: var(--icon-lg);
+  flex-shrink: 0;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   DECORATIVE HERO ELEMENTS — tokenized sizes so appearance settings apply.
+   Use these instead of hardcoded h-0.5, h-64 w-64, h-40 w-40.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@utility app-hero-accent {
+  height: var(--hero-accent-h);
+  flex-shrink: 0;
+}
+
+@utility app-hero-orb-lg {
+  width: var(--hero-orb-lg);
+  height: var(--hero-orb-lg);
+  flex-shrink: 0;
+}
+
+@utility app-hero-orb-sm {
+  width: var(--hero-orb-sm);
+  height: var(--hero-orb-sm);
+  flex-shrink: 0;
+}
+
+/* ── Text overflow helper ── */
+@utility app-break-words {
+  overflow-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   INPUT HELPERS — floating-label pattern uses these for icon/placeholder.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@utility input-icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+@utility input-placeholder {
+  font-size: var(--text-label);
+  color: var(--muted-foreground);
+}
+
+@utility app-input-icon {
+  width: var(--icon-sm);
+  height: var(--icon-sm);
+  flex-shrink: 0;
+  color: var(--muted-foreground);
+}
+
+@utility app-input-placeholder {
+  font-size: var(--text-label);
+  color: var(--muted-foreground);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   LEGACY TYPOGRAPHY ALIASES — kept for backward compatibility.
+   All point to canonical --text-* and --space-* vars above.
+   ───────────────────────────────────────────────────────────────────────────── */
+@utility app-ui-text-xs {
+  font-size: var(--text-micro);
+  line-height: 1.3;
+}
+
+@utility app-ui-text-sm {
+  font-size: var(--text-body);
+  line-height: 1.35;
+}
+
+@utility app-ui-toolbar-meta {
+  font-size: var(--text-body);
+  line-height: 1.35;
+}
+
+@utility app-ui-stat-hero {
+  font-size: var(--text-stat);
+  line-height: 1.05;
+}
+
+@utility app-ui-column-header {
+  font-size: var(--text-micro);
+  line-height: 1.3;
+}
+
+@utility app-ui-flight-time {
+  font-size: var(--text-heading-sm);
+  line-height: 1.15;
+}
+
+@utility app-ui-heading-xs {
+  font-size: var(--text-heading-sm);
+  line-height: 1.2;
+}
+
+@utility app-typo-page-title {
+  font-size: var(--text-heading);
+  line-height: 1.2;
+}
+
+@utility app-typo-page-subtitle {
+  font-size: var(--text-body);
+  line-height: 1.35;
+}
+
+@utility app-typo-stat-value {
+  font-size: var(--text-stat);
+  line-height: 1.15;
+}
+
+@utility app-typo-eyebrow {
+  font-size: var(--text-caption);
+  line-height: 1.25;
+}
+
+@utility app-typo-filter-label {
+  font-size: var(--text-label);
+  line-height: 1.25;
+}
+
+@utility app-typo-section-heading {
+  font-size: var(--text-heading-sm);
+  line-height: 1.25;
+}
+
+@utility app-typo-mono-block {
+  font-size: var(--text-mono);
+  line-height: 1.45;
+}
+
+@utility app-typo-tab {
+  font-size: var(--text-body);
+  line-height: 1.25;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SHELL LAYOUT — page-level spacing backed by --space-* tokens.
+   ───────────────────────────────────────────────────────────────────────────── */
+@utility app-shell-page {
+  padding-inline: var(--space-page-x);
+  padding-block: var(--space-page-y);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-section);
+}
+
+@utility app-shell-card {
+  padding: var(--space-card);
+  display: flex;
+  flex-direction: column;
+  gap: var(--card-gap);
+}
+
+@utility app-shell-filter {
+  padding: var(--space-filter);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-gap);
+}
+
+@utility app-shell-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-gap);
+}
+
+@utility app-shell-stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(8rem, 100%), 1fr));
+  gap: var(--space-gap);
+}
+
+/* ── Density helpers (stat cards, baggage, manage-users) ── */
+@utility app-density-hero-pad {
+  padding: var(--space-card);
+}
+
+@utility app-density-header-row-gap {
+  gap: var(--space-gap);
+}
+
+@utility app-density-section-gap {
+  gap: var(--space-gap);
+}
+
+@utility app-density-grid-gap {
+  gap: var(--space-gap);
+}
+
+@utility app-density-stat-tile-pad {
+  padding: var(--space-filter);
+}
+
+@utility app-density-hero-icon {
+  padding: var(--hero-icon-pad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@utility app-density-stat-pill {
+  gap: var(--space-gap);
+  padding-inline: var(--space-filter);
+  padding-block: calc(var(--space-gap) * 0.35);
+}
+
+@utility ui-mobile-pill-height {
+  height: var(--pill-h);
+}
+
+@utility ui-mobile-pill-pad-x {
+  padding-inline: var(--pill-px);
+}
+
+@utility ui-typo-mobile-nav-primary {
+  font-size: var(--text-body);
+  line-height: 1.35;
+}
+
+@utility ui-typo-mobile-nav-secondary {
+  font-size: var(--text-body);
+  line-height: 1.35;
+}
+
+@utility ui-typo-mobile-eyebrow {
+  font-size: var(--text-caption);
+  line-height: 1.25;
+}
+
+@utility ui-table-pair-col {
+  min-width: min(var(--table-pair-col-rem), 70vmin);
+}
+
+/* Stat pill aliases used in account-subsystems header */
+@utility asr-stat-pill-label {
+  font-size: var(--text-label);
+  line-height: 1.25;
+}
+
+@utility asr-stat-pill-value {
+  font-size: var(--text-stat);
+  line-height: 1.15;
+}
+
+/* ── Brand gradient utilities  (use as: className="brand-gradient") ── */
+.brand-gradient {
+  background: var(--brand-gradient);
+}
+
+.brand-gradient-hover {
+  transition: background 0.2s ease, filter 0.2s ease;
+}
+
+.brand-gradient-hover:hover {
+  background: var(--hover-gradient);
+  filter: saturate(1.03);
+}
+
+.hover-gradient {
+  transition: background 0.2s ease, filter 0.2s ease;
+}
+
+.hover-gradient:hover {
+  background: var(--hover-gradient);
+  filter: saturate(1.03);
+}
+
+.text-brand-foreground {
+  color: var(--primary-foreground);
+}
+
+.brand-gradient-text {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.brand-glow {
+  box-shadow: 0 0 0.75rem var(--brand-glow);
+}
+
+.status-success {
+  background: var(--success);
+  color: var(--success-foreground);
+}
+
+.status-warning {
+  background: var(--warning);
+  color: var(--warning-foreground);
+}
+
+.status-info {
+  background: var(--info);
+  color: var(--info-foreground);
+}
+
+.chip-surface {
+  background: var(--chip);
+  color: var(--chip-foreground);
+}
+
+.chip-surface-selected {
+  background: var(--chip-selected);
+  color: var(--chip-selected-foreground);
+}
+
+.price-text {
+  color: var(--price);
+}
+
+.price-sale-text {
+  color: var(--price-sale);
+}
+
+/* ── Scrollbar-none helper ── */
+.scrollbar-none {
+  scrollbar-width: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   TABLE — responsive scale from :root `--table-*` tokens + breakpoint overrides.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+[data-slot="table-head"] {
+  font-size: var(--table-head-text) !important;
+  height: var(--table-head-h);
+  padding-inline: var(--table-cell-px);
+  letter-spacing: var(--table-head-tracking, 0.03em);
+  text-transform: uppercase;
+  font-weight: var(--weight-table-head);
+}
+
+[data-slot="table-cell"] {
+  font-size: var(--table-cell-text) !important;
+  padding-block: var(--table-cell-py);
+  padding-inline: var(--table-cell-px);
+  font-weight: var(--weight-body);
+  line-height: var(--table-cell-leading, 1.45);
+  letter-spacing: var(--table-cell-tracking, 0em);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   ANIMATIONS
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Shimmer — used for skeleton loaders. Mimics the "GIF loading" feel without
+   an actual image: a sweeping highlight that moves across the element. */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(90deg,
+      var(--muted) 25%,
+      oklch(from var(--muted-foreground) l c h / 0.15) 50%,
+      var(--muted) 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}
+
+/* Logo / icon carousel */
+@keyframes logo-scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-144rem);
+  }
+}
+
+.animate-logo-scroll {
+  animation: logo-scroll 30s linear infinite;
+}
+
+.animate-logo-scroll:hover {
+  animation-play-state: paused;
+}
+
+/* Gentle pulse — slightly different from Tailwind's default: holds steady
+   briefly before re-pulsing, giving a more "breathing" quality. */
+@keyframes breathe {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.45;
+  }
+}
+
+.animate-breathe {
+  animation: breathe 2.2s ease-in-out infinite;
+}
+
+/* Slide up — for toasts, bulk action bars, etc. */
+@keyframes slide-up {
+  from {
+    transform: translateY(1.5rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.28s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Fade-scale — card / modal entrance */
+@keyframes fade-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(8px);
+  }
+
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.animate-fade-scale {
+  animation: fade-scale 0.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Gradient flow — decorative background animation for stat cards on hover */
+@keyframes gradient-flow {
+
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.animate-gradient-flow {
+  background-size: 200% 200%;
+  animation: gradient-flow 4s ease infinite;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR — brand atmosphere (decorative, pointer-events:none, z below z-[3])
+   Classes referenced in sidebar.tsx SidebarBrandAtmosphere component.
+   Layout (width, border, shadow, margin) is intentionally NOT touched here.
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.sidebar-brand-atmosphere {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.sidebar-brand-blob {
+  position: absolute;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  opacity: 0.07;
+  filter: blur(2.5rem);
+  animation: sidebar-blob-drift 12s ease-in-out infinite alternate;
+}
+
+.sidebar-brand-blob--sm {
+  width: 7rem;
+  height: 7rem;
+  top: -1.5rem;
+  right: -1.5rem;
+}
+
+.sidebar-brand-blob--lg {
+  width: 11rem;
+  height: 11rem;
+  bottom: 3rem;
+  left: -2.5rem;
+  opacity: 0.05;
+}
+
+.sidebar-brand-blob--delayed {
+  animation-delay: -6s;
+}
+
+.sidebar-brand-shimmer {
+  position: absolute;
+  inset-x: 0;
+  top: 0;
+  height: 0.125rem;
+  background: var(--brand-gradient);
+  opacity: 0.6;
+}
+
+@keyframes sidebar-blob-drift {
+  0% {
+    transform: translateY(0) scale(1);
+  }
+
+  50% {
+    transform: translateY(1.5rem) scale(1.08);
+  }
+
+  100% {
+    transform: translateY(-0.75rem) scale(0.96);
+  }
+}
+
+/* Sidebar text tokens */
+[data-sidebar="group-label"] {
+  font-size: var(--sb-text-label);
+  font-weight: var(--weight-label);
+}
+
+[data-sidebar="menu-button"] {
+  font-size: var(--sb-text-item);
+  padding-inline: var(--nav-item-px);
+  padding-block: var(--nav-item-py);
+}
+
+[data-sidebar="menu-sub-button"] {
+  font-size: var(--sb-text-sub);
+  padding-inline: var(--nav-item-px);
+  padding-block: calc(var(--nav-item-py) * 0.75);
+}
+
+[data-sidebar="menu-badge"] {
+  font-size: var(--sb-text-badge);
+}
+
+[data-sidebar="group-content"] {
+  font-size: var(--sb-text-item);
+}
+
+[data-sidebar="menu-button"] svg,
+[data-sidebar="menu-sub-button"] svg {
+  width: var(--nav-icon-size);
+  height: var(--nav-icon-size);
+  flex-shrink: 0;
+}
+
+/* ── Shadcn primitives — type from canonical tokens ── */
+[data-slot="input"] {
+  font-size: var(--text-body);
+  padding-block: var(--ctrl-py);
+}
+
+textarea[data-slot="textarea"] {
+  font-size: var(--text-body);
+  padding-block: var(--ctrl-py);
+}
+
+[data-slot="button"] {
+  font-size: var(--text-action);
+  font-weight: var(--weight-action);
+  padding-block: var(--ctrl-py);
+}
+
+/* ── Squircle geometry — single source of truth for interactive shells ── */
+[data-control-shell],
+[data-slot="button"],
+[data-slot="popover-trigger"],
+[data-slot="dropdown-menu-trigger"],
+[data-slot="select-trigger"],
+[data-slot="input"],
+[data-slot="badge"],
+[data-slot="search-trigger"],
+[role="combobox"],
+[type="button"],
+textarea[data-slot="textarea"],
+.app-density-stat-pill,
+.app-density-stat-tile-pad {
+  corner-shape: squircle;
+  border-radius: var(--squircle-radius);
+}
+
+[data-slot="search-trigger"] {
+  font-size: var(--text-action);
+}
+
+[data-control-shell] {
+  min-height: var(--ctrl-h);
+}
+
+[data-slot="badge"] {
+  font-size: var(--text-badge);
+  min-height: var(--badge-h);
+  font-weight: var(--weight-badge);
+  padding-inline: var(--badge-px);
+  padding-block: var(--badge-py);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   SIDEBAR — layout fixes
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Fix for sidebar "none" mode height */
+.sidebar-none-mode [data-slot="sidebar"] {
+  /* dvh: mobile URL bar; vmin/vmax are wrong for full-viewport height */
+  height: 100dvh !important;
+  min-height: 100dvh !important;
+}
+
+/* Fix for right-side inset variant */
+@media (min-width: 768px) {
+  html:not([dir="rtl"]) [data-side="right"][data-variant="inset"]~[data-slot="sidebar-inset"] {
+    margin-right: 0 !important;
+    margin-left: 0 !important;
+  }
+
+  html:not([dir="rtl"]) [data-side="right"][data-variant="inset"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+  }
+
+  html[dir="rtl"] [data-side="right"][data-variant="inset"]~[data-slot="sidebar-inset"] {
+    margin-right: var(--sidebar-width) !important;
+    margin-left: 0 !important;
+  }
+
+  html[dir="rtl"] [data-side="right"][data-variant="inset"][data-collapsible="icon"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
+    margin-right: calc(var(--sidebar-width-icon) + var(--spacing) * 4 + 2px) !important;
+    margin-left: 0 !important;
+  }
+
+  html[dir="rtl"] [data-side="right"][data-variant="inset"][data-collapsible="offcanvas"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
+    margin-right: 0.5rem !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   REM RANGE SLIDER — custom cross-browser track/thumb for RemRangeSlider atom
+   ───────────────────────────────────────────────────────────────────────────── */
+
+.rem-range-slider-input {
+  -webkit-appearance: none;
+  appearance: none;
+  height: 0.375rem;
+  border-radius: 9999px;
+  outline: none;
+  cursor: pointer;
+  /* Use oklch-native CSS vars directly — no hsl() wrapper needed */
+  background: linear-gradient(to right,
+      var(--primary) 0%,
+      var(--primary) var(--range-fill, 50%),
+      var(--muted) var(--range-fill, 50%),
+      var(--muted) 100%);
+  transition: background 0.08s ease;
+}
+
+.rem-range-slider-input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  background: var(--primary);
+  border: 2.5px solid var(--background);
+  box-shadow:
+    0 0 0 2px color-mix(in oklch, var(--primary) 40%, transparent),
+    0 2px 8px color-mix(in oklch, var(--primary) 30%, transparent);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.rem-range-slider-input::-moz-range-thumb {
+  width: 1.125rem;
+  height: 1.125rem;
+  border-radius: 50%;
+  border: 2.5px solid var(--background);
+  background: var(--primary);
+  box-shadow:
+    0 0 0 2px color-mix(in oklch, var(--primary) 40%, transparent),
+    0 2px 8px color-mix(in oklch, var(--primary) 30%, transparent);
+  cursor: pointer;
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.rem-range-slider-input:hover::-webkit-slider-thumb {
+  transform: scale(1.18);
+  box-shadow:
+    0 0 0 4px color-mix(in oklch, var(--primary) 22%, transparent),
+    0 3px 12px color-mix(in oklch, var(--primary) 35%, transparent);
+}
+
+.rem-range-slider-input:hover::-moz-range-thumb {
+  transform: scale(1.18);
+  box-shadow:
+    0 0 0 4px color-mix(in oklch, var(--primary) 22%, transparent),
+    0 3px 12px color-mix(in oklch, var(--primary) 35%, transparent);
+}
+
+.rem-range-slider-input:focus-visible::-webkit-slider-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent);
+}
+
+.rem-range-slider-input:focus-visible::-moz-range-thumb {
+  box-shadow: 0 0 0 3px color-mix(in oklch, var(--ring) 60%, transparent);
+}
+
+.rem-range-slider-input::-webkit-slider-runnable-track {
+  border-radius: 9999px;
+}
+
+.rem-range-slider-input::-moz-range-track {
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: transparent;
+}
+
+
+/* ── Marketplace locale fonts ── */
+html[lang="en"] body {
+  font-family: var(--app-font-family, var(--font-family-english, Inter, PoppinsLocal, ui-sans-serif, system-ui));
+  font-size: var(--text-body);
+}
 html[lang="en"] h1,
 html[lang="en"] h2,
 html[lang="en"] h3,
 html[lang="en"] h4,
 html[lang="en"] h5,
-html[lang="en"] h6,
-html[lang="en"] .heading-xl,
-html[lang="en"] .heading-2xl,
-html[lang="en"] .heading-lg,
-html[lang="en"] .heading-md,
-html[lang="en"] .heading-sm {
+html[lang="en"] h6 {
   font-family: var(--font-family-heading, Poppins, PoppinsLocal, Inter, sans-serif);
 }
-
-/* Dari (fa) fonts + RTL */
-html[lang="fa"] {
-  direction: rtl;
-}
-
+html[lang="fa"] { direction: rtl; }
 html[lang="fa"] body {
   font-family: var(--font-family-persian, Vazirmatn, Yekan, HSDream, sans-serif);
-  font-size: var(--font-size-body, var(--font-size-base, 1rem));
+  font-size: var(--text-body);
 }
-
 html[lang="fa"] h1,
 html[lang="fa"] h2,
 html[lang="fa"] h3,
 html[lang="fa"] h4,
 html[lang="fa"] h5,
-html[lang="fa"] h6,
-html[lang="fa"] .heading-xl,
-html[lang="fa"] .heading-2xl,
-html[lang="fa"] .heading-lg,
-html[lang="fa"] .heading-md,
-html[lang="fa"] .heading-sm {
-  font-family: var(--font-family-heading-persian, var(--font-family-heading, HSDream, Vazirmatn, Yekan, sans-serif));
+html[lang="fa"] h6 {
+  font-family: var(--font-family-heading-persian, HSDream, Vazirmatn, Yekan, sans-serif);
 }
 
-:root {
-  --font-family-english: Inter, PoppinsLocal, Roboto, Open Sans, Lato, ui-sans-serif, system-ui;
-  --font-family-persian: Vazirmatn, Yekan, HSDream, Tahoma, sans-serif;
-  --font-family-heading: Poppins, PoppinsLocal, Inter, ui-sans-serif, system-ui;
-  --font-family-heading-persian: HSDream, Vazirmatn, Yekan, sans-serif;
-  --font-size-body: 1rem;
-  --font-size-heading: 1.25rem;
-  --font-size-ui: 0.95rem;
-  /* Heading texture mask — points to /public/mask.png; used by :where(h1…h6) and strong/b below */
-  --app-heading-mask-image: url('/mask.png');
-
-  /* Default LIGHT prefixed tokens (local neon fallback) */
-  --light-background: 195 100% 98%;
-  /* very pale cyan */
-  --light-foreground: 220 95% 8%;
-  /* deep navy */
-  --light-muted: 195 100% 92%;
-  /* pale cyan panels */
-  --light-card: 195 100% 100%;
-  --light-border: 200 90% 85%;
-  /* soft cyan border */
-  --light-input: 200 90% 85%;
-  --light-primary: 180 100% 40%;
-  /* bright teal */
-  --light-primary-foreground: 0 0% 100%;
-  --light-secondary: 295 90% 55%;
-  /* vivid magenta */
-  --light-secondary-foreground: 0 0% 98%;
-  --light-accent: 45 100% 50%;
-  /* neon yellow accent */
-  --light-accent-foreground: 220 95% 8%;
-
-  /* Map active (unprefixed) vars to LIGHT prefixed ones */
-  --background: var(--light-background);
-  --foreground: var(--light-foreground);
-  --muted: var(--light-muted);
-  --card: var(--light-card);
-  --border: var(--light-border);
-  --input: var(--light-input);
-  --primary: var(--light-primary);
-  --primary-foreground: var(--light-primary-foreground);
-  --secondary: var(--light-secondary);
-  --secondary-foreground: var(--light-secondary-foreground);
-  --accent: var(--light-accent);
-  --accent-foreground: var(--light-accent-foreground);
-  /* Link tokens mapping: prefer resolved vars (from components) then prefixed tokens */
-  --link-bg: var(--link-bg-resolved, var(--light-link-bg));
-  --link-hover-bg: var(--link-hover-bg-resolved, var(--light-link-hover-bg));
-  --link-color: var(--link-color-resolved, var(--light-link-color, var(--accent)));
-  --link-hover-color: var(--link-hover-color-resolved, var(--light-link-hover-color, var(--primary)));
-  --link-underline: var(--link-underline-resolved, var(--light-link-underline, var(--accent)));
-  --link-active-color: var(--link-active-color-resolved, var(--light-link-active-color, var(--foreground)));
-
-  /* Shadcn / admin control tokens */
-  /* Base radius — ThemeCustomizer overrides via --radius; squircle scales ×125 for corner-shape */
-  --radius: 0.625rem;
-  --radius-md: var(--radius);
-  --squircle-radius: calc(var(--radius) * 125);
-  --ctrl-h: 2.75rem;
-  --ctrl-h-sm: 2.25rem;
-  --ctrl-px: 1rem;
-  --space-card: 1rem;
-  --badge-h: 1.25rem;
-  --text-badge: 0.6875rem;
-  --text-input-label-float-y: 0.35rem;
-  --muted-foreground: 220 10% 40%;
-  --destructive: 0 84% 50%;
-  --destructive-foreground: 0 0% 100%;
-  --ring: var(--primary);
-  --sidebar: var(--card);
-  --sidebar-foreground: var(--foreground);
-  --sidebar-primary: var(--primary);
-  --sidebar-primary-foreground: var(--primary-foreground);
-  --sidebar-accent: var(--muted);
-  --sidebar-accent-foreground: var(--foreground);
-  --sidebar-border: var(--border);
-  --sidebar-ring: var(--ring);
-  --brand-gradient: linear-gradient(135deg, hsl(var(--primary)), hsl(var(--secondary)));
-  --brand-foreground: var(--primary-foreground);
-  --spacing: 0.25rem;
-
-  /* Popover / chart / semantic tokens for theme customizer + shadcn */
-  --popover: var(--card);
-  --popover-foreground: var(--foreground);
-  --card-foreground: var(--foreground);
-  --chart-1: var(--primary);
-  --chart-2: var(--secondary);
-  --chart-3: var(--accent);
-  --chart-4: 200 90% 45%;
-  --chart-5: 320 70% 50%;
-  --success: 152 60% 40%;
-  --success-foreground: 0 0% 100%;
-  --warning: 45 95% 48%;
-  --warning-foreground: 220 95% 8%;
-  --info: 210 90% 48%;
-  --info-foreground: 0 0% 100%;
-
-  /* Density studio canonical tokens */
-  --text-micro: 0.625rem;
-  --text-caption: 0.6875rem;
-  --text-label: 0.75rem;
-  --text-body: 1rem;
-  --text-action: 1rem;
-  --text-heading-sm: 1.25rem;
-  --text-heading: 1.5rem;
-  --text-stat: 1.125rem;
-  --icon-xs: 0.875rem;
-  --icon-sm: 1rem;
-  --icon-md: 1.25rem;
-  --icon-lg: 1.5rem;
-  --space-page-x: 1rem;
-  --space-page-y: 1rem;
-  --space-section: 1.5rem;
-  --space-gap: 0.75rem;
-  --app-sidebar-width: 16rem;
-}
-
-.rounded-squircle,
-.squircle {
-  corner-shape: squircle;
-  border-radius: var(--squircle-radius);
-}
-
-.brand-gradient {
-  background-image: var(--brand-gradient);
-  color: hsl(var(--brand-foreground));
-}
-
-.hover-gradient:hover {
-  filter: brightness(1.05);
-}
-
-.brand-glow {
-  box-shadow: 0 8px 24px -12px hsl(var(--primary) / 0.55);
-}
-
-.admin-text-label {
-  font-size: 0.875rem;
-  font-weight: 500;
-  line-height: 1.25;
-}
-
-.admin-text-heading {
-  font-size: clamp(1.125rem, 1rem + 0.5vw, 1.5rem);
-  font-weight: 600;
-  line-height: 1.3;
-}
-
-.admin-icon-xs {
-  width: 0.875rem;
-  height: 0.875rem;
-}
-
-.admin-icon-sm {
-  width: 1rem;
-  height: 1rem;
-}
-
-.dark,
-html[data-theme="dark"] {
-  /* Default DARK prefixed tokens (local neon fallback) */
-  --dark-background: 260 80% 6%;
-  /* deep purple */
-  --dark-foreground: 45 100% 95%;
-  /* pale neon yellow text */
-  --dark-muted: 260 80% 12%;
-  /* dark purple panels */
-  --dark-card: 260 80% 8%;
-  --dark-border: 260 70% 18%;
-  --dark-input: 260 70% 18%;
-  --dark-primary: 180 100% 60%;
-  /* bright teal on dark */
-  --dark-primary-foreground: 260 80% 6%;
-  --dark-secondary: 295 90% 65%;
-  --dark-secondary-foreground: 260 80% 6%;
-  --dark-accent: 45 100% 60%;
-  --dark-accent-foreground: 260 80% 6%;
-
-  /* Map active (unprefixed) vars to DARK prefixed ones */
-  --background: var(--dark-background);
-  --foreground: var(--dark-foreground);
-  --muted: var(--dark-muted);
-  --card: var(--dark-card);
-  --border: var(--dark-border);
-  --input: var(--dark-input);
-  --primary: var(--dark-primary);
-  --primary-foreground: var(--dark-primary-foreground);
-  --secondary: var(--dark-secondary);
-  --secondary-foreground: var(--dark-secondary-foreground);
-  --accent: var(--dark-accent);
-  --accent-foreground: var(--dark-accent-foreground);
-  /* Link tokens mapping: prefer resolved vars (from components) then prefixed tokens */
-  --link-bg: var(--link-bg-resolved, var(--dark-link-bg));
-  --link-hover-bg: var(--link-hover-bg-resolved, var(--dark-link-hover-bg));
-  --link-color: var(--link-color-resolved, var(--dark-link-color, var(--accent)));
-  --link-hover-color: var(--link-hover-color-resolved, var(--dark-link-hover-color, var(--primary)));
-  --link-underline: var(--link-underline-resolved, var(--dark-link-underline, var(--accent)));
-  --link-active-color: var(--link-active-color-resolved, var(--dark-link-active-color, var(--foreground)));
-  --muted-foreground: 220 10% 70%;
-  --destructive: 0 72% 55%;
-  --destructive-foreground: 0 0% 100%;
-}
-
-html,
-body {
-  @apply bg-[hsl(var(--background))] text-[hsl(var(--foreground))];
-  font-family: var(--font-family-english, var(--font-family, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial));
-  line-height: var(--line-height-normal, 1.4);
-  font-size: var(--font-size-body, var(--font-size-base, 16px));
-  overflow-x: hidden;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-.heading-xl,
-.heading-2xl,
-.heading-lg,
-.heading-md,
-.heading-sm {
-  font-size: var(--font-size-heading, inherit);
-}
-
-/* ── Textured heading mask treatment — RTL + LTR safe (mask-position: center) ── */
-/* Works in both dir="ltr" and dir="rtl" because center is axis-agnostic.          */
+/* Textured heading mask */
 :where(h1, h2, h3, h4, h5, h6) {
-  line-height: 1.4cap;
-  padding-block-end: 0.25ch;
   -webkit-mask-image: var(--app-heading-mask-image);
   mask-image: var(--app-heading-mask-image);
   -webkit-mask-size: cover;
@@ -456,8 +1542,6 @@ h6,
   -webkit-mask-position: center;
   mask-position: center;
 }
-
-/* Apply the same texture to bold / important inline text */
 :where(strong, b) {
   -webkit-mask-image: var(--app-heading-mask-image);
   mask-image: var(--app-heading-mask-image);
@@ -469,544 +1553,179 @@ h6,
   mask-position: center;
 }
 
-input,
-select,
-textarea,
-button {
-  font-size: var(--font-size-ui, 0.95rem);
+.rounded-squircle,
+.squircle {
+  corner-shape: squircle;
+  border-radius: var(--squircle-radius);
 }
+
+/* Marketplace motion — theme-var driven */
+.bg-grid-overlay {
+  background-image:
+    linear-gradient(90deg, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px),
+    linear-gradient(color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px);
+  background-size: 80px 80px;
+}
+.bg-aurora-one {
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--primary) 55%, transparent), transparent 70%);
+}
+.bg-aurora-two {
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--secondary) 55%, transparent), transparent 70%);
+}
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+.animate-marquee { animation: marquee 28s linear infinite; }
+.animate-marquee:hover { animation-play-state: paused; }
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+.animate-spin-slow { animation: spin-slow 60s linear infinite; }
+@keyframes drift-a {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(20px, -10px); }
+  66% { transform: translate(-10px, 15px); }
+  100% { transform: translate(0, 0); }
+}
+@keyframes drift-b {
+  0% { transform: translate(0, 0); }
+  33% { transform: translate(-16px, 12px); }
+  66% { transform: translate(12px, -8px); }
+  100% { transform: translate(0, 0); }
+}
+.animate-drift-a { animation: drift-a 20s ease-in-out infinite; }
+.animate-drift-b { animation: drift-b 22s ease-in-out infinite; }
 
 .glass {
-  /* tone glass to be subtler like nextjs panels */
-  @apply bg-white/60 dark:bg-white/5 backdrop-blur-md shadow-glass border border-[hsl(var(--border))]/60 dark:border-white/10;
+  background-color: color-mix(in oklch, var(--background) 60%, transparent);
+  backdrop-filter: blur(12px);
+  border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
+  box-shadow: var(--shadow-md, 0 10px 30px -12px color-mix(in oklch, var(--foreground) 20%, transparent));
+}
+.dark .glass {
+  background-color: color-mix(in oklch, var(--card) 40%, transparent);
+  border-color: color-mix(in oklch, var(--border) 70%, transparent);
 }
 
-.neuo {
-  box-shadow: 9px 9px 16px rgba(0, 0, 0, 0.25), -9px -9px 16px rgba(255, 255, 255, 0.03);
+.liquid-glass {
+  position: relative;
+  border-radius: var(--radius-lg, 1rem);
+  background: color-mix(in oklch, var(--background) 18%, transparent);
+  backdrop-filter: saturate(160%) blur(16px);
+}
+.liquid-glass::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  border-radius: inherit;
+  padding: 1px;
+  background: conic-gradient(from 180deg at 50% 50%, color-mix(in oklch, var(--primary) 85%, transparent), color-mix(in oklch, var(--secondary) 85%, transparent), color-mix(in oklch, var(--primary) 85%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: .9;
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply min-h-screen antialiased;
-    overflow-x: hidden;
-  }
+.app-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: blur(8px);
+  background-color: color-mix(in oklch, var(--navbar-bg, var(--background)) 92%, transparent);
+  border-bottom: 1px solid var(--navbar-border, var(--border));
+  color: var(--navbar-fg, var(--foreground));
+  height: var(--navbar-height, var(--shell-header-h, 4rem));
+  box-shadow: var(--navbar-shadow, none);
 }
 
-@layer components {
-
-  /* Liquid glass gradient border panel */
-  .liquid-glass {
-    position: relative;
-    border-radius: var(--radius-lg, 1rem);
-    background: hsl(var(--background) / 0.18);
-    -webkit-backdrop-filter: saturate(160%) blur(16px);
-    backdrop-filter: saturate(160%) blur(16px);
-  }
-
-  .liquid-glass::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border-radius: inherit;
-    padding: 1px;
-    background: conic-gradient(from 180deg at 50% 50%, hsl(var(--primary)/.85), hsl(var(--secondary)/.85), hsl(var(--primary)/.85));
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: .9;
-  }
-
-  .liquid-glass::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    border-radius: inherit;
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .12), 0 8px 30px rgba(0, 0, 0, .12);
-  }
-
-  /* Subtle hover lift for glass panels */
-  .glass-hover {
-    transition: transform .25s var(--transition-normal, ease);
-  }
-
-  .glass-hover:hover {
-    transform: translateY(-2px);
-  }
-
-  html[data-density="compact"] .card {
-    padding: 0.85rem !important;
-  }
-
-  html[data-density="compact"] .card h3,
-  html[data-density="compact"] h3 {
-    font-size: 0.9rem;
-  }
-
-  html[data-density="compact"] .card p {
-    font-size: 0.7rem;
-  }
-
-  .noise-overlay::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("/images/placeholder-card.jpg");
-    mix-blend-mode: overlay;
-    opacity: 0.03;
-    pointer-events: none;
-  }
-
-  /* Utilities */
-  .safe-pb {
-    padding-bottom: calc(var(--safe-bottom) + 0.25rem);
-  }
-
-  .safe-pt {
-    padding-top: calc(var(--safe-top) + 0.25rem);
-  }
-
-  .safe-pl {
-    padding-left: calc(var(--safe-left));
-  }
-
-  .safe-pr {
-    padding-right: calc(var(--safe-right));
-  }
-
-  /* Unread badge pop animation */
-  @keyframes badge-pop {
-    0% {
-      transform: scale(0);
-      opacity: 0;
-    }
-
-    55% {
-      transform: scale(1.15);
-      opacity: 1;
-    }
-
-    75% {
-      transform: scale(0.9);
-    }
-
-    100% {
-      transform: scale(1);
-    }
-  }
-
-  .badge-pop {
-    animation: badge-pop 420ms cubic-bezier(.22, 1, .36, 1);
-  }
-
-  /* Ambient hover gradient helper */
-  .hover-ambient {
-    position: relative;
-  }
-
-  .hover-ambient::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity .35s ease;
-    background: radial-gradient(circle at 50% 60%, hsl(var(--accent) / 0.18), transparent 70%);
-    mix-blend-mode: plus-lighter;
-  }
-
-  .hover-ambient:hover::after {
-    opacity: 1;
-  }
-
-  .container-padded {
-    @apply container px-4 md:px-6 lg:px-8;
-  }
-
-  /* Smooth native touch scrolling helper */
-  .touch-scroll {
-    -webkit-overflow-scrolling: touch;
-  }
-
-  /* Global interactive defaults for buttons and links using theme vars */
-  button,
-  .btn,
-  [role="button"] {
-    transition: var(--btn-primary-transition, var(--transition-normal, 200ms ease));
-  }
-
-  button:hover,
-  .btn:hover,
-  [role="button"]:hover {
-    box-shadow: var(--btn-primary-hover-shadow, var(--shadow-sm, none));
-    background-color: hsl(var(--btn-primary-hover-bg, var(--accent)));
-    color: hsl(var(--btn-primary-hover-fg, var(--accent-foreground)));
-  }
-
-  button:active,
-  .btn:active,
-  [role="button"]:active {
-    box-shadow: var(--btn-primary-active-shadow, var(--shadow-sm, none));
-    background-color: hsl(var(--btn-primary-active-bg, var(--primary)));
-    color: hsl(var(--btn-primary-active-fg, var(--primary-foreground)));
-  }
-
-  select,
-  .select,
-  [role="listbox"] {
-    background-color: hsl(var(--card, var(--background)));
-    color: hsl(var(--foreground));
-    border: solid var(--border-width-regular, 1px) hsl(var(--border));
-  }
-
-  option {
-    background-color: hsl(var(--card, var(--background)));
-    color: hsl(var(--foreground));
-  }
-
-  select:focus-visible {
-    outline: none;
-    box-shadow: 0 0 0 3px hsl(var(--accent) / 0.35);
-  }
-
-  .card {
-    @apply rounded-2xl p-5 md:p-6 transition-transform duration-300 ease-premium hover:-translate-y-0.5;
-    background-color: hsl(var(--card-bg, var(--card)));
-    color: hsl(var(--card-fg, var(--foreground)));
-    border-color: hsl(var(--card-border, var(--border)));
-    border-width: var(--card-border-width, var(--border-width-regular, 1px));
-    border-style: solid;
-    border-radius: var(--radius-card, var(--radius-lg, 1rem));
-    box-shadow: var(--card-shadow, var(--shadow-md, none));
-  }
-
-  .heading-xl {
-    @apply font-extrabold tracking-tight;
-    font-size: var(--font-size-3xl, 1.875rem);
-  }
-
-  .heading-2xl {
-    @apply font-extrabold tracking-tight;
-    font-size: var(--font-size-4xl, 2.25rem);
-  }
-
-  .heading-lg {
-    @apply font-bold tracking-tight;
-    font-size: var(--font-size-2xl, 1.5rem);
-  }
-
-  .heading-md {
-    @apply font-semibold tracking-tight;
-    font-size: var(--font-size-xl, 1.25rem);
-  }
-
-  .heading-sm {
-    @apply font-semibold tracking-tight;
-    font-size: var(--font-size-lg, 1.125rem);
-  }
-
-  .text-2xs {
-    font-size: var(--font-size-2xs, 0.6875rem);
-  }
-
-  .subtle {
-    @apply text-sm text-foreground/70;
-  }
-
-  .particles::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 24px 24px;
-    -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-    mask-image: radial-gradient(ellipse at center, black 40%, transparent 70%);
-    pointer-events: none;
-  }
-
-  /* Navbar helper class to consume component variables */
-  .app-navbar {
-    position: sticky;
-    top: 0;
-    z-index: var(--z-index-navbar, var(--z-index-base, 40));
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    background-color: hsl(var(--navbar-bg, var(--background)) / 0.92);
-    border-bottom: solid var(--navbar-border-width, var(--border-width-regular, 1px)) hsl(var(--navbar-border, var(--border)));
-    color: hsl(var(--navbar-fg, var(--foreground)));
-    height: var(--navbar-height, 4rem);
-    box-shadow: var(--navbar-shadow, var(--shadow-none, none));
-  }
-
-  /* Default link token styles applied to anchors */
-  a,
-  .link {
-    color: hsl(var(--link-color, var(--accent)));
-    background-color: hsl(var(--link-bg, var(--background)) / 0);
-    text-decoration: none;
-    transition: var(--link-transition, color var(--transition-normal, 200ms ease));
-    text-decoration-color: hsl(var(--link-underline, var(--accent)));
-    text-underline-offset: var(--space-1, 2px);
-    text-decoration-thickness: var(--border-width-regular, 1px);
-  }
-
-  a:hover,
-  .link:hover {
-    color: hsl(var(--link-hover-color, var(--primary)));
-    background-color: hsl(var(--link-hover-bg, var(--muted)) / 0.15);
-  }
-
-  a:active,
-  .link:active {
-    color: hsl(var(--link-active-color, var(--foreground)));
-  }
-
-  .link:hover,
-  .link.link-hover-primary:hover {
-    color: hsl(var(--link-hover-color, var(--primary)));
-    text-decoration: underline;
-    text-underline-offset: calc(var(--space-1, 2px) + 1px);
-    text-decoration-thickness: calc(var(--border-width-regular, 1px) + 0.5px);
-  }
-
-  .link.link-hover-secondary:hover {
-    color: hsl(var(--secondary));
-  }
-
-  .link:active {
-    color: hsl(var(--link-active-color, var(--foreground)));
-    opacity: 0.9;
-  }
-
-  .link-underline {
-    text-decoration: underline;
-  }
+.card {
+  border-radius: var(--radius-card, var(--radius-lg, 1rem));
+  padding: var(--space-card);
+  background-color: var(--card-bg, var(--card));
+  color: var(--card-fg, var(--card-foreground, var(--foreground)));
+  border: 1px solid var(--card-border, var(--border));
+  box-shadow: var(--card-shadow, none);
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-/* Accent button utilities: used by sliders, pagination, filters, hero CTAs */
-.go-to-slide,
-button[aria-label^="Go to slide"],
-.accent-btn {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
-  border-color: hsl(var(--accent) / 0.85);
-}
-
-.go-to-slide:hover,
-.accent-btn:hover,
-button[aria-label^="Go to slide"]:hover {
-  filter: brightness(0.98);
-  transform: translateY(-1px);
-}
+.card:hover { transform: translateY(-2px); }
 
 .theme-range {
   appearance: none;
   width: 100%;
   height: 0.5rem;
   border-radius: 9999px;
-  background: linear-gradient(90deg,
-      hsl(var(--primary) / 0.85),
-      hsl(var(--accent) / 0.85));
+  background: linear-gradient(90deg, color-mix(in oklch, var(--primary) 85%, transparent), color-mix(in oklch, var(--accent) 85%, transparent));
   outline: none;
 }
-
 .theme-range::-webkit-slider-thumb {
   appearance: none;
   width: 1rem;
   height: 1rem;
   border-radius: 9999px;
-  border: 2px solid hsl(var(--card));
-  background: hsl(var(--accent));
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  border: 2px solid var(--card);
+  background: var(--accent);
   cursor: pointer;
 }
 
-.theme-range::-moz-range-thumb {
-  width: 1rem;
-  height: 1rem;
-  border: 2px solid hsl(var(--card));
-  border-radius: 9999px;
-  background: hsl(var(--accent));
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  cursor: pointer;
-}
-
-
-/* Prevent mobile browsers (iOS Safari) from zooming when focusing inputs with <16px font-size */
-@media (max-width: 640px) {
-
-  input,
-  select,
-  textarea {
-    font-size: 16px !important;
-    line-height: 1.35;
-  }
-}
-
-/* Hide scrollbar utility for horizontal scrollers */
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-.no-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
-}
-
-/* Aspect ratio helpers (used by ImageSlider to avoid inline styles) */
-.ar-16-9 {
-  aspect-ratio: 16 / 9;
-}
-
-.ar-4-1 {
-  aspect-ratio: 4 / 1;
-}
-
-.ar-1-1 {
-  aspect-ratio: 1 / 1;
-}
-
-.ar-3-2 {
-  aspect-ratio: 3 / 2;
-}
-
-/* Conic gradient for primary/secondary theme tokens */
 .bg-conic-primary-secondary {
-  background: conic-gradient(from 180deg at 50% 50%,
-      hsl(var(--primary) / 0.12),
-      transparent 30%,
-      hsl(var(--secondary) / 0.12),
-      transparent 70%,
-      hsl(var(--primary) / 0.12));
+  background: conic-gradient(from 180deg at 50% 50%, color-mix(in oklch, var(--primary) 12%, transparent), transparent 30%, color-mix(in oklch, var(--secondary) 12%, transparent), transparent 70%, color-mix(in oklch, var(--primary) 12%, transparent));
 }
-
-/* Radial gradient for accent token */
 .bg-radial-accent {
-  background: radial-gradient(closest-side,
-      hsl(var(--accent) / 0.18),
-      transparent 70%);
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--accent) 18%, transparent), transparent 70%);
 }
-
-/* Radial gradient for secondary token */
 .bg-radial-secondary {
-  background: radial-gradient(closest-side,
-      hsl(var(--secondary) / 0.18),
-      transparent 70%);
+  background: radial-gradient(closest-side, color-mix(in oklch, var(--secondary) 18%, transparent), transparent 70%);
 }
 
-/* Ensure all 'Go to slide' controls use accent as background for visibility */
-.go-to-slide,
-button[aria-label^="Go to slide"] {
-  background-color: hsl(var(--accent));
-  color: hsl(var(--accent-foreground));
-}
-
-.go-to-slide:hover,
-button[aria-label^="Go to slide"]:hover,
-.go-to-slide:focus,
-button[aria-label^="Go to slide"]:focus {
-  filter: brightness(0.95);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
-}
-
-/* Bottom sheet dynamic height helper: uses --sheet-height set by JS */
-.sheet-dynamic-height {
-  height: var(--sheet-height, 60vh);
-  bottom: 0;
-}
-
-/* Blur utility classes */
-.blur-18 {
-  filter: blur(18px);
-}
-
-.blur-40 {
-  filter: blur(40px);
-}
-
-.blur-42 {
-  filter: blur(42px);
-}
-
-/* Utility class for auto dimensions */
-.auto-dimensions {
-  width: auto;
-  height: auto;
-}
-
-/* Blur utility class for BottomNavigation */
-.blur-4 {
-  filter: blur(4px);
-}
-
-/* Utility class for hidden overflow */
-.overflow-hidden {
-  overflow: hidden;
-}
-
-/* Gradient background for sign-up page */
 .gradient-bg {
   min-height: 100vh;
   overflow: hidden;
-  background: radial-gradient(circle at top, hsl(var(--primary)) / 0.28, transparent 58%),
-    radial-gradient(circle at bottom, hsl(var(--accent)) / 0.22, transparent 64%);
+  background:
+    radial-gradient(circle at top, color-mix(in oklch, var(--primary) 28%, transparent), transparent 58%),
+    radial-gradient(circle at bottom, color-mix(in oklch, var(--accent) 22%, transparent), transparent 64%);
 }
 
-/* Small helpers added during inline-style refactor */
-.will-change {
-  will-change: opacity, transform;
-}
-
-.dropdown-card {
-  background-color: hsl(var(--card-bg, var(--card)));
-}
-
-.chart-tooltip {
-  outline: none !important;
-}
-
-/* Target the recharts legend wrapper to tune font-size */
-.recharts-legend-wrapper,
-.chart-legend {
-  font-size: 12px;
-}
-
-@keyframes partners-marquee {
-  0% {
-    transform: translateX(0);
-  }
-
-  100% {
-    transform: translateX(-50%);
-  }
+.go-to-slide,
+button[aria-label^="Go to slide"],
+.accent-btn {
+  background-color: var(--accent);
+  color: var(--accent-foreground);
+  border-color: color-mix(in oklch, var(--accent) 85%, transparent);
 }
 
 .partners-marquee-track {
   width: max-content;
   animation: partners-marquee 24s linear infinite;
 }
-
-@media (prefers-reduced-motion: reduce) {
-  .partners-marquee-track {
-    animation: none;
-  }
+@keyframes partners-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
 }
-
-/* Logo carousel — used by partners.tsx (logo-carousel replacement) */
-.animate-logo-scroll:hover {
-  animation-play-state: paused;
-}
-
 @media (prefers-reduced-motion: reduce) {
+  .partners-marquee-track,
+  .animate-marquee,
+  .animate-spin-slow,
+  .animate-drift-a,
+  .animate-drift-b,
   .animate-logo-scroll {
-    animation: none;
+    animation: none !important;
   }
 }
 
-/* Password strength bar color utilities that map to theme tokens */
-/* Removed small bg- utility classes; components should use token-based classes like bg-[hsl(var(--primary))] */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+.safe-pb { padding-bottom: calc(var(--safe-bottom, 0px) + 0.25rem); }
+.safe-pt { padding-top: calc(var(--safe-top, 0px) + 0.25rem); }
+.container-padded { @apply container px-4 md:px-6 lg:px-8; }
+
+@media (max-width: 640px) {
+  input, select, textarea {
+    font-size: 16px !important;
+    line-height: 1.35;
+  }
+}
+

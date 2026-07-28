@@ -185,7 +185,7 @@ const TextareaField = forwardRef<HTMLTextAreaElement, TextareaFieldProps>(
             // Default: sits inside the top padding area (acts as placeholder)
             "top-0 translate-y-[14px] text-muted-foreground",
             // Focused → float up + shrink
-            "peer-focus:translate-y-[6px] peer-focus:admin-text-heading-sm peer-focus:text-foreground/70",
+            "peer-focus:translate-y-[6px] peer-focus:app-text-heading-sm peer-focus:text-foreground/70",
             // Filled → stay floated
             "peer-[:not(:placeholder-shown)]:translate-y-[6px] peer-[:not(:placeholder-shown)]:text-foreground/70",
             // Controlled with value → always floated

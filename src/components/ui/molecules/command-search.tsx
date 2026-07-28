@@ -77,7 +77,7 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="flex min-h-[var(--ctrl-h)] items-center justify-center admin-text-body text-zinc-500 dark:text-zinc-400"
+    className="flex min-h-[var(--ctrl-h)] items-center justify-center app-text-body text-zinc-500 dark:text-zinc-400"
     {...props}
   />
 ));
@@ -90,7 +90,7 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden px-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:admin-text-caption [&_[cmdk-group-heading]]:admin-text-label [&_[cmdk-group-heading]]:text-zinc-500 dark:[&_[cmdk-group-heading]]:text-zinc-400 [&:not(:first-child)]:mt-2",
+      "overflow-hidden px-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:app-text-caption [&_[cmdk-group-heading]]:app-text-label [&_[cmdk-group-heading]]:text-zinc-500 dark:[&_[cmdk-group-heading]]:text-zinc-400 [&:not(:first-child)]:mt-2",
       className,
     )}
     {...props}
@@ -105,7 +105,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex min-h-[var(--ctrl-h)] cursor-pointer select-none items-center gap-2 rounded-lg px-4 admin-text-body text-zinc-700 dark:text-zinc-300 outline-none transition-colors data-[disabled=true]:pointer-events-none data-[selected=true]:bg-zinc-100 dark:data-[selected=true]:bg-zinc-800 data-[selected=true]:text-zinc-900 dark:data-[selected=true]:text-zinc-100 data-[disabled=true]:opacity-50 [&+[cmdk-item]]:mt-1",
+      "relative flex min-h-[var(--ctrl-h)] cursor-pointer select-none items-center gap-2 rounded-lg px-4 app-text-body text-zinc-700 dark:text-zinc-300 outline-none transition-colors data-[disabled=true]:pointer-events-none data-[selected=true]:bg-zinc-100 dark:data-[selected=true]:bg-zinc-800 data-[selected=true]:text-zinc-900 dark:data-[selected=true]:text-zinc-100 data-[disabled=true]:opacity-50 [&+[cmdk-item]]:mt-1",
       className,
     )}
     {...props}
@@ -467,7 +467,7 @@ export function CommandSearch({
                       value={`${item.title} ${item.url}`}
                       onSelect={() => handleSelect(item.url)}
                     >
-                      {Icon && <Icon className="mr-2 admin-icon-sm" />}
+                      {Icon && <Icon className="mr-2 app-icon-sm" />}
                       {item.title}
                     </CommandItem>
                   );
@@ -493,13 +493,13 @@ export function SearchTrigger({
       data-slot="search-trigger"
       onClick={onClick}
       aria-label={label}
-      className="inline-flex items-center gap-2 whitespace-nowrap rounded-md admin-text-body transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground min-h-[var(--ctrl-h-sm)] px-3 py-1 relative w-full justify-start text-muted-foreground sm:pr-12 md:w-36 lg:w-56"
+      className="inline-flex items-center gap-2 whitespace-nowrap rounded-md app-text-body transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground min-h-[var(--ctrl-h-sm)] px-3 py-1 relative w-full justify-start text-muted-foreground sm:pr-12 md:w-36 lg:w-56"
     >
-      <Search className="admin-icon-xs shrink-0" />
+      <Search className="app-icon-xs shrink-0" />
       <span className="hidden lg:inline-flex">{label}</span>
       <span className="inline-flex lg:hidden">{label}</span>
-      <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-4 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono admin-text-label opacity-100 sm:flex">
-        <span className="admin-text-caption">⌘</span>K
+      <kbd className="pointer-events-none absolute right-1.5 top-1.5 hidden h-4 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono app-text-label opacity-100 sm:flex">
+        <span className="app-text-caption">⌘</span>K
       </kbd>
     </button>
   );

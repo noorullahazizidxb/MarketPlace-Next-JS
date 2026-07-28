@@ -19,6 +19,7 @@ import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
+import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
 
 type FormData = { email: string; password: string };
 
@@ -104,27 +105,10 @@ export default function SignInPage() {
   return (
     <div
       dir={isRtl ? "rtl" : "ltr"}
-      className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-[hsl(var(--background))] relative overflow-hidden"
+      data-app-page="sign-in"
+      className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-background relative overflow-hidden"
     >
-      {/* Animated background */}
-      <div className="absolute inset-0 -z-10">
-        <motion.div
-          className="absolute inset-0 bg-[linear-gradient(135deg,_hsl(var(--primary))/0.1,_transparent_45%,_hsl(var(--secondary))/0.12)]"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.9 }}
-        />
-        <motion.div
-          className="absolute -top-20 -left-20 h-72 w-72 rounded-full bg-[hsl(var(--primary))/0.15] blur-3xl"
-          animate={{ y: [0, 14, -8, 0] }}
-          transition={{ duration: 13, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div
-          className="absolute -bottom-24 -right-16 h-80 w-80 rounded-full bg-[hsl(var(--accent))/0.15] blur-3xl"
-          animate={{ y: [0, -12, 9, 0], x: [0, 8, -5, 0] }}
-          transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }}
-        />
-      </div>
+      <AmbientCanvas variant="ribbons" intensity={0.32} className="-z-10" />
 
       <motion.div
         initial={{ opacity: 0, y: 28, scale: 0.97 }}
@@ -132,10 +116,9 @@ export default function SignInPage() {
         transition={{ type: "spring", stiffness: 260, damping: 28 }}
         className="relative w-full max-w-md"
       >
-        <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]/50 bg-[hsl(var(--card))]/80 backdrop-blur-2xl shadow-[0_32px_70px_-40px_hsl(var(--primary)/0.4)] p-8">
-          {/* Shimmer lines */}
-          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.5] to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[hsl(var(--accent))/0.3] to-transparent" />
+        <div className="relative overflow-hidden rounded-3xl border border-border/50 bg-card/80 backdrop-blur-2xl shadow-xl p-[var(--space-card)]">
+          <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/50 to-transparent" />
+          <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-accent/30 to-transparent" />
 
           {/* Logo + heading */}
           <motion.div
@@ -144,7 +127,7 @@ export default function SignInPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08, duration: 0.4 }}
           >
-            <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_hsl(var(--primary)/0.25)] ring-1 ring-[hsl(var(--primary))]/20 dark:bg-white/95">
+            <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-white/95">
               <Image
                 src="/brand/devminds-logo.png"
                 alt="DevMinds"
@@ -155,10 +138,10 @@ export default function SignInPage() {
                 draggable={false}
               />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[hsl(var(--foreground))]">
+            <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
               {t("signInTitle")}
             </h1>
-            <p className="mt-1.5 text-sm text-[hsl(var(--muted-foreground))]">
+            <p className="mt-1.5 text-sm text-[var(--muted-foreground)]">
               {t("signInSubtitle")}
             </p>
           </motion.div>
@@ -175,11 +158,11 @@ export default function SignInPage() {
                 googleUrl={config.googleAuthUrl}
                 facebookUrl={config.facebookAuthUrl}
               />
-              <div className="relative text-center text-xs text-[hsl(var(--muted-foreground))]">
-                <span className="relative z-10 bg-[hsl(var(--card))]/90 px-3">
+              <div className="relative text-center text-xs text-[var(--muted-foreground)]">
+                <span className="relative z-10 bg-[var(--card)]/90 px-3">
                   {t("orContinueWithEmail")}
                 </span>
-                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[hsl(var(--border))]" />
+                <span className="absolute inset-x-0 top-1/2 h-px -translate-y-1/2 bg-[var(--border)]" />
               </div>
             </motion.div>
           )}
@@ -278,7 +261,7 @@ export default function SignInPage() {
               <Tooltip content={t("tooltipForgotPassword")} side="top">
                 <Link
                   href="#"
-                  className="text-sm text-[hsl(var(--accent))] hover:underline underline-offset-2 transition-colors"
+                  className="text-sm text-[var(--accent)] hover:underline underline-offset-2 transition-colors"
                 >
                   {t("forgot")}
                 </Link>

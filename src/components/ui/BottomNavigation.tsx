@@ -93,18 +93,18 @@ const BottomNavItem: React.FC<{
       aria-label={item.label}
       onClick={() => onNavigate(item.href, item.onClick)}
       className={
-        "relative flex flex-col items-center hover:bg-[var(--foreground)] justify-center gap-0.5 min-w-[40px] px-2 py-2 rounded-2xl text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 ring-primary/40 " +
+        "relative flex flex-col items-center hover:bg-foreground/5 justify-center gap-0.5 min-w-[40px] px-2 py-2 rounded-2xl app-text-caption font-medium transition-colors focus:outline-none focus-visible:ring-2 ring-primary/40 " +
         (active
-          ? "text-[var(--foreground)]"
-          : "text-[hsl(var(--muted-foreground,var(--foreground)))] hover:text-[hsl(var(--foreground))]")
+          ? "text-foreground"
+          : "text-muted-foreground hover:text-foreground")
       }
     >
       <span
         className={
-          "grid place-items-center relative size-9 rounded-xl transition-all shadow-[inset_0_0_0_1px_hsl(var(--border)),0_4px_12px_-3px_rgba(0,0,0,0.35)] " +
+          "grid place-items-center relative size-9 rounded-xl transition-all shadow-[inset_0_0_0_1px_var(--border),0_4px_12px_-3px_rgba(0,0,0,0.35)] " +
           (active
-            ? "bg-gradient-to-br from-primary/30 via-fuchsia-500/30 to-cyan-500/30 text-[hsl(var(--foreground))] ring-1 ring-primary/50"
-            : "bg-[hsl(var(--background))]/50 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--background))]/35")
+            ? "bg-gradient-to-br from-primary/30 via-fuchsia-500/30 to-cyan-500/30 text-foreground ring-1 ring-primary/50"
+            : "bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/35")
         }
       >
         <Icon className="size-4" />
@@ -120,7 +120,7 @@ const BottomNavItem: React.FC<{
           "leading-none transition-all " +
           (active
             ? ""
-            : " text-[hsl(var(--muted-foreground,var(--foreground)))]")
+            : " text-muted-foreground")
         }
       >
         {item.label}
@@ -155,7 +155,7 @@ const CenterOverlay: React.FC<CenterOverlayProps> = ({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-[850] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[850] flex items-center justify-center p-[var(--space-page-x)]"
           onClick={onClose}
         >
           <motion.div
@@ -165,12 +165,12 @@ const CenterOverlay: React.FC<CenterOverlayProps> = ({
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
             className={
-              "relative w-full max-w-md rounded-3xl bg-[hsl(var(--background))]/85 backdrop-blur-xl border border-[hsl(var(--border))] shadow-[0_8px_50px_-10px_rgba(0,0,0,0.55),0_0_0_1px_hsl(var(--border))] p-5 flex flex-col gap-4 " +
+              "relative w-full max-w-md rounded-3xl bg-background/85 backdrop-blur-xl border border-border shadow-[0_8px_50px_-10px_rgba(0,0,0,0.55),0_0_0_1px_var(--border)] p-[var(--space-card)] flex flex-col gap-[var(--space-gap)] " +
               className
             }
           >
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold tracking-wide">{title}</p>
+              <p className="app-text-body font-semibold tracking-wide">{title}</p>
               <Button
                 type="button"
                 variant="ghost"
@@ -335,11 +335,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             <div className="pointer-events-auto w-[min(94%,640px)] mx-auto relative">
               {/* Ambient blurred blob */}
               <div className="absolute -inset-6 -z-10">
-                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-[hsl(var(--primary))/0.25] via-[hsl(var(--secondary))/0.15] to-[hsl(var(--accent))/0.25] blur-2xl opacity-70" />
+                <div className="absolute inset-0 rounded-[40px] bg-gradient-to-r from-[color-mix(in oklab, var(--primary) 25%, transparent)] via-[color-mix(in oklab, var(--secondary) 15%, transparent)] to-[color-mix(in oklab, var(--accent) 25%, transparent)] blur-2xl opacity-70" />
               </div>
               <motion.div
                 layout
-                className="group relative flex justify-around gap-1 rounded-[32px] px-2 py-2 glass border border-[hsl(var(--border))] bg-[hsl(var(--background))]/75 supports-[backdrop-filter]:bg-[hsl(var(--background))]/55 shadow-[0_2px_4px_-2px_rgba(0,0,0,0.4),0_12px_40px_-8px_rgba(0,0,0,0.55),0_0_0_1px_hsl(var(--border))] before:absolute before:inset-0 before:rounded-[32px] before:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(0,0,0,0.35)] overflow-hidden"
+                className="group relative flex justify-around gap-1 rounded-[32px] px-2 py-2 glass border border-border bg-background/75 supports-[backdrop-filter]:bg-background/55 shadow-[0_2px_4px_-2px_rgba(0,0,0,0.4),0_12px_40px_-8px_rgba(0,0,0,0.55),0_0_0_1px_var(--border)] before:absolute before:inset-0 before:rounded-[32px] before:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(0,0,0,0.35)] overflow-hidden"
               >
                 {computedItems.map((item, i) => {
                   const active = activeCheck(item);
@@ -353,7 +353,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         index={i}
                       />
                       {item.key === "notifications" && unreadCount > 0 && (
-                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-[hsl(var(--accent))/0.9] text-[hsl(var(--accent-foreground),white)] text-[10px] font-semibold grid place-items-center badge-pop">
+                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-accent/90 text-accent-foreground text-[10px] font-semibold grid place-items-center badge-pop">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
@@ -386,7 +386,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="pb-4">
           <AdminUserHeader user={user} />
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-[var(--space-gap)]">
           {/* Requested admin quick actions */}
           <ActionTile
             icon={Bell}
@@ -490,7 +490,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
         <div className="pb-4">
           <AdminUserHeader user={user} />
         </div>
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-3 gap-[var(--space-gap)]">
           <ActionTile
             icon={Bell}
             label={t("notifications")}
@@ -556,7 +556,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
             onSubmitClose={() => setSearchOpen(false)}
             mode="sheet"
           />
-          <p className="text-xs subtle mt-3 px-1">{t("searchIntro")}</p>
+          <p className="app-text-caption subtle mt-3 px-1">{t("searchIntro")}</p>
         </div>
       </BottomSheet>
       {/* Edge swipe opener area (left 24px) */}
@@ -591,8 +591,8 @@ const AdminUserHeader: React.FC<{ user: any }> = ({ user }) => {
   const avatar = asset(user?.photo) || "/favicon.svg";
   const name = user?.fullName || user?.name || user?.email || t("you");
   return (
-    <div className="flex items-center gap-3 p-2 -mt-1">
-      <div className="relative size-12 rounded-2xl overflow-hidden border border-[hsl(var(--border))]">
+    <div className="flex items-center gap-[var(--space-gap)] p-2 -mt-1">
+      <div className="relative size-12 rounded-2xl overflow-hidden border border-border">
         <Image
           src={avatar}
           alt="avatar"
@@ -602,9 +602,9 @@ const AdminUserHeader: React.FC<{ user: any }> = ({ user }) => {
         />
       </div>
       <div className="min-w-0">
-        <p className="text-sm font-semibold line-clamp-1">{name}</p>
+        <p className="app-text-body font-semibold line-clamp-1">{name}</p>
         {user?.email && (
-          <p className="text-xs subtle line-clamp-1">{user.email}</p>
+          <p className="app-text-caption subtle line-clamp-1">{user.email}</p>
         )}
       </div>
     </div>
@@ -626,12 +626,12 @@ const ActionTile: React.FC<ActionTileProps> = ({
     animate={{ scale: 1, opacity: 1, y: 0 }}
     whileTap={{ scale: 0.92 }}
     onClick={onClick}
-    className="flex flex-col items-center gap-1 p-3 rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+    className="flex flex-col items-center gap-1 p-[var(--space-filter)] rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
   >
-    <span className="size-10 grid place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-fuchsia-500/25 text-[hsl(var(--accent))] shadow-inner">
+    <span className="size-10 grid place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-fuchsia-500/25 text-accent shadow-inner">
       <Icon className="size-5" />
     </span>
-    <span className="text-[11px] font-medium text-center leading-tight line-clamp-2">
+    <span className="app-text-caption font-medium text-center leading-tight line-clamp-2">
       {label}
     </span>
   </motion.button>

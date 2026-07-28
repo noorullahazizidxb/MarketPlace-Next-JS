@@ -25,5 +25,4 @@ export const config = {
   facebookAppId: readPublicEnv("NEXT_PUBLIC_FACEBOOK_APP_ID"),
   googleAuthUrl: readPublicEnv("NEXT_PUBLIC_GOOGLE_AUTH_URL") || "/api/auth/google",
   facebookAuthUrl: readPublicEnv("NEXT_PUBLIC_FACEBOOK_AUTH_URL") || "/api/auth/facebook",
-  themeFileRoute: "/api/themes/file",
 };

@@ -21,7 +21,7 @@ export function GenericFormSkeleton({
       <div className="flex items-center gap-2">
         {Array.from({ length: 3 }).map((_, i) => (
           <React.Fragment key={i}>
-            <Skeleton className={`h-8 w-8 rounded-full ${i === 0 ? "bg-[hsl(var(--primary))]/20" : ""}`} />
+            <Skeleton className={`h-8 w-8 rounded-full ${i === 0 ? "bg-[var(--primary)]/20" : ""}`} />
             {i < 2 && <Skeleton className="h-0.5 flex-1 rounded-full" />}
           </React.Fragment>
         ))}

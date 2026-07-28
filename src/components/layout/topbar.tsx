@@ -77,11 +77,11 @@ export function Topbar() {
           <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
             <div className="absolute -inset-x-20 -top-32 h-56 bg-gradient-to-r from-primary/30 via-fuchsia-500/20 to-cyan-400/30 blur-3xl" />
           </div>
-          <div className="relative w-full rounded-2xl  liquid-glass glass-hover">
-            <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-2">
+          <div className="relative w-full rounded-2xl liquid-glass glass-hover">
+            <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-[var(--space-gap)]">
               <motion.div
                 whileHover={{ y: -2 }}
-                className="flex items-center gap-2 "
+                className="flex items-center gap-[var(--space-gap)]"
               >
                 <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
                   <ThemeToggle iconOnly className="hidden sm:grid" />
@@ -101,14 +101,14 @@ export function Topbar() {
                   <Tooltip content={t("home")} side="bottom">
                     <Link
                       href="/listings"
-                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
                     >
                       <Home className="size-4" />
                       <span>{t("home")}</span>
                       {isActive("/listings") && (
                         <motion.span
                           layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
                         />
                       )}
                     </Link>
@@ -121,14 +121,14 @@ export function Topbar() {
                   <Tooltip content={t("blogs")} side="bottom">
                     <Link
                       href="/blogs"
-                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
                     >
                       <Newspaper className="size-4" />
                       <span>{t("blogs")}</span>
                       {isActive("/blogs") && (
                         <motion.span
                           layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
                         />
                       )}
                     </Link>
@@ -141,14 +141,14 @@ export function Topbar() {
                   <Tooltip content={t("about")} side="bottom">
                     <Link
                       href="/about"
-                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
                     >
                       <Info className="size-4" />
                       <span>{t("about")}</span>
                       {isActive("/about") && (
                         <motion.span
                           layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
                         />
                       )}
                     </Link>
@@ -161,14 +161,14 @@ export function Topbar() {
                   <Tooltip content={t("contact")} side="bottom">
                     <Link
                       href="/contact"
-                      className="relative text-sm inline-flex items-center gap-2 px-3 py-2 rounded-full "
+                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
                     >
                       <Phone className="size-4" />
                       <span>{t("contact")}</span>
                       {isActive("/contact") && (
                         <motion.span
                           layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-[hsl(var(--accent))]"
+                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
                         />
                       )}
                     </Link>
@@ -177,11 +177,11 @@ export function Topbar() {
                 {/* My listings removed from top nav to avoid duplicate links (profile menu has it) */}
               </nav>
 
-              <div className="flex items-center justify-end gap-2 pr-12 sm:pr-2">
+              <div className="flex items-center justify-end gap-[var(--space-gap)] pr-12 sm:pr-2">
                 <Tooltip content={t("language")} side="bottom">
                   <LanguageDropdown className="sm:hidden inline-flex" />
                 </Tooltip>
-                <div className="flex items-center gap-2 sm:hidden">
+                <div className="flex items-center gap-[var(--space-gap)] sm:hidden">
                   <Tooltip content={t("search")} side="bottom">
                     <SearchBox className="w-full" placeholder={t("search")} />
                   </Tooltip>
@@ -218,7 +218,7 @@ export function Topbar() {
                     />
                   </>
                 )}
-                <div className="hidden md:flex items-center gap-2">
+                <div className="hidden md:flex items-center gap-[var(--space-gap)]">
                   <Tooltip content={t("search")} side="bottom">
                     <SearchBox placeholder={t("search")} />
                   </Tooltip>
@@ -227,7 +227,7 @@ export function Topbar() {
                   <div className="relative">
                     <button
                       onClick={() => setOpen((v) => !v)}
-                      className="relative glass rounded-2xl pl-2 pr-3 h-10 flex items-center gap-2 hover:ring-1 ring-white/20"
+                      className="relative glass rounded-2xl pl-2 pr-3 h-[var(--ctrl-h)] min-h-[var(--ctrl-h)] flex items-center gap-[var(--space-gap)] hover:ring-1 ring-white/20"
                     >
                       <Image
                         src={asset(avatar)}
@@ -236,12 +236,12 @@ export function Topbar() {
                         height={24}
                         className="rounded-xl"
                       />
-                      <span className="hidden sm:block text-sm font-medium">
+                      <span className="hidden sm:block app-text-body font-medium">
                         {name}
                       </span>
                       {counts?.listings > 0 && (
                         <span
-                          className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white text-xs font-semibold"
+                          className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-red-600 text-white app-text-caption font-semibold"
                           aria-hidden
                         >
                           {counts.listings > 99 ? "99+" : counts.listings}
@@ -253,12 +253,9 @@ export function Topbar() {
                         initial={{ opacity: 0, y: -6, scale: 0.98 }}
                         animate={{ opacity: 1, y: 0, scale: 1 }}
                         transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-[calc(100%+8px)] z-1000 w-64 rounded-2xl overflow-hidden border border-[hsl(var(--card-border, var(--border)))] text-[hsl(var(--card-fg, var(--foreground)))] shadow-2xl"
-                        style={{
-                          backgroundColor: `hsl(var(--card-bg, var(--card)))`,
-                        }}
+                        className="absolute right-0 top-[calc(100%+8px)] z-1000 w-64 rounded-2xl overflow-hidden border border-border bg-card text-card-foreground shadow-2xl"
                       >
-                        <div className="p-3 border-b border-white/10 flex items-center gap-3">
+                        <div className="p-[var(--space-filter)] border-b border-border/40 flex items-center gap-[var(--space-gap)]">
                           <Image
                             src={asset(avatar)}
                             alt="avatar"
@@ -267,10 +264,10 @@ export function Topbar() {
                             className="rounded-xl"
                           />
                           <div>
-                            <p className="text-sm font-medium line-clamp-1">
+                            <p className="app-text-body font-medium line-clamp-1">
                               {(user as any)?.name || name}
                             </p>
-                            <p className="text-xs subtle">
+                            <p className="app-text-caption subtle">
                               {user?.email || ""}
                             </p>
                           </div>
@@ -278,45 +275,45 @@ export function Topbar() {
                         <div className="py-1">
                           <Link
                             href="/profile"
-                            className="flex items-center gap-3 px-3 h-11 rounded-xl "
+                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <User2 className="size-4" />
-                            <span className="text-sm">{t("profile")}</span>
+                            <span className="app-text-body">{t("profile")}</span>
                           </Link>
                           <Link
                             href="/my-listings"
-                            className="flex items-center gap-3 px-3 h-11 rounded-xl "
+                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <LayoutGrid className="size-4" />
-                            <span className="text-sm">{t("myListings")}</span>
+                            <span className="app-text-body">{t("myListings")}</span>
                             {!!counts?.listings && (
-                              <span className="ml-auto text-xs px-2 py-0.5 rounded bg-white/10">
+                              <span className="ml-auto app-text-caption px-2 py-0.5 rounded bg-white/10">
                                 {counts.listings}
                               </span>
                             )}
                           </Link>
                           <Link
                             href="/profile/approved-listings"
-                            className="flex items-center gap-3 px-3 h-11 rounded-xl "
+                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <LayoutGrid className="size-4" />
-                            <span className="text-sm">
+                            <span className="app-text-body">
                               {t("approvedListings")}
                             </span>
                           </Link>
                           <Link
                             href="/profile/audit-logs"
-                            className="flex items-center gap-3 px-3 h-11 rounded-xl "
+                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <List className="size-4" />
-                            <span className="text-sm">{t("auditLogs")}</span>
+                            <span className="app-text-body">{t("auditLogs")}</span>
                           </Link>
                           <Link
                             href="/profile/feedbacks"
-                            className="flex items-center gap-3 px-3 h-11 rounded-xl "
+                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <Info className="size-4" />
-                            <span className="text-sm">{t("feedbacks")}</span>
+                            <span className="app-text-body">{t("feedbacks")}</span>
                           </Link>
                           {/* Roles, Sent Notifications and Notifications removed per request */}
                           <LogoutButton />
@@ -392,14 +389,14 @@ function LogoutButton() {
         } catch { }
         window.location.href = "/sign-in";
       }}
-      className="flex w-full items-center gap-3 px-3 h-11 hover:bg-white/10 text-left"
+      className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-white/10 text-left"
     >
       {isPending ? (
         <span className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
       ) : (
         <LogOut className="size-4" />
       )}
-      <span className="text-sm">{t("logout")}</span>
+      <span className="app-text-body">{t("logout")}</span>
     </button>
   );
 }

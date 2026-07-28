@@ -108,9 +108,9 @@ export default function AdCard({
   };
 
   return (
-    <Card className="relative group overflow-hidden p-0 flex flex-col border border-[hsl(var(--border))]/60 hover:border-[hsl(var(--accent))]/40 hover:shadow-[0_8px_32px_-8px_hsl(var(--accent)/0.25)] transition-all duration-300 bg-[hsl(var(--card))]">
+    <Card className="relative group overflow-hidden p-0 flex flex-col border border-[var(--border)]/60 hover:border-[var(--accent)]/40 hover:shadow-[0_8px_32px_-8px_color-mix(in oklab, var(--accent) 25%, transparent)] transition-all duration-300 bg-[var(--card)]">
       {/* Image area */}
-      <div className="relative h-44 w-full bg-gradient-to-br from-[hsl(var(--muted))]/30 to-[hsl(var(--muted))]/10 flex items-center justify-center overflow-hidden">
+      <div className="relative h-44 w-full bg-gradient-to-br from-[var(--muted)]/30 to-[var(--muted)]/10 flex items-center justify-center overflow-hidden">
         {ad.imageUrl ? (
           <>
             {!imgLoaded && <ImageSpinner />}
@@ -125,26 +125,26 @@ export default function AdCard({
             />
           </>
         ) : (
-          <div className="flex flex-col items-center gap-2 text-[hsl(var(--muted-foreground))]/40">
+          <div className="flex flex-col items-center gap-2 text-[var(--muted-foreground)]/40">
             <ImageIcon className="size-10" />
             <span className="text-[10px] uppercase tracking-widest">No Image</span>
           </div>
         )}
-        <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--card))]/80 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)]/80 via-transparent to-transparent" />
         {/* Status badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-[hsl(var(--card))]/80 backdrop-blur-md border border-[hsl(var(--border))]/40 text-[hsl(var(--foreground))]/80">
+          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-[var(--card)]/80 backdrop-blur-md border border-[var(--border)]/40 text-[var(--foreground)]/80">
             {localPlacement.replace(/_/g, " ")}
           </span>
           <span
             className={cn(
               "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide backdrop-blur-md border",
               localActive
-                ? "bg-[hsl(var(--accent))]/15 border-[hsl(var(--accent))]/40 text-[hsl(var(--accent))]"
-                : "bg-[hsl(var(--muted))]/30 border-[hsl(var(--muted-foreground))]/20 text-[hsl(var(--muted-foreground))]"
+                ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
+                : "bg-[var(--muted)]/30 border-[var(--muted-foreground)]/20 text-[var(--muted-foreground)]"
             )}
           >
-            <span className={cn("size-1.5 rounded-full", localActive ? "bg-[hsl(var(--accent))]" : "bg-[hsl(var(--muted-foreground))]/50")} />
+            <span className={cn("size-1.5 rounded-full", localActive ? "bg-[var(--accent)]" : "bg-[var(--muted-foreground)]/50")} />
             {localActive ? "Active" : "Inactive"}
           </span>
         </div>
@@ -153,18 +153,18 @@ export default function AdCard({
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 gap-4">
         <div className="space-y-1.5">
-          <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-[hsl(var(--foreground))]">
+          <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-[var(--foreground)]">
             {ad.title}
           </h3>
           {ad.body && (
-            <p className="text-xs text-[hsl(var(--muted-foreground))] line-clamp-2 leading-relaxed">
+            <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
               {ad.body}
             </p>
           )}
         </div>
 
         {/* Timestamps */}
-        <div className="flex items-center justify-between text-[10px] text-[hsl(var(--muted-foreground))]/70 gap-2">
+        <div className="flex items-center justify-between text-[10px] text-[var(--muted-foreground)]/70 gap-2">
           <span className="inline-flex items-center gap-1">
             <Clock className="size-3" />
             {timeAgo(ad.createdAt)}
@@ -176,7 +176,7 @@ export default function AdCard({
         </div>
 
         {/* Controls */}
-        <div className="mt-auto pt-3 border-t border-[hsl(var(--border))]/50 flex items-center gap-2">
+        <div className="mt-auto pt-3 border-t border-[var(--border)]/50 flex items-center gap-2">
           <div className="flex-1 min-w-0">
             <PlacementSelect
               value={localPlacement}
@@ -194,7 +194,7 @@ export default function AdCard({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 rounded-lg hover:bg-[hsl(var(--primary))]/10 hover:text-[hsl(var(--primary))]"
+                className="h-8 w-8 p-0 rounded-lg hover:bg-[var(--primary)]/10 hover:text-[var(--primary)]"
                 aria-label="Edit ad"
                 onClick={() => onEdit?.(ad)}
               >

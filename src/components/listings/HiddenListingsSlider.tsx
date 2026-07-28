@@ -173,7 +173,7 @@ export function HiddenListingsSlider({
             <button
               aria-label="Previous"
               onClick={prev}
-              className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
+              className="size-9 rounded-full grid place-items-center border border-border hover:bg-foreground/10"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -182,17 +182,17 @@ export function HiddenListingsSlider({
             <button
               aria-label="Next"
               onClick={next}
-              className="size-9 rounded-full grid place-items-center border border-[hsl(var(--border))] hover:bg-[hsl(var(--foreground))/0.1]"
+              className="size-9 rounded-full grid place-items-center border border-border hover:bg-foreground/10"
             >
               <ChevronRight className="size-4" />
             </button>
           </Tooltip>
         </div>
       </div>
-      <div className="relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_10%_-20%,hsl(var(--primary)/0.12),transparent_70%)]" />
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_90%_120%,hsl(var(--accent)/0.12),transparent_70%)]" />
-        <div className="relative p-4 min-h-[320px]">
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-card/80">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_10%_-20%,color-mix(in oklab, var(--primary) 12%, transparent),transparent_70%)]" />
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_90%_120%,color-mix(in oklab, var(--accent) 12%, transparent),transparent_70%)]" />
+        <div className="relative p-[var(--space-card)] min-h-[320px]">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={idx}
@@ -200,7 +200,7 @@ export function HiddenListingsSlider({
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: dir === 1 ? -40 : 40 }}
               transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-gap)] app-density-grid-gap"
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.16}
@@ -256,7 +256,7 @@ export function HiddenListingsSlider({
             className={
               i === idx
                 ? "go-to-slide size-1.5 rounded-full"
-                : "size-1.5 rounded-full bg-[hsl(var(--foreground))/0.3] hover:opacity-90"
+                : "size-1.5 rounded-full bg-[color-mix(in oklab, var(--foreground) 30%, transparent)] hover:opacity-90"
             }
           />
         ))}

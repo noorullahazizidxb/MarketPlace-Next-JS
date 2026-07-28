@@ -35,8 +35,8 @@ export default function StoriesBar() {
           {isLoading &&
             Array.from({ length: 8 }).map((_, i) => (
               <div key={i} className="w-20 flex-shrink-0">
-                <div className="size-16 rounded-2xl bg-[hsl(var(--foreground))/0.08] animate-pulse" />
-                <div className="mt-2 h-3 rounded bg-[hsl(var(--foreground))/0.08]" />
+                <div className="size-16 rounded-2xl bg-[color-mix(in oklab, var(--foreground) 8%, transparent)] animate-pulse" />
+                <div className="mt-2 h-3 rounded bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]" />
               </div>
             ))}
           {!isLoading &&
@@ -47,8 +47,8 @@ export default function StoriesBar() {
                 aria-label={s.title}
                 onClick={() => openAt(i)}
               >
-                <div className="relative size-16 rounded-2xl p-0.5 bg-gradient-to-br from-[hsl(var(--primary))/0.6] via-[hsl(var(--secondary))/0.6] to-[hsl(var(--accent))/0.6]">
-                  <div className="size-full rounded-[14px] bg-[hsl(var(--background))] grid place-items-center overflow-hidden">
+                <div className="relative size-16 rounded-2xl p-0.5 bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 60%, transparent)] via-[color-mix(in oklab, var(--secondary) 60%, transparent)] to-[color-mix(in oklab, var(--accent) 60%, transparent)]">
+                  <div className="size-full rounded-[14px] bg-[var(--background)] grid place-items-center overflow-hidden">
                     <Image
                       src={asset(
                         (Array.isArray(s.images) && s.images.length > 0

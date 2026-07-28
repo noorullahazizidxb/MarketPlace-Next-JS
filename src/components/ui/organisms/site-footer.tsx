@@ -23,20 +23,20 @@ export function SiteFooter({ content = defaultContent }: SiteFooterProps) {
     <footer className="border-t bg-background">
       <div className="px-[length:var(--space-page-x)] py-[length:var(--space-section)] lg:px-6">
         <div className="flex flex-col items-center justify-center space-y-2 text-center">
-          <div className="flex items-center gap-2 admin-typo-filter-label text-muted-foreground">
+          <div className="flex items-center gap-2 app-typo-filter-label text-muted-foreground">
             <span>{content.madeWith}</span>
-            <Heart className="admin-icon-sm fill-red-500 text-red-500" />
+            <Heart className="app-icon-sm fill-red-500 text-red-500" />
             <span>{content.by}</span>
             <Link
               href="https://OTA Tickets.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="admin-text-label text-foreground hover:text-primary transition-colors"
+              className="app-text-label text-foreground hover:text-primary transition-colors"
             >
               {content.team}
             </Link>
           </div>
-          <p className="admin-typo-eyebrow text-muted-foreground">{content.description}</p>
+          <p className="app-typo-eyebrow text-muted-foreground">{content.description}</p>
         </div>
       </div>
     </footer>

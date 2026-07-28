@@ -126,7 +126,7 @@ export default function BlogsPage() {
   }, [filtered, currentPage, pageSize]);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 app-shell-page" data-app-page="blogs">
       <BlogHero
         value={q}
         onChange={setQ}
@@ -273,7 +273,7 @@ export default function BlogsPage() {
         )}
 
         {!isLoading && (filtered?.length ?? 0) > 0 && (
-          <div className="mt-2 flex flex-col gap-4 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/60 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+          <div className="mt-2 flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center gap-2 text-sm">
               <span className="subtle">{t("pageSizeLabel") || "Page size"}</span>
               <div className="relative">
@@ -281,7 +281,7 @@ export default function BlogsPage() {
                   <select
                     value={pageSize}
                     onChange={(event) => setPageSize(Number(event.target.value))}
-                    className="h-10 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[hsl(var(--accent))/0.35]"
+                    className="h-10 rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in oklab, var(--accent) 35%, transparent)]"
                     aria-label="Blog page size"
                   >
                     {[9, 12, 15, 18, 24].map((size) => (
@@ -300,7 +300,7 @@ export default function BlogsPage() {
                   type="button"
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+                  className="h-10 rounded-xl border border-[var(--border)] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
                 >
                   {t("prev") || "Previous"}
                 </button>
@@ -315,8 +315,8 @@ export default function BlogsPage() {
                       type="button"
                       onClick={() => setCurrentPage(pageNumber)}
                       className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${active
-                        ? "border-[hsl(var(--accent))] bg-[hsl(var(--accent))/0.2] text-[hsl(var(--accent))]"
-                        : "border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]"
+                        ? "border-[var(--accent)] bg-[color-mix(in oklab, var(--accent) 20%, transparent)] text-[var(--accent)]"
+                        : "border-[var(--border)] hover:bg-[var(--muted)]"
                         }`}
                     >
                       {pageNumber}
@@ -332,7 +332,7 @@ export default function BlogsPage() {
                     setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="h-10 rounded-xl border border-[hsl(var(--border))] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[hsl(var(--muted))]"
+                  className="h-10 rounded-xl border border-[var(--border)] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
                 >
                   {t("next") || "Next"}
                 </button>

@@ -110,7 +110,7 @@ function ToolbarPill({
       className={cn(
         "inline-flex max-w-full items-center gap-2 rounded-full",
         "ui-mobile-pill-height ui-mobile-pill-pad-x",
-        "ui-typo-mobile-eyebrow admin-text-heading-sm tracking-wide",
+        "ui-typo-mobile-eyebrow app-text-heading-sm tracking-wide",
         "whitespace-nowrap",
         "ring-1 transition-all duration-200 active:scale-95",
         "disabled:pointer-events-none disabled:opacity-50",
@@ -119,7 +119,7 @@ function ToolbarPill({
           : "bg-muted/70 text-muted-foreground ring-border/50 hover:bg-accent hover:text-accent-foreground",
       )}
     >
-      <span className="flex shrink-0 items-center justify-center admin-icon-sm [&_svg]:size-full">
+      <span className="flex shrink-0 items-center justify-center app-icon-sm [&_svg]:size-full">
         {icon}
       </span>
       <span className="min-w-0 truncate">{label}</span>
@@ -133,7 +133,7 @@ function QuickLinksShell({ children }: { children: React.ReactNode }) {
       className={cn(
         "relative overflow-hidden rounded-2xl",
         "border border-border/50 bg-muted/25",
-        "shadow-[0_8px_30px_-18px_hsl(var(--foreground)/0.35)]",
+        "shadow-[0_8px_30px_-18px_color-mix(in oklab, var(--foreground) 35%, transparent)]",
       )}
     >
       {/* Subtle algorithmic mesh: layered radial gradients (deterministic, token-based). */}
@@ -142,10 +142,10 @@ function QuickLinksShell({ children }: { children: React.ReactNode }) {
         className="pointer-events-none absolute inset-0 opacity-70"
         style={{
           backgroundImage:
-            "radial-gradient(120px 70px at 18% 18%, hsl(var(--primary) / 0.20), transparent 60%)," +
-            "radial-gradient(160px 90px at 82% 32%, hsl(var(--primary) / 0.12), transparent 62%)," +
-            "radial-gradient(200px 120px at 35% 92%, hsl(var(--foreground) / 0.06), transparent 70%)," +
-            "radial-gradient(260px 150px at 90% 88%, hsl(var(--foreground) / 0.05), transparent 72%)",
+            "radial-gradient(120px 70px at 18% 18%, color-mix(in oklab, var(--primary) 20%, transparent), transparent 60%)," +
+            "radial-gradient(160px 90px at 82% 32%, color-mix(in oklab, var(--primary) 12%, transparent), transparent 62%)," +
+            "radial-gradient(200px 120px at 35% 92%, color-mix(in oklab, var(--foreground) 6%, transparent), transparent 70%)," +
+            "radial-gradient(260px 150px at 90% 88%, color-mix(in oklab, var(--foreground) 5%, transparent), transparent 72%)",
         }}
       />
       <div className="relative p-3">{children}</div>
@@ -192,20 +192,20 @@ function QuickLinkCard({
           "group-hover:bg-primary/14",
         )}
       >
-        <span className="flex items-center justify-center admin-icon-sm text-primary [&_svg]:size-full">
+        <span className="flex items-center justify-center app-icon-sm text-primary [&_svg]:size-full">
           {icon}
         </span>
       </span>
       <span className="min-w-0 flex-1">
-        <span className="block truncate admin-typo-section-heading">
+        <span className="block truncate app-typo-section-heading">
           {title}
         </span>
-        <span className="block truncate admin-typo-filter-label text-muted-foreground">
+        <span className="block truncate app-typo-filter-label text-muted-foreground">
           {description}
         </span>
       </span>
       {external ? (
-        <TbExternalLink className="admin-icon-sm shrink-0 text-muted-foreground/60 group-hover:text-muted-foreground" />
+        <TbExternalLink className="app-icon-sm shrink-0 text-muted-foreground/60 group-hover:text-muted-foreground" />
       ) : null}
     </a>
   );
@@ -215,7 +215,7 @@ function QuickLinkCard({
 
 function DrawerSectionLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p className="mb-2.5 px-1 ui-typo-mobile-eyebrow admin-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
+    <p className="mb-2.5 px-1 ui-typo-mobile-eyebrow app-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
       {children}
     </p>
   );
@@ -233,7 +233,7 @@ function DrawerNavItem({ href, icon, label, external, onClick }: MobileNavLink) 
       className={cn(
         "group flex items-center gap-3",
         "rounded-2xl px-3.5 py-3",
-        "ui-typo-mobile-nav-primary admin-text-label text-foreground",
+        "ui-typo-mobile-nav-primary app-text-label text-foreground",
         "bg-muted/40 ring-1 ring-border/40",
         "transition-all duration-200",
         "hover:bg-primary hover:text-primary-foreground hover:ring-primary/50 hover:shadow-lg hover:shadow-primary/10",
@@ -246,14 +246,14 @@ function DrawerNavItem({ href, icon, label, external, onClick }: MobileNavLink) 
           "bg-background/80 ring-1 ring-border/40 text-muted-foreground",
           "transition-colors duration-200",
           "group-hover:bg-white/15 group-hover:text-primary-foreground group-hover:ring-white/20",
-          "[&_svg]:admin-icon-sm",
+          "[&_svg]:app-icon-sm",
         )}>
           {icon}
         </span>
       )}
       <span className="flex-1 truncate">{label}</span>
       {external && (
-        <TbExternalLink className="admin-icon-xs shrink-0 opacity-40 group-hover:opacity-70" />
+        <TbExternalLink className="app-icon-xs shrink-0 opacity-40 group-hover:opacity-70" />
       )}
     </a>
   );
@@ -375,7 +375,7 @@ export function MobileNavDrawer({
             "rounded-t-[22px] border-t border-border/40",
             // Glassmorphic surface
             "bg-background/96 backdrop-blur-2xl",
-            "shadow-[0_-12px_60px_-8px_hsl(var(--foreground)/0.18),0_-4px_20px_-4px_hsl(var(--foreground)/0.08)]",
+            "shadow-[0_-12px_60px_-8px_color-mix(in oklab, var(--foreground) 18%, transparent),0_-4px_20px_-4px_color-mix(in oklab, var(--foreground) 8%, transparent)]",
             "overflow-hidden",
           )}
           // Important: Vaul's snap-point translate math assumes the sheet is viewport-height.
@@ -392,7 +392,7 @@ export function MobileNavDrawer({
 
           {/* ── Ambient decorative gradients ── */}
           <AmbientBlob className="left-1/4 top-0 h-52 w-52 -translate-y-1/2 bg-primary" />
-          <AmbientBlob className="right-1/4 top-0 admin-hero-orb-sm -translate-y-1/2 bg-violet-500" />
+          <AmbientBlob className="right-1/4 top-0 app-hero-orb-sm -translate-y-1/2 bg-violet-500" />
 
           {/* ── Gesture handle + toolbar (always visible; supports drag gestures) ── */}
           <div className="relative z-[91]">
@@ -459,10 +459,10 @@ export function MobileNavDrawer({
                 {languageSwitcherSlot && expandedPanel === "language" && (
                   <section className="mb-5">
                     <div className="mb-2.5 flex items-center justify-between px-1">
-                      <p className="ui-typo-mobile-eyebrow admin-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
+                      <p className="ui-typo-mobile-eyebrow app-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
                         {labels.language ?? "Language"}
                       </p>
-                      <span className="admin-typo-filter-label text-muted-foreground/70">
+                      <span className="app-typo-filter-label text-muted-foreground/70">
                         Unified settings
                       </span>
                     </div>
@@ -471,7 +471,7 @@ export function MobileNavDrawer({
                       className={cn(
                         "relative overflow-hidden rounded-2xl",
                         "border border-border/50 bg-background/60",
-                        "shadow-[0_16px_50px_-40px_hsl(var(--foreground)/0.35)]",
+                        "shadow-[0_16px_50px_-40px_color-mix(in oklab, var(--foreground) 35%, transparent)]",
                       )}
                     >
                       <div
@@ -479,21 +479,21 @@ export function MobileNavDrawer({
                         className="pointer-events-none absolute inset-0 opacity-60"
                         style={{
                           backgroundImage:
-                            "radial-gradient(180px 120px at 20% 0%, hsl(var(--primary) / 0.16), transparent 65%)," +
-                            "radial-gradient(220px 140px at 90% 40%, hsl(var(--foreground) / 0.06), transparent 70%)",
+                            "radial-gradient(180px 120px at 20% 0%, color-mix(in oklab, var(--primary) 16%, transparent), transparent 65%)," +
+                            "radial-gradient(220px 140px at 90% 40%, color-mix(in oklab, var(--foreground) 6%, transparent), transparent 70%)",
                         }}
                       />
                       <div className="relative p-3">
                         <div className="mb-3 flex items-center justify-between">
                           <div className="min-w-0">
-                            <p className="truncate admin-typo-section-heading">
+                            <p className="truncate app-typo-section-heading">
                               Language management
                             </p>
-                            <p className="truncate admin-typo-filter-label text-muted-foreground">
+                            <p className="truncate app-typo-filter-label text-muted-foreground">
                               Choose your preferred interface language.
                             </p>
                           </div>
-                          <span className="rounded-full bg-primary/10 px-2 py-0.5 admin-typo-eyebrow text-primary ring-1 ring-primary/15">
+                          <span className="rounded-full bg-primary/10 px-2 py-0.5 app-typo-eyebrow text-primary ring-1 ring-primary/15">
                             Primary
                           </span>
                         </div>
@@ -511,10 +511,10 @@ export function MobileNavDrawer({
                     {/* Quick Links toolbar */}
                     <section className="mb-5">
                       <div className="mb-2.5 flex items-center justify-between px-1">
-                        <p className="ui-typo-mobile-eyebrow admin-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
+                        <p className="ui-typo-mobile-eyebrow app-text-heading uppercase tracking-[0.2em] text-muted-foreground/60">
                           {labels.quickLinks ?? "Quick Links"}
                         </p>
-                        <span className="rounded-full bg-primary/10 px-2 py-0.5 admin-typo-eyebrow text-primary ring-1 ring-primary/15">
+                        <span className="rounded-full bg-primary/10 px-2 py-0.5 app-typo-eyebrow text-primary ring-1 ring-primary/15">
                           2
                         </span>
                       </div>
@@ -546,7 +546,7 @@ export function MobileNavDrawer({
                         <div
                           className={cn(
                             "rounded-2xl border border-border/50 bg-background/40 p-2",
-                            "shadow-[0_16px_50px_-40px_hsl(var(--foreground)/0.35)]",
+                            "shadow-[0_16px_50px_-40px_color-mix(in oklab, var(--foreground) 35%, transparent)]",
                           )}
                         >
                           <div className="flex flex-col gap-2">
@@ -610,7 +610,7 @@ export function MobileDrawerSection({
   return (
     <section className={cn("mb-5", className)}>
       {title && (
-        <p className="mb-2 px-1 ui-typo-mobile-eyebrow admin-text-caption uppercase tracking-widest text-muted-foreground/70">
+        <p className="mb-2 px-1 ui-typo-mobile-eyebrow app-text-caption uppercase tracking-widest text-muted-foreground/70">
           {title}
         </p>
       )}

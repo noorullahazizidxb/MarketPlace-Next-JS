@@ -14,10 +14,10 @@ const iconSizeMap: Record<SpinnerSize, string> = {
 };
 
 const variantColorMap: Record<SpinnerVariant, string> = {
-  default: "text-[hsl(var(--foreground))]/70",
-  primary: "text-[hsl(var(--primary))]",
-  accent: "text-[hsl(var(--accent))]",
-  muted: "text-[hsl(var(--muted-foreground))]",
+  default: "text-[var(--foreground)]/70",
+  primary: "text-[var(--primary)]",
+  accent: "text-[var(--accent)]",
+  muted: "text-[var(--muted-foreground)]",
 };
 
 export interface SpinnerProps {
@@ -51,7 +51,7 @@ export function Spinner({
         className={cn("animate-spin", iconSizeMap[size], variantColorMap[variant])}
       />
       {label && (
-        <span className="text-xs text-[hsl(var(--muted-foreground))]">{label}</span>
+        <span className="text-xs text-[var(--muted-foreground)]">{label}</span>
       )}
     </span>
   );
@@ -77,11 +77,11 @@ export function ImageSpinner({ className }: { className?: string }) {
     <span
       aria-hidden="true"
       className={cn(
-        "absolute inset-0 flex items-center justify-center bg-[hsl(var(--muted))]/40 backdrop-blur-[2px] z-10 transition-opacity",
+        "absolute inset-0 flex items-center justify-center bg-[var(--muted)]/40 backdrop-blur-[2px] z-10 transition-opacity",
         className
       )}
     >
-      <LoaderIcon className="animate-spin size-6 text-[hsl(var(--muted-foreground))]" />
+      <LoaderIcon className="animate-spin size-6 text-[var(--muted-foreground)]" />
     </span>
   );
 }

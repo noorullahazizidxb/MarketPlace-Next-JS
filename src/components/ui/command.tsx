@@ -19,7 +19,7 @@ export const CommandInput: React.FC<CommandInputProps> = ({
   className,
   ...rest
 }) => (
-  <div className="p-2 border-b bg-[hsl(var(--card))]/50">
+  <div className="p-2 border-b bg-[var(--card)]/50">
     <input
       className={cn("w-full bg-transparent outline-none text-xs", className)}
       onChange={(e) => onValueChange?.(e.target.value)}
@@ -49,7 +49,7 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 }) => (
   <button
     className={cn(
-      "w-full text-left px-3 py-2 text-xs hover:bg-[hsl(var(--muted))/0.5] flex items-center",
+      "w-full text-left px-3 py-2 text-xs hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)] flex items-center",
       className
     )}
     {...rest}

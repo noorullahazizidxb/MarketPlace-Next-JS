@@ -195,7 +195,20 @@ function applyLayoutDensityCssVars(settings: ThemeSettings) {
     settings.layoutDensity as ResponsiveLayoutDensity | LayoutDensityTokens | null | undefined,
   );
   const styleTag = getOrCreateDensityStyleTag();
-  styleTag.textContent = buildLayoutDensityOverrideCss(density);
+  const densityCss = buildLayoutDensityOverrideCss(density);
+  const byPage = settings.layoutDensityByPage;
+  const pageParts: string[] = [];
+  if (byPage) {
+    for (const [pageId, tokens] of Object.entries(byPage)) {
+      if (!tokens || Object.keys(tokens).length === 0) continue;
+      const pageCss = buildLayoutDensityOverrideCss(
+        { base: undefined, viewports: { xl: tokens } },
+        { selector: `[data-app-page="${pageId}"]` },
+      );
+      if (pageCss) pageParts.push(pageCss);
+    }
+  }
+  styleTag.textContent = [densityCss, ...pageParts].filter(Boolean).join("\n");
 }
 
 const resolveIsDarkMode = (mode: ThemeMode) => {
@@ -260,7 +273,11 @@ const cloneThemeSettings = (settings: ThemeSettings): ThemeSettings => ({
 const areThemeSettingsEqual = (a: ThemeSettings, b: ThemeSettings): boolean =>
   JSON.stringify(a) === JSON.stringify(b);
 
-const applyThemeSettings = (settings: ThemeSettings, isDarkMode: boolean) => {
+/** Single client applicator — preset vars + density. Prefer this over any legacy HSL path. */
+export const applyThemeSettings = (
+  settings: ThemeSettings,
+  isDarkMode: boolean,
+) => {
   resetThemeVars();
   const root = document.documentElement;
   const body = document.body;

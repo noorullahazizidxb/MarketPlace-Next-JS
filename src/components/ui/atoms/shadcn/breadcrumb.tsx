@@ -61,7 +61,7 @@ function BreadcrumbPage({ className, ...props }: React.ComponentProps<"span">) {
       role="link"
       aria-disabled="true"
       aria-current="page"
-      className={cn("text-foreground admin-text-label", className)}
+      className={cn("text-foreground app-text-label", className)}
       {...props}
     />
   )
@@ -73,7 +73,7 @@ function BreadcrumbSeparator({ children, className, ...props }: React.ComponentP
       data-slot="breadcrumb-separator"
       role="presentation"
       aria-hidden="true"
-      className={cn("text-muted-foreground/40 [&>svg]:admin-icon-xs", className)}
+      className={cn("text-muted-foreground/40 [&>svg]:app-icon-xs", className)}
       {...props}
     >
       {children ?? <ChevronRight />}
@@ -88,13 +88,13 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<"span"
       role="presentation"
       aria-hidden="true"
       className={cn(
-        "flex admin-icon-lg items-center justify-center rounded-md",
+        "flex app-icon-lg items-center justify-center rounded-md",
         "text-muted-foreground hover:bg-accent hover:text-foreground transition-colors",
         className
       )}
       {...props}
     >
-      <MoreHorizontal className="admin-icon-sm" />
+      <MoreHorizontal className="app-icon-sm" />
       <span className="sr-only">More</span>
     </span>
   )

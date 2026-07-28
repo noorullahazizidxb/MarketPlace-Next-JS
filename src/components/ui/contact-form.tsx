@@ -65,37 +65,37 @@ export default function ContactForm() {
   return (
     <section dir={isRtl ? "rtl" : "ltr"} className="w-full">
       <form
-        className="space-y-5 rounded-[2rem] border border-[hsl(var(--border))] bg-[linear-gradient(180deg,hsl(var(--card)),hsl(var(--background)))] p-6 shadow-[0_24px_60px_-32px_rgba(0,0,0,0.45)] sm:p-8"
+        className="space-y-5 rounded-[2rem] border border-[var(--border)] bg-[linear-gradient(180deg,var(--card),var(--background))] p-6 shadow-[0_24px_60px_-32px_rgba(0,0,0,0.45)] sm:p-8"
         onSubmit={onSubmit}
       >
         <div className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[hsl(var(--accent))]">
+          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
             {t("sendMessage")}
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-[hsl(var(--foreground))]">
+          <h2 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">
             {t("contactFormTitle")}
           </h2>
-          <p className="text-sm leading-7 text-[hsl(var(--foreground))/0.74]">
+          <p className="text-sm leading-7 text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
             {t("contactFormSubtitle")}
           </p>
         </div>
 
-        <div className="grid gap-3 rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--background))/0.68] p-4 sm:grid-cols-3">
-          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
-            <Mail className="size-4 text-[hsl(var(--accent))]" />
-            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+        <div className="grid gap-3 rounded-3xl border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 68%, transparent)] p-4 sm:grid-cols-3">
+          <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
+            <Mail className="size-4 text-[var(--accent)]" />
+            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactEmailValue")}
             </span>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
-            <PhoneCall className="size-4 text-[hsl(var(--accent))]" />
-            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+          <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
+            <PhoneCall className="size-4 text-[var(--accent)]" />
+            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactPhoneValue")}
             </span>
           </div>
-          <div className="flex items-center gap-3 rounded-2xl bg-[hsl(var(--card))]/88 p-3">
-            <MessageSquareText className="size-4 text-[hsl(var(--accent))]" />
-            <span className="text-xs text-[hsl(var(--foreground))/0.74]">
+          <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
+            <MessageSquareText className="size-4 text-[var(--accent)]" />
+            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactResponseTime")}
             </span>
           </div>

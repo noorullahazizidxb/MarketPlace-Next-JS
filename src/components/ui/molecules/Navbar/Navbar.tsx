@@ -34,13 +34,13 @@ import Link from "next/link";
 
 /* ── Desktop nav link ──────────────────────────────────── */
 const NAV_LINK_CLASS =
-  "inline-flex min-h-[var(--ctrl-h)] w-max items-center justify-center px-4 py-2 admin-text-body transition-colors hover:text-primary focus:text-primary focus:outline-none";
+  "inline-flex min-h-[var(--ctrl-h)] w-max items-center justify-center px-4 py-2 app-text-body transition-colors hover:text-primary focus:text-primary focus:outline-none";
 
 function DesktopNavItem({ item }: { item: (typeof NAV_ITEMS)[number] }) {
   if (item.hasMegaMenu) {
     return (
       <NavigationMenuItem>
-        <NavigationMenuTrigger className="bg-transparent px-4 py-2 admin-text-body hover:bg-transparent hover:text-primary focus:bg-transparent">
+        <NavigationMenuTrigger className="bg-transparent px-4 py-2 app-text-body hover:bg-transparent hover:text-primary focus:bg-transparent">
           {item.name}
         </NavigationMenuTrigger>
         <NavigationMenuContent>
@@ -130,7 +130,7 @@ export function Navbar({ onOpenAuthModal, auth, navbarActions }: NavbarProps) {
                     rel="noopener noreferrer"
                     className="flex items-center"
                   >
-                    <LayoutDashboard className="mr-2 admin-icon-sm" />
+                    <LayoutDashboard className="mr-2 app-icon-sm" />
                     Admin Panel
                   </a>
                 </Button>
@@ -147,7 +147,7 @@ export function Navbar({ onOpenAuthModal, auth, navbarActions }: NavbarProps) {
               {isLoggedIn && isAdmin && (
                 <Button variant="ghost" size="sm" className="min-h-[var(--ctrl-h-sm)] w-9 shrink-0">
                   <a href="/admin" className="flex items-center justify-center">
-                    <LayoutDashboard className="admin-icon-md" />
+                    <LayoutDashboard className="app-icon-md" />
                     <span className="sr-only">Dashboard</span>
                   </a>
                 </Button>
@@ -166,7 +166,7 @@ export function Navbar({ onOpenAuthModal, auth, navbarActions }: NavbarProps) {
                     size="sm"
                     className="min-h-[var(--ctrl-h-sm)] w-9 shrink-0"
                   >
-                    <Menu className="admin-icon-md" />
+                    <Menu className="app-icon-md" />
                     <span className="sr-only">Toggle menu</span>
                   </Button>
                 </SheetTrigger>

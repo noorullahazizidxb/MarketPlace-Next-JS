@@ -43,7 +43,7 @@ function TimeColumn({
     <div className="flex flex-col gap-2">
       {/* Column label */}
       <div
-        className="px-1 admin-text-caption uppercase tracking-widest text-muted-foreground"
+        className="px-1 app-text-caption uppercase tracking-widest text-muted-foreground"
       >
         {label}
       </div>
@@ -65,8 +65,8 @@ function TimeColumn({
                     : "text-foreground hover:bg-muted"
                 )}
               >
-                <span className="tabular-nums admin-text-label">{v}</span>
-                {active && <Check className="admin-icon-xs shrink-0" />}
+                <span className="tabular-nums app-text-label">{v}</span>
+                {active && <Check className="app-icon-xs shrink-0" />}
               </button>
             );
           })}
@@ -117,7 +117,7 @@ export function TimePicker({
           >
             {/* Clock icon */}
             <span className="pointer-events-none absolute start-3.5 top-1/2 -translate-y-1/2 text-muted-foreground/60 transition-colors group-focus-within:text-foreground">
-              <Clock3 className="admin-icon-sm" />
+              <Clock3 className="app-icon-sm" />
             </span>
 
             {/* Floating label */}
@@ -125,7 +125,7 @@ export function TimePicker({
               className={cn(
                 "pointer-events-none absolute start-10 transition-all duration-200",
                 currentValue
-                  ? "top-1.5 text-foreground/70 admin-text-heading-sm"
+                  ? "top-1.5 text-foreground/70 app-text-heading-sm"
                   : "top-1/2 -translate-y-1/2 text-muted-foreground",
               )}
               style={{ fontSize: currentValue
@@ -138,7 +138,7 @@ export function TimePicker({
             {/* Selected value */}
             <span
               className={cn(
-                "block ps-6 admin-text-stat tabular-nums text-foreground",
+                "block ps-6 app-text-stat tabular-nums text-foreground",
                 !currentValue && "opacity-0 select-none",
               )}
             >
@@ -154,14 +154,14 @@ export function TimePicker({
           <div className="overflow-hidden rounded-2xl bg-popover">
             {/* Header */}
             <div className="flex items-center gap-2 border-b border-border/50 bg-muted/30 px-4 py-3">
-              <span className="brand-gradient hover-gradient flex admin-icon-md items-center justify-center rounded-lg shadow-sm">
-                <Clock3 className="text-brand-foreground admin-icon-xs" />
+              <span className="brand-gradient hover-gradient flex app-icon-md items-center justify-center rounded-lg shadow-sm">
+                <Clock3 className="text-brand-foreground app-icon-xs" />
               </span>
               <div>
-                <p className="admin-text-heading-sm text-foreground">
+                <p className="app-text-heading-sm text-foreground">
                   Select time
                 </p>
-                <p className="admin-text-label text-muted-foreground">
+                <p className="app-text-label text-muted-foreground">
                   Choose hour then minute to confirm.
                 </p>
               </div>
@@ -175,11 +175,11 @@ export function TimePicker({
 
             {/* Footer: live preview */}
             <div className="flex items-center justify-between border-t border-border/50 bg-muted/20 px-4 py-2.5">
-              <span className="admin-text-label text-muted-foreground">
+              <span className="app-text-label text-muted-foreground">
                 Current value
               </span>
               <span
-                className="admin-text-heading tabular-nums text-foreground"
+                className="app-text-heading tabular-nums text-foreground"
               >
                 {hour}:{minute}
               </span>
@@ -190,11 +190,11 @@ export function TimePicker({
 
       {/* Validation */}
       {error ? (
-        <p className="ps-1 admin-text-label text-destructive">
+        <p className="ps-1 app-text-label text-destructive">
           {error}
         </p>
       ) : helperText ? (
-        <p className="ps-1 admin-text-label text-muted-foreground">
+        <p className="ps-1 app-text-label text-muted-foreground">
           {helperText}
         </p>
       ) : null}

@@ -12,14 +12,18 @@ export default function AdminUsersPage() {
   const { t } = useLanguage();
   if (!isAdmin) {
     return (
-      <div className="container-padded py-16">
+      <div className="container-padded py-16 app-shell-page" data-app-page="admin-users">
         <div className="max-w-lg mx-auto text-center space-y-4">
-          <ShieldCheck className="mx-auto size-12 text-[hsl(var(--accent))]" />
-          <h1 className="text-2xl font-semibold">{t("notAuthorized")}</h1>
+          <ShieldCheck className="mx-auto size-12 text-[var(--accent)]" />
+          <h1 className="app-text-heading font-semibold">{t("notAuthorized")}</h1>
           <p className="subtle">{t("adminPrivilegesNeeded")}</p>
         </div>
       </div>
     );
   }
-  return <UsersDashboard />;
+  return (
+    <div className="app-shell-page" data-app-page="admin-users">
+      <UsersDashboard />
+    </div>
+  );
 }

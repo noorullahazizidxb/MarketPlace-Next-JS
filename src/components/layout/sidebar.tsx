@@ -65,16 +65,17 @@ export function Sidebar({
       {showDesktop && (
         <aside
           dir={isRtl ? "rtl" : "ltr"}
+          data-app-page="shell-sidebar"
           className={
             (isRtl ? "hidden md:flex flex-col " : "hidden md:flex flex-col ") +
-            " sticky top-0 h-screen bg-transparent border-r border-[hsl(var(--border))] liquid-glass"
+            " sticky top-0 h-screen bg-transparent border-r border-border liquid-glass"
           }
         >
-          <div className="relative p-4">
-            <div className="liquid-glass glass-hover rounded-full p-3 flex items-center justify-center gap-3">
+          <div className="relative p-[var(--space-filter)]">
+            <div className="liquid-glass glass-hover rounded-full p-[var(--space-filter)] flex items-center justify-center gap-[var(--space-gap)]">
               <button
                 onClick={() => setProfileOpen((s) => !s)}
-                className="flex items-center rounded-2xl  bg-transparent hover:bg-foreground/5 gap-3"
+                className="flex items-center rounded-2xl  bg-transparent hover:bg-foreground/5 gap-[var(--space-gap)]"
               >
                 <Image
                   src={asset(avatar)}
@@ -84,8 +85,8 @@ export function Sidebar({
                   className="rounded-xl"
                 />
                 <div>
-                  <div className="text-sm font-medium line-clamp-1">{name}</div>
-                  <div className="text-xs subtle">
+                  <div className="app-text-body font-medium line-clamp-1">{name}</div>
+                  <div className="app-text-caption subtle">
                     {user?.roles?.map((r: any) => r.role).join(", ")}
                   </div>
                 </div>
@@ -95,64 +96,64 @@ export function Sidebar({
               <motion.div
                 initial={{ opacity: 0, y: -6 }}
                 animate={{ opacity: 1, y: 0 }}
-                className="absolute left-7 top-[78px] z-[70] w-56 rounded-2xl overflow-hidden bg-[hsl(var(--card))] border border-[hsl(var(--card-border, var(--border)))]"
+                className="absolute left-7 top-[78px] z-[70] w-56 rounded-2xl overflow-hidden bg-card border border-border"
               >
-                <div className="p-5">
+                <div className="p-[var(--space-card)]">
                   <Link
                     href="/profile"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl "
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl "
                   >
-                    <User2 className="size-4" />
-                    <span className="text-sm">{t("profile")}</span>
+                    <User2 className="app-icon-sm" />
+                    <span className="app-text-body">{t("profile")}</span>
                   </Link>
                   <Link
                     href="/my-listings"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl "
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl "
                   >
-                    <LayoutGrid className="size-4" />
-                    <span className="text-sm">{t("myListings")}</span>
+                    <LayoutGrid className="app-icon-sm" />
+                    <span className="app-text-body">{t("myListings")}</span>
                   </Link>
                   <Link
                     href="/notifications"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <Bell className="size-4" />
-                    <span className="text-sm">{t("notifications")}</span>
+                    <Bell className="app-icon-sm" />
+                    <span className="app-text-body">{t("notifications")}</span>
                   </Link>
                   <Link
                     href="/profile/roles"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <List className="size-4" />
-                    <span className="text-sm">{t("roles")}</span>
+                    <List className="app-icon-sm" />
+                    <span className="app-text-body">{t("roles")}</span>
                   </Link>
                   <Link
                     href="/profile/sent-notifications"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <Bell className="size-4" />
-                    <span className="text-sm">{t("sentNotifications")}</span>
+                    <Bell className="app-icon-sm" />
+                    <span className="app-text-body">{t("sentNotifications")}</span>
                   </Link>
                   <Link
                     href="/profile/approved-listings"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <LayoutGrid className="size-4" />
-                    <span className="text-sm">{t("approvedListings")}</span>
+                    <LayoutGrid className="app-icon-sm" />
+                    <span className="app-text-body">{t("approvedListings")}</span>
                   </Link>
                   <Link
                     href="/profile/audit-logs"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <List className="size-4" />
-                    <span className="text-sm">{t("auditLogs")}</span>
+                    <List className="app-icon-sm" />
+                    <span className="app-text-body">{t("auditLogs")}</span>
                   </Link>
                   <Link
                     href="/profile/feedbacks"
-                    className="flex items-center gap-3 px-3 h-10 rounded-xl"
+                    className="flex items-center gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] rounded-xl"
                   >
-                    <Info className="size-4" />
-                    <span className="text-sm">{t("feedbacks")}</span>
+                    <Info className="app-icon-sm" />
+                    <span className="app-text-body">{t("feedbacks")}</span>
                   </Link>
                   <button
                     onClick={async () => {
@@ -179,30 +180,30 @@ export function Sidebar({
                       } catch { }
                       window.location.href = "/sign-in";
                     }}
-                    className="flex w-full items-center rounded-2xl gap-3 px-3 h-10 hover:bg-white/5 text-left"
+                    className="flex w-full items-center rounded-2xl gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] hover:bg-white/5 text-left"
                   >
-                    <LogOut className="size-4" />
-                    <span className="text-sm">{t("logout")}</span>
+                    <LogOut className="app-icon-sm" />
+                    <span className="app-text-body">{t("logout")}</span>
                   </button>
                 </div>
               </motion.div>
             )}
           </div>
-          <nav className="space-y-2 p-5">
+          <nav className="space-y-2 p-[var(--space-card)]">
             {items.map(({ href, label, Icon }) => (
               <div key={href}>
                 {label === "Settings" ? (
                   <div
                     onClick={() => setSettingsOpen((v) => !v)}
                     className={
-                      "flex items-center gap-3 px-3 h-11 rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 cursor-pointer " +
+                      "flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 cursor-pointer " +
                       (pathname === href
                         ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
                         : "")
                     }
                   >
-                    <Icon className="size-4" />
-                    <span className="text-sm font-medium">{label}</span>
+                    <Icon className="app-icon-sm" />
+                    <span className="app-text-body font-medium">{label}</span>
                     <ChevronDown
                       className={`ml-auto transition-transform ${settingsOpen ? "rotate-180" : ""
                         }`}
@@ -213,14 +214,14 @@ export function Sidebar({
                     href={href}
                     onClick={() => onClose?.()}
                     className={
-                      "flex items-center gap-3 px-3 h-11 rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 " +
+                      "flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl liquid-glass glass-hover transition-all hover:translate-x-0.5 " +
                       (pathname === href
                         ? "ring-1 ring-primary/40 bg-gradient-to-r from-primary/10 to-transparent"
                         : "")
                     }
                   >
-                    <Icon className="size-4" />
-                    <span className="text-sm font-medium">{label}</span>
+                    <Icon className="app-icon-sm" />
+                    <span className="app-text-body font-medium">{label}</span>
                   </Link>
                 )}
               </div>
@@ -247,14 +248,15 @@ export function Sidebar({
             animate={{ x: 0, opacity: 1 }}
             exit={{ x: -320, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            data-app-page="shell-sidebar"
             className={
-              "absolute top-0 h-full w-72 bg-[hsl(var(--background))] shadow-xl p-4 " +
+              "absolute top-0 h-full w-72 bg-background shadow-xl p-[var(--space-filter)] " +
               (isRtl
-                ? "right-0 border-l border-[hsl(var(--border))]"
-                : "left-0 border-r border-[hsl(var(--border))]")
+                ? "right-0 border-l border-border"
+                : "left-0 border-r border-border")
             }
           >
-            <div className="liquid-glass glass-hover rounded-2xl p-3 mb-3 flex items-center gap-3">
+            <div className="liquid-glass glass-hover rounded-2xl p-[var(--space-filter)] mb-3 flex items-center gap-[var(--space-gap)]">
               <Image
                 src={avatar}
                 alt="avatar"
@@ -263,8 +265,8 @@ export function Sidebar({
                 className="rounded-lg"
               />
               <div>
-                <div className="text-sm font-medium">{name}</div>
-                <div className="text-xs subtle">
+                <div className="app-text-body font-medium">{name}</div>
+                <div className="app-text-caption subtle">
                   {user?.roles?.map((r: any) => r.role).join(", ")}
                 </div>
               </div>
@@ -275,19 +277,19 @@ export function Sidebar({
                   {label === "Settings" ? (
                     <div
                       onClick={() => setSettingsOpen((v) => !v)}
-                      className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer"
+                      className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl glass transition-all hover:translate-x-0.5 border border-border cursor-pointer"
                     >
-                      <Icon className="size-4" />
-                      <span className="text-sm font-medium">{label}</span>
+                      <Icon className="app-icon-sm" />
+                      <span className="app-text-body font-medium">{label}</span>
                     </div>
                   ) : (
                     <Link
                       href={href}
                       onClick={() => onClose?.()}
-                      className="flex items-center gap-3 px-3 h-11 rounded-xl glass transition-all hover:translate-x-0.5 border border-[hsl(var(--border))] cursor-pointer"
+                      className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl glass transition-all hover:translate-x-0.5 border border-border cursor-pointer"
                     >
-                      <Icon className="size-4" />
-                      <span className="text-sm font-medium">{label}</span>
+                      <Icon className="app-icon-sm" />
+                      <span className="app-text-body font-medium">{label}</span>
                     </Link>
                   )}
                   {label === "Settings" && (
@@ -302,17 +304,17 @@ export function Sidebar({
                           <Link
                             href="/settings/appearance"
                             onClick={() => onClose?.()}
-                            className="flex items-center gap-3 h-10 text-sm"
+                            className="flex items-center gap-[var(--space-gap)] h-[var(--ctrl-h)] app-text-body"
                           >
-                            <Layers className="size-4" />
+                            <Layers className="app-icon-sm" />
                             <span>{t("configureThemes")}</span>
                           </Link>
                           <Link
                             href="/settings/notifications"
                             onClick={() => onClose?.()}
-                            className="flex items-center gap-3 h-10 text-sm"
+                            className="flex items-center gap-[var(--space-gap)] h-[var(--ctrl-h)] app-text-body"
                           >
-                            <Bell className="size-4" />
+                            <Bell className="app-icon-sm" />
                             <span>{t("notifications")}</span>
                           </Link>
                         </motion.div>

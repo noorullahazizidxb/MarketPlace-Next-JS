@@ -75,32 +75,32 @@ const STATUS_STYLES: Record<string, string> = {
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
-  PENDING: <Clock className="size-3" />,
-  APPROVED: <CheckCircle2 className="size-3" />,
-  REJECTED: <XCircle className="size-3" />,
-  DRAFT: <PenLine className="size-3" />,
-  EXPIRED: <CalendarX2 className="size-3" />,
-  SOLD: <ShoppingBag className="size-3" />,
-  RENTED: <KeyRound className="size-3" />,
-  HIDDEN: <EyeOff className="size-3" />,
+  PENDING: <Clock className="app-icon-xs" />,
+  APPROVED: <CheckCircle2 className="app-icon-xs" />,
+  REJECTED: <XCircle className="app-icon-xs" />,
+  DRAFT: <PenLine className="app-icon-xs" />,
+  EXPIRED: <CalendarX2 className="app-icon-xs" />,
+  SOLD: <ShoppingBag className="app-icon-xs" />,
+  RENTED: <KeyRound className="app-icon-xs" />,
+  HIDDEN: <EyeOff className="app-icon-xs" />,
 };
 
 const PILL_ICONS: Record<StatusOption, React.ReactNode> = {
-  ALL: <LayoutList className="size-3.5" />,
-  PENDING: <Clock className="size-3.5" />,
-  APPROVED: <CheckCircle2 className="size-3.5" />,
-  REJECTED: <XCircle className="size-3.5" />,
-  DRAFT: <PenLine className="size-3.5" />,
-  SOLD: <ShoppingBag className="size-3.5" />,
-  RENTED: <KeyRound className="size-3.5" />,
-  EXPIRED: <CalendarX2 className="size-3.5" />,
-  HIDDEN: <EyeOff className="size-3.5" />,
+  ALL: <LayoutList className="app-icon-xs" />,
+  PENDING: <Clock className="app-icon-xs" />,
+  APPROVED: <CheckCircle2 className="app-icon-xs" />,
+  REJECTED: <XCircle className="app-icon-xs" />,
+  DRAFT: <PenLine className="app-icon-xs" />,
+  SOLD: <ShoppingBag className="app-icon-xs" />,
+  RENTED: <KeyRound className="app-icon-xs" />,
+  EXPIRED: <CalendarX2 className="app-icon-xs" />,
+  HIDDEN: <EyeOff className="app-icon-xs" />,
 };
 
 function StatusBadge({ status }: { status: string }) {
   return (
     <span
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-[11px] font-medium ${STATUS_STYLES[status] ?? "bg-[hsl(var(--muted))]/20 border-[hsl(var(--border))]"
+      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 app-text-micro font-medium ${STATUS_STYLES[status] ?? "bg-[var(--muted)]/20 border-[var(--border)]"
         }`}
     >
       {STATUS_ICONS[status]}
@@ -126,9 +126,9 @@ function StatusPills({
         <button
           key={s}
           onClick={() => onChange(s)}
-          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium transition-all ${active === s
-              ? "bg-[hsl(var(--primary))] text-[hsl(var(--primary-foreground))] border-[hsl(var(--primary))] shadow-sm"
-              : "border-[hsl(var(--border))] text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]/40 hover:bg-[hsl(var(--muted))]/50 hover:text-[hsl(var(--foreground))]"
+          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 app-text-caption font-medium transition-all ${active === s
+              ? "bg-[var(--primary)] text-[var(--primary-foreground)] border-[var(--primary)] shadow-sm"
+              : "border-[var(--border)] text-[var(--muted-foreground)] hover:border-[var(--primary)]/40 hover:bg-[var(--muted)]/50 hover:text-[var(--foreground)]"
             }`}
         >
           {PILL_ICONS[s]}
@@ -171,9 +171,9 @@ function ListingRow({
   };
 
   return (
-    <div className="group flex items-start gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 transition-all hover:shadow-md hover:border-[hsl(var(--primary))]/20">
+    <div className="group flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 transition-all hover:shadow-md hover:border-[var(--primary)]/20">
       {/* Thumbnail */}
-      <div className="relative size-16 shrink-0 rounded-lg overflow-hidden bg-[hsl(var(--muted))]/30">
+      <div className="relative size-16 shrink-0 rounded-lg overflow-hidden bg-[var(--muted)]/30">
         {cover ? (
           <>
             {!thumbLoaded && <ImageSpinner className="rounded-lg" />}
@@ -187,7 +187,7 @@ function ListingRow({
           </>
         ) : (
           <div className="h-full w-full flex items-center justify-center">
-            <LayoutList className="size-5 text-[hsl(var(--muted-foreground))]" />
+            <LayoutList className="app-icon-md text-[var(--muted-foreground)]" />
           </div>
         )}
       </div>
@@ -195,24 +195,24 @@ function ListingRow({
       {/* Info */}
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-sm truncate max-w-[22ch]">{listing.title}</span>
+          <span className="font-medium app-text-body truncate max-w-[22ch]">{listing.title}</span>
           <StatusBadge status={listing.status} />
           {listing.category?.name && (
-            <span className="text-xs rounded-full bg-[hsl(var(--muted))]/40 px-2 py-0.5 border border-[hsl(var(--border))]">
+            <span className="app-text-caption rounded-full bg-[var(--muted)]/40 px-2 py-0.5 border border-[var(--border)]">
               {listing.category.name}
             </span>
           )}
         </div>
-        <p className="text-xs text-[hsl(var(--muted-foreground))] line-clamp-1">
+        <p className="app-text-caption text-[var(--muted-foreground)] line-clamp-1">
           {listing.description || "—"}
         </p>
-        <div className="flex items-center gap-3 text-[11px] text-[hsl(var(--muted-foreground))]">
+        <div className="flex items-center gap-3 app-text-micro text-[var(--muted-foreground)]">
           {listing.user?.fullName && <span>{listing.user.fullName}</span>}
           {listing.createdAt && (
             <span>{new Date(listing.createdAt).toLocaleDateString()}</span>
           )}
           {listing.price && (
-            <span className="font-medium text-[hsl(var(--foreground))]">
+            <span className="font-medium text-[var(--foreground)]">
               {listing.price} {listing.currency}
             </span>
           )}
@@ -224,7 +224,7 @@ function ListingRow({
         <Link href={`/listings/${listing.id}`} target="_blank">
           <Tooltip content="Preview listing" side="top">
             <Button size="sm" variant="ghost" className="gap-1 px-2">
-              <Eye className="size-3.5" />
+              <Eye className="app-icon-xs" />
             </Button>
           </Tooltip>
         </Link>
@@ -237,7 +237,7 @@ function ListingRow({
             loading={approve.isPending}
             disabled={isPending}
           >
-            <CheckCircle2 className="size-3.5" />
+            <CheckCircle2 className="app-icon-xs" />
             Approve
           </Button>
         )}
@@ -250,7 +250,7 @@ function ListingRow({
             loading={reject.isPending}
             disabled={isPending}
           >
-            <XCircle className="size-3.5" />
+            <XCircle className="app-icon-xs" />
             Reject
           </Button>
         )}
@@ -294,9 +294,9 @@ function BlogRow({
   };
 
   return (
-    <div className="group flex items-start gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-3 transition-all hover:shadow-md hover:border-[hsl(var(--primary))]/20">
+    <div className="group flex items-start gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-3 transition-all hover:shadow-md hover:border-[var(--primary)]/20">
       {/* Thumbnail */}
-      <div className="relative size-16 shrink-0 rounded-lg overflow-hidden bg-[hsl(var(--muted))]/30">
+      <div className="relative size-16 shrink-0 rounded-lg overflow-hidden bg-[var(--muted)]/30">
         {cover ? (
           <>
             {!thumbLoaded && <ImageSpinner className="rounded-lg" />}
@@ -310,7 +310,7 @@ function BlogRow({
           </>
         ) : (
           <div className="h-full w-full flex items-center justify-center">
-            <FileText className="size-5 text-[hsl(var(--muted-foreground))]" />
+            <FileText className="app-icon-md text-[var(--muted-foreground)]" />
           </div>
         )}
       </div>
@@ -318,13 +318,13 @@ function BlogRow({
       {/* Info */}
       <div className="flex-1 min-w-0 space-y-1">
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="font-medium text-sm truncate max-w-[22ch]">{blog.title}</span>
+          <span className="font-medium app-text-body truncate max-w-[22ch]">{blog.title}</span>
           <StatusBadge status={blog.status} />
         </div>
-        <p className="text-xs text-[hsl(var(--muted-foreground))] line-clamp-1">
+        <p className="app-text-caption text-[var(--muted-foreground)] line-clamp-1">
           {blog.content || "—"}
         </p>
-        <div className="flex items-center gap-3 text-[11px] text-[hsl(var(--muted-foreground))]">
+        <div className="flex items-center gap-3 app-text-micro text-[var(--muted-foreground)]">
           <span>{authorName}</span>
           {blog.createdAt && (
             <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
@@ -342,7 +342,7 @@ function BlogRow({
         <Link href={`/blogs/${blog.id}`} target="_blank">
           <Tooltip content="Preview blog" side="top">
             <Button size="sm" variant="ghost" className="gap-1 px-2">
-              <Eye className="size-3.5" />
+              <Eye className="app-icon-xs" />
             </Button>
           </Tooltip>
         </Link>
@@ -355,7 +355,7 @@ function BlogRow({
             loading={approve.isPending}
             disabled={isPending}
           >
-            <CheckCircle2 className="size-3.5" />
+            <CheckCircle2 className="app-icon-xs" />
             Approve
           </Button>
         )}
@@ -368,7 +368,7 @@ function BlogRow({
             loading={reject.isPending}
             disabled={isPending}
           >
-            <XCircle className="size-3.5" />
+            <XCircle className="app-icon-xs" />
             Reject
           </Button>
         )}
@@ -392,7 +392,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`flex items-center gap-3 rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] p-4 shadow-sm`}
+      className={`flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm`}
     >
       <div
         className={`size-10 rounded-xl flex items-center justify-center ${color}`}
@@ -400,8 +400,8 @@ function StatCard({
         {icon}
       </div>
       <div>
-        <div className="text-xl font-bold tabular-nums">{value}</div>
-        <div className="text-xs text-[hsl(var(--muted-foreground))]">{label}</div>
+        <div className="app-text-heading font-bold tabular-nums">{value}</div>
+        <div className="app-text-caption text-[var(--muted-foreground)]">{label}</div>
       </div>
     </div>
   );
@@ -470,17 +470,17 @@ export default function ManageContentStatusPage() {
 
   // ── Stats ───────────────────────────────────────────────────────────────────
   const listingStats = [
-    { label: "Pending", status: "PENDING", icon: <Clock className="size-4" />, color: "bg-amber-500/15 text-amber-500" },
-    { label: "Approved", status: "APPROVED", icon: <CheckCircle2 className="size-4" />, color: "bg-emerald-500/15 text-emerald-500" },
-    { label: "Rejected", status: "REJECTED", icon: <XCircle className="size-4" />, color: "bg-red-500/15 text-red-500" },
+    { label: "Pending", status: "PENDING", icon: <Clock className="app-icon-sm" />, color: "bg-amber-500/15 text-amber-500" },
+    { label: "Approved", status: "APPROVED", icon: <CheckCircle2 className="app-icon-sm" />, color: "bg-emerald-500/15 text-emerald-500" },
+    { label: "Rejected", status: "REJECTED", icon: <XCircle className="app-icon-sm" />, color: "bg-red-500/15 text-red-500" },
   ];
 
   if (!isAdmin) {
     return (
       <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 p-6">
         <XCircle className="size-10 text-red-500 opacity-60" />
-        <p className="text-lg font-semibold">Admin access required</p>
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">
+        <p className="app-text-heading-sm font-semibold">Admin access required</p>
+        <p className="app-text-body text-[var(--muted-foreground)]">
           You do not have permission to view this page.
         </p>
       </div>
@@ -488,14 +488,14 @@ export default function ManageContentStatusPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 space-y-6">
+    <div className="min-h-screen p-4 sm:p-6 space-y-6 app-shell-page" data-app-page="admin-manage-content-status">
       {/* ── Page header ──────────────────────────────────────────────── */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">
+          <h1 className="app-text-heading font-bold tracking-tight">
             Manage Content Status
           </h1>
-          <p className="text-sm text-[hsl(var(--muted-foreground))] mt-0.5">
+          <p className="app-text-body text-[var(--muted-foreground)] mt-0.5">
             Review and moderate listings &amp; blogs across all statuses.
           </p>
         </div>
@@ -508,7 +508,7 @@ export default function ManageContentStatusPage() {
             refreshBlogs();
           }}
         >
-          <RefreshCw className="size-4" />
+          <RefreshCw className="app-icon-sm" />
           Refresh
         </Button>
       </div>
@@ -530,23 +530,23 @@ export default function ManageContentStatusPage() {
       </div>
 
       {/* ── Tab switcher ─────────────────────────────────────────────── */}
-      <div className="flex gap-2 border-b border-[hsl(var(--border))] pb-0">
+      <div className="flex gap-2 border-b border-[var(--border)] pb-0">
         {(["listings", "blogs"] as ContentType[]).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
-            className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${tab === t
-              ? "border-[hsl(var(--primary))] text-[hsl(var(--primary))]"
-              : "border-transparent text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))]"
+            className={`flex items-center gap-2 px-4 py-2.5 app-text-body font-medium border-b-2 transition-colors ${tab === t
+              ? "border-[var(--primary)] text-[var(--primary)]"
+              : "border-transparent text-[var(--muted-foreground)] hover:text-[var(--foreground)]"
               }`}
           >
             {t === "listings" ? (
-              <LayoutList className="size-4" />
+              <LayoutList className="app-icon-sm" />
             ) : (
-              <FileText className="size-4" />
+              <FileText className="app-icon-sm" />
             )}
             {t === "listings" ? "Listings" : "Blogs"}
-            <span className="ml-1 rounded-full bg-[hsl(var(--muted))]/50 px-1.5 py-0.5 text-[10px]">
+            <span className="ml-1 rounded-full bg-[var(--muted)]/50 px-1.5 py-0.5 app-text-micro">
               {t === "listings" ? listings.length : blogs.length}
             </span>
           </button>
@@ -559,7 +559,7 @@ export default function ManageContentStatusPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[hsl(var(--muted-foreground))]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 app-icon-sm text-[var(--muted-foreground)]" />
               <input
                 value={listingQ}
                 onChange={(e) => {
@@ -567,7 +567,7 @@ export default function ManageContentStatusPage() {
                   setListingPage(1);
                 }}
                 placeholder="Search listings..."
-                className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/20 focus:border-[hsl(var(--primary))]/50"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] pl-9 pr-3 py-2 app-text-body outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)]/50"
               />
             </div>
             <StatusPills
@@ -586,9 +586,9 @@ export default function ManageContentStatusPage() {
               <Spinner size="lg" variant="muted" />
             </div>
           ) : listings.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-3 text-[hsl(var(--muted-foreground))]">
+            <div className="flex flex-col items-center justify-center py-16 gap-3 text-[var(--muted-foreground)]">
               <LayoutList className="size-10 opacity-30" />
-              <p className="text-sm">No listings found for this filter.</p>
+              <p className="app-text-body">No listings found for this filter.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -605,7 +605,7 @@ export default function ManageContentStatusPage() {
           {/* Pagination */}
           {listings.length > 0 && (
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-[hsl(var(--muted-foreground))]">
+              <span className="app-text-caption text-[var(--muted-foreground)]">
                 Page {listingPage}
               </span>
               <div className="flex items-center gap-2">
@@ -616,7 +616,7 @@ export default function ManageContentStatusPage() {
                   onClick={() => setListingPage((p) => p - 1)}
                   className="gap-1"
                 >
-                  <ChevronLeft className="size-4" /> Prev
+                  <ChevronLeft className="app-icon-sm" /> Prev
                 </Button>
                 <Button
                   size="sm"
@@ -625,7 +625,7 @@ export default function ManageContentStatusPage() {
                   onClick={() => setListingPage((p) => p + 1)}
                   className="gap-1"
                 >
-                  Next <ChevronRight className="size-4" />
+                  Next <ChevronRight className="app-icon-sm" />
                 </Button>
               </div>
             </div>
@@ -639,7 +639,7 @@ export default function ManageContentStatusPage() {
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1 max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-4 text-[hsl(var(--muted-foreground))]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 app-icon-sm text-[var(--muted-foreground)]" />
               <input
                 value={blogQ}
                 onChange={(e) => {
@@ -647,7 +647,7 @@ export default function ManageContentStatusPage() {
                   setBlogPage(1);
                 }}
                 placeholder="Search blogs..."
-                className="w-full rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--background))] pl-9 pr-3 py-2 text-sm outline-none focus:ring-2 focus:ring-[hsl(var(--primary))]/20 focus:border-[hsl(var(--primary))]/50"
+                className="w-full rounded-xl border border-[var(--border)] bg-[var(--background)] pl-9 pr-3 py-2 app-text-body outline-none focus:ring-2 focus:ring-[var(--primary)]/20 focus:border-[var(--primary)]/50"
               />
             </div>
             <StatusPills
@@ -666,9 +666,9 @@ export default function ManageContentStatusPage() {
               <Spinner size="lg" variant="muted" />
             </div>
           ) : blogs.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-16 gap-3 text-[hsl(var(--muted-foreground))]">
+            <div className="flex flex-col items-center justify-center py-16 gap-3 text-[var(--muted-foreground)]">
               <FileText className="size-10 opacity-30" />
-              <p className="text-sm">No blogs found for this filter.</p>
+              <p className="app-text-body">No blogs found for this filter.</p>
             </div>
           ) : (
             <div className="space-y-2">
@@ -681,7 +681,7 @@ export default function ManageContentStatusPage() {
           {/* Pagination */}
           {blogs.length > 0 && (
             <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-[hsl(var(--muted-foreground))]">
+              <span className="app-text-caption text-[var(--muted-foreground)]">
                 Page {blogPage}
               </span>
               <div className="flex items-center gap-2">
@@ -692,7 +692,7 @@ export default function ManageContentStatusPage() {
                   onClick={() => setBlogPage((p) => p - 1)}
                   className="gap-1"
                 >
-                  <ChevronLeft className="size-4" /> Prev
+                  <ChevronLeft className="app-icon-sm" /> Prev
                 </Button>
                 <Button
                   size="sm"
@@ -701,7 +701,7 @@ export default function ManageContentStatusPage() {
                   onClick={() => setBlogPage((p) => p + 1)}
                   className="gap-1"
                 >
-                  Next <ChevronRight className="size-4" />
+                  Next <ChevronRight className="app-icon-sm" />
                 </Button>
               </div>
             </div>

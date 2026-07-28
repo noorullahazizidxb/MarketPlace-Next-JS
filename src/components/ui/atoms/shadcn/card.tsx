@@ -61,7 +61,7 @@ function CardTitle({ className, style, ...props }: React.ComponentProps<"div">) 
   return (
     <div
       data-slot="card-title"
-      className={cn("admin-text-heading-sm leading-tight text-foreground", className)}
+      className={cn("app-text-heading-sm leading-tight text-foreground", className)}
       {...props}
     />
   )
@@ -73,7 +73,7 @@ function CardDescription({ className, style, ...props }: React.ComponentProps<"d
   return (
     <div
       data-slot="card-description"
-      className={cn("admin-text-body text-muted-foreground", className)}
+      className={cn("app-text-body text-muted-foreground", className)}
       {...props}
     />
   )

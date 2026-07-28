@@ -70,9 +70,9 @@ export default function FollowButton({
         className={cn(
           "relative inline-flex items-center gap-2 px-5 h-10 rounded-2xl text-sm font-semibold overflow-hidden",
           following &&
-            "bg-[hsl(var(--muted))]/30 border-[hsl(var(--border))]/60 text-[hsl(var(--foreground))]/80 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400",
+            "bg-[var(--muted)]/30 border-[var(--border)]/60 text-[var(--foreground)]/80 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400",
           !following &&
-            "shadow-[0_4px_20px_-4px_hsl(var(--primary)/0.5)] hover:shadow-[0_6px_28px_-4px_hsl(var(--primary)/0.6)] hover:brightness-110",
+            "shadow-[0_4px_20px_-4px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:shadow-[0_6px_28px_-4px_color-mix(in oklab, var(--primary) 60%, transparent)] hover:brightness-110",
         )}
       >
         {!following && (

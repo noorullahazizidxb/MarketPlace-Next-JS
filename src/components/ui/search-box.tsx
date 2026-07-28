@@ -168,7 +168,7 @@ export function SearchBox({
             p.toLowerCase() === debounced.toLowerCase() ? (
               <mark
                 key={i}
-                className="bg-[hsl(var(--accent))/0.35] text-[hsl(var(--accent))] rounded px-0.5"
+                className="bg-[color-mix(in oklab, var(--accent) 35%, transparent)] text-[var(--accent)] rounded px-0.5"
               >
                 {p}
               </mark>
@@ -220,7 +220,7 @@ export function SearchBox({
       </div>
       {/* Inline sheet mode results */}
       {isSheet && open && (
-        <div className="mt-4 flex-1 min-h-0 rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--background))]/80 backdrop-blur-sm p-3 flex flex-col shadow-[0_4px_24px_-6px_rgba(0,0,0,0.4)] z-[1200] overflow-visible">
+        <div className="mt-4 flex-1 min-h-0 rounded-2xl border border-[var(--border)] bg-[var(--background)]/80 backdrop-blur-sm p-3 flex flex-col shadow-[0_4px_24px_-6px_rgba(0,0,0,0.4)] z-[1200] overflow-visible">
           {recent.length > 0 && q.length === 0 && (
             <div className="mb-2 flex flex-wrap gap-2">
               {recent.map((r) => (
@@ -237,7 +237,7 @@ export function SearchBox({
                       onSubmitClose?.();
                     } catch { }
                   }}
-                  className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
+                  className="px-3 py-1 rounded-full bg-[var(--muted)] text-xs hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
                 >
                   {r}
                 </button>
@@ -249,7 +249,7 @@ export function SearchBox({
                     localStorage.removeItem("recent-searches");
                   } catch { }
                 }}
-                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
+                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
               >
                 Clear
               </button>
@@ -264,9 +264,9 @@ export function SearchBox({
             <span>Press Enter to view all</span>
           </div>
           {hits.length > 0 && (
-            <ul className="overflow-auto divide-y divide-[hsl(var(--border))]/60 flex-1 min-h-0">
+            <ul className="overflow-auto divide-y divide-[var(--border)]/60 flex-1 min-h-0">
               {hits.map((h: any, idx: number) => (
-                <li key={h.id ?? idx} className="hover:bg-[hsl(var(--muted))]">
+                <li key={h.id ?? idx} className="hover:bg-[var(--muted)]">
                   <button
                     type="button"
                     className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
@@ -309,7 +309,7 @@ export function SearchBox({
           const content = (
             <div
               ref={popupRef}
-              className="p-5 rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col"
+              className="p-5 rounded-2xl overflow-visible border border-[var(--border)] bg-[var(--background)] shadow-xl max-h-[60vh] flex flex-col"
             >
               {recent.length > 0 && q.length === 0 && (
                 <div className="mb-2 flex flex-wrap gap-2">
@@ -327,7 +327,7 @@ export function SearchBox({
                           onSubmitClose?.();
                         } catch { }
                       }}
-                      className="px-3 py-1 rounded-full bg-[hsl(var(--muted))] text-xs hover:bg-[hsl(var(--accent))/0.3]"
+                      className="px-3 py-1 rounded-full bg-[var(--muted)] text-xs hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
                     >
                       {r}
                     </button>
@@ -339,7 +339,7 @@ export function SearchBox({
                         localStorage.removeItem("recent-searches");
                       } catch { }
                     }}
-                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[hsl(var(--background))/0.06] hover:bg-[hsl(var(--foreground))/0.08]"
+                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
                   >
                     Clear
                   </button>
@@ -354,11 +354,11 @@ export function SearchBox({
                 <span>Press Enter to view all</span>
               </div>
               {hits.length > 0 && (
-                <ul className="overflow-auto divide-y divide-[hsl(var(--border))]/60 flex-1 min-h-0">
+                <ul className="overflow-auto divide-y divide-[var(--border)]/60 flex-1 min-h-0">
                   {hits.map((h: any, idx: number) => (
                     <li
                       key={h.id ?? idx}
-                      className="hover:bg-[hsl(var(--muted))]"
+                      className="hover:bg-[var(--muted)]"
                     >
                       <button
                         type="button"
@@ -402,7 +402,7 @@ export function SearchBox({
 
           // Fallback: render inline absolutely positioned (original behavior)
           return (
-            <div className="absolute left-0 right-0 p-3 mt-2 z-[1200] rounded-2xl overflow-visible border border-[hsl(var(--border))] bg-[hsl(var(--background))] shadow-xl max-h-[60vh] flex flex-col">
+            <div className="absolute left-0 right-0 p-3 mt-2 z-[1200] rounded-2xl overflow-visible border border-[var(--border)] bg-[var(--background)] shadow-xl max-h-[60vh] flex flex-col">
               {content}
             </div>
           );

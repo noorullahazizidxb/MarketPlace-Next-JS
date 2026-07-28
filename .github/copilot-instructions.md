@@ -144,89 +144,31 @@ src/
     language.store.ts        # Locale selection
     ui.store.ts              # Density, sidebar state
     listings.store.ts        # Listings filters & pagination
-    theme.store.ts           # Active theme token map
     notifications.store.ts
     toasts.store.ts
     search.store.ts
   validation/                # Zod schemas for all forms
   mock/                      # Mock API data (enabled via config.useMockData)
   types/                     # Shared TypeScript types
-theme-data/
-  active-theme.json          # Live theme token overrides (loaded at runtime)
-  default-theme.json         # Default token values
+  lib/theme/                 # Theme presets, ThemeProvider, ui-context JSON persistence
 public/
   mask.png                   # PNG texture mask used by :where(h1..h6) in globals.css
   images/
   logo/
 ```
 
+Theme settings persist in `.data/ui-context.json` via `/api/ui-context` (SSR-injected). There is no `theme.store.ts` or `theme-data/` HSL file stack.
 ---
 
 ## 4. Styling & Design System
 
-### 4.1 Tailwind v3 Config (`tailwind.config.ts`)
+### 4.1 Tailwind v4 + `@theme`
 
-This project uses **Tailwind CSS v3** with `theme.extend`. There is **no `@theme` directive** (that is a Tailwind v4 feature). All custom tokens are extended via `tailwind.config.ts`:
+This project uses **Tailwind CSS v4** with `@import "tailwindcss"` and `@theme inline` in `src/app/globals.css`. Color utilities map directly to CSS variables (`var(--background)`, not `hsl(var(--background))`) so oklch presets apply correctly. Density tokens (`--text-*`, `--space-*`, `--ctrl-*`) live in `:root` and are overridden per breakpoint in `src/styles/responsive-tokens.css`. Prefer `app-text-*` / `app-icon-*` / `app-shell-*` utilities over static `text-sm` / `size-4` / `p-4`.
 
-#### Custom colors (map to CSS variables)
-```typescript
-colors: {
-  background: "hsl(var(--background))",
-  foreground: "hsl(var(--foreground))",
-  muted:      "hsl(var(--muted))",
-  card:       "hsl(var(--card))",
-  border:     "hsl(var(--border))",
-  input:      "hsl(var(--input))",
-  primary:    { DEFAULT: "hsl(var(--primary))", foreground: "hsl(var(--primary-foreground))" },
-  secondary:  { DEFAULT: "hsl(var(--secondary))", foreground: "hsl(var(--secondary-foreground))" },
-  accent:     { DEFAULT: "hsl(var(--accent))", foreground: "hsl(var(--accent-foreground))" },
-}
-```
-Use: `bg-primary`, `text-foreground`, `border-border`, etc. — these resolve at runtime via CSS variables.
+### 4.2 Theme tokens
 
-For opacity variants use: `bg-[hsl(var(--primary)/0.15)]` — **never** hardcode raw `rgb()` or `hsl()` values.
-
-#### Custom border radius
-```
-rounded-lg   → 1.25rem
-rounded-xl   → 1.5rem
-rounded-2xl  → 2rem
-```
-
-#### Custom shadows
-```
-shadow-soft   → 0 10px 30px -12px rgba(2,6,23,0.3)
-shadow-glass  → inset 0 1px rgba(255,255,255,0.25) + 0 10px 30px -12px rgba(2,6,23,0.35)
-```
-
-#### Custom timing function
-```
-ease-premium  → cubic-bezier(0.16, 1, 0.3, 1)
-```
-Always use `ease-premium` for card hovers, panel transitions, and modal animations.
-
-#### Custom keyframes & animations (generated as Tailwind utilities)
-| Class | Duration | Use case |
-|---|---|---|
-| `animate-aurora` | 12s ease-in-out infinite | Background blob glow |
-| `animate-float` | 6s ease-in-out infinite | Floating hero elements |
-| `animate-shimmer` | 2.5s linear infinite | Skeleton loading shimmer |
-| `animate-logo-scroll` | 30s linear infinite | Partners logo carousel |
-
-### 4.2 CSS Variables (Design Tokens)
-
-All colors use HSL triplets without `hsl()` wrapper in the variable itself:
-```css
---primary: 180 100% 40%;     /* teal */
---secondary: 295 90% 55%;    /* magenta */
---accent: 45 100% 50%;       /* neon yellow */
---background: var(--light-background);
---foreground: var(--light-foreground);
-```
-
-Dark mode adds `.dark` class or `data-theme="dark"` on `<html>`. Token variables are remapped in `.dark {}`.
-
-Theme overrides loaded from `theme-data/active-theme.json` at runtime (via `src/store/theme.store.ts`).
+`:root` / `.dark` hold oklch semantic tokens (`--background`, `--primary`, `--sidebar-*`, …). Theme presets and Appearance Studio settings are applied via SSR `#app-inline-css` + client `ThemeProvider` from `src/lib/theme/theme-context.tsx`. Persistence: `.data/ui-context.json` through `/api/ui-context`.
 
 ### 4.3 `globals.css` Layers & Custom Classes
 
@@ -247,23 +189,23 @@ Theme overrides loaded from `theme-data/active-theme.json` at runtime (via `src/
 ```
 
 #### Layout utilities
+```css
+/* Prefer token utilities */
+.app-shell-page { padding-inline: var(--space-page-x); ... }
+.app-text-body { font-size: var(--text-body); ... }
+```
+
+#### Legacy layout helpers (still available)
 | Class | Purpose |
 |---|---|
-| `.container-padded` | `container px-4 md:px-6 lg:px-8` |
+| `.container-padded` | `container` + responsive padding |
 | `.glass` | White/5 backdrop blur panel with border |
 | `.liquid-glass` | Conic-gradient border + blur glass panel |
 | `.glass-hover` | translateY(-2px) hover lift |
 | `.neuo` | Neumorphic box shadow |
 
-#### Typography scale classes
-| Class | Font size var |
-|---|---|
-| `.heading-2xl` | `--font-size-4xl` (2.25rem) |
-| `.heading-xl` | `--font-size-3xl` (1.875rem) |
-| `.heading-lg` | `--font-size-2xl` (1.5rem) |
-| `.heading-md` | `--font-size-xl` (1.25rem) |
-| `.heading-sm` | `--font-size-lg` (1.125rem) |
-| `.subtle` | `text-sm text-foreground/70` |
+#### Preferred typography
+Prefer `app-text-heading`, `app-text-body`, `app-text-label`, `app-text-caption` over static `text-sm` / legacy `.heading-*` classes.
 
 #### Animation helpers
 | Class | Purpose |
@@ -384,10 +326,11 @@ className={cn("base-classes", condition && "conditional-class", className)}
 | `language.store.ts` | `locale: "en" \| "fa"` | Yes |
 | `ui.store.ts` | `density`, sidebar open/closed | Yes |
 | `listings.store.ts` | filters, pagination, active listing | No |
-| `theme.store.ts` | active theme token map | Yes |
 | `notifications.store.ts` | unread count, notifications array | No |
 | `toasts.store.ts` | toast queue | No |
 | `search.store.ts` | search term, results | No |
+
+Theme appearance lives in `lib/theme` + `.data/ui-context.json` (not a Zustand theme store).
 
 ---
 

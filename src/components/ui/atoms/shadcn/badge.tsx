@@ -22,14 +22,14 @@ const badgeVariants = cva(
     "px-[var(--ctrl-px,0.625rem)]",
     "h-[var(--badge-h,1.25rem)]",
     // Icon handling
-    "[&>svg]:admin-icon-xs gap-1.5 [&>svg]:pointer-events-none",
+    "[&>svg]:app-icon-xs gap-1.5 [&>svg]:pointer-events-none",
     // Accessibility / interaction
     "focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px]",
     "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
     // Transition
     "transition-[color,box-shadow] overflow-hidden",
     // Font handled via tokens
-    "admin-text-heading uppercase tracking-wider text-[var(--text-badge,0.6875rem)]",
+    "app-text-heading uppercase tracking-wider text-[var(--text-badge,0.6875rem)]",
   ].join(" "),
   {
     variants: {

@@ -6,8 +6,8 @@ export function ProfileSkeleton() {
   return (
     <div className="space-y-6 pb-20">
       {/* Header banner */}
-      <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/80 backdrop-blur-xl p-6 sm:p-10">
-        <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--primary))]/10 via-transparent to-[hsl(var(--accent))]/10 pointer-events-none" />
+      <div className="relative overflow-hidden rounded-3xl border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl p-6 sm:p-10">
+        <div className="absolute inset-0 bg-gradient-to-br from-[var(--primary)]/10 via-transparent to-[var(--accent)]/10 pointer-events-none" />
         <div className="flex flex-col sm:flex-row gap-6 items-start">
           {/* Avatar */}
           <Skeleton className="w-24 h-24 sm:w-32 sm:h-32 rounded-3xl shrink-0" />
@@ -35,7 +35,7 @@ export function ProfileSkeleton() {
         {Array.from({ length: 3 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-[1.5rem] border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/60 backdrop-blur-xl p-5 flex items-center gap-4"
+            className="rounded-[1.5rem] border border-[var(--border)]/40 bg-[var(--card)]/60 backdrop-blur-xl p-5 flex items-center gap-4"
           >
             <Skeleton className="w-10 h-10 rounded-2xl shrink-0" />
             <div className="space-y-2 flex-1">
@@ -53,7 +53,7 @@ export function ProfileSkeleton() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="rounded-[1.5rem] border border-[hsl(var(--border))]/40 overflow-hidden bg-[hsl(var(--card))]/80"
+              className="rounded-[1.5rem] border border-[var(--border)]/40 overflow-hidden bg-[var(--card)]/80"
             >
               <Skeleton className="h-40 w-full rounded-none" />
               <div className="p-4 space-y-2.5">

@@ -31,18 +31,18 @@ function CurrencySelector() {
           <DropdownMenuTrigger
             className={cn(
               "flex items-center gap-1 sm:gap-1.5",
-              "admin-text-caption sm:admin-text-body text-white",
+              "app-text-caption sm:app-text-body text-white",
               "hover:text-gray-200 transition-colors",
               "focus:outline-none focus:ring-2 focus:ring-white/20 rounded"
             )}
           >
-            <ChevronDown className="admin-icon-xs sm:w-4 sm:h-4" />
+            <ChevronDown className="app-icon-xs sm:w-4 sm:h-4" />
             <span>{currencyInfo.label}</span>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="min-w-[100px]">
             <DropdownMenuItem
               onClick={toggleCurrency}
-              className="cursor-pointer admin-text-body"
+              className="cursor-pointer app-text-body"
             >
               {CURRENCIES[otherCurrency].label}
             </DropdownMenuItem>
@@ -75,7 +75,7 @@ export function TopBarNavbar() {
           )}
         >
           {/* Welcome Message */}
-          <p className="admin-text-caption xs:admin-text-caption sm:admin-text-body md:admin-text-body truncate">
+          <p className="app-text-caption xs:app-text-caption sm:app-text-body md:app-text-body truncate">
           Welcome to the leading ticketing and travel platform in Afghanistan.          </p>
   
           {/* Currency Selector */}

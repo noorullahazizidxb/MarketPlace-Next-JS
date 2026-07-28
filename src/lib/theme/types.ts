@@ -274,31 +274,48 @@ export interface ResponsiveLayoutDensity {
 }
 
 /**
- * All admin page ids used by `data-admin-page` attributes.
+ * Marketplace page ids used by `data-app-page` / Appearance density overrides.
  * Extend when new pages are added.
  */
-export type AdminPageId =
-  | "account-subsystems"
-  | "baggage"
-  | "base-info"
-  | "companies"
-  | "contracts"
-  | "currency-convert"
-  | "fund-report"
-  | "fund-requests"
-  | "manage-users"
-  | "markup-discount"
-  | "security-accessibility"
-  | "settings-account"
+export type AppPageId =
+  | "home"
+  | "listings"
+  | "listing-detail"
+  | "listings-create"
+  | "my-listings"
+  | "blogs"
+  | "blog-detail"
+  | "blogs-create"
+  | "profile"
+  | "profile-public"
+  | "about"
+  | "contact"
+  | "sign-in"
+  | "sign-up"
+  | "admin"
+  | "admin-notifications"
+  | "admin-ads"
+  | "admin-categories"
+  | "admin-contacts"
+  | "admin-stories"
+  | "admin-users"
+  | "admin-manage-content-status"
+  | "pendings"
+  | "stories"
+  | "settings"
   | "settings-appearance"
+  | "settings-themes"
+  | "settings-account"
   | "settings-billing"
   | "settings-connections"
   | "settings-notifications"
   | "settings-user"
-  | "subsystems"
-  | "theme-accessibility"
-  | "two-step-users"
-  | "user-treasury";
+  | "shell-sidebar"
+  | "shell-topbar"
+  | "shell-footer";
+
+/** @deprecated Prefer `AppPageId` — kept for Appearance Studio import parity with OTA. */
+export type AdminPageId = AppPageId;
 
 // Theme settings stored in UI context.
 export interface ThemeSettings {
@@ -317,8 +334,8 @@ export interface ThemeSettings {
   contentWidth: ContentWidthOption;
   /** Responsive appearance token overrides for base + viewport-specific values. */
   layoutDensity?: ResponsiveLayoutDensity | null;
-  /** Per admin page token overrides (applied when `data-admin-page` matches). */
-  layoutDensityByPage?: Partial<Record<AdminPageId, LayoutDensityTokens>> | null;
+  /** Per-page token overrides (applied when `data-app-page` matches). */
+  layoutDensityByPage?: Partial<Record<AppPageId, LayoutDensityTokens>> | null;
 }
 
 // Sidebar settings stored in UI context.

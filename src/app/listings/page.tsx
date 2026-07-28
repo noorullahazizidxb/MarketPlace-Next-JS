@@ -26,6 +26,7 @@ import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ComponentLoading } from "@/components/ui/component-loading";
+import { OrbField } from "@/components/ui/atoms/ambient-canvas";
 
 // Lazy-load below-fold / heavy components to keep initial bundle small
 const HiddenListingsSlider = dynamic(
@@ -191,7 +192,8 @@ function ListingsContent() {
   }, [allItems, id, searchText]);
 
   return (
-    <div className="space-y-6" ref={ptrRef}>
+    <div className="relative space-y-6 app-shell-page" ref={ptrRef} data-app-page="listings">
+      <OrbField intensity={0.18} className="fixed inset-0 -z-10" />
       {/* Hero */}
       <HomeHero />
       {/* Stories bar */}
@@ -239,7 +241,7 @@ function ListingsContent() {
           </div>
         );
       })()}
-      <div id="listings" ref={listingsAnchorRef} className="card p-4 space-y-3">
+      <div id="listings" ref={listingsAnchorRef} className="card app-shell-card space-y-[var(--space-gap)]">
         <FiltersBar />
         {error && (
           <p className="text-red-500">
@@ -248,19 +250,19 @@ function ListingsContent() {
         )}
         {/* Grid is always rendered — skeletons occupy the same space as cards
             while data loads so there is no layout shift when content arrives. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-[var(--space-gap)] app-density-grid-gap">
           {isLoading
             ? Array.from({ length: pageSize }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))]"
+                className="rounded-2xl border border-border overflow-hidden bg-card"
               >
                 <Skeleton className="h-40 w-full rounded-none" />
-                <div className="p-4 space-y-2">
+                <div className="p-[var(--space-card)] space-y-2">
                   <Skeleton className="h-5 w-3/4" />
                   <Skeleton className="h-4 w-2/3" />
                   <Skeleton className="h-4 w-1/3" />
-                  <div className="flex items-center gap-2 pt-1">
+                  <div className="flex items-center gap-[var(--space-gap)] pt-1">
                     <Skeleton className="h-6 w-16 rounded-xl" />
                     <Skeleton className="h-6 w-20 rounded-xl" />
                   </div>
@@ -338,7 +340,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const visible = generateVisible(page, pageCount);
 
   return (
-    <div className={`mt-4 flex items-center justify-center gap-2 transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
+    <div className={`mt-4 flex items-center justify-center gap-[var(--space-gap)] transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
       <Tooltip content={t("prev")} side="top">
         <Button
           variant="accent"
@@ -356,7 +358,7 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
           return (
             <Fragment key={p}>
               {showEllipsis && (
-                <span className="px-2 text-sm opacity-60">…</span>
+                <span className="px-2 app-text-caption opacity-60">…</span>
               )}
               <Tooltip content={`${t("page" as any) || "Page"} ${p}`} side="top">
                 <motion.button
@@ -364,8 +366,8 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
                   onClick={() => set(p)}
                   className={
                     p === page
-                      ? "px-3 h-9 rounded-xl bg-[hsl(var(--primary))] border border-[hsl(var(--primary))/0.35] text-[hsl(var(--primary-foreground))]"
-                      : "px-3 h-9 rounded-xl bg-[hsl(var(--accent))] border border-[hsl(var(--border))] text-[hsl(var(--accent-foreground))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))] focus:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))]"
+                      ? "px-3 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-xl bg-primary border border-primary/35 text-primary-foreground"
+                      : "px-3 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-xl bg-accent border border-border text-accent-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary"
                   }
                   aria-current={p === page ? "page" : undefined}
                 >

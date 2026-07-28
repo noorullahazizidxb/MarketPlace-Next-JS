@@ -1,5 +1,9 @@
 import type { Config } from "tailwindcss";
 
+/**
+ * Slim config — colors/radius come from CSS `@theme` (var(--*)), not hsl(var(--*)).
+ * Keep only non-token utilities (container, shadows, keyframes).
+ */
 const config: Config = {
   darkMode: "class",
   content: [
@@ -23,53 +27,13 @@ const config: Config = {
       "2xl": "1536px",
     },
     extend: {
-      colors: {
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
-        },
-        card: "hsl(var(--card))",
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
-        },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
-        },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
-        },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
-        },
-        ring: "hsl(var(--ring))",
-        sidebar: {
-          DEFAULT: "hsl(var(--sidebar))",
-          foreground: "hsl(var(--sidebar-foreground))",
-          primary: "hsl(var(--sidebar-primary))",
-          "primary-foreground": "hsl(var(--sidebar-primary-foreground))",
-          accent: "hsl(var(--sidebar-accent))",
-          "accent-foreground": "hsl(var(--sidebar-accent-foreground))",
-          border: "hsl(var(--sidebar-border))",
-          ring: "hsl(var(--sidebar-ring))",
-        },
-      },
       borderRadius: {
-        lg: "1.25rem",
-        xl: "1.5rem",
-        "2xl": "2rem",
         squircle: "var(--squircle-radius)",
       },
       boxShadow: {
-        soft: "0 10px 30px -12px rgba(2,6,23,0.3)",
-        glass: "inset 0 1px rgba(255,255,255,0.25), 0 10px 30px -12px rgba(2,6,23,0.35)",
+        soft: "0 10px 30px -12px color-mix(in oklch, var(--foreground) 25%, transparent)",
+        glass:
+          "inset 0 1px color-mix(in oklch, var(--foreground) 12%, transparent), 0 10px 30px -12px color-mix(in oklch, var(--foreground) 28%, transparent)",
       },
       backdropBlur: {
         xs: "2px",

@@ -55,7 +55,7 @@ export function ColorPicker({
 
   return (
     <div className="flex flex-col gap-2">
-      <Label htmlFor={`color-${cssVar}`} className="admin-text-label">
+      <Label htmlFor={`color-${cssVar}`} className="app-text-label">
         {label}
       </Label>
       <div className="flex items-start gap-2">
@@ -78,7 +78,7 @@ export function ColorPicker({
         <div className="flex-1">
           <TextInputField
             label="Color value"
-            icon={<Hash className="admin-icon-sm" aria-hidden />}
+            icon={<Hash className="app-icon-sm" aria-hidden />}
             value={localValue}
             onChange={handleTextChange}
           />

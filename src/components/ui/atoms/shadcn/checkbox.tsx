@@ -14,7 +14,7 @@ function Checkbox({
     <CheckboxPrimitive.Root
       data-slot="checkbox"
       className={cn(
-        "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive admin-icon-sm shrink-0 rounded-squircle border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
+        "peer border-input dark:bg-input/30 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground dark:data-[state=checked]:bg-primary data-[state=checked]:border-primary focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive app-icon-sm shrink-0 rounded-squircle border shadow-xs transition-shadow outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
         className
       )}
       {...props}
@@ -23,7 +23,7 @@ function Checkbox({
         data-slot="checkbox-indicator"
         className="flex items-center justify-center text-current transition-none"
       >
-        <CheckIcon className="admin-icon-xs" />
+        <CheckIcon className="app-icon-xs" />
       </CheckboxPrimitive.Indicator>
     </CheckboxPrimitive.Root>
   )
@@ -59,7 +59,7 @@ function CheckboxField({
           className={className}
           {...props}
         />
-        <span className="admin-text-body text-foreground leading-5">
+        <span className="app-text-body text-foreground leading-5">
           <span className="inline-flex items-center gap-1">
             <span>{label}</span>
             {requiredMark && (
@@ -71,11 +71,11 @@ function CheckboxField({
         </span>
       </label>
       {errorMessage ? (
-        <p className="admin-text-label text-destructive ps-6" role="alert">
+        <p className="app-text-label text-destructive ps-6" role="alert">
           {errorMessage}
         </p>
       ) : helperText ? (
-        <p className="admin-text-label text-muted-foreground ps-6">
+        <p className="app-text-label text-muted-foreground ps-6">
           {helperText}
         </p>
       ) : null}

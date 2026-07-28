@@ -79,7 +79,7 @@ function ThemePreviewSwatches({
       {solidPreviewKeys.map((key) => (
         <div
           key={key}
-          className="admin-icon-xs rounded-full border border-border/20 flex-shrink-0"
+          className="app-icon-xs rounded-full border border-border/20 flex-shrink-0"
           style={{ backgroundColor: styles[key] ?? "transparent" }}
         />
       ))}
@@ -195,14 +195,14 @@ export function ThemeTab({
       {/* Shadcn UI Theme Presets */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="admin-text-body">Shadcn UI Theme Presets</Label>
+          <Label className="app-text-body">Shadcn UI Theme Presets</Label>
           <Button
             variant="outline"
             size="sm"
             onClick={handleRandomShadcn}
             className="cursor-pointer"
           >
-            <Dices className="admin-icon-xs mr-1.5" />
+            <Dices className="app-icon-xs mr-1.5" />
             Random
           </Button>
         </div>
@@ -246,14 +246,14 @@ export function ThemeTab({
       {/* Tweakcn Theme Presets */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="admin-text-body">Tweakcn Theme Presets</Label>
+          <Label className="app-text-body">Tweakcn Theme Presets</Label>
           <Button
             variant="outline"
             size="sm"
             onClick={handleRandomTweakcn}
             className="cursor-pointer"
           >
-            <Dices className="admin-icon-xs mr-1.5" />
+            <Dices className="app-icon-xs mr-1.5" />
             Random
           </Button>
         </div>
@@ -302,14 +302,14 @@ export function ThemeTab({
       {/* Brand Theme Presets */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="admin-text-body">Brand Theme Presets</Label>
+          <Label className="app-text-body">Brand Theme Presets</Label>
           <Button
             variant="outline"
             size="sm"
             onClick={handleRandomBrand}
             className="cursor-pointer"
           >
-            <Dices className="admin-icon-xs mr-1.5" />
+            <Dices className="app-icon-xs mr-1.5" />
             Random
           </Button>
         </div>
@@ -358,14 +358,14 @@ export function ThemeTab({
       {/* Sidebar Theme Presets */}
       <div className="space-y-3">
         <div className="flex items-center justify-between">
-          <Label className="admin-text-body">Sidebar Theme Presets</Label>
+          <Label className="app-text-body">Sidebar Theme Presets</Label>
           <Button
             variant="outline"
             size="sm"
             onClick={handleRandomSidebar}
             className="cursor-pointer"
           >
-            <Dices className="admin-icon-xs mr-1.5" />
+            <Dices className="app-icon-xs mr-1.5" />
             Random
           </Button>
         </div>
@@ -413,7 +413,7 @@ export function ThemeTab({
 
       {/* Radius Selection */}
       <div className="space-y-3">
-        <Label className="admin-text-body">Radius</Label>
+        <Label className="app-text-body">Radius</Label>
         <div className="grid grid-cols-5 gap-2">
           {radiusOptions.map((option) => (
             <div
@@ -425,7 +425,7 @@ export function ThemeTab({
               onClick={() => handleRadiusSelect(option.value)}
             >
               <div className="text-center">
-                <div className="admin-text-caption">{option.name}</div>
+                <div className="app-text-caption">{option.name}</div>
               </div>
             </div>
           ))}
@@ -436,7 +436,7 @@ export function ThemeTab({
 
       {/* Mode Section */}
       <div className="space-y-3">
-        <Label className="admin-text-body">Mode</Label>
+        <Label className="app-text-body">Mode</Label>
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant={!isDarkMode ? "secondary" : "outline"}
@@ -444,7 +444,7 @@ export function ThemeTab({
             onClick={handleLightMode}
             className="mode-toggle-button cursor-pointer"
           >
-            <Sun className="admin-icon-sm mr-1" />
+            <Sun className="app-icon-sm mr-1" />
             Light
           </Button>
           <Button
@@ -453,7 +453,7 @@ export function ThemeTab({
             onClick={handleDarkMode}
             className="mode-toggle-button cursor-pointer"
           >
-            <Moon className="admin-icon-sm mr-1" />
+            <Moon className="app-icon-sm mr-1" />
             Dark
           </Button>
         </div>
@@ -469,7 +469,7 @@ export function ThemeTab({
           onClick={onImportClick}
           className="w-full cursor-pointer"
         >
-          <Upload className="admin-icon-xs mr-1.5" />
+          <Upload className="app-icon-xs mr-1.5" />
           Import Theme
         </Button>
       </div>
@@ -485,7 +485,7 @@ export function ThemeTab({
           className="border border-border rounded-lg overflow-hidden"
         >
           <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 transition-colors">
-            <Label className="admin-text-body cursor-pointer">
+            <Label className="app-text-body cursor-pointer">
               Brand Colors
             </Label>
           </AccordionTrigger>
@@ -510,17 +510,17 @@ export function ThemeTab({
       {/* Tweakcn */}
       <div className="p-4 bg-muted rounded-lg space-y-3">
         <div className="flex items-center gap-2">
-          <Palette className="admin-icon-sm text-primary" />
-          <span className="admin-text-body">Advanced Customization</span>
+          <Palette className="app-icon-sm text-primary" />
+          <span className="app-text-body">Advanced Customization</span>
         </div>
-        <p className="admin-text-caption text-muted-foreground">
+        <p className="app-text-caption text-muted-foreground">
           For advanced theme customization with real-time preview, visual color
           picker, and hundreds of prebuilt themes, visit{" "}
           <a
             href="https://tweakcn.com/editor/theme"
             target="_blank"
             rel="noopener noreferrer"
-            className="text-primary hover:underline admin-text-label cursor-pointer"
+            className="text-primary hover:underline app-text-label cursor-pointer"
           >
             tweakcn.com
           </a>
@@ -534,7 +534,7 @@ export function ThemeTab({
             window.open("https://tweakcn.com/editor/theme", "_blank")
           }
         >
-          <ExternalLink className="admin-icon-xs mr-1.5" />
+          <ExternalLink className="app-icon-xs mr-1.5" />
           Open Tweakcn
         </Button>
       </div>

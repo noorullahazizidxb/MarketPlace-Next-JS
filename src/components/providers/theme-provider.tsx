@@ -1,16 +1,25 @@
 "use client";
+
 import { PropsWithChildren } from "react";
-import { ThemeManager } from "@/store/theme.store";
 import { SidebarConfigProvider } from "@/lib/repo/hooks";
 import { ThemeProvider as RepoThemeProvider } from "@/lib/repo/theme";
+import type { ThemeSettings } from "@repo/types";
 
-export function ThemeProvider({ children }: PropsWithChildren) {
+type ThemeProviderProps = PropsWithChildren<{
+  initialThemeSettings?: ThemeSettings;
+}>;
+
+/**
+ * Single theme path: ui-context JSON → ThemeProvider.applyThemeSettings.
+ * Legacy Zustand ThemeManager / theme-data HSL dual stack removed.
+ */
+export function ThemeProvider({
+  children,
+  initialThemeSettings,
+}: ThemeProviderProps) {
   return (
-    <RepoThemeProvider>
-      <SidebarConfigProvider>
-        <ThemeManager />
-        {children}
-      </SidebarConfigProvider>
+    <RepoThemeProvider initialThemeSettings={initialThemeSettings}>
+      <SidebarConfigProvider>{children}</SidebarConfigProvider>
     </RepoThemeProvider>
   );
 }

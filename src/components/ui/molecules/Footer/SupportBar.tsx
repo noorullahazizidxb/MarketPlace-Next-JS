@@ -63,7 +63,7 @@ export function SupportBar() {
               {SUPPORT_PHONE}
             </Link>
             <Phone
-              className="admin-icon-sm shrink-0 text-primary-foreground"
+              className="app-icon-sm shrink-0 text-primary-foreground"
               aria-hidden
             />
           </div>

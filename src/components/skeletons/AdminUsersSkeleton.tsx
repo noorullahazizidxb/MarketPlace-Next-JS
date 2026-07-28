@@ -23,9 +23,9 @@ export function AdminUsersSkeleton() {
       </div>
 
       {/* Table shell */}
-      <div className="rounded-[1.5rem] border border-[hsl(var(--border))]/40 overflow-hidden bg-[hsl(var(--card))]/80 backdrop-blur-xl">
+      <div className="rounded-[1.5rem] border border-[var(--border)]/40 overflow-hidden bg-[var(--card)]/80 backdrop-blur-xl">
         {/* header row */}
-        <div className="flex items-center gap-4 px-5 py-4 border-b border-[hsl(var(--border))]/40">
+        <div className="flex items-center gap-4 px-5 py-4 border-b border-[var(--border)]/40">
           {["10%", "30%", "20%", "15%", "15%", "10%"].map((w, i) => (
             <Skeleton key={i} className={`h-3.5 rounded-xl`} style={{ width: w }} />
           ))}
@@ -34,7 +34,7 @@ export function AdminUsersSkeleton() {
         {Array.from({ length: 8 }).map((_, i) => (
           <div
             key={i}
-            className="flex items-center gap-4 px-5 py-3.5 border-b border-[hsl(var(--border))]/20 last:border-0"
+            className="flex items-center gap-4 px-5 py-3.5 border-b border-[var(--border)]/20 last:border-0"
           >
             <Skeleton className="w-9 h-9 rounded-full shrink-0" />
             <Skeleton className="h-4 flex-1 max-w-[30%] rounded-xl" />

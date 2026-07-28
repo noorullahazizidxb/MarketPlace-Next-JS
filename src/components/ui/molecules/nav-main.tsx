@@ -222,7 +222,7 @@ export function NavMain({
                       <TooltipTrigger asChild>
                         <DropdownMenuTrigger asChild>
                           <SidebarMenuButton className="cursor-pointer">
-                            {item.icon ? <item.icon className="admin-icon-sm" /> : null}
+                            {item.icon ? <item.icon className="app-icon-sm" /> : null}
                             <span>{item.title}</span>
                           </SidebarMenuButton>
                         </DropdownMenuTrigger>
@@ -248,7 +248,7 @@ export function NavMain({
                             exit="exit"
                             className="min-w-52 rounded-xl border border-border/70 bg-popover p-2 shadow-xl shadow-black/5 backdrop-blur-sm"
                           >
-                            <div className="mb-1 px-2 pt-1 admin-typo-eyebrow uppercase tracking-[0.2em] text-muted-foreground">
+                            <div className="mb-1 px-2 pt-1 app-typo-eyebrow uppercase tracking-[0.2em] text-muted-foreground">
                               {item.title}
                             </div>
                             <div className="mb-1 h-px bg-border/60" />
@@ -264,12 +264,12 @@ export function NavMain({
                                         asChild
                                         className={
                                           pathname === subItem.url
-                                            ? "admin-text-heading-sm text-primary focus:text-primary"
+                                            ? "app-text-heading-sm text-primary focus:text-primary"
                                             : ""
                                         }
                                       >
                                         <Link href={subItem.url} onClick={closeMobileSidebar}>
-                                          {subItem.icon ? <subItem.icon className="me-2 admin-icon-xs" /> : null}
+                                          {subItem.icon ? <subItem.icon className="me-2 app-icon-xs" /> : null}
                                           {subItem.title}
                                         </Link>
                                       </DropdownMenuItem>
@@ -294,7 +294,7 @@ export function NavMain({
                         tooltip={item.title}
                         className="cursor-pointer"
                       >
-                        {item.icon ? <item.icon className="admin-icon-sm" /> : null}
+                        {item.icon ? <item.icon className="app-icon-sm" /> : null}
                         <span>{item.title}</span>
                         <ChevronRight
                           className={cn(
@@ -315,7 +315,7 @@ export function NavMain({
                           <SidebarMenuSubItem key={subItem.title}>
                                 <SidebarMenuSubButton
                                   asChild
-                                  className="cursor-pointer font-normal hover:bg-transparent active:bg-transparent data-[active=true]:bg-transparent data-[active=true]:admin-text-heading-sm data-[active=true]:text-primary"
+                                  className="cursor-pointer font-normal hover:bg-transparent active:bg-transparent data-[active=true]:bg-transparent data-[active=true]:app-text-heading-sm data-[active=true]:text-primary"
                                   isActive={pathname === subItem.url}
                                 >
                                   <Link
@@ -333,7 +333,7 @@ export function NavMain({
                                     }
                                   >
                                     {subItem.icon ? (
-                                      <subItem.icon className="admin-icon-xs" />
+                                      <subItem.icon className="app-icon-xs" />
                                     ) : null}
                                     <span>{subItem.title}</span>
                                   </Link>
@@ -352,7 +352,7 @@ export function NavMain({
                   isActive={pathname === item.url}
                 >
                   <Link href={item.url} onClick={closeMobileSidebar}>
-                    {item.icon ? <item.icon className="admin-icon-sm" /> : null}
+                    {item.icon ? <item.icon className="app-icon-sm" /> : null}
                     <span>{item.title}</span>
                   </Link>
                 </SidebarMenuButton>

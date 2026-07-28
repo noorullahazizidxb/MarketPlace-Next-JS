@@ -45,9 +45,9 @@ function PreviewSpecimen({
   return (
     <section className="min-w-0 max-w-full overflow-hidden rounded-lg border border-border/50 bg-background/70 p-2">
       <div className="mb-1.5">
-        <p className="admin-text-label text-foreground">{title}</p>
+        <p className="app-text-label text-foreground">{title}</p>
         {note ? (
-          <p className="admin-text-caption text-muted-foreground">{note}</p>
+          <p className="app-text-caption text-muted-foreground">{note}</p>
         ) : null}
       </div>
       <div className="min-w-0 max-w-full">{children}</div>
@@ -65,18 +65,18 @@ export function AppearanceLivePreview({
   if (variant === "icons") {
     return (
       <div className={cn(previewShell("p-2 space-y-2"), className)}>
-        <p className="admin-text-caption text-muted-foreground">
-          Icon sizes use <code className="admin-text-micro">admin-icon-*</code> classes backed by{" "}
-          <code className="admin-text-micro">--icon-xs</code> through{" "}
-          <code className="admin-text-micro">--icon-lg</code>.
+        <p className="app-text-caption text-muted-foreground">
+          Icon sizes use <code className="app-text-micro">app-icon-*</code> classes backed by{" "}
+          <code className="app-text-micro">--icon-xs</code> through{" "}
+          <code className="app-text-micro">--icon-lg</code>.
         </p>
         <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
           {(
             [
-              ["XS", "admin-icon-xs"],
-              ["SM", "admin-icon-sm"],
-              ["MD", "admin-icon-md"],
-              ["LG", "admin-icon-lg"],
+              ["XS", "app-icon-xs"],
+              ["SM", "app-icon-sm"],
+              ["MD", "app-icon-md"],
+              ["LG", "app-icon-lg"],
             ] as const
           ).map(([label, iconClass]) => (
             <div key={label} className="flex flex-col items-center gap-2 rounded-lg border border-border/50 bg-muted/20 p-3">
@@ -85,14 +85,14 @@ export function AppearanceLivePreview({
               ) : (
                 <Search className={cn(iconClass, "text-primary")} aria-hidden />
               )}
-              <span className="admin-text-micro text-muted-foreground">Icon {label}</span>
+              <span className="app-text-micro text-muted-foreground">Icon {label}</span>
             </div>
           ))}
         </div>
         <div className="flex items-center gap-2 rounded-lg border border-border/50 bg-muted/20 px-3 py-2">
-          <CalendarIcon className="admin-icon-sm text-muted-foreground" aria-hidden />
-          <span className="admin-text-body text-foreground">Inline field icon (SM)</span>
-          <X className="admin-icon-xs ms-auto text-muted-foreground" aria-hidden />
+          <CalendarIcon className="app-icon-sm text-muted-foreground" aria-hidden />
+          <span className="app-text-body text-foreground">Inline field icon (SM)</span>
+          <X className="app-icon-xs ms-auto text-muted-foreground" aria-hidden />
         </div>
       </div>
     );
@@ -101,7 +101,7 @@ export function AppearanceLivePreview({
   if (variant === "controls") {
     return (
       <div className={cn(previewShell("space-y-2 p-2"), className)}>
-        <p className="admin-text-caption text-muted-foreground">
+        <p className="app-text-caption text-muted-foreground">
           Controls specimen from manage-users forms — field, policy card, and action buttons.
         </p>
         <PreviewUserControls />
@@ -114,7 +114,7 @@ export function AppearanceLivePreview({
               <button
                 type="button"
                 data-slot="button"
-                className="rounded-lg border border-border/60 bg-primary text-primary-foreground shadow-sm admin-text-action"
+                className="rounded-lg border border-border/60 bg-primary text-primary-foreground shadow-sm app-text-action"
                 style={{
                   minHeight: "var(--ctrl-h)",
                   paddingInline: "var(--ctrl-px)",
@@ -125,7 +125,7 @@ export function AppearanceLivePreview({
               <button
                 type="button"
                 data-slot="button"
-                className="rounded-lg border border-border/60 bg-muted shadow-sm admin-text-action"
+                className="rounded-lg border border-border/60 bg-muted shadow-sm app-text-action"
                 style={{
                   minHeight: "var(--ctrl-h-sm)",
                   paddingInline: "var(--ctrl-px)",
@@ -146,7 +146,7 @@ export function AppearanceLivePreview({
                   key={state}
                   data-slot="badge"
                   className={cn(
-                    "inline-flex items-center rounded-full border admin-text-badge",
+                    "inline-flex items-center rounded-full border app-text-badge",
                     index === 0
                       ? "border-primary/30 bg-primary/10 text-primary"
                       : "border-border/50 bg-muted/35 text-muted-foreground",
@@ -170,8 +170,8 @@ export function AppearanceLivePreview({
   if (variant === "table") {
     return (
       <div className={cn(previewShell("p-2 space-y-2"), className)}>
-        <p className="admin-text-caption text-muted-foreground">
-          Production currency rates table with <code className="admin-text-micro">ui-table-pair-col</code> pair column.
+        <p className="app-text-caption text-muted-foreground">
+          Production currency rates table with <code className="app-text-micro">ui-table-pair-col</code> pair column.
         </p>
         <PreviewCurrencyTable showPairColumn />
         <PreviewSpecimen title="Baggage rules row" note="Dense table cell tokens from baggage module">
@@ -179,14 +179,14 @@ export function AppearanceLivePreview({
             <table className="w-full border-collapse text-start">
               <thead>
                 <tr className="border-b border-border/40 bg-muted/40 text-muted-foreground uppercase tracking-wide">
-                  <th data-slot="table-head" className="text-start admin-text-label">Airline</th>
-                  <th data-slot="table-head" className="text-start admin-text-label">Allowance</th>
+                  <th data-slot="table-head" className="text-start app-text-label">Airline</th>
+                  <th data-slot="table-head" className="text-start app-text-label">Allowance</th>
                 </tr>
               </thead>
               <tbody>
                 <tr className="border-t border-border/40">
-                  <td data-slot="table-cell" className="admin-text-body">EK · Dubai</td>
-                  <td data-slot="table-cell" className="font-mono admin-text-mono">2 × 23kg</td>
+                  <td data-slot="table-cell" className="app-text-body">EK · Dubai</td>
+                  <td data-slot="table-cell" className="font-mono app-text-mono">2 × 23kg</td>
                 </tr>
               </tbody>
             </table>
@@ -199,7 +199,7 @@ export function AppearanceLivePreview({
   if (variant === "sidebar") {
     return (
       <div className={cn(previewShell("p-2"), className)}>
-        <p className="mb-3 admin-text-caption text-muted-foreground">
+        <p className="mb-3 app-text-caption text-muted-foreground">
           Sidebar tokens from production shell — group label, nav item, badge, and sub-item sizes.
         </p>
         <PreviewSidebarNav />
@@ -210,15 +210,15 @@ export function AppearanceLivePreview({
   if (variant === "mobile") {
     return (
       <div className={cn(previewShell("p-2"), className)}>
-        <p className="mb-3 admin-text-caption text-muted-foreground">
-          Mobile pills use <code className="admin-text-micro">ui-mobile-pill-height</code> and{" "}
-          <code className="admin-text-micro">ui-mobile-pill-pad-x</code>.
+        <p className="mb-3 app-text-caption text-muted-foreground">
+          Mobile pills use <code className="app-text-micro">ui-mobile-pill-height</code> and{" "}
+          <code className="app-text-micro">ui-mobile-pill-pad-x</code>.
         </p>
         <div className="flex flex-wrap gap-2">
           {["Flights", "Hotels", "Wallet"].map((label) => (
             <span
               key={label}
-              className="inline-flex items-center rounded-full border border-border/50 bg-muted/40 admin-text-label text-muted-foreground ui-mobile-pill-height ui-mobile-pill-pad-x"
+              className="inline-flex items-center rounded-full border border-border/50 bg-muted/40 app-text-label text-muted-foreground ui-mobile-pill-height ui-mobile-pill-pad-x"
             >
               {label}
             </span>
@@ -323,15 +323,15 @@ export function AppearanceLivePreview({
         <div className="grid min-w-0 gap-2">
           <PreviewSpecimen
             title="Typography specimens"
-            note="Directly mapped to `admin-text-*` utility classes."
+            note="Directly mapped to `app-text-*` utility classes."
           >
             <div className="space-y-1.5">
-              <p className="admin-text-micro text-muted-foreground">Micro helper text</p>
-              <p className="admin-text-caption text-muted-foreground">Caption / metadata</p>
-              <p className="admin-text-label text-muted-foreground">Field Label</p>
-              <p className="admin-text-body text-foreground">Body copy used in cards and forms.</p>
-              <p className="admin-text-action text-foreground">Action label</p>
-              <p className="admin-text-mono text-foreground">PNR: AB12CD</p>
+              <p className="app-text-micro text-muted-foreground">Micro helper text</p>
+              <p className="app-text-caption text-muted-foreground">Caption / metadata</p>
+              <p className="app-text-label text-muted-foreground">Field Label</p>
+              <p className="app-text-body text-foreground">Body copy used in cards and forms.</p>
+              <p className="app-text-action text-foreground">Action label</p>
+              <p className="app-text-mono text-foreground">PNR: AB12CD</p>
             </div>
           </PreviewSpecimen>
           <PreviewUserControls />
@@ -400,8 +400,8 @@ export function AppearanceLivePreview({
       <div className={cn(previewShell("flex flex-col items-center justify-center gap-6 p-8"), className)}>
         <LoadingSpinner size="md" label="Loading preview" />
         <LoadingSpinner size="lg" label="Large spinner" />
-        <p className="admin-text-caption text-muted-foreground">
-          Scale multiplier: <code className="admin-text-micro">var(--loading-spinner-scale)</code>
+        <p className="app-text-caption text-muted-foreground">
+          Scale multiplier: <code className="app-text-micro">var(--loading-spinner-scale)</code>
         </p>
       </div>
     );
@@ -427,10 +427,10 @@ export function AppearanceLivePreview({
         className,
       )}
     >
-      <p className="admin-text-body" dir="ltr">
+      <p className="app-text-body" dir="ltr">
         Latin quick brown fox — 0123456789
       </p>
-      <p className="admin-text-body" dir="rtl">
+      <p className="app-text-body" dir="rtl">
         نمونه متن فارسی / العربية ١٢٣
       </p>
     </div>

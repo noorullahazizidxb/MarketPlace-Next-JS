@@ -33,8 +33,8 @@ const Hero: React.FC<{
   setQ: (s: string) => void;
   onCreate: () => void;
 }> = ({ q, setQ, onCreate }) => (
-  <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]">
-    <div className="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_80%_-10%,hsl(var(--primary)/0.2),transparent_60%),_linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)]" />
+  <div className="relative overflow-hidden rounded-3xl border border-[var(--border)]">
+    <div className="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_80%_-10%,color-mix(in oklab, var(--primary) 20%, transparent),transparent_60%),_linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))]" />
     <div className="p-6 sm:p-8 md:p-10 grid gap-4">
       <motion.h1
         initial={{ opacity: 0, y: 8 }}
@@ -63,7 +63,7 @@ const Hero: React.FC<{
           value={q}
           onChange={setQ}
           icon={<Search className="size-4" />}
-          className="h-11 rounded-xl bg-[hsl(var(--input))]/20 border-[hsl(var(--border))]/60"
+          className="h-11 rounded-xl bg-[var(--input)]/20 border-[var(--border)]/60"
         />
         <Button variant="accent" onClick={onCreate}>
           + Create Story
@@ -84,7 +84,7 @@ const StoryCard: React.FC<{
     animate={{ opacity: 1, y: 0 }}
     whileHover={{ y: -3 }}
     transition={{ duration: 0.25 }}
-    className="rounded-2xl border border-[hsl(var(--border))] overflow-hidden bg-[hsl(var(--card))] shadow-[0_6px_24px_-10px_rgba(0,0,0,0.45)]"
+    className="rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--card)] shadow-[0_6px_24px_-10px_rgba(0,0,0,0.45)]"
   >
     <button
       type="button"
@@ -107,7 +107,7 @@ const StoryCard: React.FC<{
           }}
           className="flex items-center gap-2"
         >
-          <div className="size-7 rounded-full overflow-hidden bg-[hsl(var(--muted))/0.2] grid place-items-center">
+          <div className="size-7 rounded-full overflow-hidden bg-[color-mix(in oklab, var(--muted) 20%, transparent)] grid place-items-center">
             {s.user?.photo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
@@ -182,7 +182,7 @@ export default function AdminStoriesIndexPage() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 app-shell-page" data-app-page="admin-stories">
       <Hero
         q={q}
         setQ={setQ}
@@ -193,7 +193,7 @@ export default function AdminStoriesIndexPage() {
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
-              className="h-64 rounded-2xl bg-[hsl(var(--muted))]/10 animate-pulse"
+              className="h-64 rounded-2xl bg-[var(--muted)]/10 animate-pulse"
             />
           ))}
         </div>

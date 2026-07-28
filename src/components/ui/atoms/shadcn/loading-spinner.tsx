@@ -109,7 +109,7 @@ export function LoadingSpinner({
 
       {label && (
         <span
-          className="animate-breathe admin-text-body text-muted-foreground"
+          className="animate-breathe app-text-body text-muted-foreground"
         >
           {label}
         </span>

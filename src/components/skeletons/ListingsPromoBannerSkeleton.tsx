@@ -7,9 +7,9 @@ export function ListingsPromoBannerSkeleton() {
   return (
     <section aria-hidden className="w-full">
       <div className="container-padded">
-        <div className="relative overflow-hidden rounded-3xl border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl shadow-2xl">
           {/* ambient gradient */}
-          <div className="absolute inset-0 bg-gradient-to-tr from-[hsl(var(--secondary))]/20 via-[hsl(var(--accent))]/10 to-transparent pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-tr from-[var(--secondary)]/20 via-[var(--accent)]/10 to-transparent pointer-events-none" />
           <div className="relative px-6 py-10 md:px-10 md:py-16">
             <div className="flex flex-col md:flex-row items-center gap-8 md:gap-14">
               {/* text block */}

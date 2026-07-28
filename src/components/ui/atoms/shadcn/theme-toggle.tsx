@@ -76,9 +76,9 @@ export function ThemeModeToggle({
     >
       {/* Show the icon for the mode you can switch TO */}
       {isDarkMode ? (
-        <Sun className="admin-icon-sm transition-transform duration-300 rotate-0 scale-100" />
+        <Sun className="app-icon-sm transition-transform duration-300 rotate-0 scale-100" />
       ) : (
-        <Moon className="admin-icon-sm transition-transform duration-300 rotate-0 scale-100" />
+        <Moon className="app-icon-sm transition-transform duration-300 rotate-0 scale-100" />
       )}
       <span className="sr-only">
         {isDarkMode ? labels.toggleToLight : labels.toggleToDark}

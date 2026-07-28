@@ -18,10 +18,10 @@ export function BlogCardSkeleton({
   return (
     <article
       aria-hidden="true"
-      className="relative overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]"
+      className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]"
     >
       {/* Image area */}
-      <div className={cn("w-full bg-[hsl(var(--muted))]/40", imgHeight)}>
+      <div className={cn("w-full bg-[var(--muted)]/40", imgHeight)}>
         <Skeleton className="h-full w-full rounded-none" />
       </div>
 

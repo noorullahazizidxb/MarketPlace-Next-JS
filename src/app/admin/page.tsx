@@ -84,7 +84,7 @@ interface AdminStatsResponse {
 
 // Shared premium chart enhancements
 const chartCardBg =
-  "bg-gradient-to-br from-[hsl(var(--card))] to-[hsl(var(--card))/70]";
+  "bg-gradient-to-br from-[var(--card)] to-[color-mix(in oklab, var(--card) 70%, transparent)]";
 
 type ChartTooltipProps = {
   active?: boolean;
@@ -106,9 +106,9 @@ function ChartTooltip({
   const labelText = label != null ? String(label) : null;
 
   return (
-    <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--popover))]/90 backdrop-blur-sm px-3 py-2 shadow-lg min-w-[140px]">
+    <div className="rounded-xl border border-[var(--border)] bg-[var(--popover)]/90 backdrop-blur-sm px-3 py-2 shadow-lg min-w-[140px]">
       {labelText && (
-        <p className="text-[11px] font-medium mb-1 text-[hsl(var(--foreground))]/80">
+        <p className="app-text-micro font-medium mb-1 text-[var(--foreground)]/80">
           {labelText}
         </p>
       )}
@@ -116,17 +116,17 @@ function ChartTooltip({
         {payload.map((p) => {
           const dataKey = String(p.dataKey ?? "");
           const colorMap: Record<string, string> = {
-            "#2563eb": "bg-[hsl(var(--primary))]",
-            "#16a34a": "bg-[hsl(var(--accent))]",
-            "#6366f1": "bg-[hsl(var(--secondary))]",
-            "#06b6d4": "bg-[hsl(var(--accent))]",
-            "#10b981": "bg-[hsl(var(--accent))]",
-            "#f43f5e": "bg-[hsl(var(--primary))]",
-            "#f59e0b": "bg-[hsl(var(--secondary))]",
-            "#0ea5e9": "bg-[hsl(var(--primary))]",
+            "#2563eb": "bg-[var(--primary)]",
+            "#16a34a": "bg-[var(--accent)]",
+            "#6366f1": "bg-[var(--secondary)]",
+            "#06b6d4": "bg-[var(--accent)]",
+            "#10b981": "bg-[var(--accent)]",
+            "#f43f5e": "bg-[var(--primary)]",
+            "#f59e0b": "bg-[var(--secondary)]",
+            "#0ea5e9": "bg-[var(--primary)]",
           };
           const swatch =
-            colorMap[String(p.color ?? "")] || "bg-[hsl(var(--primary))]";
+            colorMap[String(p.color ?? "")] || "bg-[var(--primary)]";
           const rawName = String(p.name ?? dataKey);
           const displayName = formatName
             ? formatName(rawName, dataKey)
@@ -143,17 +143,17 @@ function ChartTooltip({
           return (
             <div
               key={dataKey}
-              className="flex items-center justify-between gap-4 text-[11px]"
+              className="flex items-center justify-between gap-4 app-text-micro"
             >
               <span className="flex items-center gap-1.5">
                 <span
                   className={`inline-block size-2.5 rounded-sm ${swatch}`}
                 />
-                <span className="text-[hsl(var(--foreground))]/70">
+                <span className="text-[var(--foreground)]/70">
                   {displayName}
                 </span>
               </span>
-              <span className="tabular-nums font-medium text-[hsl(var(--foreground))]">
+              <span className="tabular-nums font-medium text-[var(--foreground)]">
                 {displayValue}
               </span>
             </div>
@@ -183,8 +183,8 @@ export default function AdminDashboardPage() {
       title: t("listings") || "Listings",
       icon: Building2,
       value: summary.totalListings ?? data?.totals?.total ?? 0,
-      accent: "text-[hsl(var(--primary))]",
-      iconBg: "bg-[hsl(var(--primary))]/10",
+      accent: "text-[var(--primary)]",
+      iconBg: "bg-[var(--primary)]/10",
       sub: `${data?.totals?.pending ?? 0} pending`,
     },
     {
@@ -214,14 +214,14 @@ export default function AdminDashboardPage() {
   ];
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-8 app-shell-page" data-app-page="admin">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="heading-xl flex items-center gap-3">
-          <LineChartIcon className="size-7 text-[hsl(var(--primary))]" />
+          <LineChartIcon className="app-icon-lg text-[var(--primary)]" />
           {t("adminHub") || "Admin Dashboard"}
         </h1>
         {error && (
-          <p className="text-sm text-red-500">
+          <p className="app-text-body text-red-500">
             {(error as any)?.message || "Failed to load stats"}
           </p>
         )}
@@ -232,7 +232,7 @@ export default function AdminDashboardPage() {
         {kpis.map((k, i) => (
           <div
             key={k.title}
-            className="relative overflow-hidden rounded-[1.5rem] border border-[hsl(var(--border))]/40 bg-[hsl(var(--card))]/80 backdrop-blur-xl p-5 flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
+            className="relative overflow-hidden rounded-[1.5rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl p-5 flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
           >
             {/* shimmer top line */}
             <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
@@ -240,19 +240,19 @@ export default function AdminDashboardPage() {
             <span className={`pointer-events-none absolute -top-8 -left-4 size-24 rounded-full blur-2xl opacity-20 ${k.iconBg}`} />
             <div className="flex items-start justify-between relative">
               <div className="space-y-1">
-                <p className="text-[11px] uppercase tracking-widest font-semibold text-[hsl(var(--foreground))]/45">
+                <p className="app-text-micro uppercase tracking-widest font-semibold text-[var(--foreground)]/45">
                   {k.title}
                 </p>
                 <p className="text-3xl font-bold tabular-nums">
-                  {isLoading ? <span className="inline-block h-8 w-12 rounded-lg bg-[hsl(var(--muted))]/30 animate-pulse" /> : k.value.toLocaleString()}
+                  {isLoading ? <span className="inline-block h-8 w-12 rounded-lg bg-[var(--muted)]/30 animate-pulse" /> : k.value.toLocaleString()}
                 </p>
               </div>
               <div className={`size-11 rounded-2xl flex items-center justify-center ${k.iconBg} shadow-sm`}>
-                <k.icon className={"size-5 " + k.accent} />
+                <k.icon className={"app-icon-md " + k.accent} />
               </div>
             </div>
             {k.sub && (
-              <p className="text-[11px] text-[hsl(var(--foreground))]/40 font-medium relative">
+              <p className="app-text-micro text-[var(--foreground)]/40 font-medium relative">
                 {k.sub}
               </p>
             )}
@@ -263,43 +263,43 @@ export default function AdminDashboardPage() {
       {/* Secondary stats redesigned: stacked meta + wide queue stats */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
         <div className="space-y-6">
-          <Card className="p-5 space-y-3 shadow-sm border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/90 backdrop-blur-sm">
-            <h3 className="text-sm font-semibold tracking-wide flex items-center gap-2">
-              <span className="inline-block size-2 rounded-full bg-[hsl(var(--accent))]" />
+          <Card className="p-5 space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
+            <h3 className="app-text-body font-semibold tracking-wide flex items-center gap-2">
+              <span className="inline-block size-2 rounded-full bg-[var(--accent)]" />
               {t("retention")}
             </h3>
-            <div className="grid grid-cols-2 gap-3 text-xs">
-              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-[hsl(var(--accent))/0.1] to-transparent p-3">
-                <p className="subtle text-[10px] uppercase tracking-wide">
+            <div className="grid grid-cols-2 gap-3 app-text-caption">
+              <div className="rounded-xl border border-[var(--border)]/60 bg-gradient-to-br from-[color-mix(in oklab, var(--accent) 10%, transparent)] to-transparent p-3">
+                <p className="subtle app-text-micro uppercase tracking-wide">
                   {t("unapprovedDays")}
                 </p>
-                <p className="text-lg font-semibold tabular-nums">
+                <p className="app-text-heading-sm font-semibold tabular-nums">
                   {retention?.unapprovedDays ?? "—"}
                 </p>
               </div>
-              <div className="rounded-xl border border-[hsl(var(--border))]/60 bg-gradient-to-br from-[hsl(var(--primary))/0.1] to-transparent p-3">
-                <p className="subtle text-[10px] uppercase tracking-wide">
+              <div className="rounded-xl border border-[var(--border)]/60 bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 10%, transparent)] to-transparent p-3">
+                <p className="subtle app-text-micro uppercase tracking-wide">
                   {t("renewWindowDays")}
                 </p>
-                <p className="text-lg font-semibold tabular-nums">
+                <p className="app-text-heading-sm font-semibold tabular-nums">
                   {retention?.renewWindowDays ?? "—"}
                 </p>
               </div>
             </div>
           </Card>
-          <Card className="p-5 space-y-3 shadow-sm border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/90 backdrop-blur-sm">
-            <h3 className="text-sm font-semibold tracking-wide flex items-center gap-2">
-              <span className="inline-block size-2 rounded-full bg-[hsl(var(--secondary))]" />
+          <Card className="p-5 space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
+            <h3 className="app-text-body font-semibold tracking-wide flex items-center gap-2">
+              <span className="inline-block size-2 rounded-full bg-[var(--secondary)]" />
               {t("schedules")}
             </h3>
-            <div className="space-y-2 text-xs">
-              <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))]/60 px-3 py-2 bg-[hsl(var(--muted))]/10">
+            <div className="space-y-2 app-text-caption">
+              <div className="flex items-center justify-between rounded-xl border border-[var(--border)]/60 px-3 py-2 bg-[var(--muted)]/10">
                 <span>{t("moderationCleanupTime")}</span>
                 <span className="font-mono tabular-nums">
                   {schedules?.moderationCleanupTime || "—"}
                 </span>
               </div>
-              <div className="flex items-center justify-between rounded-xl border border-[hsl(var(--border))]/60 px-3 py-2 bg-[hsl(var(--muted))]/10">
+              <div className="flex items-center justify-between rounded-xl border border-[var(--border)]/60 px-3 py-2 bg-[var(--muted)]/10">
                 <span>{t("renewalCleanupTime")}</span>
                 <span className="font-mono tabular-nums">
                   {schedules?.renewalCleanupTime || "—"}
@@ -308,12 +308,12 @@ export default function AdminDashboardPage() {
             </div>
           </Card>
         </div>
-        <Card className="lg:col-span-2 p-5 space-y-4 overflow-x-auto shadow-md border border-[hsl(var(--border))]/60 bg-[hsl(var(--card))]/90 backdrop-blur-sm">
+        <Card className="lg:col-span-2 p-5 space-y-4 overflow-x-auto shadow-md border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold tracking-wide">
+            <h3 className="app-text-body font-semibold tracking-wide">
               {t("queueStats")}
             </h3>
-            <span className="text-[10px] uppercase tracking-wide text-[hsl(var(--foreground))]/50">
+            <span className="app-text-micro uppercase tracking-wide text-[var(--foreground)]/50">
               {t("updated")}: {new Date().toLocaleTimeString()}
             </span>
           </div>
@@ -322,18 +322,18 @@ export default function AdminDashboardPage() {
               Object.entries(queueStats).map(([q, stats]) => (
                 <div
                   key={q}
-                  className="rounded-2xl border border-[hsl(var(--border))]/60 p-4 bg-gradient-to-br from-[hsl(var(--muted))/8] to-transparent hover:from-[hsl(var(--muted))/15] transition-colors"
+                  className="rounded-2xl border border-[var(--border)]/60 p-4 bg-gradient-to-br from-[color-mix(in oklab, var(--muted) 8%, transparent)] to-transparent hover:from-[color-mix(in oklab, var(--muted) 15%, transparent)] transition-colors"
                 >
-                  <div className="flex flex-wrap items-center justify-between gap-2 text-xs mb-3">
-                    <span className="font-medium text-[hsl(var(--foreground))]/90">
+                  <div className="flex flex-wrap items-center justify-between gap-2 app-text-caption mb-3">
+                    <span className="font-medium text-[var(--foreground)]/90">
                       {q}
                     </span>
-                    <span className="text-[hsl(var(--foreground))]/60 flex items-center gap-1">
+                    <span className="text-[var(--foreground)]/60 flex items-center gap-1">
                       <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
                       {t("completed")}: {stats.completed}
                     </span>
                   </div>
-                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 text-[10px]">
+                  <div className="grid grid-cols-4 md:grid-cols-7 gap-2 app-text-micro">
                     {[
                       ["active", stats.active],
                       ["waiting", stats.waiting],
@@ -345,12 +345,12 @@ export default function AdminDashboardPage() {
                     ].map(([label, v]) => (
                       <div
                         key={label as string}
-                        className="rounded-lg border border-[hsl(var(--border))]/50 px-2 py-1.5 flex flex-col items-center bg-[hsl(var(--background))]/50 backdrop-blur-sm hover:bg-[hsl(var(--background))]/70 transition-colors"
+                        className="rounded-lg border border-[var(--border)]/50 px-2 py-1.5 flex flex-col items-center bg-[var(--background)]/50 backdrop-blur-sm hover:bg-[var(--background)]/70 transition-colors"
                       >
-                        <span className="font-mono tabular-nums text-[11px] font-semibold">
+                        <span className="font-mono tabular-nums app-text-micro font-semibold">
                           {v}
                         </span>
-                        <span className="uppercase tracking-wide text-[8px] text-[hsl(var(--foreground))]/55">
+                        <span className="uppercase tracking-wide app-text-micro text-[var(--foreground)]/55">
                           {t(label as any) || label}
                         </span>
                       </div>
@@ -358,7 +358,7 @@ export default function AdminDashboardPage() {
                   </div>
                 </div>
               ))}
-            {!queueStats && <p className="text-xs subtle">—</p>}
+            {!queueStats && <p className="app-text-caption subtle">—</p>}
           </div>
         </Card>
       </div>
@@ -391,7 +391,7 @@ export default function AdminDashboardPage() {
                 <LineChart data={charts.listingsDaily}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
@@ -421,7 +421,7 @@ export default function AdminDashboardPage() {
             )}
           {!isLoading &&
             (!charts.listingsDaily || charts.listingsDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -439,7 +439,7 @@ export default function AdminDashboardPage() {
                 <BarChart data={charts.listingsMonthly}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="month" />
                   <YAxis />
@@ -454,7 +454,7 @@ export default function AdminDashboardPage() {
           {!isLoading &&
             (!charts.listingsMonthly ||
               charts.listingsMonthly.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -470,7 +470,7 @@ export default function AdminDashboardPage() {
               <BarChart data={charts.usersDaily}>
                 <CartesianGrid
                   strokeDasharray="3 3"
-                  stroke="hsl(var(--border))"
+                  stroke="var(--border)"
                 />
                 <XAxis dataKey="date" hide />
                 <YAxis />
@@ -488,7 +488,7 @@ export default function AdminDashboardPage() {
           )}
           {!isLoading &&
             (!charts.usersDaily || charts.usersDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -506,7 +506,7 @@ export default function AdminDashboardPage() {
                 <LineChart data={charts.approvalTimeDaily}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide />
                   <YAxis />
@@ -528,7 +528,7 @@ export default function AdminDashboardPage() {
           {!isLoading &&
             (!charts.approvalTimeDaily ||
               charts.approvalTimeDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -546,7 +546,7 @@ export default function AdminDashboardPage() {
                 <LineChart data={charts.feedbackDaily}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide />
                   <YAxis />
@@ -575,7 +575,7 @@ export default function AdminDashboardPage() {
             )}
           {!isLoading &&
             (!charts.feedbackDaily || charts.feedbackDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -594,7 +594,7 @@ export default function AdminDashboardPage() {
                 <LineChart data={charts.notificationsDaily}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide />
                   <YAxis />
@@ -640,7 +640,7 @@ export default function AdminDashboardPage() {
           {!isLoading &&
             (!charts.notificationsDaily ||
               charts.notificationsDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -663,7 +663,7 @@ export default function AdminDashboardPage() {
                 >
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide />
                   <YAxis />
@@ -684,7 +684,7 @@ export default function AdminDashboardPage() {
             )}
           {!isLoading &&
             (!charts.listingsDaily || charts.listingsDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -702,7 +702,7 @@ export default function AdminDashboardPage() {
                 <LineChart data={charts.feedbackDaily}>
                   <CartesianGrid
                     strokeDasharray="3 3"
-                    stroke="hsl(var(--border))"
+                    stroke="var(--border)"
                   />
                   <XAxis dataKey="date" hide />
                   <YAxis domain={[0, 5]} />
@@ -723,7 +723,7 @@ export default function AdminDashboardPage() {
             )}
           {!isLoading &&
             (!charts.feedbackDaily || charts.feedbackDaily.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -749,7 +749,7 @@ export default function AdminDashboardPage() {
                     nameKey="region"
                     outerRadius={110}
                     fill="#0ea5e9"
-                    stroke="hsl(var(--background))"
+                    stroke="var(--background)"
                     strokeWidth={2}
                   />
                 </PieChart>
@@ -758,7 +758,7 @@ export default function AdminDashboardPage() {
           {!isLoading &&
             (!charts.representativesByRegion ||
               charts.representativesByRegion.length === 0) && (
-              <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+              <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
             )}
@@ -830,16 +830,16 @@ function ListingsTypeStatusCharts({
   return (
     <div className="flex flex-col h-full">
       {/* Mode Toggle */}
-      <div className="mb-4 flex flex-wrap items-center gap-2 text-xs">
+      <div className="mb-4 flex flex-wrap items-center gap-2 app-text-caption">
         {(["daily", "weekly", "monthly", "yearly"] as const).map((m) => (
           <button
             key={m}
             onClick={() => setMode(m)}
             className={
-              "px-3 py-1.5 rounded-full border text-[11px] font-medium transition-colors " +
+              "px-3 py-1.5 rounded-full border app-text-micro font-medium transition-colors " +
               (mode === m
-                ? "bg-[hsl(var(--accent))] text-[hsl(var(--accent-foreground))] border-[hsl(var(--border))] hover:[background-color:hsl(var(--btn-accent-hover-bg,var(--primary)))] hover:[color:hsl(var(--btn-accent-hover-fg,var(--accent-foreground)))]"
-                : "bg-[hsl(var(--muted))]/20 hover:bg-[hsl(var(--muted))]/30 border-[hsl(var(--border))]")
+                ? "bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--border)] hover:[background-color:var(--btn-accent-hover-bg,var(--primary))] hover:[color:var(--btn-accent-hover-fg,var(--accent-foreground))]"
+                : "bg-[var(--muted)]/20 hover:bg-[var(--muted)]/30 border-[var(--border)]")
             }
           >
             {(t as any)(m)}
@@ -856,7 +856,7 @@ function ListingsTypeStatusCharts({
             >
               <CartesianGrid
                 strokeDasharray="3 3"
-                stroke="hsl(var(--border))"
+                stroke="var(--border)"
               />
               <XAxis dataKey={keyField} tick={{ fontSize: 11 }} />
               <YAxis tickFormatter={(v) => `${Math.round(v * 100)}%`} />
@@ -886,12 +886,12 @@ function ListingsTypeStatusCharts({
             </BarChart>
           </ResponsiveContainer>
         ) : !isLoading && dataset.length === 0 ? (
-          <p className="text-xs text-center mt-4 text-[hsl(var(--foreground))]/60">
+          <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
             {(t as any)("noData")}
           </p>
         ) : null}
       </div>
-      <div className="mt-2 text-[10px] text-[hsl(var(--foreground))]/50 flex flex-wrap gap-3">
+      <div className="mt-2 app-text-micro text-[var(--foreground)]/50 flex flex-wrap gap-3">
         {statusKeys.map((k) => {
           const swatch =
             {
@@ -903,7 +903,7 @@ function ListingsTypeStatusCharts({
               EXPIRED: "bg-zinc-500",
               DRAFT: "bg-emerald-400",
               HIDDEN: "bg-slate-500",
-            }[k] || "bg-[hsl(var(--primary))]";
+            }[k] || "bg-[var(--primary)]";
           return (
             <span key={k} className="flex items-center gap-1">
               <span className={`inline-block size-2 rounded-sm ${swatch}`} />

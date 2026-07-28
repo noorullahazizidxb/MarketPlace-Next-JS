@@ -187,7 +187,7 @@ const PasswordPair: React.FC = () => {
             </div>
             <div className="text-2xs subtle">{strengthPct}%</div>
           </div>
-          <div className="w-full h-2 bg-[hsl(var(--muted))] rounded-full overflow-hidden">
+          <div className="w-full h-2 bg-[var(--muted)] rounded-full overflow-hidden">
             <div
               className={
                 "h-2 rounded-full transition-all " + barColor + " " + widthClass
@@ -324,7 +324,7 @@ const PhotoUpload: React.FC<{ preview?: string }> = ({ preview }) => {
     <div className="md:col-span-2 flex flex-col gap-2">
       <span className="text-xs font-medium">Photo</span>
       <div className="flex items-center gap-4">
-        <div className="relative size-20 rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--muted))/0.4] grid place-items-center">
+        <div className="relative size-20 rounded-xl overflow-hidden border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)] grid place-items-center">
           {preview ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -384,13 +384,13 @@ const TagsInput: React.FC<{
   return (
     <div className="flex flex-col gap-2">
       <label className="text-xs font-medium">Tags</label>
-      <div className="flex flex-wrap gap-2 rounded-xl border p-2 bg-[hsl(var(--card))] min-h-[52px]">
+      <div className="flex flex-wrap gap-2 rounded-xl border p-2 bg-[var(--card)] min-h-[52px]">
         {tags.map((t, i) => (
           <button
             type="button"
             key={t}
             onClick={() => remove(i)}
-            className="group px-2 py-1 rounded-full bg-[hsl(var(--muted))/0.4] border border-[hsl(var(--border))] text-2xs inline-flex items-center gap-1 hover:bg-red-500/10 hover:border-red-400 transition-colors"
+            className="group px-2 py-1 rounded-full bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border border-[var(--border)] text-2xs inline-flex items-center gap-1 hover:bg-red-500/10 hover:border-red-400 transition-colors"
           >
             {t}
             <X className="size-3 opacity-50 group-hover:opacity-90" />
@@ -592,19 +592,19 @@ const UserCreateWizard: React.FC<{
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col h-full min-h-0 max-h-[calc(100vh-96px)] sm:max-h-none bg-[hsl(var(--card))]"
+        className="flex flex-col h-full min-h-0 max-h-[calc(100vh-96px)] sm:max-h-none bg-[var(--card)]"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
-        <div className="px-6 pt-5 pb-4 border-b border-[hsl(var(--border))]/30 relative">
+        <div className="px-6 pt-5 pb-4 border-b border-[var(--border)]/30 relative">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-2.5">
-              <div className="size-9 rounded-xl bg-[hsl(var(--primary))]/10 flex items-center justify-center">
-                <UserPlus className="size-4.5 text-[hsl(var(--primary))]" />
+              <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center">
+                <UserPlus className="size-4.5 text-[var(--primary)]" />
               </div>
               <div>
                 <h2 className="text-base font-bold leading-tight">Create User</h2>
-                <p className="text-[11px] text-[hsl(var(--foreground))]/40">Step {step + 1} of {steps.length} — {steps[step]}</p>
+                <p className="text-[11px] text-[var(--foreground)]/40">Step {step + 1} of {steps.length} — {steps[step]}</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
@@ -612,38 +612,38 @@ const UserCreateWizard: React.FC<{
                 <React.Fragment key={s}>
                   <motion.div
                     animate={{
-                      backgroundColor: i < step ? "hsl(var(--primary))" : i === step ? "hsl(var(--primary))" : "hsl(var(--border))",
+                      backgroundColor: i < step ? "var(--primary)" : i === step ? "var(--primary)" : "var(--border)",
                       opacity: i > step ? 0.35 : 1,
                     }}
                     transition={{ duration: 0.2 }}
                     className={cn(
                       "size-7 rounded-xl flex items-center justify-center text-[10px] font-bold",
-                      i <= step ? "text-[hsl(var(--primary-foreground))]" : "text-[hsl(var(--muted-foreground))]"
+                      i <= step ? "text-[var(--primary-foreground)]" : "text-[var(--muted-foreground)]"
                     )}
                   >
                     {i < step ? <Check className="size-3" /> : i + 1}
                   </motion.div>
                   {i < steps.length - 1 && (
                     <div className="relative w-5 h-0.5">
-                      <div className="absolute inset-0 rounded-full bg-[hsl(var(--border))]/30" />
-                      <motion.div className="absolute inset-0 rounded-full bg-[hsl(var(--primary))]" animate={{ scaleX: i < step ? 1 : 0 }} style={{ originX: 0 }} transition={{ duration: 0.2 }} />
+                      <div className="absolute inset-0 rounded-full bg-[var(--border)]/30" />
+                      <motion.div className="absolute inset-0 rounded-full bg-[var(--primary)]" animate={{ scaleX: i < step ? 1 : 0 }} style={{ originX: 0 }} transition={{ duration: 0.2 }} />
                     </div>
                   )}
                 </React.Fragment>
               ))}
             </div>
           </div>
-          <div className="h-1 rounded-full bg-[hsl(var(--muted))]/20 overflow-hidden">
+          <div className="h-1 rounded-full bg-[var(--muted)]/20 overflow-hidden">
             <motion.div
               initial={false}
               animate={{ width: progress + "%" }}
               transition={{ type: "spring", stiffness: 140, damping: 22 }}
-              className="h-full rounded-full bg-gradient-to-r from-[hsl(var(--primary))] to-[hsl(var(--primary))]/60"
+              className="h-full rounded-full bg-gradient-to-r from-[var(--primary)] to-[var(--primary)]/60"
             />
           </div>
         </div>
         {/* Mobile action bar (top) */}
-        <div className="px-4 pt-3 flex items-center gap-2 sm:hidden sticky top-0 z-20 bg-[hsl(var(--card))]/95 backdrop-blur supports-[backdrop-filter]:bg-[hsl(var(--card))]/85 border-b border-[hsl(var(--border))]/30">
+        <div className="px-4 pt-3 flex items-center gap-2 sm:hidden sticky top-0 z-20 bg-[var(--card)]/95 backdrop-blur supports-[backdrop-filter]:bg-[var(--card)]/85 border-b border-[var(--border)]/30">
           {step > 0 && (
             <Button
               type="button"
@@ -777,7 +777,7 @@ const UserCreateWizard: React.FC<{
                         }}
                       />
                     </div>
-                    <div className="rounded-xl border p-4 space-y-4 bg-[hsl(var(--muted))/0.3]">
+                    <div className="rounded-xl border p-4 space-y-4 bg-[color-mix(in oklab, var(--muted) 30%, transparent)]">
                       <h4 className="text-xs font-semibold tracking-wide uppercase text-foreground/70">
                         Address
                       </h4>
@@ -861,7 +861,7 @@ const UserCreateWizard: React.FC<{
                       {repInfoArray.fields.map((field, index) => (
                         <div
                           key={field.id}
-                          className="grid md:grid-cols-4 gap-3 items-start rounded-xl border p-4 bg-[hsl(var(--muted))/0.4] relative"
+                          className="grid md:grid-cols-4 gap-3 items-start rounded-xl border p-4 bg-[color-mix(in oklab, var(--muted) 40%, transparent)] relative"
                         >
                           <TextField
                             name={`representativeInfo.${index}.region` as any}
@@ -899,7 +899,7 @@ const UserCreateWizard: React.FC<{
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => repInfoArray.remove(index)}
-                                className="size-8 p-0 text-[hsl(var(--foreground))]/40 hover:text-red-400 hover:bg-red-400/10"
+                                className="size-8 p-0 text-[var(--foreground)]/40 hover:text-red-400 hover:bg-red-400/10"
                               >
                                 <Trash2 className="size-4" />
                               </Button>
@@ -923,7 +923,7 @@ const UserCreateWizard: React.FC<{
             </div>
             {/* Live Summary Sidebar */}
             <aside className="hidden xl:block w-72 shrink-0 space-y-4 sticky top-4 self-start">
-              <div className="rounded-2xl border border-[hsl(var(--border))]/40 p-4 space-y-3 bg-[hsl(var(--muted))]/10">
+              <div className="rounded-2xl border border-[var(--border)]/40 p-4 space-y-3 bg-[var(--muted)]/10">
                 <h4 className="text-xs font-semibold tracking-wide uppercase">
                   Summary
                 </h4>
@@ -999,24 +999,24 @@ const UserCreateWizard: React.FC<{
                   )}
                 </div>
               </div>
-              <div className="rounded-2xl border border-[hsl(var(--border))]/40 p-3 bg-[hsl(var(--muted))]/10">
+              <div className="rounded-2xl border border-[var(--border)]/40 p-3 bg-[var(--muted)]/10">
                 <div className="flex items-center justify-between text-2xs font-medium">
                   <span>Progress</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
-                <div className="h-2 mt-2 rounded-full bg-[hsl(var(--muted))/0.5] overflow-hidden">
+                <div className="h-2 mt-2 rounded-full bg-[color-mix(in oklab, var(--muted) 50%, transparent)] overflow-hidden">
                   <motion.div
                     initial={false}
                     animate={{ width: progress + "%" }}
                     transition={{ type: "tween", duration: 0.4 }}
-                    className="h-full bg-gradient-to-r from-[hsl(var(--accent))] via-emerald-400 to-green-500"
+                    className="h-full bg-gradient-to-r from-[var(--accent)] via-emerald-400 to-green-500"
                   />
                 </div>
               </div>
             </aside>
           </div>
         </div>
-        <div className="hidden sm:flex sticky bottom-0 z-30 px-6 py-4 border-t border-[hsl(var(--border))]/30 bg-[hsl(var(--card))]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
+        <div className="hidden sm:flex sticky bottom-0 z-30 px-6 py-4 border-t border-[var(--border)]/30 bg-[var(--card)]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>

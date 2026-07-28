@@ -77,7 +77,7 @@ function AuthorCard({
           className="flex items-center gap-3 group"
           aria-label={`View profile of ${authorName}`}
         >
-          <div className="relative size-11 rounded-full overflow-hidden ring-2 ring-[hsl(var(--border))] group-hover:ring-[hsl(var(--primary))]/50 transition-all flex-shrink-0 bg-[hsl(var(--muted))]/20">
+          <div className="relative size-11 rounded-full overflow-hidden ring-2 ring-[var(--border)] group-hover:ring-[var(--primary)]/50 transition-all flex-shrink-0 bg-[var(--muted)]/20">
             {photoUrl ? (
               <>
                 {!avatarLoaded && <ImageSpinner className="rounded-full" />}
@@ -90,18 +90,18 @@ function AuthorCard({
                 />
               </>
             ) : (
-              <div className="size-full grid place-items-center bg-gradient-to-br from-[hsl(var(--primary))]/20 to-[hsl(var(--accent))]/20">
-                <UserCircle2 className="size-6 text-[hsl(var(--muted-foreground))]" />
+              <div className="size-full grid place-items-center bg-gradient-to-br from-[var(--primary)]/20 to-[var(--accent)]/20">
+                <UserCircle2 className="size-6 text-[var(--muted-foreground)]" />
               </div>
             )}
           </div>
           <div>
-            <span className="text-sm font-semibold group-hover:text-[hsl(var(--primary))] transition-colors flex items-center gap-1">
+            <span className="text-sm font-semibold group-hover:text-[var(--primary)] transition-colors flex items-center gap-1">
               {authorName}
-              {isOwner && <BadgeCheck className="size-3.5 text-[hsl(var(--primary))]" />}
+              {isOwner && <BadgeCheck className="size-3.5 text-[var(--primary)]" />}
             </span>
             {createdAt && (
-              <span className="flex items-center gap-1 text-xs text-[hsl(var(--muted-foreground))]">
+              <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
                 <Calendar className="size-3" />
                 {formatDate(createdAt)}
               </span>
@@ -119,7 +119,7 @@ function AuthorCard({
               ? "border-amber-400/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
               : days !== null && days <= 0
                 ? "border-red-400/40 bg-red-500/10 text-red-600 dark:text-red-400"
-                : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))]"
+                : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)]"
           )}
         >
           {days !== null && days <= 0 ? (
@@ -206,7 +206,7 @@ function SocialBar({
             "hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
             liked
               ? "border-rose-400/50 bg-rose-500/10 text-rose-500 dark:text-rose-400"
-              : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-rose-400/40 hover:text-rose-400"
+              : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)] hover:border-rose-400/40 hover:text-rose-400"
           )}
         >
           <Heart
@@ -243,7 +243,7 @@ function SocialBar({
             "hover:scale-105 active:scale-95 disabled:opacity-50",
             justShared
               ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-              : "border-[hsl(var(--border))] bg-[hsl(var(--muted))]/20 text-[hsl(var(--muted-foreground))] hover:border-[hsl(var(--primary))]/40 hover:text-[hsl(var(--primary))]"
+              : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)] hover:border-[var(--primary)]/40 hover:text-[var(--primary)]"
           )}
         >
           <Share2 className={cn("size-4", justShared && "scale-110")} />
@@ -252,7 +252,7 @@ function SocialBar({
       </Tooltip>
 
       {/* Comment count (visual only) */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-2 text-sm text-[hsl(var(--muted-foreground))]">
+      <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-2 text-sm text-[var(--muted-foreground)]">
         <MessageCircle className="size-4" />
         <span className="tabular-nums">{commentCount}</span>
       </div>
@@ -261,7 +261,7 @@ function SocialBar({
         <Tooltip content={t("signInToInteract")} side="top">
           <Link
             href="/sign-in"
-            className="text-xs text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--primary))] transition-colors underline-offset-2 hover:underline ml-1"
+            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors underline-offset-2 hover:underline ml-1"
           >
             {t("signInToLike") || "Sign in to like"}
           </Link>
@@ -356,12 +356,12 @@ export default function BlogDetailPage() {
   if (!blog) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-5 p-6">
-        <div className="size-16 rounded-2xl bg-[hsl(var(--muted))]/20 grid place-items-center">
-          <AlertTriangle className="size-8 text-[hsl(var(--muted-foreground))]/50" />
+        <div className="size-16 rounded-2xl bg-[var(--muted)]/20 grid place-items-center">
+          <AlertTriangle className="size-8 text-[var(--muted-foreground)]/50" />
         </div>
         <div>
           <p className="text-lg font-semibold text-center">{t("blogNotFound") || "Post not found"}</p>
-          <p className="text-sm text-[hsl(var(--muted-foreground))] text-center mt-1">
+          <p className="text-sm text-[var(--muted-foreground)] text-center mt-1">
             This post may have been removed or never existed.
           </p>
         </div>
@@ -384,14 +384,15 @@ export default function BlogDetailPage() {
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
-      className="max-w-5xl mx-auto px-4 py-8 space-y-8"
+      className="max-w-5xl mx-auto px-4 py-8 space-y-8 app-shell-page"
+      data-app-page="blog-detail"
     >
       {/* ── Back navigation ─────────────────────────────────────────── */}
       <Tooltip content={t("tooltipBack")} side="bottom">
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--muted-foreground))] hover:text-[hsl(var(--foreground))] transition-colors group"
+          className="inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors group"
           aria-label={t("back") || "Back"}
         >
           <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
@@ -401,7 +402,7 @@ export default function BlogDetailPage() {
 
       {/* ── Hero image slider ────────────────────────────────────────── */}
       {images.length > 0 && (
-        <div className="rounded-2xl overflow-hidden shadow-[0_8px_32px_-8px_rgba(0,0,0,0.25)] ring-1 ring-[hsl(var(--border))]/30">
+        <div className="rounded-2xl overflow-hidden shadow-[0_8px_32px_-8px_rgba(0,0,0,0.25)] ring-1 ring-[var(--border)]/30">
           <ImageSlider images={images} aspect="16/9" />
         </div>
       )}
@@ -409,7 +410,7 @@ export default function BlogDetailPage() {
       {/* ── Title + admin/author toolbar ────────────────────────────── */}
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug text-[hsl(var(--foreground))]">
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug text-[var(--foreground)]">
             {blog.title}
           </h1>
           {(isAuthor || isAdmin) && (
@@ -448,7 +449,7 @@ export default function BlogDetailPage() {
         </div>
 
         {/* Author + date + expiry */}
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/60 backdrop-blur-sm p-4">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--card)]/60 backdrop-blur-sm p-4">
           <AuthorCard
             author={blog.author}
             createdAt={blog.createdAt}
@@ -470,10 +471,10 @@ export default function BlogDetailPage() {
       {/* ── Divider ──────────────────────────────────────────────────── */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[hsl(var(--border))]" />
+          <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-[hsl(var(--background))] px-4 text-xs text-[hsl(var(--muted-foreground))]">
+          <span className="bg-[var(--background)] px-4 text-xs text-[var(--muted-foreground)]">
             Article
           </span>
         </div>
@@ -485,7 +486,7 @@ export default function BlogDetailPage() {
           {blog.content.split("\n\n").map((para: string, i: number) => (
             <p
               key={i}
-              className="text-[hsl(var(--foreground))]/85 leading-relaxed text-[0.9375rem] mb-4 last:mb-0"
+              className="text-[var(--foreground)]/85 leading-relaxed text-[0.9375rem] mb-4 last:mb-0"
             >
               {para}
             </p>
@@ -496,10 +497,10 @@ export default function BlogDetailPage() {
       {/* ── Divider ──────────────────────────────────────────────────── */}
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-[hsl(var(--border))]" />
+          <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-[hsl(var(--background))] px-4 text-xs text-[hsl(var(--muted-foreground))]">
+          <span className="bg-[var(--background)] px-4 text-xs text-[var(--muted-foreground)]">
             <MessageCircle className="size-3 inline mr-1" />
             Comments
           </span>
@@ -514,8 +515,8 @@ export default function BlogDetailPage() {
       />
 
       {/* ── Bottom social repeat ─────────────────────────────────────── */}
-      <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 p-4 flex items-center justify-between gap-4 flex-wrap">
-        <p className="text-sm text-[hsl(var(--muted-foreground))]">
+      <div className="rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-4 flex items-center justify-between gap-4 flex-wrap">
+        <p className="text-sm text-[var(--muted-foreground)]">
           Found this helpful? Share it with others.
         </p>
         <SocialBar

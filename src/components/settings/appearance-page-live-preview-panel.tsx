@@ -113,32 +113,32 @@ export function AppearancePageLivePreviewPanel({
     return (
         <section className="flex min-w-0 flex-col gap-2 rounded-xl border border-border/60 bg-background/85 p-3">
             <div className="flex items-center gap-2">
-                <p className="admin-text-label">Page-Based Live Preview</p>
-                <Badge variant={selectedPage ? "secondary" : "outline"} className="ml-auto px-1.5 admin-text-micro">
+                <p className="app-text-label">Page-Based Live Preview</p>
+                <Badge variant={selectedPage ? "secondary" : "outline"} className="ml-auto px-1.5 app-text-micro">
                     {selectedPage ? "Active" : "Inactive"}
                 </Badge>
                 {selectedPage && (
-                    <Badge variant="outline" className="px-1.5 admin-text-micro font-mono">
+                    <Badge variant="outline" className="px-1.5 app-text-micro font-mono">
                         {logicalWidth}px
                     </Badge>
                 )}
             </div>
 
             {!selectedPage && (
-                <p className="admin-text-caption text-muted-foreground">
+                <p className="app-text-caption text-muted-foreground">
                     Select a page override to activate this preview container.
                 </p>
             )}
 
             {selectedPage && !PagePreview && (
-                <p className="admin-text-caption text-muted-foreground">
+                <p className="app-text-caption text-muted-foreground">
                     No widget preview is registered for {resolvePreviewPageLabel(selectedPage)}.
                 </p>
             )}
 
             {selectedPage && PagePreview && (
                 <>
-                    <p className="admin-text-caption text-muted-foreground">
+                    <p className="app-text-caption text-muted-foreground">
                         Live source page: {resolvePreviewPageLabel(selectedPage)} · viewport{" "}
                         {logicalWidth}px
                         {scale < 1 ? ` · zoomed to ${Math.round(scale * 100)}%` : null}
@@ -176,7 +176,7 @@ export function AppearancePageLivePreviewPanel({
                             >
                                 <React.Suspense
                                     fallback={
-                                        <p className="admin-text-caption text-muted-foreground p-2">
+                                        <p className="app-text-caption text-muted-foreground p-2">
                                             Loading preview...
                                         </p>
                                     }

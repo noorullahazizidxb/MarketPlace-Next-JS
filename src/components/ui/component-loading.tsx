@@ -22,7 +22,7 @@ export function ComponentLoading({ rows = 3, className }: Props) {
       {Array.from({ length: rows }).map((_, i) => (
         <div
           key={i}
-          className="h-4 rounded-md bg-[hsl(var(--muted))]"
+          className="h-4 rounded-md bg-[var(--muted)]"
           style={{ width: `${70 + ((i * 17) % 30)}%` }}
         />
       ))}

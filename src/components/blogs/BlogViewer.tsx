@@ -104,13 +104,13 @@ export default function BlogViewer({
               role="dialog"
               aria-modal
               aria-label={source?.title}
-              className="relative w-[min(960px,92vw)] max-h-[90vh] overflow-hidden rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))] z-[61]"
+              className="relative w-[min(960px,92vw)] max-h-[90vh] overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] z-[61]"
               initial={{ scale: 0.98, opacity: 0.98 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.98, opacity: 0 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
             >
-              <div className="flex items-center justify-between p-4 md:p-5 border-b border-[hsl(var(--border))]">
+              <div className="flex items-center justify-between p-4 md:p-5 border-b border-[var(--border)]">
                 <div className="line-clamp-1 font-semibold">
                   {source?.title}
                 </div>
@@ -125,7 +125,7 @@ export default function BlogViewer({
               <div className="p-4 md:p-5 space-y-4 max-h-[calc(90vh-64px)] overflow-y-auto">
                 <ImageSlider images={images} aspect="16/9" />
                 {source?.content && (
-                  <p className="text-sm text-[hsl(var(--foreground))]/85 whitespace-pre-line">
+                  <p className="text-sm text-[var(--foreground)]/85 whitespace-pre-line">
                     {source.content}
                   </p>
                 )}

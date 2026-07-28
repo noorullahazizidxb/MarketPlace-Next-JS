@@ -121,8 +121,8 @@ function passwordStrength(pw: string) {
 // ---------------- Helper UI Primitives (inline for now) ----------------
 function FieldLabel({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <span className="flex items-center gap-1.5 text-2xs font-medium tracking-wide uppercase text-[hsl(var(--muted-foreground))]">
-      <Icon className="size-3.5" /> {label}
+    <span className="flex items-center gap-1.5 text-2xs font-medium tracking-wide uppercase text-[var(--muted-foreground)]">
+      <Icon className="app-icon-xs" /> {label}
     </span>
   );
 }
@@ -326,10 +326,10 @@ export default function ProfilePage() {
   }
   // non-blocking: if error, render page with any store user and a subtle notice
   return (
-    <div className="relative min-h-screen pb-24">
+    <div className="relative min-h-screen pb-24 app-shell-page" data-app-page="profile">
       {profileError && (
         <div className="container-padded mt-4">
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-2 text-sm">
+          <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-2 app-text-body">
             {t("profileLoadFailedCached")}
           </div>
         </div>
@@ -345,11 +345,11 @@ export default function ProfilePage() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="rounded-3xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-[0_8px_40px_-4px_rgba(0,0,0,0.25)] overflow-hidden"
+          className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-xl shadow-[0_8px_40px_-4px_rgba(0,0,0,0.25)] overflow-hidden"
         >
           {/* Banner */}
           <div className="h-40 sm:h-56 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--accent))]/30 via-fuchsia-500/20 to-emerald-500/20" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/30 via-fuchsia-500/20 to-emerald-500/20" />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.4)_0%,transparent_70%)] mix-blend-overlay" />
           </div>
           {/* Avatar & primary info */}
@@ -359,15 +359,15 @@ export default function ProfilePage() {
               <img
                 src={avatarUrl}
                 alt={t("profileAvatarAlt")}
-                className="w-full h-full object-cover rounded-2xl border-4 border-[hsl(var(--background))] shadow-xl group-hover:shadow-2xl transition-shadow"
+                className="w-full h-full object-cover rounded-2xl border-4 border-[var(--background)] shadow-xl group-hover:shadow-2xl transition-shadow"
               />
               <button
                 type="button"
                 aria-label={t("profileAvatarChange")}
                 onClick={openFile}
-                className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white text-xs font-medium backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white app-text-caption font-medium backdrop-blur-sm transition-opacity"
               >
-                <ImageIcon className="size-5 mr-1" /> {t("profileAvatarChange")}
+                <ImageIcon className="app-icon-md mr-1" /> {t("profileAvatarChange")}
               </button>
               <input
                 ref={fileRef}
@@ -382,25 +382,25 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="text-2xl sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
+              <h1 className="app-text-heading sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
                 {user?.fullName || user?.firstName || t("profileNameAnonymous")}
                 {user?.roles?.some((r: any) => r.role === "REPRESENTATIVE") && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-2xs border border-emerald-500/30">
-                    <ShieldCheck className="size-3" />{" "}
+                    <ShieldCheck className="app-icon-xs" />{" "}
                     {t("profileRepresentativeBadge")}
                   </span>
                 )}
               </h1>
-              <p className="mt-1 text-sm subtle line-clamp-2 max-w-xl">
+              <p className="mt-1 app-text-body subtle line-clamp-2 max-w-xl">
                 {bioValue || t("shortBioPlaceholder")}
               </p>
               <div className="mt-4 flex flex-wrap gap-3">
                 {stats.map((s) => (
                   <div
                     key={s.label}
-                    className="px-4 py-2 rounded-xl bg-[hsl(var(--muted))]/60 border border-[hsl(var(--border))] text-center min-w-[110px] backdrop-blur"
+                    className="px-4 py-2 rounded-xl bg-[var(--muted)]/60 border border-[var(--border)] text-center min-w-[110px] backdrop-blur"
                   >
-                    <div className="text-lg font-semibold tracking-tight">
+                    <div className="app-text-heading-sm font-semibold tracking-tight">
                       {s.value}
                     </div>
                     <div className="text-2xs uppercase subtle mt-1">
@@ -415,14 +415,14 @@ export default function ProfilePage() {
                 type="button"
                 variant={editing ? "secondary" : "primary"}
                 onClick={() => setEditing((v) => !v)}
-                className="rounded-xl px-5 shadow-sm bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white border-none hover:shadow-lg"
+                className="rounded-xl px-5 shadow-sm bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white border-none hover:shadow-lg"
               >
                 {editing ? (
-                  <X className="size-4" />
+                  <X className="app-icon-sm" />
                 ) : (
-                  <Edit3 className="size-4" />
+                  <Edit3 className="app-icon-sm" />
                 )}
-                <span className="ml-2 text-sm font-medium">
+                <span className="ml-2 app-text-body font-medium">
                   {editing ? t("cancel") : t("edit")}
                 </span>
               </Button>
@@ -439,10 +439,10 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
           >
-            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
-              <User2 className="size-4" /> Profile Details
+            <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
+              <User2 className="app-icon-sm" /> Profile Details
             </h2>
             <div className="grid sm:grid-cols-2 gap-6">
               <DetailField
@@ -483,10 +483,10 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
           >
-            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
-              <MapPin className="size-4" /> Address
+            <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
+              <MapPin className="app-icon-sm" /> Address
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               <DetailField
@@ -512,10 +512,10 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
           >
-            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
-              <Globe2 className="size-4" /> Social
+            <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
+              <Globe2 className="app-icon-sm" /> Social
             </h2>
             <div className="grid sm:grid-cols-3 gap-6">
               <DetailField
@@ -544,14 +544,14 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[hsl(var(--border))] bg-[hsl(var(--card))]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)] flex flex-col"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)] flex flex-col"
           >
-            <h2 className="text-base font-semibold mb-4 flex items-center gap-2">
-              <Edit3 className="size-4" /> Quick Bio
+            <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
+              <Edit3 className="app-icon-sm" /> Quick Bio
             </h2>
             <TextareaField
               label={t("shortBioPlaceholder") || "Short bio"}
-              icon={<Edit3 className="size-4" />}
+              icon={<Edit3 className="app-icon-sm" />}
               rows={6}
               maxLength={260}
               value={bioValue}
@@ -563,7 +563,7 @@ export default function ProfilePage() {
             <Button
               type="button"
               onClick={() => setEditing(true)}
-              className="mt-4 rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg"
+              className="mt-4 rounded-xl bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white hover:shadow-lg"
             >
               {t("openFullEditor")}
             </Button>
@@ -575,15 +575,15 @@ export default function ProfilePage() {
       <Dialog open={editing} onOpenChange={(o: boolean) => setEditing(o)}>
         <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold">
+            <h2 className="app-text-heading-sm font-semibold">
               {t("saveChanges") ? t("saveChanges") : t("profile")}
             </h2>
             <DialogClose asChild>
               <button
                 aria-label="Close"
-                className="p-2 rounded-full hover:bg-[hsl(var(--muted))]"
+                className="p-2 rounded-full hover:bg-[var(--muted)]"
               >
-                <X className="size-5" />
+                <X className="app-icon-md" />
               </button>
             </DialogClose>
           </div>
@@ -593,28 +593,28 @@ export default function ProfilePage() {
           >
             <TextInputField
               label="First Name"
-              icon={<User2 className="size-4" />}
+              icon={<User2 className="app-icon-sm" />}
               error={errors.firstName?.message}
               value={firstNameValue}
               onChange={setField("firstName")}
             />
             <TextInputField
               label="Last Name"
-              icon={<User2 className="size-4" />}
+              icon={<User2 className="app-icon-sm" />}
               error={errors.lastName?.message}
               value={lastNameValue}
               onChange={setField("lastName")}
             />
             <TextInputField
               label="Full Name"
-              icon={<User2 className="size-4" />}
+              icon={<User2 className="app-icon-sm" />}
               error={errors.fullName?.message}
               value={fullNameValue}
               onChange={setField("fullName")}
             />
             <TextInputField
               label="Email"
-              icon={<Mail className="size-4" />}
+              icon={<Mail className="app-icon-sm" />}
               type="email"
               error={errors.email?.message}
               value={emailValue}
@@ -622,7 +622,7 @@ export default function ProfilePage() {
             />
             <TextInputField
               label="Phone"
-              icon={<Phone className="size-4" />}
+              icon={<Phone className="app-icon-sm" />}
               type="tel"
               error={errors.phone?.message}
               value={phoneValue}
@@ -630,7 +630,7 @@ export default function ProfilePage() {
             />
             <TextInputField
               label="WhatsApp"
-              icon={<Phone className="size-4" />}
+              icon={<Phone className="app-icon-sm" />}
               type="tel"
               error={errors.whatsapp?.message}
               value={whatsappValue}
@@ -638,49 +638,49 @@ export default function ProfilePage() {
             />
             <TextInputField
               label="City"
-              icon={<MapPin className="size-4" />}
+              icon={<MapPin className="app-icon-sm" />}
               error={errors.city?.message}
               value={cityValue}
               onChange={setField("city")}
             />
             <TextInputField
               label="Country"
-              icon={<MapPin className="size-4" />}
+              icon={<MapPin className="app-icon-sm" />}
               error={errors.country?.message}
               value={countryValue}
               onChange={setField("country")}
             />
             <TextInputField
               label="Street"
-              icon={<MapPin className="size-4" />}
+              icon={<MapPin className="app-icon-sm" />}
               error={errors.street?.message}
               value={streetValue}
               onChange={setField("street")}
             />
             <TextInputField
               label="Website"
-              icon={<Globe2 className="size-4" />}
+              icon={<Globe2 className="app-icon-sm" />}
               error={errors.website?.message}
               value={websiteValue}
               onChange={setField("website")}
             />
             <TextInputField
               label="LinkedIn"
-              icon={<Linkedin className="size-4" />}
+              icon={<Linkedin className="app-icon-sm" />}
               error={errors.linkedin?.message}
               value={linkedinValue}
               onChange={setField("linkedin")}
             />
             <TextInputField
               label="Facebook"
-              icon={<Facebook className="size-4" />}
+              icon={<Facebook className="app-icon-sm" />}
               error={errors.facebook?.message}
               value={facebookValue}
               onChange={setField("facebook")}
             />
             <TextInputField
               label="Instagram"
-              icon={<Instagram className="size-4" />}
+              icon={<Instagram className="app-icon-sm" />}
               error={errors.instagram?.message}
               value={instagramValue}
               onChange={setField("instagram")}
@@ -706,7 +706,7 @@ export default function ProfilePage() {
             <div className="sm:col-span-2">
               <TextareaField
                 label="Bio"
-                icon={<Edit3 className="size-4" />}
+                icon={<Edit3 className="app-icon-sm" />}
                 rows={4}
                 maxLength={260}
                 value={bioValue}
@@ -718,7 +718,7 @@ export default function ProfilePage() {
               </p>
             </div>
             {error && (
-              <p className="text-red-500 text-sm sm:col-span-2">{error}</p>
+              <p className="text-red-500 app-text-body sm:col-span-2">{error}</p>
             )}
             <div className="flex gap-3 sm:col-span-2 pt-2">
               <Button
@@ -730,14 +730,14 @@ export default function ProfilePage() {
                 }}
                 className="rounded-xl"
               >
-                <X className="size-4" /> {t("cancel")}
+                <X className="app-icon-sm" /> {t("cancel")}
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting || updateProfile.isPending}
-                className="rounded-xl bg-gradient-to-r from-[hsl(var(--accent))] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
+                className="rounded-xl bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
               >
-                <Save className="size-4" /> {t("saveChanges")}
+                <Save className="app-icon-sm" /> {t("saveChanges")}
               </Button>
             </div>
           </form>
@@ -761,7 +761,7 @@ function DetailField({
   return (
     <div className="group">
       <FieldLabel icon={Icon} label={label} />
-      <div className="mt-1 text-sm font-medium text-[hsl(var(--foreground))] bg-[hsl(var(--muted))]/40 rounded-lg px-3 py-2 border border-[hsl(var(--border))] group-hover:border-[hsl(var(--accent))]/50 transition-colors">
+      <div className="mt-1 app-text-body font-medium text-[var(--foreground)] bg-[var(--muted)]/40 rounded-lg px-3 py-2 border border-[var(--border)] group-hover:border-[var(--accent)]/50 transition-colors">
         {value && String(value).trim() !== "" ? (
           value
         ) : (
@@ -796,7 +796,7 @@ function PasswordField({
     <div>
       <TextInputField
         label="Password"
-        icon={<ShieldCheck className="size-4" />}
+        icon={<ShieldCheck className="app-icon-sm" />}
         type={visible ? "text" : "password"}
         value={value}
         onChange={onChange}
@@ -810,9 +810,9 @@ function PasswordField({
             className="text-muted-foreground hover:text-foreground"
           >
             {visible ? (
-              <EyeOff className="size-4" />
+              <EyeOff className="app-icon-sm" />
             ) : (
-              <Eye className="size-4" />
+              <Eye className="app-icon-sm" />
             )}
           </button>
         }
@@ -856,7 +856,7 @@ function ConfirmPasswordField({
   return (
     <TextInputField
       label={label}
-      icon={<ShieldCheck className="size-4" />}
+      icon={<ShieldCheck className="app-icon-sm" />}
       type={visible ? "text" : "password"}
       value={value}
       onChange={onChange}
@@ -868,14 +868,14 @@ function ConfirmPasswordField({
           <span
             className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${
               !filled
-                ? "bg-white/5 text-[hsl(var(--muted-foreground))]"
+                ? "bg-white/5 text-[var(--muted-foreground)]"
                 : matches
                   ? "bg-emerald-500/10 text-emerald-400"
                   : "bg-red-500/10 text-red-400"
             }`}
             aria-live="polite"
           >
-            <Check className="size-3" />
+            <Check className="app-icon-xs" />
             {filled ? (matches ? "Match" : "No match") : "—"}
           </span>
           <button
@@ -889,9 +889,9 @@ function ConfirmPasswordField({
             className="text-muted-foreground hover:text-foreground p-1"
           >
             {visible ? (
-              <EyeOff className="size-4" />
+              <EyeOff className="app-icon-sm" />
             ) : (
-              <Eye className="size-4" />
+              <Eye className="app-icon-sm" />
             )}
           </button>
         </div>

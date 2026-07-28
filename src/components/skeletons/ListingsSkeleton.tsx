@@ -18,7 +18,7 @@ export function ListingsSkeleton() {
         {Array.from({ length: 12 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-[1.5rem] border border-[hsl(var(--border))]/40 overflow-hidden bg-[hsl(var(--card))]/80 backdrop-blur-xl shadow-sm"
+            className="rounded-[1.5rem] border border-[var(--border)]/40 overflow-hidden bg-[var(--card)]/80 backdrop-blur-xl shadow-sm"
           >
             <Skeleton className="h-44 w-full rounded-none" />
             <div className="p-4 space-y-2.5">

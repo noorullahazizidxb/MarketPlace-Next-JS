@@ -19,7 +19,7 @@ export function UpgradeToProButton() {
         <HoverCardTrigger asChild>
           <Button
             size="lg"
-            className="px-6 py-3 bg-gradient-to-br shadow-lg from-slate-900 cursor-pointer to-slate-400 text-white admin-text-heading"
+            className="px-6 py-3 bg-gradient-to-br shadow-lg from-slate-900 cursor-pointer to-slate-400 text-white app-text-heading"
             style={{ minWidth: 180 }}
             onClick={() =>
               typeof window !== "undefined" &&
@@ -45,17 +45,17 @@ export function UpgradeToProButton() {
                 height={200}
               />
             </a>
-            <h3 className="admin-text-heading admin-text-body flex items-center py-2 gap-2">
+            <h3 className="app-text-heading app-text-body flex items-center py-2 gap-2">
               <Rocket size={18} className="text-primary" />
               Unlock Premium Blocks
               <Badge
                 variant="destructive"
-                className="admin-text-caption px-2 py-0.5 rounded-full shadow"
+                className="app-text-caption px-2 py-0.5 rounded-full shadow"
               >
                 Live
               </Badge>
             </h3>
-            <p className="text-muted-foreground admin-text-body mb-4">
+            <p className="text-muted-foreground app-text-body mb-4">
               Get access to exclusive premium blocks and dashboards for your
               next project. Elevate your UI instantly!
             </p>
@@ -88,7 +88,7 @@ export function UpgradeToProButton() {
                 <span className="absolute -top-5 -right-1">
                   <Badge
                     variant="outline"
-                    className="bg-yellow-400 text-yellow-900 border-yellow-400 admin-text-caption px-2 py-0.5 rounded-full shadow"
+                    className="bg-yellow-400 text-yellow-900 border-yellow-400 app-text-caption px-2 py-0.5 rounded-full shadow"
                   >
                     Coming soon
                   </Badge>

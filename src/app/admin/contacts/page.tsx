@@ -96,7 +96,7 @@ export default function AdminContactsPage() {
   }, [data, q, subjectFilter]);
 
   return (
-    <section dir={isRtl ? "rtl" : "ltr"} className="container-padded py-10">
+    <section dir={isRtl ? "rtl" : "ltr"} className="container-padded py-10 app-shell-page" data-app-page="admin-contacts">
       {!isAdmin ? (
         <div className="py-12">
           <p className="subtle">{t("adminPrivilegesNeeded")}</p>
@@ -106,7 +106,7 @@ export default function AdminContactsPage() {
           <div className="mb-6 flex items-center justify-between gap-3">
             <div>
               <h1 className="heading-xl">{t("contactMessages")}</h1>
-              <p className="subtle text-sm">{t("contactInboxSubtitle")}</p>
+              <p className="subtle app-text-body">{t("contactInboxSubtitle")}</p>
             </div>
             <div className="hidden sm:flex items-center gap-2">
               <div className="w-[260px]">
@@ -114,7 +114,7 @@ export default function AdminContactsPage() {
                   label={t("searchContactsPlaceholder")}
                   value={q}
                   onChange={setQ}
-                  icon={<Search className="size-4" />}
+                  icon={<Search className="app-icon-sm" />}
                 />
               </div>
               <div className="w-[200px]">
@@ -132,13 +132,13 @@ export default function AdminContactsPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
             <Card className="lg:col-span-2 p-0 overflow-hidden">
-              <div className="flex items-center gap-2 p-3 border-b border-[hsl(var(--border))] sm:hidden">
+              <div className="flex items-center gap-2 p-3 border-b border-[var(--border)] sm:hidden">
                 <div className="w-full">
                   <TextInputField
                     label={t("searchContactsPlaceholder")}
                     value={q}
                     onChange={setQ}
-                    icon={<Search className="size-4" />}
+                    icon={<Search className="app-icon-sm" />}
                   />
                 </div>
               </div>
@@ -174,7 +174,7 @@ export default function AdminContactsPage() {
                           transition={{ duration: 0.35 }}
                         >
                           <div className="flex items-start gap-4">
-                            <div className="relative size-10 rounded-xl overflow-hidden border border-[hsl(var(--border))] bg-[hsl(var(--card))] grid place-items-center">
+                            <div className="relative size-10 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--card)] grid place-items-center">
                               {c.user?.avatarUrl ? (
                                 <Image
                                   src={asset(c.user?.avatarUrl) || "/favicon.svg"}
@@ -236,7 +236,7 @@ export default function AdminContactsPage() {
               </Table>
             </Card>
 
-            <Card className="p-6 bg-[linear-gradient(to_bottom_right,hsl(var(--card)),hsl(var(--card))/80)] border border-[hsl(var(--border))]">
+            <Card className="p-6 bg-[linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))] border border-[var(--border)]">
               {selectedContact ? (
                 <div>
                   <h2 className="text-lg font-semibold mb-2">

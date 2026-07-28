@@ -45,7 +45,7 @@ export function AuthDropdown({
         variant="primary"
         onClick={() => onOpenAuthModal(NAVBAR_AUTH_MODAL_STEPS.signIn)}
       >
-        <LogIn className="mr-2 admin-icon-sm" />
+        <LogIn className="mr-2 app-icon-sm" />
         Sign In
       </Button>
     );
@@ -62,11 +62,11 @@ export function AuthDropdown({
         >
           <UserAvatar />
           {!compact && (
-            <span className="max-w-[120px] truncate admin-text-body">
+            <span className="max-w-[120px] truncate app-text-body">
               {user.fullName}
             </span>
           )}
-          <ChevronDown className="admin-icon-xs shrink-0 text-muted-foreground" />
+          <ChevronDown className="app-icon-xs shrink-0 text-muted-foreground" />
           {compact && <span className="sr-only">{user.fullName}</span>}
         </Button>
       </DropdownMenuTrigger>
@@ -94,12 +94,12 @@ export function AuthDropdown({
           >
             {item.authStep ? (
               <>
-                <item.icon className="mr-2 admin-icon-sm" />
+                <item.icon className="mr-2 app-icon-sm" />
                 {item.label}
               </>
             ) : (
               <Link href={item.href} className="flex items-center">
-                <item.icon className="mr-2 admin-icon-sm" />
+                <item.icon className="mr-2 app-icon-sm" />
                 {item.label}
               </Link>
             )}
@@ -112,7 +112,7 @@ export function AuthDropdown({
           onClick={onLogout}
           className="cursor-pointer text-red-500 hover:text-red-600 focus:text-red-600"
         >
-          <LogOut className="mr-2 admin-icon-sm" />
+          <LogOut className="mr-2 app-icon-sm" />
           Log out
         </DropdownMenuItem>
       </DropdownMenuContent>

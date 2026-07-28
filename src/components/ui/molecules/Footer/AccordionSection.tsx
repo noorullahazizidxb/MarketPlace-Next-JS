@@ -25,7 +25,7 @@ export function AccordionSection({
   return (
     <div className={className}>
       <h2
-        className={`md:hidden sm:block flex items-center justify-between py-3 rounded-md px-2 admin-text-body admin-text-heading mb-4 cursor-pointer sm:mb-2 transition-all duration-500 ease-in-out ${
+        className={`md:hidden sm:block flex items-center justify-between py-3 rounded-md px-2 app-text-body app-text-heading mb-4 cursor-pointer sm:mb-2 transition-all duration-500 ease-in-out ${
           mobileTitleOffset ? "-mt-5" : ""
         }`}
         onClick={() => setIsOpen((prev) => !prev)}
@@ -35,7 +35,7 @@ export function AccordionSection({
       </h2>
 
       {showDesktopTitle && (
-        <h2 className="hidden sm:block admin-text-body admin-text-heading mb-4 border-l-2 border-primary md:px-2 sm:mb-2">
+        <h2 className="hidden sm:block app-text-body app-text-heading mb-4 border-l-2 border-primary md:px-2 sm:mb-2">
           {title}
         </h2>
       )}

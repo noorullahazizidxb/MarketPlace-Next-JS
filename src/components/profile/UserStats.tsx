@@ -6,8 +6,8 @@ import AnimatedNumber from "@/components/ui/animated-number";
 
 const accent: Record<string, { icon: string; bg: string; glow: string }> = {
   "Total Listings": {
-    icon: "text-[hsl(var(--primary))]",
-    bg: "bg-[hsl(var(--primary))]/12",
+    icon: "text-[var(--primary)]",
+    bg: "bg-[var(--primary)]/12",
     glow: "shadow-[0_0_24px_rgba(var(--primary-raw,99,102,241),0.18)]",
   },
   Followers: {
@@ -53,7 +53,7 @@ export default function UserStats({
             <Card className={`p-5 ${a.glow}`}>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[hsl(var(--foreground))]/50">
+                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground)]/50">
                     {it.label}
                   </p>
                   <p className="text-3xl font-extrabold tracking-tight tabular-nums">
@@ -65,7 +65,7 @@ export default function UserStats({
                 </div>
               </div>
               {/* subtle progress indicator */}
-              <div className="mt-4 h-1 rounded-full bg-[hsl(var(--border))]/40 overflow-hidden">
+              <div className="mt-4 h-1 rounded-full bg-[var(--border)]/40 overflow-hidden">
                 <motion.div
                   className={`h-full rounded-full ${a.bg.replace("/12", "")}`}
                   initial={{ width: "0%" }}

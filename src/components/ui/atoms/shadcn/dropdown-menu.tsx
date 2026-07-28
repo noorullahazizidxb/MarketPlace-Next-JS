@@ -72,7 +72,7 @@ function DropdownMenuItem({
       data-inset={inset}
       data-variant={variant}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 admin-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:ps-8 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm",
+        "focus:bg-accent focus:text-accent-foreground data-[variant=destructive]:text-destructive data-[variant=destructive]:focus:bg-destructive/10 dark:data-[variant=destructive]:focus:bg-destructive/20 data-[variant=destructive]:focus:text-destructive data-[variant=destructive]:*:[svg]:!text-destructive [&_svg:not([class*='text-'])]:text-muted-foreground relative flex cursor-default items-center gap-2 rounded-sm px-2 py-1.5 app-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 data-[inset]:ps-8 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm",
         className
       )}
       {...props}
@@ -90,15 +90,15 @@ function DropdownMenuCheckboxItem({
     <DropdownMenuPrimitive.CheckboxItem
       data-slot="dropdown-menu-checkbox-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 admin-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 app-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm",
         className
       )}
       checked={checked}
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex admin-icon-xs items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex app-icon-xs items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CheckIcon className="admin-icon-sm" />
+          <CheckIcon className="app-icon-sm" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -126,14 +126,14 @@ function DropdownMenuRadioItem({
     <DropdownMenuPrimitive.RadioItem
       data-slot="dropdown-menu-radio-item"
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 admin-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:admin-icon-sm",
+        "focus:bg-accent focus:text-accent-foreground relative flex cursor-default items-center gap-2 rounded-sm py-1.5 pe-2 ps-8 app-text-body outline-hidden select-none data-[disabled]:pointer-events-none data-[disabled]:opacity-50 text-start [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:app-icon-sm",
         className
       )}
       {...props}
     >
-      <span className="pointer-events-none absolute start-2 flex admin-icon-xs items-center justify-center">
+      <span className="pointer-events-none absolute start-2 flex app-icon-xs items-center justify-center">
         <DropdownMenuPrimitive.ItemIndicator>
-          <CircleIcon className="admin-icon-xs fill-current" />
+          <CircleIcon className="app-icon-xs fill-current" />
         </DropdownMenuPrimitive.ItemIndicator>
       </span>
       {children}
@@ -157,7 +157,7 @@ function DropdownMenuLabel({
       data-slot="dropdown-menu-label"
       data-inset={inset}
       className={cn(
-        "px-2 py-1.5 admin-text-body data-[inset]:ps-8 text-start",
+        "px-2 py-1.5 app-text-body data-[inset]:ps-8 text-start",
         error && "text-destructive",
         className
       )}
@@ -196,7 +196,7 @@ function DropdownMenuShortcut({
     <span
       data-slot="dropdown-menu-shortcut"
       className={cn(
-        "text-muted-foreground ms-auto admin-text-caption tracking-widest",
+        "text-muted-foreground ms-auto app-text-caption tracking-widest",
         className
       )}
       {...props}
@@ -223,13 +223,13 @@ function DropdownMenuSubTrigger({
       data-slot="dropdown-menu-sub-trigger"
       data-inset={inset}
       className={cn(
-        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 admin-text-body outline-hidden select-none data-[inset]:ps-8 text-start",
+        "focus:bg-accent focus:text-accent-foreground data-[state=open]:bg-accent data-[state=open]:text-accent-foreground flex cursor-default items-center rounded-sm px-2 py-1.5 app-text-body outline-hidden select-none data-[inset]:ps-8 text-start",
         className
       )}
       {...props}
     >
       {children}
-      <ChevronRightIcon className="ms-auto admin-icon-sm rtl:rotate-180" />
+      <ChevronRightIcon className="ms-auto app-icon-sm rtl:rotate-180" />
     </DropdownMenuPrimitive.SubTrigger>
   )
 }

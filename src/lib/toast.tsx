@@ -20,15 +20,15 @@ function ToastCard({
 }) {
   const ringColor =
     color === "success"
-      ? "ring-[hsl(var(--primary))]/30"
+      ? "ring-[var(--primary)]/30"
       : color === "error"
       ? "ring-red-500/30"
-      : "ring-[hsl(var(--accent))]/30";
+      : "ring-[var(--accent)]/30";
   return (
     <div
       className={clsx(
-        "pointer-events-auto inline-block min-w-[12rem] max-w-[28rem] overflow-hidden rounded-xl border bg-[hsl(var(--card))] text-[hsl(var(--foreground))] shadow-lg",
-        "border-[hsl(var(--border))]",
+        "pointer-events-auto inline-block min-w-[12rem] max-w-[28rem] overflow-hidden rounded-xl border bg-[var(--card)] text-[var(--foreground)] shadow-lg",
+        "border-[var(--border)]",
         "ring-1",
         ringColor,
         t.visible
@@ -44,10 +44,10 @@ function ToastCard({
               className={clsx(
                 "rounded-full p-2",
                 color === "success"
-                  ? "bg-[hsl(var(--primary))]/10"
+                  ? "bg-[var(--primary)]/10"
                   : color === "error"
                   ? "bg-red-50"
-                  : "bg-[hsl(var(--accent))]/10"
+                  : "bg-[var(--accent)]/10"
               )}
             >
               {icon}
@@ -74,7 +74,7 @@ export function toastSuccess(message: string, title?: string) {
       title={title}
       message={message}
       color="success"
-      icon={<Check className="h-5 w-5 text-[hsl(var(--primary))]" />}
+      icon={<Check className="h-5 w-5 text-[var(--primary)]" />}
     />
   ));
 }
@@ -98,7 +98,7 @@ export function toastInfo(message: string, title?: string) {
       title={title}
       message={message}
       color="info"
-      icon={<Info className="h-5 w-5 text-[hsl(var(--accent))]" />}
+      icon={<Info className="h-5 w-5 text-[var(--accent)]" />}
     />
   ));
 }

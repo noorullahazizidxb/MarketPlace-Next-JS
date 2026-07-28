@@ -147,11 +147,11 @@ export default function CommentsInline({
           </Button>
         </form>
       ) : (
-        <div className="rounded-xl border border-[hsl(var(--border))] bg-[hsl(var(--muted))]/10 px-4 py-3 text-sm text-[hsl(var(--muted-foreground))] flex items-center justify-between gap-3">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-3 text-sm text-[var(--muted-foreground)] flex items-center justify-between gap-3">
           <span>{t("signInToComment")}</span>
           <Link
             href="/sign-in"
-            className="text-xs font-medium text-[hsl(var(--primary))] hover:underline underline-offset-2"
+            className="text-xs font-medium text-[var(--primary)] hover:underline underline-offset-2"
           >
             {t("signIn") || "Sign in"}
           </Link>
@@ -161,14 +161,14 @@ export default function CommentsInline({
         {localComments?.map((c: any) => (
           <div
             key={c.id}
-            className="px-3 py-2 rounded-xl bg-[hsl(var(--muted))]/10 flex items-start gap-3"
+            className="px-3 py-2 rounded-xl bg-[var(--muted)]/10 flex items-start gap-3"
           >
             <Link
               href={c.author?.id ? `/profile/${c.author.id}` : "#"}
               onClick={(e) => {
                 if (!c.author?.id) e.preventDefault();
               }}
-              className="size-8 rounded-full overflow-hidden bg-[hsl(var(--muted))]/10 flex-shrink-0 hover:opacity-90"
+              className="size-8 rounded-full overflow-hidden bg-[var(--muted)]/10 flex-shrink-0 hover:opacity-90"
             >
               {c.author?.photo ? (
                 <Image
@@ -179,7 +179,7 @@ export default function CommentsInline({
                   height={32}
                 />
               ) : (
-                <div className="w-8 h-8 grid place-items-center text-[hsl(var(--foreground))] text-xs font-semibold">
+                <div className="w-8 h-8 grid place-items-center text-[var(--foreground)] text-xs font-semibold">
                   {String(c.author?.fullName || c.author?.name || "?")
                     .slice(0, 1)
                     .toUpperCase()}

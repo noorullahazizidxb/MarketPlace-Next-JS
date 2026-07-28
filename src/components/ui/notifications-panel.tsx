@@ -326,7 +326,7 @@ export function NotificationsPanel({
             <div
               ref={contentRef}
               className={cn(
-                "rounded-2xl border bg-[hsl(var(--background))] text-[hsl(var(--foreground))] shadow-[0_0_0_1px_hsl(var(--border)),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative",
+                "rounded-2xl border bg-[var(--background)] text-[var(--foreground)] shadow-[0_0_0_1px_var(--border),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative",
                 anchor === "center"
                   ? "w-full max-w-md max-h-[84vh] overflow-y-auto p-4"
                   : "w-full",
@@ -334,13 +334,13 @@ export function NotificationsPanel({
               )}
             >
               {(markOneMutation.isPending || markAllMutation.isPending) && (
-                <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-[hsl(var(--background))/0.08] grid place-items-center">
+                <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-[color-mix(in oklab, var(--background) 8%, transparent)] grid place-items-center">
                   <div className="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                 </div>
               )}
-              <div className="flex items-center justify-between p-4 border-b border-[hsl(var(--border))]">
+              <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
-                  <div className="size-8 rounded-xl bg-gradient-to-br from-[hsl(var(--primary))/0.6] to-[hsl(var(--secondary))/0.5] grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
+                  <div className="size-8 rounded-xl bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 60%, transparent)] to-[color-mix(in oklab, var(--secondary) 50%, transparent)] grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
                     <Bell className="size-4" />
                   </div>
                   <div>
@@ -355,7 +355,7 @@ export function NotificationsPanel({
                 {unreadCount > 0 && (
                   <button
                     onClick={markAll}
-                    className="px-3 h-9 rounded-xl border border-[hsl(var(--border))] hover:bg-[hsl(var(--muted))]/30 text-sm"
+                    className="px-3 h-9 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/30 text-sm"
                   >
                     {t("markAllAsRead")}
                   </button>
@@ -413,13 +413,13 @@ export function NotificationsPanel({
                                     }}
                                     className={cn(
                                       "group relative rounded-2xl border p-3 pr-4 transition-colors overflow-hidden",
-                                      "border-[hsl(var(--border))] bg-[hsl(var(--card))]",
+                                      "border-[var(--border)] bg-[var(--card)]",
                                       unread &&
-                                      "ring-1 ring-[hsl(var(--accent))]/40"
+                                      "ring-1 ring-[var(--accent)]/40"
                                     )}
                                   >
-                                    <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[hsl(var(--accent))/0.12] opacity-0 group-active:opacity-100 pointer-events-none">
-                                      <span className="text-[10px] font-semibold text-[hsl(var(--accent))] rotate-6">
+                                    <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[color-mix(in oklab, var(--accent) 12%, transparent)] opacity-0 group-active:opacity-100 pointer-events-none">
+                                      <span className="text-[10px] font-semibold text-[var(--accent)] rotate-6">
                                         {t("swipe")}
                                       </span>
                                     </div>
@@ -428,8 +428,8 @@ export function NotificationsPanel({
                                         className={cn(
                                           "mt-0.5 size-9 rounded-xl grid place-items-center shadow-sm",
                                           unread
-                                            ? "bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))]"
-                                            : "bg-[hsl(var(--muted))] subtle"
+                                            ? "bg-[var(--accent)]/20 text-[var(--accent)]"
+                                            : "bg-[var(--muted)] subtle"
                                         )}
                                       >
                                         <Icon className="size-5" />
@@ -458,13 +458,13 @@ export function NotificationsPanel({
                                           {unread ? (
                                             <button
                                               onClick={() => markOne(n.id)}
-                                              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--accent))]/20 text-[hsl(var(--accent))] text-xs hover:bg-[hsl(var(--accent))]/30"
+                                              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--accent)]/20 text-[var(--accent)] text-xs hover:bg-[var(--accent)]/30"
                                             >
                                               <CheckCircle2 className="size-4" />
                                               {t("markAsRead")}
                                             </button>
                                           ) : (
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[hsl(var(--muted))] text-foreground/70 text-xs">
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--muted)] text-foreground/70 text-xs">
                                               <CheckCircle2 className="size-4" />
                                               {t("read")}
                                             </span>
