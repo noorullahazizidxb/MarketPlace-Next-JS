@@ -4,6 +4,7 @@ import type {
   SidebarSideOption,
   RadiusOption,
   BrandColor,
+  ThemeColorGroupId,
 } from "@repo/types";
 
 export const radiusOptions: RadiusOption[] = [
@@ -39,6 +40,62 @@ export const sidebarSideOptions: SidebarSideOption[] = [
   { name: "Right", value: "right" },
 ];
 
+export type ThemeColorGroup = {
+  id: ThemeColorGroupId;
+  label: string;
+  description: string;
+  cssVars: readonly string[];
+};
+
+/**
+ * Product-level color contract. Components consume semantic roles; preset
+ * hues can change without changing component code.
+ */
+export const themeColorGroups: ThemeColorGroup[] = [
+  {
+    id: "brand-actions",
+    label: "Brand & actions",
+    description: "Primary CTAs, selected states, secondary actions, and brand gradients.",
+    cssVars: ["--primary", "--primary-foreground", "--secondary", "--secondary-foreground", "--accent", "--accent-foreground", "--brand-gradient-start", "--brand-gradient-end", "--brand-gradient", "--brand-glow", "--hover-gradient-start", "--hover-gradient-end", "--hover-gradient"],
+  },
+  {
+    id: "surfaces-content",
+    label: "Surfaces & content",
+    description: "Page, card, popover, passive surface, and readable foreground pairs.",
+    cssVars: ["--background", "--foreground", "--card", "--card-foreground", "--popover", "--popover-foreground", "--muted", "--muted-foreground"],
+  },
+  {
+    id: "feedback",
+    label: "Feedback",
+    description: "Success, warning, information, and destructive states with contrast pairs.",
+    cssVars: ["--success", "--success-foreground", "--warning", "--warning-foreground", "--info", "--info-foreground", "--destructive", "--destructive-foreground"],
+  },
+  {
+    id: "boundaries-focus",
+    label: "Boundaries & focus",
+    description: "Borders, form inputs, and accessible keyboard focus indicators.",
+    cssVars: ["--border", "--input", "--ring"],
+  },
+  {
+    id: "data-visualization",
+    label: "Data visualization",
+    description: "Ordered series colors for charts and compact analytical views.",
+    cssVars: ["--chart-1", "--chart-2", "--chart-3", "--chart-4", "--chart-5"],
+  },
+  {
+    id: "navigation",
+    label: "Navigation",
+    description: "Sidebar surface, content, selected items, boundaries, and focus.",
+    cssVars: ["--sidebar", "--sidebar-foreground", "--sidebar-primary", "--sidebar-primary-foreground", "--sidebar-accent", "--sidebar-accent-foreground", "--sidebar-border", "--sidebar-ring"],
+  },
+  {
+    id: "commerce",
+    label: "Commerce",
+    description: "Price emphasis and sale messaging used by marketplace-style cards.",
+    cssVars: ["--price", "--price-sale"],
+  },
+];
+
 export const baseColors: BrandColor[] = [
   { name: "Primary", cssVar: "--primary" },
   { name: "Primary Foreground", cssVar: "--primary-foreground" },
@@ -48,6 +105,10 @@ export const baseColors: BrandColor[] = [
   { name: "Accent Foreground", cssVar: "--accent-foreground" },
   { name: "Muted", cssVar: "--muted" },
   { name: "Muted Foreground", cssVar: "--muted-foreground" },
+  { name: "Foreground", cssVar: "--foreground" },
+  { name: "Card Foreground", cssVar: "--card-foreground" },
+  { name: "Popover", cssVar: "--popover" },
+  { name: "Popover Foreground", cssVar: "--popover-foreground" },
   // ── Brand gradient ─────────────────────────────────────────────────────────
   // The start/end/glow tokens are editable solid colours.  The composite
   // --brand-gradient and --hover-gradient tokens hold computed linear-gradient()
@@ -69,6 +130,7 @@ export const baseColors: BrandColor[] = [
   { name: "Info", cssVar: "--info" },
   { name: "Info Foreground", cssVar: "--info-foreground" },
   { name: "Destructive", cssVar: "--destructive" },
+  { name: "Destructive Foreground", cssVar: "--destructive-foreground" },
   // ── Data visualization ─────────────────────────────────────────────────────
   { name: "Chart 1", cssVar: "--chart-1" },
   { name: "Chart 2", cssVar: "--chart-2" },
@@ -83,10 +145,12 @@ export const baseColors: BrandColor[] = [
   { name: "Sidebar Accent", cssVar: "--sidebar-accent" },
   { name: "Sidebar Accent Fg", cssVar: "--sidebar-accent-foreground" },
   { name: "Sidebar Border", cssVar: "--sidebar-border" },
+  { name: "Sidebar Ring", cssVar: "--sidebar-ring" },
   // ── Surface ────────────────────────────────────────────────────────────────
   { name: "Background", cssVar: "--background" },
   { name: "Card", cssVar: "--card" },
   { name: "Border", cssVar: "--border" },
+  { name: "Input", cssVar: "--input" },
   { name: "Ring", cssVar: "--ring" },
   // ── Price / e-commerce ─────────────────────────────────────────────────────
   { name: "Price", cssVar: "--price" },

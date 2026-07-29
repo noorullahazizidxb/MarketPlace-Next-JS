@@ -382,7 +382,7 @@ export default function ProfilePage() {
               />
             </div>
             <div className="flex-1 min-w-0">
-              <h1 className="app-text-heading sm:text-3xl font-semibold tracking-tight flex items-center gap-2">
+              <h1 className="app-text-h1 flex items-center gap-2">
                 {user?.fullName || user?.firstName || t("profileNameAnonymous")}
                 {user?.roles?.some((r: any) => r.role === "REPRESENTATIVE") && (
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-2xs border border-emerald-500/30">

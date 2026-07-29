@@ -40,10 +40,21 @@ export interface RadiusOption {
   value: string;
 }
 
-// Brand colors that map to CSS variables.
+export type ThemeColorGroupId =
+  | "brand-actions"
+  | "surfaces-content"
+  | "feedback"
+  | "boundaries-focus"
+  | "data-visualization"
+  | "navigation"
+  | "commerce";
+
+// Editable semantic colors that map to CSS variables.
 export interface BrandColor {
   name: string;
   cssVar: string;
+  group?: ThemeColorGroupId;
+  description?: string;
 }
 
 // A theme imported from outside the app.

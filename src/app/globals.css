@@ -700,6 +700,13 @@
   letter-spacing: var(--tracking-heading, -0.01em);
 }
 
+@utility app-text-h1 {
+  font-size: var(--text-h1);
+  line-height: var(--leading-h1, var(--leading-heading, 1.2));
+  font-weight: var(--weight-h1, var(--weight-heading));
+  letter-spacing: var(--tracking-heading, -0.01em);
+}
+
 /* Independent type axes for the few elements that only change weight,
    leading, or tracking without choosing another semantic font size. */
 @utility app-weight-body {

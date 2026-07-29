@@ -5,16 +5,13 @@
  * imported → tweakcn → brand → sidebar → color theme → radius → brandColors → typography/density.
  */
 import {
-  colorThemes,
-  brandThemes,
-  sidebarThemes,
-  tweakcnThemes,
   fontFamilyValues,
   fontSizeValues,
   contentWidthValues,
   defaultThemeSettings,
   normalizeResponsiveLayoutDensity,
   buildLayoutDensityOverrideCss,
+  buildPageDensityOverrideCss,
   getBaseDelta,
   densityViewportKeys,
 } from "@repo/constants";
@@ -23,6 +20,9 @@ import type {
   LayoutDensityTokens,
   ThemeSettings,
 } from "@repo/types/ui-context";
+import { resolveThemePresetStyles } from "./theme-preset-resolver";
+
+const DARK_SELECTOR = '.dark, [data-theme="dark"]';
 
 const resolveThemeLocale = (
   locale?: string | null,
@@ -40,76 +40,18 @@ function toCssProps(vars: Record<string, string>): string {
     .join("\n");
 }
 
-function pushPresetBlocks(
-  parts: string[],
-  light: Record<string, string>,
-  dark: Record<string, string>,
-) {
-  const lightProps = toCssProps(light);
-  const darkProps = toCssProps(dark);
-  if (lightProps) parts.push(`:root {\n${lightProps}\n}`);
-  if (darkProps) parts.push(`.dark {\n${darkProps}\n}`);
-}
-
 export function generateThemeCss(
   settings: ThemeSettings,
   locale?: string | null,
 ): string {
   const parts: string[] = [];
 
-  if (settings.importedTheme) {
-    pushPresetBlocks(
-      parts,
-      settings.importedTheme.light as Record<string, string>,
-      settings.importedTheme.dark as Record<string, string>,
-    );
-  } else if (settings.selectedTweakcnTheme) {
-    const preset = tweakcnThemes.find(
-      (t) => t.value === settings.selectedTweakcnTheme,
-    )?.preset;
-    if (preset) {
-      pushPresetBlocks(
-        parts,
-        preset.styles.light as Record<string, string>,
-        preset.styles.dark as Record<string, string>,
-      );
-    }
-  } else if (settings.selectedBrandTheme) {
-    const preset = brandThemes.find(
-      (t) => t.value === settings.selectedBrandTheme,
-    )?.preset;
-    if (preset) {
-      pushPresetBlocks(
-        parts,
-        preset.styles.light as Record<string, string>,
-        preset.styles.dark as Record<string, string>,
-      );
-    }
-  } else if (settings.selectedSidebarTheme) {
-    const preset = sidebarThemes.find(
-      (t) => t.value === settings.selectedSidebarTheme,
-    )?.preset;
-    if (preset) {
-      pushPresetBlocks(
-        parts,
-        preset.styles.light as Record<string, string>,
-        preset.styles.dark as Record<string, string>,
-      );
-    }
-  } else if (
-    settings.selectedTheme &&
-    settings.selectedTheme !== "default"
-  ) {
-    const preset = colorThemes.find(
-      (t) => t.value === settings.selectedTheme,
-    )?.preset;
-    if (preset) {
-      pushPresetBlocks(
-        parts,
-        preset.styles.light as Record<string, string>,
-        preset.styles.dark as Record<string, string>,
-      );
-    }
+  const preset = resolveThemePresetStyles(settings);
+  if (preset) {
+    const lightProps = toCssProps(preset.light);
+    const darkProps = toCssProps(preset.dark);
+    if (lightProps) parts.push(`:root {\n${lightProps}\n}`);
+    if (darkProps) parts.push(`${DARK_SELECTOR} {\n${darkProps}\n}`);
   }
 
   if (
@@ -175,19 +117,10 @@ export function generateThemeCss(
   }
 
   // Page-scoped density overrides (layoutDensityByPage → [data-app-page="…"])
-  const byPage = settings.layoutDensityByPage;
-  if (byPage && typeof byPage === "object") {
-    for (const [pageId, tokens] of Object.entries(byPage)) {
-      if (!tokens || !pageId) continue;
-      const pageDensity = normalizeResponsiveLayoutDensity(
-        tokens as LayoutDensityTokens | ResponsiveLayoutDensity,
-      );
-      const pageCss = buildLayoutDensityOverrideCss(pageDensity, {
-        selector: `[data-app-page="${pageId}"]`,
-      });
-      if (pageCss) parts.push(pageCss);
-    }
-  }
+  const pageDensityCss = buildPageDensityOverrideCss(
+    settings.layoutDensityByPage,
+  );
+  if (pageDensityCss) parts.push(pageDensityCss);
 
   return parts.join("\n");
 }

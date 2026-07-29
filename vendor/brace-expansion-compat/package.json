@@ -1,0 +1,9 @@
+{
+  "name": "@devminds/brace-expansion-compat",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.cjs",
+  "dependencies": {
+    "brace-expansion-v5": "npm:brace-expansion@5.0.8"
+  }
+}

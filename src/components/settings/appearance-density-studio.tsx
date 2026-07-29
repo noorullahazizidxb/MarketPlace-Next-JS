@@ -31,6 +31,7 @@ import {
   formatLayoutDensityCSSValue,
   LAYOUT_DENSITY_UNITLESS_KEYS,
   normalizeResponsiveLayoutDensity,
+  parseLayoutDensityNumeric,
   resolveLayoutDensityToken,
   setDefaultTabTokenValue,
   setViewportTokenValue,
@@ -53,42 +54,14 @@ import {
 } from "@repo/ui";
 import { AppearanceCategoryLivePreviewPanel } from "@/components/settings/appearance-category-live-preview-panel";
 import { AppearancePageLivePreviewPanel } from "@/components/settings/appearance-page-live-preview-panel";
-import type { AppearanceDensityTab } from "@/components/settings/appearance-preview-registry";
+import {
+  APPEARANCE_PAGE_OPTIONS,
+  type AppearanceDensityTab,
+} from "@/components/settings/appearance-preview-registry";
 
 type LayoutDensityTokenKey = keyof LayoutDensityTokens;
 type DensityScope = "default" | DensityViewportKey;
 type PageScope = "global" | AdminPageId;
-
-// Marketplace pages with data-app-page attributes (used for per-page density overrides)
-const ADMIN_PAGES: Array<{ id: AdminPageId; label: string }> = [
-  { id: "listings", label: "Listings" },
-  { id: "listing-detail", label: "Listing detail" },
-  { id: "listings-create", label: "Create listing" },
-  { id: "my-listings", label: "My listings" },
-  { id: "blogs", label: "Blogs" },
-  { id: "blog-detail", label: "Blog detail" },
-  { id: "blogs-create", label: "Create blog" },
-  { id: "profile", label: "Profile" },
-  { id: "profile-public", label: "Public profile" },
-  { id: "about", label: "About" },
-  { id: "contact", label: "Contact" },
-  { id: "sign-in", label: "Sign in" },
-  { id: "sign-up", label: "Sign up" },
-  { id: "admin", label: "Admin" },
-  { id: "admin-notifications", label: "Admin notifications" },
-  { id: "admin-ads", label: "Admin ads" },
-  { id: "admin-categories", label: "Admin categories" },
-  { id: "admin-contacts", label: "Admin contacts" },
-  { id: "admin-stories", label: "Admin stories" },
-  { id: "admin-users", label: "Admin users" },
-  { id: "admin-manage-content-status", label: "Content status" },
-  { id: "pendings", label: "Pendings" },
-  { id: "stories", label: "Stories" },
-  { id: "settings", label: "Settings" },
-  { id: "settings-appearance", label: "Appearance" },
-  { id: "settings-themes", label: "Themes" },
-  { id: "shell-sidebar", label: "Sidebar" },
-];
 
 type TokenMeta = {
   key: LayoutDensityTokenKey;
@@ -588,9 +561,12 @@ export function AppearanceDensityStudio() {
       : themeSettings.layoutDensityByPage?.[pageScope];
   const previewStyle = buildPreviewStyle(density, scope, pageTokenOverrides);
   const hasAnyOverride = Boolean(
-    density &&
-    (Object.keys(density.base ?? {}).length > 0 ||
-      Object.keys(density.viewports ?? {}).length > 0),
+    (density &&
+      (Object.keys(density.base ?? {}).length > 0 ||
+        Object.keys(density.viewports ?? {}).length > 0)) ||
+      Object.values(themeSettings.layoutDensityByPage ?? {}).some(
+        (tokens) => tokens && Object.keys(tokens).length > 0,
+      ),
   );
 
   const patchToken = React.useCallback(
@@ -599,7 +575,7 @@ export function AppearanceDensityStudio() {
       if (pageScope !== "global") {
         const current = { ...(themeSettings.layoutDensityByPage ?? {}) };
         const page = { ...(current[pageScope] ?? {}) };
-        page[key] = value as unknown as string;
+        page[key] = formatLayoutDensityCSSValue(key, value);
         updateThemeSettings(
           { layoutDensityByPage: { ...current, [pageScope]: page } },
           { persist: false },
@@ -648,15 +624,20 @@ export function AppearanceDensityStudio() {
   }, [scope, pageScope, themeSettings.layoutDensity, themeSettings.layoutDensityByPage, updateThemeSettings]);
 
   const resetAll = React.useCallback(() => {
-    updateThemeSettings({ layoutDensity: null }, { persist: false });
+    updateThemeSettings(
+      { layoutDensity: null, layoutDensityByPage: null },
+      { persist: false },
+    );
   }, [updateThemeSettings]);
 
   const renderControl = (token: TokenMeta) => {
     const isUnitless = UNITLESS_KEYS.has(token.key);
     // When in page scope, read from per-page overrides; fallback to global
     const currentValue = pageScope !== "global"
-      ? ((themeSettings.layoutDensityByPage?.[pageScope]?.[token.key] as unknown as number | undefined)
-        ?? resolveLayoutDensityToken(scopeViewport, token.key, density))
+      ? parseLayoutDensityNumeric(
+          themeSettings.layoutDensityByPage?.[pageScope]?.[token.key],
+          resolveLayoutDensityToken(scopeViewport, token.key, density),
+        )
       : resolveLayoutDensityToken(scopeViewport, token.key, density);
     const displayUnit = token.unit !== undefined ? token.unit : (isUnitless ? "" : "rem");
     return (
@@ -764,7 +745,7 @@ export function AppearanceDensityStudio() {
             >
               Global (None)
             </button>
-            {ADMIN_PAGES.map((p) => (
+            {APPEARANCE_PAGE_OPTIONS.map((p) => (
               <button
                 key={p.id}
                 type="button"
@@ -824,7 +805,7 @@ export function AppearanceDensityStudio() {
                       <div className="mb-2 flex items-center gap-1.5">
                         <span className="app-text-caption uppercase app-tracking-caps text-muted-foreground">
                           {pageScope !== "global"
-                            ? `Page override — ${ADMIN_PAGES.find((p) => p.id === pageScope)?.label ?? pageScope}`
+                            ? `Page override — ${APPEARANCE_PAGE_OPTIONS.find((p) => p.id === pageScope)?.label ?? pageScope}`
                             : scope === "default"
                               ? "Default fallback values"
                               : `${activeBreakpoint.label} viewport overrides`}
@@ -872,7 +853,7 @@ export function AppearanceDensityStudio() {
 
                     <p className="app-text-caption text-muted-foreground">
                       {pageScope !== "global"
-                        ? `Overriding tokens for [data-admin-page="${pageScope}"]. Applied on top of global density when that page is active.`
+                        ? `Overriding tokens for [data-app-page="${pageScope}"]. Applied on top of global density at every viewport while that page is active.`
                         : scope === "default"
                           ? "Default values feed every viewport unless a more specific breakpoint override exists."
                           : `You are editing ${activeBreakpoint.hint}. Changes update live immediately and are saved only when you press Save Changes.`}

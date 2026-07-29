@@ -16,7 +16,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../atoms/shadcn/tabs";
-import { useIsMobile, useThemeManager, useSidebarConfig, useTheme } from "@repo/hooks";
+import { useIsMobile, useSidebarConfig, useTheme } from "@repo/hooks";
 import {
   defaultSidebarSettings,
   defaultThemeSettings,
@@ -44,12 +44,6 @@ export function ThemeCustomizer({
   sideOverride,
   layout = "auto",
 }: ThemeCustomizerProps) {
-  const {
-    applyImportedTheme,
-    isDarkMode,
-    resetTheme,
-    applyRadius,
-  } = useThemeManager();
   const { themeSettings, updateThemeSettings } = useTheme();
   const { config: sidebarConfig, updateConfig: updateSidebarConfig } =
     useSidebarConfig();
@@ -64,20 +58,9 @@ export function ThemeCustomizer({
   const selectedBrandTheme = themeSettings.selectedBrandTheme;
   const selectedSidebarTheme = themeSettings.selectedSidebarTheme;
   const selectedRadius = themeSettings.selectedRadius;
-  const importedTheme = themeSettings.importedTheme;
 
   const handleReset = () => {
-    // Complete reset to application defaults
-
     updateThemeSettings(defaultThemeSettings);
-
-    // 2. Completely remove all custom CSS variables
-    resetTheme();
-
-    // 3. Reset the radius to default
-    applyRadius(defaultThemeSettings.selectedRadius);
-
-    // 4. Reset sidebar to defaults
     updateSidebarConfig(defaultSidebarSettings);
   };
 
@@ -89,9 +72,6 @@ export function ThemeCustomizer({
       selectedBrandTheme: "",
       selectedSidebarTheme: "",
     });
-
-    // Apply the imported theme
-    applyImportedTheme(themeData, isDarkMode);
   };
 
   const handleImportClick = () => {

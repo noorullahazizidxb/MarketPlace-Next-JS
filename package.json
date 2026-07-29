@@ -65,13 +65,12 @@
     "framer-motion": "^11.2.10",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.474.0",
-    "next": "^16.1.6",
-    "postcss": "^8.4.45",
+    "next": "16.2.12",
     "punycode": "^2.3.1",
-    "react": "^19.2.4",
+    "react": "19.2.8",
     "react-country-flag": "^3.1.0",
     "react-day-picker": "^10.0.1",
-    "react-dom": "^19.2.4",
+    "react-dom": "19.2.8",
     "react-hook-form": "^7.62.0",
     "react-hot-toast": "^2.6.0",
     "react-icons": "^5.7.0",
@@ -91,13 +90,19 @@
   "devDependencies": {
     "@playwright/test": "^1.52.0",
     "@types/node": "^25.0.3",
-    "@types/react": "19.1.0",
-    "@types/react-dom": "19.1.0",
+    "@types/react": "19.2.17",
+    "@types/react-dom": "19.2.3",
+    "brace-expansion": "file:vendor/brace-expansion-compat",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "16.2.12",
     "msw": "^2.14.6",
-    "postcss": "^8.5.6",
-    "shadcn": "^3.8.5",
-    "tailwindcss-animate": "^1.0.7",
+    "postcss": "8.5.24",
     "tw-animate-css": "^1.4.0",
     "typescript": "6.0.2"
+  },
+  "overrides": {
+    "brace-expansion": "$brace-expansion",
+    "postcss": "$postcss",
+    "sharp": "0.35.3"
   }
 }

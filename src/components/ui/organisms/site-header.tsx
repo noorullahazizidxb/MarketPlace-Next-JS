@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import Link from "next/link";
 import { Globe } from "lucide-react";
 import { Button } from "../atoms/shadcn/button";
 import { Separator } from "../atoms/shadcn/separator";
@@ -151,12 +152,12 @@ export function SiteHeader({
           >
             {/* ── Desktop-only nav links ────────────────────────────── */}
             <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
-              <a href="/listings" className="dark:text-foreground">
+              <Link href="/listings" className="dark:text-foreground">
                 <span className="inline-flex items-center gap-1.5">
                   <Globe className="app-icon-sm" aria-hidden="true" />
                   <span>Listings</span>
                 </span>
-              </a>
+              </Link>
             </Button>
 
             {/* ── Desktop right slot (wallet + language) ────────────── */}

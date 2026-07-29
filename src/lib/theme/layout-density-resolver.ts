@@ -411,6 +411,30 @@ export const buildLayoutDensityOverrideCss = (
     .join("\n\n");
 };
 
+/**
+ * Builds absolute page-scoped overrides. Page values intentionally sit on top
+ * of the responsive global density at every viewport, matching the live
+ * preview and avoiding a second, competing breakpoint model per page.
+ */
+export const buildPageDensityOverrideCss = (
+  byPage:
+    | Partial<Record<string, LayoutDensityTokens | null | undefined>>
+    | null
+    | undefined,
+): string => {
+  if (!byPage) return "";
+
+  return Object.entries(byPage)
+    .map(([pageId, tokens]) => {
+      if (!pageId || !tokens) return "";
+      const declarations = formatDensityTokenCssDeclarations(tokens);
+      if (!declarations) return "";
+      return `[data-app-page="${pageId}"] {\n${declarations}\n}`;
+    })
+    .filter(Boolean)
+    .join("\n\n");
+};
+
 /** XL-anchor value shown in the Default tab slider. */
 export const getDefaultTabDisplayValue = (
   density: ResponsiveLayoutDensity | null | undefined,
@@ -457,7 +481,6 @@ export const setViewportTokenValue = (
   key: keyof LayoutDensityTokens,
   absoluteValue: number,
 ): ResponsiveLayoutDensity => {
-  const baseline = getViewportBaseline(viewport, key);
   const expectedWithoutOverride = applyBaseDeltaToViewport(
     viewport,
     key,

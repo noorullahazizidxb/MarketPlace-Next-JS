@@ -3,17 +3,14 @@
 import * as React from "react";
 // Importing all the default settings and lists of colors/fonts from the constants package.
 import {
-  colorThemes,
-  brandThemes,
-  sidebarThemes,
   defaultThemeSettings,
   densityViewportKeys,
-  tweakcnThemes,
   fontFamilyValues,
   fontSizeValues,
   contentWidthValues,
   normalizeResponsiveLayoutDensity,
   buildLayoutDensityOverrideCss,
+  buildPageDensityOverrideCss,
   LAYOUT_DENSITY_CSS_VAR_MAP,
   getBaseDelta,
 } from "@repo/constants";
@@ -28,6 +25,10 @@ import {
   fetchUiContextState,
   patchUiContextState,
 } from "./ui-context/context-store";
+import {
+  replaceAppliedThemeVariables,
+  resolveThemePresetStyles,
+} from "./theme-preset-resolver";
 
 type ThemeProviderProps = {
   children: React.ReactNode;
@@ -74,94 +75,6 @@ export function useTheme() {
   return React.useContext(ThemeProviderContext);
 }
 
-// This helper function removes old theme styles so we can apply new ones cleanly.
-const resetThemeVars = () => {
-  const root = document.documentElement;
-  const allPossibleVars = [
-    "background",
-    "foreground",
-    "card",
-    "card-foreground",
-    "popover",
-    "popover-foreground",
-    "primary",
-    "primary-foreground",
-    "secondary",
-    "secondary-foreground",
-    "muted",
-    "muted-foreground",
-    "accent",
-    "accent-foreground",
-    "destructive",
-    "destructive-foreground",
-    "border",
-    "input",
-    "ring",
-    "radius",
-    "chart-1",
-    "chart-2",
-    "chart-3",
-    "chart-4",
-    "chart-5",
-    "sidebar",
-    "sidebar-background",
-    "sidebar-foreground",
-    "sidebar-primary",
-    "sidebar-primary-foreground",
-    "sidebar-accent",
-    "sidebar-accent-foreground",
-    "sidebar-border",
-    "sidebar-ring",
-    "font-sans",
-    "font-serif",
-    "font-mono",
-    "shadow-2xs",
-    "shadow-xs",
-    "shadow-sm",
-    "shadow",
-    "shadow-md",
-    "shadow-lg",
-    "shadow-xl",
-    "shadow-2xl",
-    "spacing",
-    "tracking-normal",
-    "card-header",
-    "card-content",
-    "card-footer",
-    "muted-background",
-    "accent-background",
-    "destructive-background",
-    "warning",
-    "warning-foreground",
-    "success",
-    "success-foreground",
-    "info",
-    "info-foreground",
-    "brand-gradient-start",
-    "brand-gradient-end",
-    "brand-gradient",
-    "brand-glow",
-    "app-font-family",
-    "app-font-size",
-    "app-content-width",
-    "app-sidebar-width",
-    "heading-text-decoration",
-  ];
-
-  allPossibleVars.forEach((varName) => {
-    root.style.removeProperty(`--${varName}`);
-  });
-
-  const inlineStyles = root.style;
-  for (let i = inlineStyles.length - 1; i >= 0; i -= 1) {
-    const property = inlineStyles.item(i);
-    if (!property) continue;
-    if (property.startsWith("--")) {
-      root.style.removeProperty(property);
-    }
-  }
-};
-
 const LAYOUT_DENSITY_CSS_MAP = LAYOUT_DENSITY_CSS_VAR_MAP;
 
 const DENSITY_STYLE_TAG_ID = "responsive-layout-density-overrides";
@@ -196,19 +109,10 @@ function applyLayoutDensityCssVars(settings: ThemeSettings) {
   );
   const styleTag = getOrCreateDensityStyleTag();
   const densityCss = buildLayoutDensityOverrideCss(density);
-  const byPage = settings.layoutDensityByPage;
-  const pageParts: string[] = [];
-  if (byPage) {
-    for (const [pageId, tokens] of Object.entries(byPage)) {
-      if (!tokens || Object.keys(tokens).length === 0) continue;
-      const pageCss = buildLayoutDensityOverrideCss(
-        { base: undefined, viewports: { xl: tokens } },
-        { selector: `[data-app-page="${pageId}"]` },
-      );
-      if (pageCss) pageParts.push(pageCss);
-    }
-  }
-  styleTag.textContent = [densityCss, ...pageParts].filter(Boolean).join("\n");
+  const pageDensityCss = buildPageDensityOverrideCss(
+    settings.layoutDensityByPage,
+  );
+  styleTag.textContent = [densityCss, pageDensityCss].filter(Boolean).join("\n");
 }
 
 const resolveIsDarkMode = (mode: ThemeMode) => {
@@ -268,6 +172,14 @@ const cloneThemeSettings = (settings: ThemeSettings): ThemeSettings => ({
     }
     : null,
   layoutDensity: cloneResponsiveLayoutDensity(settings.layoutDensity),
+  layoutDensityByPage: settings.layoutDensityByPage
+    ? Object.fromEntries(
+        Object.entries(settings.layoutDensityByPage).map(([pageId, tokens]) => [
+          pageId,
+          { ...(tokens ?? {}) },
+        ]),
+      )
+    : null,
 });
 
 const areThemeSettingsEqual = (a: ThemeSettings, b: ThemeSettings): boolean =>
@@ -278,58 +190,14 @@ export const applyThemeSettings = (
   settings: ThemeSettings,
   isDarkMode: boolean,
 ) => {
-  resetThemeVars();
   const root = document.documentElement;
   const body = document.body;
 
-  if (settings.importedTheme) {
-    const themeVars = isDarkMode
-      ? settings.importedTheme.dark
-      : settings.importedTheme.light;
-    Object.entries(themeVars).forEach(([variable, value]) => {
-      root.style.setProperty(`--${variable}`, value);
-    });
-  } else if (settings.selectedTweakcnTheme) {
-    const preset = tweakcnThemes.find(
-      (theme) => theme.value === settings.selectedTweakcnTheme,
-    )?.preset;
-    if (preset) {
-      const styles = isDarkMode ? preset.styles.dark : preset.styles.light;
-      Object.entries(styles).forEach(([key, value]) => {
-        root.style.setProperty(`--${key}`, value);
-      });
-    }
-  } else if (settings.selectedBrandTheme) {
-    const preset = brandThemes.find(
-      (theme) => theme.value === settings.selectedBrandTheme,
-    )?.preset;
-    if (preset) {
-      const styles = isDarkMode ? preset.styles.dark : preset.styles.light;
-      Object.entries(styles).forEach(([key, value]) => {
-        root.style.setProperty(`--${key}`, value);
-      });
-    }
-  } else if (settings.selectedSidebarTheme) {
-    const preset = sidebarThemes.find(
-      (theme) => theme.value === settings.selectedSidebarTheme,
-    )?.preset;
-    if (preset) {
-      const styles = isDarkMode ? preset.styles.dark : preset.styles.light;
-      Object.entries(styles).forEach(([key, value]) => {
-        root.style.setProperty(`--${key}`, value);
-      });
-    }
-  } else if (settings.selectedTheme) {
-    const preset = colorThemes.find(
-      (theme) => theme.value === settings.selectedTheme,
-    )?.preset;
-    if (preset) {
-      const styles = isDarkMode ? preset.styles.dark : preset.styles.light;
-      Object.entries(styles).forEach(([key, value]) => {
-        root.style.setProperty(`--${key}`, value);
-      });
-    }
-  }
+  const preset = resolveThemePresetStyles(settings);
+  replaceAppliedThemeVariables(
+    root,
+    preset ? (isDarkMode ? preset.dark : preset.light) : {},
+  );
 
   if (settings.selectedRadius) {
     root.style.setProperty("--radius", settings.selectedRadius);
@@ -381,6 +249,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   initialThemeSettings,
   ...props
 }) => {
+  // Kept for API compatibility with the former localStorage-backed provider.
+  void _storageKey;
   const initialResolvedSettings = React.useMemo<ThemeSettings>(() => {
     if (initialThemeSettings) {
       return cloneThemeSettings({
@@ -533,6 +403,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
     const isDarkMode = resolveIsDarkMode(themeSettings.mode);
     root.classList.add(isDarkMode ? "dark" : "light");
+    root.dataset.theme = isDarkMode ? "dark" : "light";
     applyThemeSettings(themeSettings, isDarkMode);
     setIsReady(true);
   }, [themeSettings, isHydrating]);

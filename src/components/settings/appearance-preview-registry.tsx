@@ -230,6 +230,11 @@ const PAGE_WIDGET_PREVIEW_LOADERS: Partial<Record<AdminPageId, PreviewLoader>> =
   "settings-appearance": async () => ({ default: TypographyPreview }),
 };
 
+/** Every page offered by Appearance Studio has a registered live preview. */
+export const APPEARANCE_PAGE_OPTIONS = (
+  Object.keys(PAGE_WIDGET_PREVIEW_LOADERS) as AdminPageId[]
+).map((id) => ({ id, label: PAGE_LABELS[id] ?? id }));
+
 export const CATEGORY_WIDGET_PAGE_MAP: Record<AppearanceDensityTab, AdminPageId> = {
   typography: "listings",
   weights: "profile",

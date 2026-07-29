@@ -25,9 +25,10 @@ import {
   sidebarThemes,
   radiusOptions,
   baseColors,
+  themeColorGroups,
 } from "@repo/constants";
 import { ColorPicker } from "../../molecules/color-picker";
-import type { ImportedTheme, ColorTheme } from "@repo/types";
+import type { ImportedTheme } from "@repo/types";
 // Circular transition CSS is imported globally by the host app (apps/admin/app/globals.css)
 // to avoid global CSS imports inside component modules. Do not import it here.
 
@@ -113,9 +114,6 @@ export function ThemeTab({
     isDarkMode,
     brandColorsValues,
     setBrandColorsValues,
-    applyTheme,
-    applyTweakcnTheme,
-    applyRadius,
     handleColorChange,
   } = useThemeManager();
 
@@ -132,7 +130,6 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({}); // Clear brand colors state
     setImportedTheme(null); // Clear imported theme
-    applyTheme(randomTheme.value, isDarkMode);
   };
 
   const handleRandomTweakcn = () => {
@@ -146,7 +143,6 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({}); // Clear brand colors state
     setImportedTheme(null); // Clear imported theme
-    applyTweakcnTheme(randomTheme.preset, isDarkMode);
   };
 
   const handleRandomBrand = () => {
@@ -159,7 +155,6 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({});
     setImportedTheme(null);
-    applyTweakcnTheme(randomTheme.preset, isDarkMode);
   };
 
   const handleRandomSidebar = () => {
@@ -172,12 +167,10 @@ export function ThemeTab({
     setSelectedBrandTheme("");
     setBrandColorsValues({});
     setImportedTheme(null);
-    applyTweakcnTheme(randomTheme.preset, isDarkMode);
   };
 
   const handleRadiusSelect = (radius: string) => {
     setSelectedRadius(radius);
-    applyRadius(radius);
   };
 
   const handleLightMode = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -216,7 +209,6 @@ export function ThemeTab({
             setSelectedSidebarTheme(""); // Clear sidebar selection
             setBrandColorsValues({}); // Clear brand colors state
             setImportedTheme(null); // Clear imported theme
-            applyTheme(value, isDarkMode);
           }}
         >
           <SelectTrigger className="w-full cursor-pointer">
@@ -267,12 +259,6 @@ export function ThemeTab({
             setSelectedSidebarTheme(""); // Clear sidebar selection
             setBrandColorsValues({}); // Clear brand colors state
             setImportedTheme(null); // Clear imported theme
-            const selectedPreset = tweakcnThemes.find(
-              (t) => t.value === value,
-            )?.preset;
-            if (selectedPreset) {
-              applyTweakcnTheme(selectedPreset, isDarkMode);
-            }
           }}
         >
           <SelectTrigger className="w-full cursor-pointer">
@@ -323,12 +309,6 @@ export function ThemeTab({
             setSelectedSidebarTheme("");
             setBrandColorsValues({});
             setImportedTheme(null);
-            const selectedPreset = brandThemes.find(
-              (t) => t.value === value,
-            )?.preset;
-            if (selectedPreset) {
-              applyTweakcnTheme(selectedPreset, isDarkMode);
-            }
           }}
         >
           <SelectTrigger className="w-full cursor-pointer">
@@ -379,12 +359,6 @@ export function ThemeTab({
             setSelectedBrandTheme("");
             setBrandColorsValues({});
             setImportedTheme(null);
-            const selectedPreset = sidebarThemes.find(
-              (t) => t.value === value,
-            )?.preset;
-            if (selectedPreset) {
-              applyTweakcnTheme(selectedPreset, isDarkMode);
-            }
           }}
         >
           <SelectTrigger className="w-full cursor-pointer">
@@ -474,37 +448,46 @@ export function ThemeTab({
         </Button>
       </div>
 
-      {/* Brand Colors Section */}
+      {/* Semantic color contract */}
       <Accordion
-        type="single"
-        collapsible
-        className="w-full border-b rounded-lg"
+        type="multiple"
+        className="w-full space-y-2"
       >
-        <AccordionItem
-          value="brand-colors"
-          className="border border-border rounded-lg overflow-hidden"
-        >
-          <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50 transition-colors">
-            <Label className="app-text-body cursor-pointer">
-              Brand Colors
-            </Label>
-          </AccordionTrigger>
-          <AccordionContent className="px-4 pb-4 pt-2 space-y-3 border-t border-border bg-muted/20">
-            {baseColors.map((color) => (
-              <div
-                key={color.cssVar}
-                className="flex items-center justify-between"
-              >
-                <ColorPicker
-                  label={color.name}
-                  cssVar={color.cssVar}
-                  value={brandColorsValues[color.cssVar] || ""}
-                  onChange={handleColorChange}
-                />
-              </div>
-            ))}
-          </AccordionContent>
-        </AccordionItem>
+        {themeColorGroups.map((group) => {
+          const colors = group.cssVars.flatMap((cssVar) => {
+            const color = baseColors.find((item) => item.cssVar === cssVar);
+            return color ? [color] : [];
+          });
+          if (colors.length === 0) return null;
+
+          return (
+            <AccordionItem
+              key={group.id}
+              value={group.id}
+              className="overflow-hidden rounded-lg border border-border"
+            >
+              <AccordionTrigger className="px-4 py-3 hover:no-underline hover:bg-muted/50">
+                <span className="min-w-0 text-left">
+                  <span className="block app-text-body">{group.label}</span>
+                  <span className="mt-0.5 block app-text-micro font-normal text-muted-foreground">
+                    {group.description}
+                  </span>
+                </span>
+              </AccordionTrigger>
+              <AccordionContent className="space-y-3 border-t border-border bg-muted/20 px-4 pb-4 pt-3">
+                {colors.map((color) => (
+                  <ColorPicker
+                    key={color.cssVar}
+                    label={color.name}
+                    cssVar={color.cssVar}
+                    value={brandColorsValues[color.cssVar] || ""}
+                    onChange={handleColorChange}
+                  />
+                ))}
+              </AccordionContent>
+            </AccordionItem>
+          );
+        })}
       </Accordion>
 
       {/* Tweakcn */}

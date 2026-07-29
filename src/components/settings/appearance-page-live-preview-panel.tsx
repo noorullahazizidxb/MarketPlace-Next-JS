@@ -139,7 +139,7 @@ export function AppearancePageLivePreviewPanel({
             {selectedPage && PagePreview && (
                 <>
                     <p className="app-text-caption text-muted-foreground">
-                        Live source page: {resolvePreviewPageLabel(selectedPage)} · viewport{" "}
+                        Preview template: {resolvePreviewPageLabel(selectedPage)} · viewport{" "}
                         {logicalWidth}px
                         {scale < 1 ? ` · zoomed to ${Math.round(scale * 100)}%` : null}
                     </p>
