@@ -66,7 +66,7 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
         ) : null}
       </div>
 
-      <p className="text-center text-xs text-[var(--muted-foreground)]">
+      <p className="text-center app-text-caption text-[var(--muted-foreground)]">
         {t("socialAuthPrompt")}
       </p>
     </div>

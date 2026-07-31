@@ -190,14 +190,14 @@ function ActionButton({
   variant?: "default" | "accent" | "destructive";
 }) {
   const base =
-    "inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-medium shadow-sm border backdrop-blur transition-all disabled:opacity-50";
+    "inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 app-text-caption font-medium shadow-sm border backdrop-blur transition-all disabled:opacity-50";
   const variants: Record<string, string> = {
     default:
       "bg-[var(--background)]/70 border-[var(--border)] hover:bg-[var(--muted)]/40",
     accent:
       "bg-[var(--accent)]/20 border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent)]/30",
     destructive:
-      "bg-red-500/15 border-red-500/30 text-red-500 hover:bg-red-500/25",
+      "bg-destructive/15 border-destructive/40 text-destructive hover:bg-destructive/25",
   };
   return (
     <button

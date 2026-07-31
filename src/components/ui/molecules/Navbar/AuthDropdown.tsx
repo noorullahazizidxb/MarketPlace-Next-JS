@@ -110,7 +110,7 @@ export function AuthDropdown({
 
         <DropdownMenuItem
           onClick={onLogout}
-          className="cursor-pointer text-red-500 hover:text-red-600 focus:text-red-600"
+          className="cursor-pointer text-destructive hover:text-destructive focus:text-destructive"
         >
           <LogOut className="mr-2 app-icon-sm" />
           Log out

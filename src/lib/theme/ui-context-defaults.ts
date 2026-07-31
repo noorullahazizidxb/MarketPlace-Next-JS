@@ -156,7 +156,6 @@ export const defaultLayoutDensityTokens: LayoutDensityTokens = {
   sidebarWidth: sidebarWidthValues.comfortable,
   pillH: "1.75rem",
   pillPx: "0.625rem",
-  tablePairCol: "22rem",
   loadingSpinnerScale: "1.5",
   // Leading (line-height) — unitless decimals
   leadingBody: "1.5",
@@ -253,7 +252,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.5rem",
     pillH: "1.4rem",
     pillPx: "0.375rem",
-    tablePairCol: "14rem",
     loadingSpinnerScale: "1",
   },
   sm: {
@@ -315,7 +313,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.5625rem",
     pillH: "1.5rem",
     pillPx: "0.4375rem",
-    tablePairCol: "16rem",
     loadingSpinnerScale: "1",
   },
   md: {
@@ -377,7 +374,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.6875rem",
     pillH: "1.55rem",
     pillPx: "0.5rem",
-    tablePairCol: "18rem",
     loadingSpinnerScale: "1.5",
   },
   lg: {
@@ -439,7 +435,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.8125rem",
     pillH: "1.65rem",
     pillPx: "0.5625rem",
-    tablePairCol: "20rem",
     loadingSpinnerScale: "1.5",
   },
   xl: defaultLayoutDensityTokens,

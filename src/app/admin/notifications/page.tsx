@@ -580,7 +580,7 @@ export default function NotificationsAdminPage() {
                             size="sm"
                             onClick={() => setConfirmDelete(n)}
                           >
-                            <Trash2 className="app-icon-sm text-red-500" />
+                            <Trash2 className="app-icon-sm text-destructive" />
                           </Button>
                           <button
                             onClick={() => toggleExpand(n.id)}
@@ -664,7 +664,7 @@ export default function NotificationsAdminPage() {
                                           ).toLocaleString()
                                           : "—"}
                                       </td>
-                                      <td className="p-2 align-top app-text-body text-red-600">
+                                      <td className="p-2 align-top app-text-body text-destructive">
                                         {r.deliveryError || ""}
                                       </td>
                                       <td className="p-2 align-top">
@@ -1027,7 +1027,7 @@ function CreateForm({
       <h3 className="app-text-heading-sm font-semibold">{t("createNotification")}</h3>
       <p className="app-text-caption subtle mt-1">{t("createNotificationHint")}</p>
       {errors.length > 0 && (
-        <ul className="mt-3 space-y-1 app-text-caption text-red-500">
+        <ul className="mt-3 space-y-1 app-text-caption text-destructive">
           {errors.map((e) => (
             <li key={e}>{e}</li>
           ))}

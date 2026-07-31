@@ -40,7 +40,7 @@ const Hero: React.FC<{
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="text-2xl sm:text-3xl font-extrabold tracking-tight"
+        className="app-text-h2 sm:app-text-h1 font-extrabold tracking-tight"
       >
         Admin Stories
       </motion.h1>
@@ -99,7 +99,7 @@ const StoryCard: React.FC<{
       />
     </button>
     <div className="p-4">
-      <div className="flex items-center gap-2 text-xs subtle">
+      <div className="flex items-center gap-2 app-text-caption subtle">
         <Link
           href={s.user?.id ? `/profile/${s.user.id}` : "#"}
           onClick={(e) => {
@@ -116,7 +116,7 @@ const StoryCard: React.FC<{
                 className="w-7 h-7 object-cover"
               />
             ) : (
-              <div className="text-[10px] font-semibold">
+              <div className="app-text-micro font-semibold">
                 {(s.user?.fullName || "S").slice(0, 1)}
               </div>
             )}
@@ -135,7 +135,7 @@ const StoryCard: React.FC<{
           </Badge>
         )}
       </div>
-      <h3 className="mt-2 text-base font-semibold line-clamp-2">{s.title}</h3>
+      <h3 className="mt-2 app-text-body font-semibold line-clamp-2">{s.title}</h3>
       <div className="mt-3 flex items-center gap-2">
         <Button variant="secondary" onClick={onView} size="sm">
           View
@@ -145,7 +145,7 @@ const StoryCard: React.FC<{
         </Button>
         <Button
           variant="secondary"
-          className="text-red-500 hover:text-red-600"
+          className="text-destructive hover:text-destructive"
           onClick={onDelete}
           size="sm"
         >

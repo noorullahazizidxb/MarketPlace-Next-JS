@@ -140,9 +140,9 @@ export default function PublicProfilePage() {
       </motion.div>
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <h2 className="app-text-heading-sm font-semibold flex items-center gap-2">
             Listings
-            <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border)] bg-background/60">
+            <span className="app-text-caption px-2 py-0.5 rounded-full border border-[var(--border)] bg-background/60">
               {listingsCount}
             </span>
           </h2>

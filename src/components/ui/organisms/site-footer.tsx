@@ -25,7 +25,7 @@ export function SiteFooter({ content = defaultContent }: SiteFooterProps) {
         <div className="flex flex-col items-center justify-center space-y-2 text-center">
           <div className="flex items-center gap-2 app-typo-filter-label text-muted-foreground">
             <span>{content.madeWith}</span>
-            <Heart className="app-icon-sm fill-red-500 text-red-500" />
+            <Heart className="app-icon-sm fill-destructive text-destructive" />
             <span>{content.by}</span>
             <Link
               href="https://OTA Tickets.com"

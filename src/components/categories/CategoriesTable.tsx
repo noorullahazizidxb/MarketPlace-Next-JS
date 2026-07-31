@@ -74,7 +74,7 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
         </Dialog>
       </div>
       <div className="space-y-4">
-        {isLoading && <p className="text-xs subtle">Loading categories…</p>}
+        {isLoading && <p className="app-text-caption subtle">Loading categories…</p>}
         <Table>
           <TableHeader>
             <TableRow>
@@ -106,7 +106,7 @@ export const CategoriesTable: React.FC<Props> = ({ onChanged }) => {
           </TableBody>
         </Table>
         {!isLoading && filtered.length === 0 && (
-          <p className="text-xs subtle">No categories match that search.</p>
+          <p className="app-text-caption subtle">No categories match that search.</p>
         )}
       </div>
     </div>

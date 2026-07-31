@@ -237,7 +237,7 @@ export function SearchBox({
                       onSubmitClose?.();
                     } catch { }
                   }}
-                  className="px-3 py-1 rounded-full bg-[var(--muted)] text-xs hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
+                  className="px-3 py-1 rounded-full bg-[var(--muted)] app-text-caption hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
                 >
                   {r}
                 </button>
@@ -249,13 +249,13 @@ export function SearchBox({
                     localStorage.removeItem("recent-searches");
                   } catch { }
                 }}
-                className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
+                className="ml-auto app-text-micro px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
               >
                 Clear
               </button>
             </div>
           )}
-          <div className="p-2 text-xs subtle flex items-center justify-between">
+          <div className="p-2 app-text-caption subtle flex items-center justify-between">
             <span>
               {isSearching
                 ? "Searching..."
@@ -269,7 +269,7 @@ export function SearchBox({
                 <li key={h.id ?? idx} className="hover:bg-[var(--muted)]">
                   <button
                     type="button"
-                    className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
+                    className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 app-text-body"
                     onClick={() => {
                       const qp = new URLSearchParams();
                       if (h.id) {
@@ -290,7 +290,7 @@ export function SearchBox({
                       {highlight(h.title ?? "Untitled")}
                     </div>
                     {h.description && (
-                      <div className="text-xs subtle line-clamp-1">
+                      <div className="app-text-caption subtle line-clamp-1">
                         {highlight(h.description)}
                       </div>
                     )}
@@ -327,7 +327,7 @@ export function SearchBox({
                           onSubmitClose?.();
                         } catch { }
                       }}
-                      className="px-3 py-1 rounded-full bg-[var(--muted)] text-xs hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
+                      className="px-3 py-1 rounded-full bg-[var(--muted)] app-text-caption hover:bg-[color-mix(in oklab, var(--accent) 30%, transparent)]"
                     >
                       {r}
                     </button>
@@ -339,13 +339,13 @@ export function SearchBox({
                         localStorage.removeItem("recent-searches");
                       } catch { }
                     }}
-                    className="ml-auto text-[10px] px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
+                    className="ml-auto app-text-micro px-2 py-1 rounded-md bg-[color-mix(in oklab, var(--background) 6%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 8%, transparent)]"
                   >
                     Clear
                   </button>
                 </div>
               )}
-              <div className="p-2 text-xs subtle flex items-center justify-between">
+              <div className="p-2 app-text-caption subtle flex items-center justify-between">
                 <span>
                   {isSearching
                     ? "Searching..."
@@ -362,7 +362,7 @@ export function SearchBox({
                     >
                       <button
                         type="button"
-                        className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 text-sm"
+                        className="w-full  [border-radius:0.75rem] last:mb-0 text-left px-3 py-2 app-text-body"
                         onClick={() => {
                           const qp = new URLSearchParams();
                           if (h.id) {
@@ -383,7 +383,7 @@ export function SearchBox({
                           {highlight(h.title ?? "Untitled")}
                         </div>
                         {h.description && (
-                          <div className="text-xs subtle line-clamp-1">
+                          <div className="app-text-caption subtle line-clamp-1">
                             {highlight(h.description)}
                           </div>
                         )}

@@ -197,22 +197,22 @@ export default function AdminContactsPage() {
                                 >
                                   {c.handled ? t("handled") : t("unhandled")}
                                 </Badge>
-                                <span className="text-xs subtle">
+                                <span className="app-text-caption subtle">
                                   {t("submittedAt")}:{" "}
                                   {new Date(c.createdAt).toLocaleString()}
                                 </span>
                               </div>
-                              <div className="mt-1 text-xs subtle">
+                              <div className="mt-1 app-text-caption subtle">
                                 {t("subjectLabel")}: {subjectLabel(c.subject)}
                               </div>
-                              <div className="mt-2 text-sm line-clamp-2 text-foreground/90">
+                              <div className="mt-2 app-text-body line-clamp-2 text-foreground/90">
                                 {c.message}
                               </div>
                               <div className="mt-3 flex items-center gap-2">
                                 {c.email && (
                                   <a
                                     href={`mailto:${c.email}`}
-                                    className="text-xs flex items-center gap-1 link"
+                                    className="app-text-caption flex items-center gap-1 link"
                                   >
                                     <Mail className="size-3" /> {c.email}
                                   </a>
@@ -220,7 +220,7 @@ export default function AdminContactsPage() {
                                 {c.phone && (
                                   <a
                                     href={`tel:${c.phone}`}
-                                    className="text-xs flex items-center gap-1 link"
+                                    className="app-text-caption flex items-center gap-1 link"
                                   >
                                     <Phone className="size-3" /> {c.phone}
                                   </a>
@@ -239,23 +239,23 @@ export default function AdminContactsPage() {
             <Card className="p-6 bg-[linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))] border border-[var(--border)]">
               {selectedContact ? (
                 <div>
-                  <h2 className="text-lg font-semibold mb-2">
+                  <h2 className="app-text-heading-sm font-semibold mb-2">
                     {selectedContact.name}
                   </h2>
-                  <p className="text-sm mb-4">
+                  <p className="app-text-body mb-4">
                     <strong>{t("subjectLabel")}:</strong>{" "}
                     {subjectLabel(selectedContact.subject)}
                   </p>
-                  <p className="text-sm mb-4">
+                  <p className="app-text-body mb-4">
                     <strong>{t("message")}:</strong> {selectedContact.message}
                   </p>
                   {selectedContact.email && (
-                    <p className="text-sm mb-2">
+                    <p className="app-text-body mb-2">
                       <strong>{t("email")}:</strong> {selectedContact.email}
                     </p>
                   )}
                   {selectedContact.phone && (
-                    <p className="text-sm">
+                    <p className="app-text-body">
                       <strong>{t("phone")}:</strong> {selectedContact.phone}
                     </p>
                   )}

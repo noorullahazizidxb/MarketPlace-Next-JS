@@ -260,8 +260,6 @@ export type LayoutDensityTokens = Partial<{
   pillH: string;
   /** --pill-px: mobile pill horizontal padding */
   pillPx: string;
-  /** --table-pair-col-rem: rem component for min(Xrem, 70vmin) paired table columns */
-  tablePairCol: string;
   /** --loading-spinner-scale: loading spinner scale multiplier */
   loadingSpinnerScale: string;
 }>;
@@ -314,7 +312,7 @@ export type AppPageId =
   | "shell-topbar"
   | "shell-footer";
 
-/** @deprecated Prefer `AppPageId` — kept for Appearance Studio import parity with OTA. */
+/** @deprecated Prefer `AppPageId`. */
 export type AdminPageId = AppPageId;
 
 // Theme settings stored in UI context.

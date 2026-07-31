@@ -95,7 +95,7 @@ function ListingDetailsContent() {
       </div>
       {isLoading && <p>{t("loading")}</p>}
       {error && (
-        <p className="text-red-500">
+        <p className="text-destructive">
           {String((error as any).message || error)}
         </p>
       )}
@@ -536,7 +536,7 @@ function QRCard({ url }: { url: string }) {
   return (
     <div className="card p-5">
       <h3 className="font-semibold">{t("scanVisit")}</h3>
-      <div className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm dark:bg-white/90">
+      <div className="mt-3 rounded-2xl border border-[var(--border)] bg-background p-3 shadow-sm dark:bg-background/90">
         <QRCode value={url} className="h-auto w-full" />
       </div>
     </div>
@@ -550,7 +550,7 @@ function Stars({ count }: { count: number }) {
         <Star
           key={i}
           className={`app-icon-sm ${i < count
-            ? "fill-yellow-400 text-yellow-400"
+            ? "fill-warning text-warning"
             : "text-[var(--primary)]/20"
             }`}
         />
@@ -785,7 +785,7 @@ function StarRatingInput({
             className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 rounded-md`}
           >
             <Star
-              className={`app-icon-md ${active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
+              className={`app-icon-md ${active ? "fill-warning text-warning" : "text-warning"
                 }`}
             />
           </button>

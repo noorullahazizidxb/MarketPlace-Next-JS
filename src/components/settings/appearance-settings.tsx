@@ -9,11 +9,9 @@ import toast from "react-hot-toast";
 import {
   Globe2,
   Languages,
-  Layout,
   LayoutDashboard,
   Palette,
   PanelLeft,
-  Rows3,
   SlidersHorizontal,
   Type,
 } from "lucide-react";
@@ -51,11 +49,7 @@ import { AppearanceDensityStudio } from "@/components/settings/appearance-densit
 
 // ── Types ─────────────────────────────────────────────────────────────────────
 
-type AppearanceTab =
-  | "appearance-settings"
-  | "theme-customizer"
-  | "landing-page-settings"
-  | "footer-settings";
+type AppearanceTab = "appearance-settings" | "theme-customizer";
 
 // ── Font option data ───────────────────────────────────────────────────────────
 
@@ -231,30 +225,6 @@ function ThemePreviewCard({
         </div>
       </FormLabel>
     </FormItem>
-  );
-}
-
-function ComingSoonPanel({
-  title,
-  description,
-}: {
-  title: string;
-  description: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-dashed border-border/70 bg-muted/20 p-6">
-      <div className="space-y-2">
-        <p className="app-text-heading-sm">{title}</p>
-        <p className="app-text-body text-muted-foreground">{description}</p>
-      </div>
-      <div className="mt-4 rounded-xl border bg-background/70 p-4">
-        <p className="app-text-label">Coming soon</p>
-        <p className="app-text-body text-muted-foreground">
-          This tab has been kept so the migrated settings IA stays stable while the standalone
-          landing and footer controls are adapted.
-        </p>
-      </div>
-    </div>
   );
 }
 
@@ -573,8 +543,8 @@ export default function AppearanceSettings() {
   return (
     <div className="app-shell-page flex min-w-0 flex-col gap-(--space-section)" data-app-page="settings-appearance">
       <div>
-        <h1 className="app-text-heading">{t("settings:appearance.title")}</h1>
-        <p className="text-muted-foreground">{t("settings:appearance.description")}</p>
+        <h1 className="app-text-h1">{t("settings:appearance.title")}</h1>
+        <p className="app-text-body text-muted-foreground">{t("settings:appearance.description")}</p>
       </div>
 
       <Tabs
@@ -582,9 +552,7 @@ export default function AppearanceSettings() {
         onValueChange={(value) => setActiveTab(value as AppearanceTab)}
         className="space-y-4"
       >
-        <TabsList
-          className={`grid w-full rounded-lg bg-muted/60 p-1 ${canCustomiseTheme ? "grid-cols-4" : "grid-cols-3"}`}
-        >
+        <TabsList className="grid w-full grid-cols-2 rounded-xl bg-muted/60 p-1">
           <TabsTrigger value="appearance-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
             <SlidersHorizontal className="app-icon-sm" />
             <span className="hidden sm:inline">{t("settings:appearance.tabs.appearance")}</span>
@@ -595,14 +563,6 @@ export default function AppearanceSettings() {
               <span className="hidden sm:inline">{t("settings:appearance.tabs.theme")}</span>
             </TabsTrigger>
           )}
-          <TabsTrigger value="landing-page-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-            <Layout className="app-icon-sm" />
-            <span className="hidden sm:inline">{t("settings:appearance.tabs.landingPage")}</span>
-          </TabsTrigger>
-          <TabsTrigger value="footer-settings" className="cursor-pointer gap-2 data-[state=active]:bg-background">
-            <Rows3 className="app-icon-sm" />
-            <span className="hidden sm:inline">{t("settings:appearance.tabs.footer")}</span>
-          </TabsTrigger>
         </TabsList>
       </Tabs>
 
@@ -832,49 +792,18 @@ export default function AppearanceSettings() {
             </div>
             <ThemeCustomizer open={themeCustomizerOpen} onOpenChange={setThemeCustomizerOpen} />
           </motion.div>
-        ) : activeTab === "landing-page-settings" ? (
-          <motion.div
-            key="landing-page-settings"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.2, ease: "easeOut" }}
-            className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm md:p-6"
-          >
-            <div className="mb-6">
-              <h3 className="app-text-heading-sm">
-                {t("settings:appearance.sections.landingPage.title")}
-              </h3>
-              <p className="app-text-body text-muted-foreground">
-                {t("settings:appearance.sections.landingPage.description")}
-              </p>
-            </div>
-            <ComingSoonPanel
-              title={t("settings:appearance.sections.landingPage.title")}
-              description={t("settings:appearance.sections.landingPage.description")}
-            />
-          </motion.div>
         ) : (
           <motion.div
-            key="footer-settings"
+            key="theme-customizer-fallback"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2, ease: "easeOut" }}
-            className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm md:p-6"
+            className="rounded-xl border bg-card p-4 text-card-foreground shadow-sm"
           >
-            <div className="mb-6">
-              <h3 className="app-text-heading-sm">
-                {t("settings:appearance.sections.footer.title")}
-              </h3>
-              <p className="app-text-body text-muted-foreground">
-                {t("settings:appearance.sections.footer.description")}
-              </p>
-            </div>
-            <ComingSoonPanel
-              title={t("settings:appearance.sections.footer.title")}
-              description={t("settings:appearance.sections.footer.description")}
-            />
+            <p className="app-text-body text-muted-foreground">
+              Theme customisation is not available for the current account.
+            </p>
           </motion.div>
         )}
       </AnimatePresence>

@@ -188,7 +188,6 @@ const CSS_VAR_BY_KEY: Record<LayoutDensityTokenKey, string> = {
   sidebarWidth: "--app-sidebar-width",
   pillH: "--pill-h",
   pillPx: "--pill-px",
-  tablePairCol: "--table-pair-col-rem",
   loadingSpinnerScale: "--loading-spinner-scale",
   // ── Leading (line-height) ──────────────────────────────────────────────
   leadingBody: "--leading-body",
@@ -348,7 +347,6 @@ const TOKEN_CATEGORIES: TokenCategory[] = [
       { key: "tableHeadH", label: "Header Height", description: "Header row height.", icon: <TbArrowsVertical className="app-icon-sm" />, min: 1.5, max: 4, step: 0.025 },
       { key: "tableCellPy", label: "Cell Padding Y", description: "Vertical cell padding.", icon: <TbSpacingVertical className="app-icon-sm" />, min: 0.15, max: 1.25, step: 0.01 },
       { key: "tableCellPx", label: "Cell Padding X", description: "Horizontal cell padding.", icon: <TbSpacingHorizontal className="app-icon-sm" />, min: 0.15, max: 1.5, step: 0.01 },
-      { key: "tablePairCol", label: "Paired Column Min-Width", description: "Minimum width for key–value table columns (rem part of min(Xrem, 70vmin)).", icon: <TbLayout className="app-icon-sm" />, min: 12, max: 30, step: 0.5 },
       { key: "tableCellLeading", label: "Cell Line-Height", description: "Line-height for table cell content.", icon: <TbSpacingVertical className="app-icon-sm" />, min: 1, max: 2.2, step: 0.05, unit: "" },
       { key: "tableHeadTracking", label: "Header Letter-Spacing", description: "Letter-spacing for column header labels.", icon: <TbArrowsHorizontal className="app-icon-sm" />, min: 0, max: 0.2, step: 0.005, unit: "em" },
       { key: "tableCellTracking", label: "Cell Letter-Spacing", description: "Letter-spacing for table cell text.", icon: <TbArrowsHorizontal className="app-icon-sm" />, min: -0.02, max: 0.1, step: 0.005, unit: "em" },
@@ -753,14 +751,14 @@ export function AppearanceDensityStudio() {
                 className={[
                   "flex shrink-0 items-center rounded-lg border px-2 py-1 app-text-micro transition-all duration-150",
                   pageScope === p.id
-                    ? "border-amber-500/50 bg-amber-500/10 text-amber-700 dark:text-amber-400 shadow-sm"
-                    : "border-border/40 bg-background/50 text-muted-foreground hover:border-amber-500/30 hover:text-foreground",
+                    ? "border-warning/40 bg-warning/10 text-warning dark:text-warning shadow-sm"
+                    : "border-border/40 bg-background/50 text-muted-foreground hover:border-warning/40 hover:text-foreground",
                 ].join(" ")}
               >
                 {p.label}
                 {themeSettings.layoutDensityByPage?.[p.id] &&
                   Object.keys(themeSettings.layoutDensityByPage[p.id]!).length > 0 && (
-                    <span className="ml-1 rounded-full bg-amber-500/20 px-1 app-text-micro text-amber-700 dark:text-amber-400">
+                    <span className="ml-1 rounded-full bg-warning/20 px-1 app-text-micro text-warning dark:text-warning">
                       •
                     </span>
                   )}

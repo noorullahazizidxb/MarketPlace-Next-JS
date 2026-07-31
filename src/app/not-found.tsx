@@ -109,7 +109,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.05 }}
-              className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in oklab, var(--border) 12%, transparent)] bg-[color-mix(in oklab, var(--background) 6%, transparent)] px-3 py-1 text-xs text-[var(--muted-foreground)] backdrop-blur"
+              className="inline-flex items-center gap-2 rounded-full border border-[color-mix(in oklab, var(--border) 12%, transparent)] bg-[color-mix(in oklab, var(--background) 6%, transparent)] px-3 py-1 app-text-caption text-[var(--muted-foreground)] backdrop-blur"
             >
               <Stars className="size-3" />
               {t("notFoundTitle")}
@@ -123,7 +123,7 @@ export default function NotFound() {
                 delay: 0.1,
                 ease: [0.22, 1, 0.36, 1],
               }}
-              className="mt-4 text-[7rem] sm:text-[9rem] md:text-[11rem] leading-none font-black tracking-tighter bg-gradient-to-br from-[var(--primary)] via-[var(--secondary)] to-[var(--accent)] bg-clip-text text-transparent drop-shadow-2xl"
+              className="mt-4 app-text-display leading-none font-black tracking-tighter bg-gradient-to-br from-primary via-secondary to-accent bg-clip-text text-transparent drop-shadow-2xl"
             >
               404
             </motion.h1>
@@ -132,7 +132,7 @@ export default function NotFound() {
               initial={{ opacity: 0, y: 8 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
-              className="mx-auto mt-4 max-w-xl text-sm sm:text-base text-[var(--muted-foreground)]"
+              className="mx-auto mt-4 max-w-xl app-text-body sm:app-text-body text-[var(--muted-foreground)]"
             >
               {t("notFoundDescription")}
             </motion.p>
@@ -146,7 +146,7 @@ export default function NotFound() {
               whileTap={{ scale: 0.98 }}
             >
               <Link href="/">
-                <Button variant="primary" className="group px-6 py-2.5 text-sm">
+                <Button variant="primary" className="group px-6 py-2.5 app-text-body">
                   <Compass className="mr-2 size-4 transition-transform group-hover:-translate-y-0.5" />
                   {t("notFoundGoHome")}
                 </Button>

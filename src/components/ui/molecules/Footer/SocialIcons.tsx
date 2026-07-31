@@ -13,26 +13,26 @@ const SOCIAL_ICONS_CONFIG = [
   {
     key: "facebook",
     Icon: FaFacebook,
-    defaultClass: "text-blue-500",
-    barClass: "text-blue-400 dark:text-background",
+    defaultClass: "text-info",
+    barClass: "text-info dark:text-background",
   },
   {
     key: "telegram",
     Icon: FaTelegram,
-    defaultClass: "text-sky-500",
-    barClass: "text-sky-400 dark:text-background",
+    defaultClass: "text-info",
+    barClass: "text-info dark:text-background",
   },
   {
     key: "whatsapp",
     Icon: FaWhatsapp,
-    defaultClass: "text-green-600",
-    barClass: "text-green-400 dark:text-background",
+    defaultClass: "text-success",
+    barClass: "text-success dark:text-background",
   },
   {
     key: "instagram",
     Icon: FaInstagram,
-    defaultClass: "text-pink-600",
-    barClass: "text-pink-400 dark:text-background",
+    defaultClass: "text-primary",
+    barClass: "text-primary dark:text-background",
   },
 ] as const;
 

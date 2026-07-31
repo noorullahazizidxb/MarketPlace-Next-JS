@@ -51,11 +51,11 @@ export const ParentAutocomplete: React.FC<ParentAutocompleteProps> = ({
                     disabled={disabled}
                     onSelect={() => !disabled && onChange(cat.id)}
                     className={cn(
-                      "flex items-center gap-2 text-xs",
+                      "flex items-center gap-2 app-text-caption",
                       disabled && "opacity-50"
                     )}
                   >
-                    <span className="inline-flex items-center justify-center size-5 rounded-md border text-[10px] font-medium bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
+                    <span className="inline-flex items-center justify-center size-5 rounded-md border app-text-micro font-medium bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                       {cat.depth + 1}
                     </span>
                     <span className="flex-1 truncate">{cat.path}</span>
@@ -78,7 +78,7 @@ export const ParentAutocomplete: React.FC<ParentAutocompleteProps> = ({
           </button>
         )}
       </div>
-      {selected && <p className="text-2xs subtle">Selected: {selected.path}</p>}
+      {selected && <p className="app-text-micro subtle">Selected: {selected.path}</p>}
     </div>
   );
 };

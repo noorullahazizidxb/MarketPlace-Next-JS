@@ -12,12 +12,12 @@ export function SidebarNotification() {
   if (!isVisible) return null;
 
   return (
-    <Card className="mb-3 py-0 border-neutral-200 bg-neutral-50 dark:border-neutral-700 dark:bg-neutral-800">
+    <Card className="mb-3 py-0 border-border bg-muted dark:border-border dark:bg-muted">
       <CardContent className="p-4 relative">
         <Button
           variant="ghost"
           size="sm"
-          className="absolute top-2 right-2 h-6 w-6 p-0 hover:bg-neutral-200 dark:hover:bg-neutral-700"
+          className="absolute top-2 right-2 h-6 w-6 p-0 hover:bg-muted dark:hover:bg-muted"
           onClick={() => setIsVisible(false)}
         >
           <X className="app-icon-xs" />
@@ -25,7 +25,7 @@ export function SidebarNotification() {
         </Button>
 
         <div className="pr-6">
-          <h3 className="flex items-center gap-3 app-text-heading-sm text-neutral-900 dark:text-neutral-100 mb-2 mt-1">
+          <h3 className="flex items-center gap-3 app-text-heading-sm text-muted-foreground dark:text-muted-foreground mb-2 mt-1">
             <Logo size={42} className="-mt-1" />
             <div>
               Welcome to{" "}
@@ -39,7 +39,7 @@ export function SidebarNotification() {
               </a>
             </div>
           </h3>
-          <p className="app-text-body text-muted-foreground dark:text-neutral-400 leading-relaxed">
+          <p className="app-text-body text-muted-foreground dark:text-muted-foreground leading-relaxed">
             Explore our premium Shadcn UI{" "}
             <a
               href="https://OTA Tickets.com/blocks"

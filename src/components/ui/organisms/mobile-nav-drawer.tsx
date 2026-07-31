@@ -245,7 +245,7 @@ function DrawerNavItem({ href, icon, label, external, onClick }: MobileNavLink) 
           "flex size-[length:var(--icon-lg)] shrink-0 items-center justify-center rounded-xl",
           "bg-background/80 ring-1 ring-border/40 text-muted-foreground",
           "transition-colors duration-200",
-          "group-hover:bg-white/15 group-hover:text-primary-foreground group-hover:ring-white/20",
+          "group-hover:bg-background/15 group-hover:text-primary-foreground group-hover:ring-ring/30",
           "[&_svg]:app-icon-sm",
         )}>
           {icon}
@@ -358,7 +358,7 @@ export function MobileNavDrawer({
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               onClick={handleOverlayClick}
-              className="fixed inset-0 z-[80] bg-black/50 backdrop-blur-[3px]"
+              className="fixed inset-0 z-[80] bg-foreground/50 backdrop-blur-[3px]"
             />
           )}
         </AnimatePresence>
@@ -392,7 +392,7 @@ export function MobileNavDrawer({
 
           {/* ── Ambient decorative gradients ── */}
           <AmbientBlob className="left-1/4 top-0 h-52 w-52 -translate-y-1/2 bg-primary" />
-          <AmbientBlob className="right-1/4 top-0 app-hero-orb-sm -translate-y-1/2 bg-violet-500" />
+          <AmbientBlob className="right-1/4 top-0 app-hero-orb-sm -translate-y-1/2 bg-primary" />
 
           {/* ── Gesture handle + toolbar (always visible; supports drag gestures) ── */}
           <div className="relative z-[91]">

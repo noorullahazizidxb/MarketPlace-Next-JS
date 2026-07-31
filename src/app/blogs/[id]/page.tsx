@@ -96,12 +96,12 @@ function AuthorCard({
             )}
           </div>
           <div>
-            <span className="text-sm font-semibold group-hover:text-[var(--primary)] transition-colors flex items-center gap-1">
+            <span className="app-text-body font-semibold group-hover:text-[var(--primary)] transition-colors flex items-center gap-1">
               {authorName}
               {isOwner && <BadgeCheck className="size-3.5 text-[var(--primary)]" />}
             </span>
             {createdAt && (
-              <span className="flex items-center gap-1 text-xs text-[var(--muted-foreground)]">
+              <span className="flex items-center gap-1 app-text-caption text-[var(--muted-foreground)]">
                 <Calendar className="size-3" />
                 {formatDate(createdAt)}
               </span>
@@ -114,11 +114,11 @@ function AuthorCard({
       {isOwner && expiresAt && (
         <div
           className={cn(
-            "flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium",
+            "flex items-center gap-1.5 rounded-full border px-3 py-1 app-text-caption font-medium",
             isExpiringSoon
-              ? "border-amber-400/40 bg-amber-500/10 text-amber-600 dark:text-amber-400"
+              ? "border-warning/40 bg-warning/10 text-warning dark:text-warning"
               : days !== null && days <= 0
-                ? "border-red-400/40 bg-red-500/10 text-red-600 dark:text-red-400"
+                ? "border-destructive/40 bg-destructive/10 text-destructive dark:text-destructive"
                 : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)]"
           )}
         >
@@ -202,11 +202,11 @@ function SocialBar({
           aria-pressed={liked}
           aria-label={liked ? "Unlike this post" : "Like this post"}
           className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 app-text-body font-medium transition-all duration-200",
             "hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed",
             liked
-              ? "border-rose-400/50 bg-rose-500/10 text-rose-500 dark:text-rose-400"
-              : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)] hover:border-rose-400/40 hover:text-rose-400"
+              ? "border-destructive/40 bg-destructive/10 text-destructive dark:text-destructive"
+              : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)] hover:border-destructive/40 hover:text-destructive"
           )}
         >
           <Heart
@@ -239,10 +239,10 @@ function SocialBar({
           disabled={shareMutation.isPending}
           aria-label="Copy link and share"
           className={cn(
-            "inline-flex items-center gap-2 rounded-full border px-4 py-2 text-sm font-medium transition-all duration-200",
+            "inline-flex items-center gap-2 rounded-full border px-4 py-2 app-text-body font-medium transition-all duration-200",
             "hover:scale-105 active:scale-95 disabled:opacity-50",
             justShared
-              ? "border-emerald-400/50 bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
+              ? "border-success/35 bg-success/10 text-success dark:text-success"
               : "border-[var(--border)] bg-[var(--muted)]/20 text-[var(--muted-foreground)] hover:border-[var(--primary)]/40 hover:text-[var(--primary)]"
           )}
         >
@@ -252,7 +252,7 @@ function SocialBar({
       </Tooltip>
 
       {/* Comment count (visual only) */}
-      <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-2 text-sm text-[var(--muted-foreground)]">
+      <div className="inline-flex items-center gap-2 rounded-full border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-2 app-text-body text-[var(--muted-foreground)]">
         <MessageCircle className="size-4" />
         <span className="tabular-nums">{commentCount}</span>
       </div>
@@ -261,7 +261,7 @@ function SocialBar({
         <Tooltip content={t("signInToInteract")} side="top">
           <Link
             href="/sign-in"
-            className="text-xs text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors underline-offset-2 hover:underline ml-1"
+            className="app-text-caption text-[var(--muted-foreground)] hover:text-[var(--primary)] transition-colors underline-offset-2 hover:underline ml-1"
           >
             {t("signInToLike") || "Sign in to like"}
           </Link>
@@ -360,8 +360,8 @@ export default function BlogDetailPage() {
           <AlertTriangle className="size-8 text-[var(--muted-foreground)]/50" />
         </div>
         <div>
-          <p className="text-lg font-semibold text-center">{t("blogNotFound") || "Post not found"}</p>
-          <p className="text-sm text-[var(--muted-foreground)] text-center mt-1">
+          <p className="app-text-heading-sm font-semibold text-center">{t("blogNotFound") || "Post not found"}</p>
+          <p className="app-text-body text-[var(--muted-foreground)] text-center mt-1">
             This post may have been removed or never existed.
           </p>
         </div>
@@ -392,7 +392,7 @@ export default function BlogDetailPage() {
         <button
           type="button"
           onClick={() => router.back()}
-          className="inline-flex items-center gap-1.5 text-sm text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors group"
+          className="inline-flex items-center gap-1.5 app-text-body text-[var(--muted-foreground)] hover:text-[var(--foreground)] transition-colors group"
           aria-label={t("back") || "Back"}
         >
           <ArrowLeft className="size-4 transition-transform group-hover:-translate-x-0.5" />
@@ -410,7 +410,7 @@ export default function BlogDetailPage() {
       {/* ── Title + admin/author toolbar ────────────────────────────── */}
       <div className="space-y-4">
         <div className="flex items-start justify-between gap-4">
-          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight leading-snug text-[var(--foreground)]">
+          <h1 className="app-text-h2 sm:app-text-h1 font-bold tracking-tight leading-snug text-[var(--foreground)]">
             {blog.title}
           </h1>
           {(isAuthor || isAdmin) && (
@@ -434,7 +434,7 @@ export default function BlogDetailPage() {
                   <Button
                     variant="ghost"
                     size="sm"
-                    className="gap-1.5 px-3 text-red-500 hover:text-red-600 hover:bg-red-500/10"
+                    className="gap-1.5 px-3 text-destructive hover:text-destructive hover:bg-destructive/10"
                     onClick={() => setConfirmOpen(true)}
                     loading={del.isPending}
                     aria-label="Delete post"
@@ -474,7 +474,7 @@ export default function BlogDetailPage() {
           <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-[var(--background)] px-4 text-xs text-[var(--muted-foreground)]">
+          <span className="bg-[var(--background)] px-4 app-text-caption text-[var(--muted-foreground)]">
             Article
           </span>
         </div>
@@ -486,7 +486,7 @@ export default function BlogDetailPage() {
           {blog.content.split("\n\n").map((para: string, i: number) => (
             <p
               key={i}
-              className="text-[var(--foreground)]/85 leading-relaxed text-[0.9375rem] mb-4 last:mb-0"
+              className="text-foreground/85 leading-relaxed app-text-body mb-4 last:mb-0"
             >
               {para}
             </p>
@@ -500,7 +500,7 @@ export default function BlogDetailPage() {
           <div className="w-full border-t border-[var(--border)]" />
         </div>
         <div className="relative flex justify-center">
-          <span className="bg-[var(--background)] px-4 text-xs text-[var(--muted-foreground)]">
+          <span className="bg-[var(--background)] px-4 app-text-caption text-[var(--muted-foreground)]">
             <MessageCircle className="size-3 inline mr-1" />
             Comments
           </span>
@@ -516,7 +516,7 @@ export default function BlogDetailPage() {
 
       {/* ── Bottom social repeat ─────────────────────────────────────── */}
       <div className="rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-4 flex items-center justify-between gap-4 flex-wrap">
-        <p className="text-sm text-[var(--muted-foreground)]">
+        <p className="app-text-body text-[var(--muted-foreground)]">
           Found this helpful? Share it with others.
         </p>
         <SocialBar

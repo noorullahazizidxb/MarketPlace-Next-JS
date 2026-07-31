@@ -104,17 +104,17 @@ export function Tooltip({
               // Positioning
               "pointer-events-none absolute z-[300] max-w-[260px]",
               // Visual — premium glassmorphic surface
-              "rounded-xl border border-white/10",
+              "rounded-xl border border-border",
               "bg-[var(--card)]/95 text-[var(--foreground)]",
               "shadow-[0_8px_32px_-6px_rgba(0,0,0,0.35),inset_0_1px_0_rgba(255,255,255,0.08)] backdrop-blur-2xl",
               // Typography
-              "px-3 py-1.5 text-[11px] font-medium leading-snug whitespace-normal",
+              "px-3 py-1.5 app-text-caption font-medium leading-snug whitespace-normal",
               sideMap[side],
               contentClassName
             )}
           >
             {/* top shimmer line */}
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px rounded-t-xl bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent" />
             {/* arrow */}
             <span className={cn("pointer-events-none absolute", arrowMap[side])} />
             {content}

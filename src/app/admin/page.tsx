@@ -191,24 +191,24 @@ export default function AdminDashboardPage() {
       title: t("approvedShort") || "Approved",
       icon: ShieldCheck,
       value: summary.approvedListings ?? data?.totals?.approved ?? 0,
-      accent: "text-emerald-500",
-      iconBg: "bg-emerald-500/10",
+      accent: "text-success",
+      iconBg: "bg-success/10",
       sub: null,
     },
     {
       title: t("users") || "Users",
       icon: Users2,
       value: summary.totalUsers ?? 0,
-      accent: "text-indigo-500",
-      iconBg: "bg-indigo-500/10",
+      accent: "text-primary",
+      iconBg: "bg-primary/10",
       sub: null,
     },
     {
       title: t("feedbacks") || "Feedbacks",
       icon: Star,
       value: summary.feedbackCount ?? 0,
-      accent: "text-amber-500",
-      iconBg: "bg-amber-500/10",
+      accent: "text-warning",
+      iconBg: "bg-warning/10",
       sub: summary.avgRating ? `Avg ${summary.avgRating}★` : null,
     },
   ];
@@ -221,7 +221,7 @@ export default function AdminDashboardPage() {
           {t("adminHub") || "Admin Dashboard"}
         </h1>
         {error && (
-          <p className="app-text-body text-red-500">
+          <p className="app-text-body text-destructive">
             {(error as any)?.message || "Failed to load stats"}
           </p>
         )}
@@ -235,7 +235,7 @@ export default function AdminDashboardPage() {
             className="relative overflow-hidden rounded-[1.5rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl p-5 flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
           >
             {/* shimmer top line */}
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent" />
             {/* accent glow */}
             <span className={`pointer-events-none absolute -top-8 -left-4 size-24 rounded-full blur-2xl opacity-20 ${k.iconBg}`} />
             <div className="flex items-start justify-between relative">
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
                 <p className="app-text-micro uppercase tracking-widest font-semibold text-[var(--foreground)]/45">
                   {k.title}
                 </p>
-                <p className="text-3xl font-bold tabular-nums">
+                <p className="app-text-h1 font-bold tabular-nums">
                   {isLoading ? <span className="inline-block h-8 w-12 rounded-lg bg-[var(--muted)]/30 animate-pulse" /> : k.value.toLocaleString()}
                 </p>
               </div>
@@ -329,7 +329,7 @@ export default function AdminDashboardPage() {
                       {q}
                     </span>
                     <span className="text-[var(--foreground)]/60 flex items-center gap-1">
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
+                      <span className="inline-block size-1.5 rounded-full bg-success" />
                       {t("completed")}: {stats.completed}
                     </span>
                   </div>
@@ -895,14 +895,14 @@ function ListingsTypeStatusCharts({
         {statusKeys.map((k) => {
           const swatch =
             {
-              PENDING: "bg-amber-500",
-              APPROVED: "bg-emerald-600",
-              REJECTED: "bg-rose-500",
-              SOLD: "bg-indigo-500",
-              RENTED: "bg-sky-500",
-              EXPIRED: "bg-zinc-500",
-              DRAFT: "bg-emerald-400",
-              HIDDEN: "bg-slate-500",
+              PENDING: "bg-warning",
+              APPROVED: "bg-success",
+              REJECTED: "bg-destructive",
+              SOLD: "bg-primary",
+              RENTED: "bg-info",
+              EXPIRED: "bg-muted",
+              DRAFT: "bg-success",
+              HIDDEN: "bg-muted",
             }[k] || "bg-[var(--primary)]";
           return (
             <span key={k} className="flex items-center gap-1">

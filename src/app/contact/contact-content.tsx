@@ -23,7 +23,7 @@ function ContactHero() {
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,color-mix(in oklab, var(--accent) 18%, transparent),transparent_28%),radial-gradient(circle_at_85%_30%,color-mix(in oklab, var(--primary) 16%, transparent),transparent_30%)]" />
         <motion.div
-          className="absolute -left-10 top-6 h-36 w-36 rounded-3xl border border-white/15 bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl"
+          className="absolute -left-10 top-6 h-36 w-36 rounded-3xl border border-border bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl"
           animate={{ rotate: [12, 26, 12], y: [0, 10, 0] }}
           transition={{ duration: 7.5, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -36,13 +36,13 @@ function ContactHero() {
 
       <div className="relative z-10 grid gap-8 lg:grid-cols-[1.25fr_0.75fr] lg:items-end">
         <div dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "text-right" : "text-left"}>
-          <p className="text-sm font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
+          <p className="app-text-body font-semibold uppercase tracking-[0.24em] text-[var(--accent)]">
             {t("contact")}
           </p>
-          <h1 className="mt-3 text-3xl font-extrabold tracking-tight text-[var(--foreground)] sm:text-4xl md:text-5xl">
+          <h1 className="mt-3 app-text-h1 font-extrabold tracking-tight text-[var(--foreground)] sm:app-text-h1 md:app-text-h1">
             {t("getInTouch")}
           </h1>
-          <p className="mt-4 max-w-2xl text-sm leading-7 text-[color-mix(in oklab, var(--foreground) 80%, transparent)] sm:text-base">
+          <p className="mt-4 max-w-2xl app-text-body leading-7 text-[color-mix(in oklab, var(--foreground) 80%, transparent)] sm:app-text-body">
             {t("contactHeaderSubtitle")}
           </p>
         </div>
@@ -58,10 +58,10 @@ function ContactHero() {
               className="rounded-2xl border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 72%, transparent)] p-4 backdrop-blur-sm"
             >
               <item.icon className="size-5 text-[var(--accent)]" />
-              <h2 className="mt-3 text-sm font-semibold text-[var(--foreground)]">
+              <h2 className="mt-3 app-text-body font-semibold text-[var(--foreground)]">
                 {item.title}
               </h2>
-              <p className="mt-1 text-xs text-[color-mix(in oklab, var(--foreground) 72%, transparent)]">
+              <p className="mt-1 app-text-caption text-[color-mix(in oklab, var(--foreground) 72%, transparent)]">
                 {item.text}
               </p>
             </div>
@@ -115,7 +115,7 @@ function ContactInfoCards() {
               </div>
               <div>
                 <h3 className="font-semibold text-[var(--foreground)]">{card.title}</h3>
-                <p className="mt-1 text-sm text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">{card.text}</p>
+                <p className="mt-1 app-text-body text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">{card.text}</p>
               </div>
             </div>
           </a>
@@ -145,17 +145,17 @@ function BusinessHoursCard() {
         <div className="size-8 rounded-xl bg-[var(--primary)]/15 grid place-items-center">
           <Clock className="size-4 text-[var(--primary)]" />
         </div>
-        <h3 className="font-semibold text-sm">
+        <h3 className="font-semibold app-text-body">
           {(t("businessHours" as any) || "Business Hours") as string}
         </h3>
       </div>
       <div className="space-y-2">
         {hours.map((row) => (
-          <div key={row.day} className="flex items-center justify-between text-sm gap-2">
-            <span className="text-[var(--foreground)]/70 text-xs">{row.day}</span>
+          <div key={row.day} className="flex items-center justify-between app-text-body gap-2">
+            <span className="text-[var(--foreground)]/70 app-text-caption">{row.day}</span>
             <span
-              className={`font-medium text-xs px-2 py-0.5 rounded-full border ${row.open
-                ? "bg-emerald-500/10 text-emerald-600 border-emerald-400/30 dark:text-emerald-400"
+              className={`font-medium app-text-caption px-2 py-0.5 rounded-full border ${row.open
+                ? "bg-success/10 text-success border-success/35 dark:text-success"
                 : "bg-[var(--muted)]/30 text-[var(--muted-foreground)] border-[var(--border)]"
                 }`}
             >
@@ -181,10 +181,10 @@ export function ContactContent() {
           <ContactInfoCards />
           <BusinessHoursCard />
           <div className="rounded-3xl border border-[var(--border)] bg-[linear-gradient(135deg,var(--card),var(--background))] p-6">
-            <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+            <p className="app-text-body font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
               {t("contactSupportEyebrow")}
             </p>
-            <p className="mt-3 text-sm leading-7 text-[color-mix(in oklab, var(--foreground) 76%, transparent)]">
+            <p className="mt-3 app-text-body leading-7 text-[color-mix(in oklab, var(--foreground) 76%, transparent)]">
               {t("contactSupportBody")}
             </p>
           </div>

@@ -69,7 +69,7 @@ export function ApprovalCard({
           aspect="16/9"
           className="object-cover"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-overlay-dark/50 to-transparent" />
         <div className="absolute bottom-3 left-3 right-3 flex items-center gap-3">
           <Link
             href={author?.id ? `/profile/${author.id}` : "#"}
@@ -92,15 +92,15 @@ export function ApprovalCard({
               onClick={(e) => {
                 if (!author?.id) e.preventDefault();
               }}
-              className="text-white/90 font-medium truncate hover:underline"
+              className="text-primary-foreground/90 font-medium truncate hover:underline"
             >
               {author?.fullName || author?.name || author?.email}
             </Link>
-            <div className="text-white/70 app-text-caption truncate">
+            <div className="text-primary-foreground/70 app-text-caption truncate">
               {listing?.category?.name || listing?.categoryName || "Category"}
             </div>
           </div>
-          <div className="ml-auto text-white/80 app-text-body backdrop-blur-sm rounded-full px-3 py-1 border border-white/20">
+          <div className="ml-auto text-primary-foreground/80 app-text-body backdrop-blur-sm rounded-full px-3 py-1 border border-border">
             {priceTag}
           </div>
         </div>
@@ -115,7 +115,7 @@ export function ApprovalCard({
             <p className="app-text-body subtle line-clamp-2">
               {listing?.description || t("noDescriptionProvided")}
             </p>
-            <div className="mt-2 flex flex-wrap items-center gap-2 text-2xs">
+            <div className="mt-2 flex flex-wrap items-center gap-2 app-text-micro">
               <span className="px-2 py-0.5 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)]">
                 {status}
               </span>
@@ -331,7 +331,7 @@ export function ApprovalCard({
                       {reps.map((r, i) => (
                         <span
                           key={r.id || i}
-                          className="px-2 py-1 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)] text-2xs"
+                          className="px-2 py-1 rounded-full border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)] app-text-micro"
                         >
                           {r?.representative?.region || "Region"} ·{" "}
                           {r?.representative?.whatsappNumber || "N/A"}

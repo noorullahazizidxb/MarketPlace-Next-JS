@@ -70,15 +70,15 @@ export function Topbar() {
         initial={{ y: -32, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="app-navbar fixed top-3 left-0 right-0 z-[500] mx-4 sm:mx-8 lg:mx-14 xl:mx-24 rounded-2xl"
+        className="app-navbar modern-navbar"
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <div className="relative overflow-visible">
           <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
-            <div className="absolute -inset-x-20 -top-32 h-56 bg-gradient-to-r from-primary/30 via-fuchsia-500/20 to-cyan-400/30 blur-3xl" />
+            <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
           </div>
           <div className="relative w-full rounded-2xl liquid-glass glass-hover">
-            <div className="container-padded h-16 grid grid-cols-[1fr_auto_1fr] items-center gap-[var(--space-gap)]">
+            <div className="modern-navbar-grid">
               <motion.div
                 whileHover={{ y: -2 }}
                 className="flex items-center gap-[var(--space-gap)]"
@@ -86,14 +86,14 @@ export function Topbar() {
                 <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
                   <ThemeToggle iconOnly className="hidden sm:grid" />
                 </Tooltip>
-                <div className="size-12 rounded-xl overflow-hidden bg-white shadow-sm shrink-0">
+                <div className="modern-navbar-logo">
                   <Image src="/brand/devminds-logo.png" alt="DevMinds" width={48} height={48} sizes="48px" className="w-full h-full object-contain" />
                 </div>
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
                 </span>
               </motion.div>
-              <nav className="hidden sm:flex items-center justify-center gap-5">
+              <nav className="hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -101,7 +101,7 @@ export function Topbar() {
                   <Tooltip content={t("home")} side="bottom">
                     <Link
                       href="/listings"
-                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
+                      className={`app-nav-link ${isActive("/listings") ? "is-active" : ""}`}
                     >
                       <Home className="size-4" />
                       <span>{t("home")}</span>
@@ -121,7 +121,7 @@ export function Topbar() {
                   <Tooltip content={t("blogs")} side="bottom">
                     <Link
                       href="/blogs"
-                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
+                      className={`app-nav-link ${isActive("/blogs") ? "is-active" : ""}`}
                     >
                       <Newspaper className="size-4" />
                       <span>{t("blogs")}</span>
@@ -141,7 +141,7 @@ export function Topbar() {
                   <Tooltip content={t("about")} side="bottom">
                     <Link
                       href="/about"
-                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
+                      className={`app-nav-link ${isActive("/about") ? "is-active" : ""}`}
                     >
                       <Info className="size-4" />
                       <span>{t("about")}</span>
@@ -161,7 +161,7 @@ export function Topbar() {
                   <Tooltip content={t("contact")} side="bottom">
                     <Link
                       href="/contact"
-                      className="relative app-text-label inline-flex items-center gap-2 px-3 py-2 rounded-full"
+                      className={`app-nav-link ${isActive("/contact") ? "is-active" : ""}`}
                     >
                       <Phone className="size-4" />
                       <span>{t("contact")}</span>
@@ -177,7 +177,7 @@ export function Topbar() {
                 {/* My listings removed from top nav to avoid duplicate links (profile menu has it) */}
               </nav>
 
-              <div className="flex items-center justify-end gap-[var(--space-gap)] pr-12 sm:pr-2">
+              <div className="flex items-center justify-end gap-[var(--space-gap)]">
                 <Tooltip content={t("language")} side="bottom">
                   <LanguageDropdown className="sm:hidden inline-flex" />
                 </Tooltip>
@@ -191,7 +191,7 @@ export function Topbar() {
                   <>
                     <Tooltip content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'Notifications'} side="bottom">
                       <button
-                        className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-white/20"
+                        className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-ring/30"
                         aria-label="Toggle notifications"
                         onClick={() => {
                           try {
@@ -204,7 +204,7 @@ export function Topbar() {
                       >
                         <Bell className="size-4" />
                         {unreadCount > 0 && (
-                          <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground text-[10px] font-semibold grid place-items-center">
+                          <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground app-text-micro font-semibold grid place-items-center">
                             {unreadCount > 99 ? "99+" : unreadCount}
                           </span>
                         )}
@@ -227,7 +227,7 @@ export function Topbar() {
                   <div className="relative">
                     <button
                       onClick={() => setOpen((v) => !v)}
-                      className="relative glass rounded-2xl pl-2 pr-3 h-[var(--ctrl-h)] min-h-[var(--ctrl-h)] flex items-center gap-[var(--space-gap)] hover:ring-1 ring-white/20"
+                      className="relative glass rounded-2xl pl-2 pr-3 h-[var(--ctrl-h)] min-h-[var(--ctrl-h)] flex items-center gap-[var(--space-gap)] hover:ring-1 ring-ring/30"
                     >
                       <Image
                         src={asset(avatar)}
@@ -287,7 +287,7 @@ export function Topbar() {
                             <LayoutGrid className="size-4" />
                             <span className="app-text-body">{t("myListings")}</span>
                             {!!counts?.listings && (
-                              <span className="ml-auto app-text-caption px-2 py-0.5 rounded bg-white/10">
+                              <span className="ml-auto app-text-caption px-2 py-0.5 rounded bg-background/10">
                                 {counts.listings}
                               </span>
                             )}
@@ -389,10 +389,10 @@ function LogoutButton() {
         } catch { }
         window.location.href = "/sign-in";
       }}
-      className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-white/10 text-left"
+      className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-background/10 text-left"
     >
       {isPending ? (
-        <span className="size-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+        <span className="size-4 rounded-full border-2 border-border border-t-white animate-spin" />
       ) : (
         <LogOut className="size-4" />
       )}

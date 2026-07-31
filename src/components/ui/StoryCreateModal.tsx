@@ -189,7 +189,7 @@ export default function StoryCreateModal({
     <Dialog open={open} onOpenChange={(v) => (!v ? onClose() : null)}>
       <DialogContent className="w-[min(96vw,640px)] p-0 overflow-hidden rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.4)]">
         {/* shimmer line */}
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent z-10" />
 
         <form onSubmit={handleSubmit((vals) => onSubmit(vals as FormVals))} className="flex flex-col">
           {/* Header */}
@@ -234,7 +234,7 @@ export default function StoryCreateModal({
                   <div className="space-y-1.5">
                     <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Title</label>
                     <input {...register("title")} placeholder="Give your story a compelling title…" className={inputCls} />
-                    {errors.title && <p className="app-text-caption text-red-400">{String(errors.title.message)}</p>}
+                    {errors.title && <p className="app-text-caption text-destructive">{String(errors.title.message)}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Description</label>
@@ -243,7 +243,7 @@ export default function StoryCreateModal({
                       className={cn(inputCls, "h-auto min-h-[100px] py-3 resize-none")}
                       placeholder="What's this story about?"
                     />
-                    {errors.description && <p className="app-text-caption text-red-400">{String(errors.description.message)}</p>}
+                    {errors.description && <p className="app-text-caption text-destructive">{String(errors.description.message)}</p>}
                   </div>
                 </motion.div>
               )}
@@ -299,7 +299,7 @@ export default function StoryCreateModal({
                                 <button
                                   type="button"
                                   onClick={() => setImages((p) => p.filter((_, i) => i !== idx))}
-                                  className="absolute top-1 right-1 size-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="absolute top-1 right-1 size-6 rounded-full bg-foreground/60 text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                   <X className="app-icon-xs" />
                                 </button>
@@ -314,7 +314,7 @@ export default function StoryCreateModal({
                     <div className="space-y-1.5">
                       <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Video URL</label>
                       <input {...register("videoUrl")} placeholder="https://youtube.com/watch?v=..." className={inputCls} />
-                      {errors.videoUrl && <p className="app-text-caption text-red-400">{String(errors.videoUrl.message)}</p>}
+                      {errors.videoUrl && <p className="app-text-caption text-destructive">{String(errors.videoUrl.message)}</p>}
                     </div>
                   )}
                   {!mode && (
@@ -373,7 +373,7 @@ export default function StoryCreateModal({
                   onClick={() => canNext(step) && setStep((s) => Math.min(STEPS.length - 1, s + 1))}
                   className="h-[var(--ctrl-h)] px-5 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all overflow-hidden relative"
                 >
-                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                   Next
                   <ArrowRight className="app-icon-xs" />
                 </button>
@@ -383,7 +383,7 @@ export default function StoryCreateModal({
                   disabled={isPending}
                   className="h-[var(--ctrl-h)] px-6 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
                 >
-                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                   {isPending ? <Loader2 className="app-icon-sm animate-spin" /> : <Sparkles className="app-icon-sm" />}
                   {isEdit ? "Update Story" : "Publish Story"}
                 </button>

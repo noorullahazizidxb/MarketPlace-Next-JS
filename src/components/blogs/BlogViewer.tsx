@@ -97,7 +97,7 @@ export default function BlogViewer({
             exit={{ opacity: 0 }}
           >
             <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
               onClick={onClose}
             />
             <motion.div
@@ -125,7 +125,7 @@ export default function BlogViewer({
               <div className="p-4 md:p-5 space-y-4 max-h-[calc(90vh-64px)] overflow-y-auto">
                 <ImageSlider images={images} aspect="16/9" />
                 {source?.content && (
-                  <p className="text-sm text-[var(--foreground)]/85 whitespace-pre-line">
+                  <p className="app-text-body text-[var(--foreground)]/85 whitespace-pre-line">
                     {source.content}
                   </p>
                 )}
@@ -138,7 +138,7 @@ export default function BlogViewer({
                       <Button
                         variant="secondary"
                         size="sm"
-                        className="text-red-500 hover:text-red-600"
+                        className="text-destructive hover:text-destructive"
                         onClick={() => setConfirmOpen(true)}
                       >
                         {t("delete")}

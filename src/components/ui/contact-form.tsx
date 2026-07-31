@@ -69,13 +69,13 @@ export default function ContactForm() {
         onSubmit={onSubmit}
       >
         <div className="space-y-2">
-          <p className="text-sm font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
+          <p className="app-text-body font-semibold uppercase tracking-[0.22em] text-[var(--accent)]">
             {t("sendMessage")}
           </p>
-          <h2 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">
+          <h2 className="app-text-h2 font-bold tracking-tight text-[var(--foreground)]">
             {t("contactFormTitle")}
           </h2>
-          <p className="text-sm leading-7 text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
+          <p className="app-text-body leading-7 text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
             {t("contactFormSubtitle")}
           </p>
         </div>
@@ -83,19 +83,19 @@ export default function ContactForm() {
         <div className="grid gap-3 rounded-3xl border border-[var(--border)] bg-[color-mix(in oklab, var(--background) 68%, transparent)] p-4 sm:grid-cols-3">
           <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
             <Mail className="size-4 text-[var(--accent)]" />
-            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
+            <span className="app-text-caption text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactEmailValue")}
             </span>
           </div>
           <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
             <PhoneCall className="size-4 text-[var(--accent)]" />
-            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
+            <span className="app-text-caption text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactPhoneValue")}
             </span>
           </div>
           <div className="flex items-center gap-3 rounded-2xl bg-[var(--card)]/88 p-3">
             <MessageSquareText className="size-4 text-[var(--accent)]" />
-            <span className="text-xs text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
+            <span className="app-text-caption text-[color-mix(in oklab, var(--foreground) 74%, transparent)]">
               {t("contactResponseTime")}
             </span>
           </div>
@@ -145,7 +145,7 @@ export default function ContactForm() {
           onChange={setBody}
         />
         <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-h-5 text-sm">
+          <div className="min-h-5 app-text-body">
             {status === "success" && (
               <span className="text-[hsl(140_60%_60%)]">{message}</span>
             )}

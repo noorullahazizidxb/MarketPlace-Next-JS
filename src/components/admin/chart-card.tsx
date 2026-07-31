@@ -25,11 +25,11 @@ export function ChartCard({
     <Card className={cn("p-5 flex flex-col gap-3", className)}>
       <div className="flex items-start justify-between gap-4">
         <div className="space-y-1">
-          <h3 className="text-sm font-medium tracking-wide text-[var(--foreground)]/90">
+          <h3 className="app-text-body font-medium tracking-wide text-[var(--foreground)]/90">
             {title}
           </h3>
           {description && (
-            <p className="text-[11px] uppercase tracking-wide text-[var(--foreground)]/50">
+            <p className="app-text-caption uppercase tracking-wide text-[var(--foreground)]/50">
               {description}
             </p>
           )}

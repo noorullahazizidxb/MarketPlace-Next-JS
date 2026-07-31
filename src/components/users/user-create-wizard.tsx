@@ -135,14 +135,14 @@ const PasswordPair: React.FC = () => {
             : "Very strong";
   const barColor =
     score <= 1
-      ? "bg-red-500"
+      ? "bg-destructive"
       : score === 2
-        ? "bg-orange-400"
+        ? "bg-warning"
         : score === 3
-          ? "bg-yellow-400"
+          ? "bg-warning"
           : score === 4
-            ? "bg-emerald-400"
-            : "bg-green-500";
+            ? "bg-success"
+            : "bg-success";
   const widthClass =
     score === 0
       ? "w-0"
@@ -180,12 +180,12 @@ const PasswordPair: React.FC = () => {
         />
 
         <div className="mt-1">
-          <div className="flex items-center justify-between text-2xs mb-1">
+          <div className="flex items-center justify-between app-text-micro mb-1">
             <div className="flex items-center gap-2">
-              <div className="text-2xs font-medium">Strength</div>
-              <div className="text-2xs subtle">{strengthLabel}</div>
+              <div className="app-text-micro font-medium">Strength</div>
+              <div className="app-text-micro subtle">{strengthLabel}</div>
             </div>
-            <div className="text-2xs subtle">{strengthPct}%</div>
+            <div className="app-text-micro subtle">{strengthPct}%</div>
           </div>
           <div className="w-full h-2 bg-[var(--muted)] rounded-full overflow-hidden">
             <div
@@ -194,11 +194,11 @@ const PasswordPair: React.FC = () => {
               }
             />
           </div>
-          <div className="flex gap-2 mt-3 text-2xs">
+          <div className="flex gap-2 mt-3 app-text-micro">
             <div className="flex items-center gap-2">
               <span
                 className={
-                  score >= 1 ? "text-emerald-400" : "text-foreground/40"
+                  score >= 1 ? "text-success" : "text-foreground/40"
                 }
               >
                 <Check className="size-3" />
@@ -209,7 +209,7 @@ const PasswordPair: React.FC = () => {
               <span
                 className={
                   /[A-Z]/.test(password || "")
-                    ? "text-emerald-400"
+                    ? "text-success"
                     : "text-foreground/40"
                 }
               >
@@ -221,7 +221,7 @@ const PasswordPair: React.FC = () => {
               <span
                 className={
                   /[0-9]/.test(password || "")
-                    ? "text-emerald-400"
+                    ? "text-success"
                     : "text-foreground/40"
                 }
               >
@@ -233,7 +233,7 @@ const PasswordPair: React.FC = () => {
               <span
                 className={
                   /[^A-Za-z0-9]/.test(password || "")
-                    ? "text-emerald-400"
+                    ? "text-success"
                     : "text-foreground/40"
                 }
               >
@@ -269,14 +269,14 @@ const PasswordPair: React.FC = () => {
 
         <div className="mt-3 flex items-center gap-3">
           {confirmPassword && confirmPassword === password ? (
-            <div className="flex items-center gap-2 text-emerald-400">
+            <div className="flex items-center gap-2 text-success">
               <Check className="size-4" />{" "}
-              <span className="text-2xs">Passwords match</span>
+              <span className="app-text-micro">Passwords match</span>
             </div>
           ) : (
-            <div className="flex items-center gap-2 text-red-400">
+            <div className="flex items-center gap-2 text-destructive">
               <X className="size-4" />{" "}
-              <span className="text-2xs">Not matching</span>
+              <span className="app-text-micro">Not matching</span>
             </div>
           )}
         </div>
@@ -322,7 +322,7 @@ const PhotoUpload: React.FC<{ preview?: string }> = ({ preview }) => {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className="md:col-span-2 flex flex-col gap-2">
-      <span className="text-xs font-medium">Photo</span>
+      <span className="app-text-caption font-medium">Photo</span>
       <div className="flex items-center gap-4">
         <div className="relative size-20 rounded-xl overflow-hidden border border-[var(--border)] bg-[color-mix(in oklab, var(--muted) 40%, transparent)] grid place-items-center">
           {preview ? (
@@ -383,14 +383,14 @@ const TagsInput: React.FC<{
   };
   return (
     <div className="flex flex-col gap-2">
-      <label className="text-xs font-medium">Tags</label>
+      <label className="app-text-caption font-medium">Tags</label>
       <div className="flex flex-wrap gap-2 rounded-xl border p-2 bg-[var(--card)] min-h-[52px]">
         {tags.map((t, i) => (
           <button
             type="button"
             key={t}
             onClick={() => remove(i)}
-            className="group px-2 py-1 rounded-full bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border border-[var(--border)] text-2xs inline-flex items-center gap-1 hover:bg-red-500/10 hover:border-red-400 transition-colors"
+            className="group px-2 py-1 rounded-full bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border border-[var(--border)] app-text-micro inline-flex items-center gap-1 hover:bg-destructive/10 hover:border-destructive/40 transition-colors"
           >
             {t}
             <X className="size-3 opacity-50 group-hover:opacity-90" />
@@ -413,7 +413,7 @@ const TagsInput: React.FC<{
           />
         </div>
       </div>
-      <p className="text-2xs subtle">
+      <p className="app-text-micro subtle">
         Press Enter to add, click a tag to remove.
       </p>
     </div>
@@ -603,8 +603,8 @@ const UserCreateWizard: React.FC<{
                 <UserPlus className="size-4.5 text-[var(--primary)]" />
               </div>
               <div>
-                <h2 className="text-base font-bold leading-tight">Create User</h2>
-                <p className="text-[11px] text-[var(--foreground)]/40">Step {step + 1} of {steps.length} — {steps[step]}</p>
+                <h2 className="app-text-body font-bold leading-tight">Create User</h2>
+                <p className="app-text-caption text-[var(--foreground)]/40">Step {step + 1} of {steps.length} — {steps[step]}</p>
               </div>
             </div>
             <div className="flex items-center gap-1.5">
@@ -617,7 +617,7 @@ const UserCreateWizard: React.FC<{
                     }}
                     transition={{ duration: 0.2 }}
                     className={cn(
-                      "size-7 rounded-xl flex items-center justify-center text-[10px] font-bold",
+                      "size-7 rounded-xl flex items-center justify-center app-text-micro font-bold",
                       i <= step ? "text-[var(--primary-foreground)]" : "text-[var(--muted-foreground)]"
                     )}
                   >
@@ -740,7 +740,7 @@ const UserCreateWizard: React.FC<{
                     transition={{ duration: 0.25 }}
                     className="space-y-6"
                   >
-                    <h3 className="text-sm font-semibold">Details</h3>
+                    <h3 className="app-text-body font-semibold">Details</h3>
                     <div className="grid md:grid-cols-3 gap-5">
                       <TextField
                         name={"contacts.phone" as any}
@@ -778,7 +778,7 @@ const UserCreateWizard: React.FC<{
                       />
                     </div>
                     <div className="rounded-xl border p-4 space-y-4 bg-[color-mix(in oklab, var(--muted) 30%, transparent)]">
-                      <h4 className="text-xs font-semibold tracking-wide uppercase text-foreground/70">
+                      <h4 className="app-text-caption font-semibold tracking-wide uppercase text-foreground/70">
                         Address
                       </h4>
                       <div className="grid md:grid-cols-3 gap-4">
@@ -826,7 +826,7 @@ const UserCreateWizard: React.FC<{
                     className="space-y-6"
                   >
                     <RoleSelect />
-                    <div className="rounded-xl border p-4 text-xs subtle space-y-2">
+                    <div className="rounded-xl border p-4 app-text-caption subtle space-y-2">
                       <p>Select a role for the user:</p>
                       <ul className="list-disc pl-5 space-y-1">
                         <li>
@@ -854,7 +854,7 @@ const UserCreateWizard: React.FC<{
                     transition={{ duration: 0.25 }}
                     className="space-y-6"
                   >
-                    <h3 className="text-sm font-semibold">
+                    <h3 className="app-text-body font-semibold">
                       Representative Provinces
                     </h3>
                     <div className="space-y-4">
@@ -881,7 +881,7 @@ const UserCreateWizard: React.FC<{
                             control={control}
                             name={`representativeInfo.${index}.active`}
                             render={({ field }) => (
-                              <label className="flex items-center gap-2 text-xs font-medium mt-6">
+                              <label className="flex items-center gap-2 app-text-caption font-medium mt-6">
                                 <Checkbox
                                   checked={!!field.value}
                                   onCheckedChange={(v) =>
@@ -899,7 +899,7 @@ const UserCreateWizard: React.FC<{
                                 variant="ghost"
                                 size="sm"
                                 onClick={() => repInfoArray.remove(index)}
-                                className="size-8 p-0 text-[var(--foreground)]/40 hover:text-red-400 hover:bg-red-400/10"
+                                className="size-8 p-0 text-[var(--foreground)]/40 hover:text-destructive hover:bg-destructive/10"
                               >
                                 <Trash2 className="size-4" />
                               </Button>
@@ -924,10 +924,10 @@ const UserCreateWizard: React.FC<{
             {/* Live Summary Sidebar */}
             <aside className="hidden xl:block w-72 shrink-0 space-y-4 sticky top-4 self-start">
               <div className="rounded-2xl border border-[var(--border)]/40 p-4 space-y-3 bg-[var(--muted)]/10">
-                <h4 className="text-xs font-semibold tracking-wide uppercase">
+                <h4 className="app-text-caption font-semibold tracking-wide uppercase">
                   Summary
                 </h4>
-                <div className="text-2xs space-y-2">
+                <div className="app-text-micro space-y-2">
                   <div>
                     <div className="font-medium mb-1">Account</div>
                     <ul className="space-y-0.5">
@@ -1000,7 +1000,7 @@ const UserCreateWizard: React.FC<{
                 </div>
               </div>
               <div className="rounded-2xl border border-[var(--border)]/40 p-3 bg-[var(--muted)]/10">
-                <div className="flex items-center justify-between text-2xs font-medium">
+                <div className="flex items-center justify-between app-text-micro font-medium">
                   <span>Progress</span>
                   <span>{Math.round(progress)}%</span>
                 </div>
@@ -1009,7 +1009,7 @@ const UserCreateWizard: React.FC<{
                     initial={false}
                     animate={{ width: progress + "%" }}
                     transition={{ type: "tween", duration: 0.4 }}
-                    className="h-full bg-gradient-to-r from-[var(--accent)] via-emerald-400 to-green-500"
+                    className="h-full bg-gradient-to-r from-[var(--accent)] via-success to-success"
                   />
                 </div>
               </div>

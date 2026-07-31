@@ -249,7 +249,7 @@ export default function CreateListingPage() {
 
   const renderStep1 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
+      <h2 className="app-text-caption font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep1Title")}
       </h2>
       <div className="grid grid-cols-2 gap-3">
@@ -275,7 +275,7 @@ export default function CreateListingPage() {
             )}
             <span
               className={cn(
-                "text-sm font-bold",
+                "app-text-body font-bold",
                 pickedType === typeKey
                   ? "text-[var(--primary)]"
                   : "text-[var(--foreground)]"
@@ -293,7 +293,7 @@ export default function CreateListingPage() {
 
   const renderStep2 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
+      <h2 className="app-text-caption font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep2Title")}
       </h2>
       <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
@@ -303,7 +303,7 @@ export default function CreateListingPage() {
             type="button"
             whileTap={{ scale: 0.97 }}
             className={cn(
-              "h-14 rounded-2xl border-2 text-sm bg-[var(--card)]/60 backdrop-blur-sm hover:bg-[var(--primary)]/5 transition-all relative overflow-hidden",
+              "h-14 rounded-2xl border-2 app-text-body bg-[var(--card)]/60 backdrop-blur-sm hover:bg-[var(--primary)]/5 transition-all relative overflow-hidden",
               pickedCategory === c.id
                 ? "border-[var(--primary)]/60 bg-[var(--primary)]/5 font-semibold text-[var(--primary)]"
                 : "border-[var(--border)]/40 font-medium"
@@ -337,13 +337,13 @@ export default function CreateListingPage() {
 
   const renderStep3 = () => (
     <div className="space-y-4">
-      <h2 className="text-xs font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
+      <h2 className="app-text-caption font-semibold uppercase tracking-widest text-[var(--foreground)]/50">
         {t("listingsCreateStep3Title")}
       </h2>
       <div
         className={cn(
           "p-8 rounded-2xl border-2 border-dashed bg-[var(--card)]/40 backdrop-blur-sm transition-colors",
-          imagesLocalError ? "border-red-500/60" : "border-[var(--border)]/40 hover:border-[var(--primary)]/30"
+          imagesLocalError ? "border-destructive/40" : "border-[var(--border)]/40 hover:border-[var(--primary)]/30"
         )}
         onDragOver={(e) => e.preventDefault()}
         onDrop={(e) => {
@@ -370,7 +370,7 @@ export default function CreateListingPage() {
       >
         <div className="text-center space-y-3">
           <UploadCloud className="size-8 mx-auto text-[var(--foreground)]/25" />
-          <p className="text-sm text-[var(--foreground)]/50">
+          <p className="app-text-body text-[var(--foreground)]/50">
             {t("listingsCreateImagesDragDrop")}
           </p>
           <div>
@@ -428,7 +428,7 @@ export default function CreateListingPage() {
                   />
                   <button
                     type="button"
-                    className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-red-400 transition-colors"
+                    className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-destructive transition-colors"
                     onClick={() => {
                       const next = imagesPreview.filter((_, idx) => idx !== i);
                       setImagesPreview(next);
@@ -457,7 +457,7 @@ export default function CreateListingPage() {
                 />
                 <button
                   type="button"
-                  className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-red-400 transition-colors"
+                  className="absolute top-1.5 right-1.5 size-6 rounded-lg bg-[var(--background)]/80 backdrop-blur border border-[var(--border)]/50 flex items-center justify-center text-[var(--foreground)]/50 hover:text-destructive transition-colors"
                   onClick={() => {
                     const marker = img.id ? String(img.id) : `url:${img.url}`;
                     setRemovedExisting((s) =>
@@ -472,7 +472,7 @@ export default function CreateListingPage() {
           </div>
         )}
         {(imagesLocalError || (errors as any)?.images?.message) && (
-          <p className="mt-2 text-sm text-red-500">
+          <p className="mt-2 app-text-body text-destructive">
             {imagesLocalError || (errors as any)?.images?.message}
           </p>
         )}
@@ -615,7 +615,7 @@ export default function CreateListingPage() {
           )}
         />
       </div>
-      {error && <p className="text-red-500 text-sm md:col-span-2">{error}</p>}
+      {error && <p className="text-destructive app-text-body md:col-span-2">{error}</p>}
       <div className="md:col-span-2 flex gap-2 pt-1">
         <Button
           type="button"
@@ -659,7 +659,7 @@ export default function CreateListingPage() {
       <div className="w-full max-w-3xl">
         <Card className="relative overflow-hidden p-6 rounded-[2rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-2xl shadow-[0_20px_60px_-15px_rgba(0,0,0,0.25)]">
           {/* shimmer top line */}
-          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent" />
+          <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/15 to-transparent" />
 
           {/* Header */}
           <div className="flex items-center gap-3 mb-5">
@@ -667,10 +667,10 @@ export default function CreateListingPage() {
               <TypeIcon className="size-4 text-[var(--primary)]" />
             </div>
             <div>
-              <h1 className="text-base font-bold leading-tight">
+              <h1 className="app-text-body font-bold leading-tight">
                 {editId ? t("editListing") || "Edit Listing" : t("createListing") || "Create Listing"}
               </h1>
-              <p className="text-[11px] text-[var(--foreground)]/40">
+              <p className="app-text-caption text-[var(--foreground)]/40">
                 {stepLabels[step - 1]} — Step {step} of 4
               </p>
             </div>
@@ -690,7 +690,7 @@ export default function CreateListingPage() {
                           i <= step ? "var(--primary)" : "var(--border)",
                       }}
                       transition={{ duration: 0.2 }}
-                      className="size-7 rounded-xl border-2 flex items-center justify-center text-[11px] font-bold shrink-0"
+                      className="size-7 rounded-xl border-2 flex items-center justify-center app-text-caption font-bold shrink-0"
                     >
                       <motion.span
                         animate={{ opacity: 1 }}
@@ -707,7 +707,7 @@ export default function CreateListingPage() {
                     </motion.div>
                     <span
                       className={cn(
-                        "text-[10px] hidden sm:block whitespace-nowrap",
+                        "app-text-micro hidden sm:block whitespace-nowrap",
                         i === step
                           ? "text-[var(--foreground)] font-medium"
                           : "text-[var(--foreground)]/35"

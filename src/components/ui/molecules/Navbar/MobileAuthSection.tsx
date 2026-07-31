@@ -89,7 +89,7 @@ export function MobileAuthSection({
 
       <Button
         variant="ghost"
-        className="w-full text-red-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-950"
+        className="w-full text-destructive hover:bg-destructive hover:text-destructive dark:hover:bg-destructive"
         onClick={async () => {
           onClose();
           await onLogout();

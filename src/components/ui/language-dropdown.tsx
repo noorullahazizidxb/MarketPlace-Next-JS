@@ -25,7 +25,7 @@ function Flag({
     return (
       <span
         className={cn(
-          "inline-block w-5 h-4 rounded-sm bg-muted text-center text-xs",
+          "inline-block w-5 h-4 rounded-sm bg-muted text-center app-text-caption",
           className,
         )}
       >
@@ -62,11 +62,11 @@ export const LanguageDropdown = React.forwardRef<
           aria-haspopup="menu"
           aria-label="Change language"
           className={cn(
-            "glass inline-flex items-center gap-2 h-9 px-3 rounded-xl text-sm font-medium",
+            "glass inline-flex items-center gap-2 h-9 px-3 rounded-xl app-text-body font-medium",
             className,
           )}
         >
-          <span className="text-base leading-none">
+          <span className="app-text-body leading-none">
             <Flag country={current.country} alt={current.label} />
           </span>
         </Button>

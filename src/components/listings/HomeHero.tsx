@@ -21,12 +21,12 @@ export function HomeHero() {
       <div className="pointer-events-none absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,color-mix(in oklab, var(--accent) 30%, transparent),transparent_50%)]" />
         <motion.div
-          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl border border-white/10"
+          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl border border-border"
           animate={{ rotate: [40, 58, 40], y: [0, 12, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[color-mix(in oklab, var(--accent) 10%, transparent)] backdrop-blur-2xl border border-white/10"
+          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[color-mix(in oklab, var(--accent) 10%, transparent)] backdrop-blur-2xl border border-border"
           animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
           transition={{ duration: 9.2, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -41,7 +41,7 @@ export function HomeHero() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
+            className={`app-text-h1 sm:app-text-h1 md:app-text-h1 font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroHeadline")}
             <span className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-accent ${isRtl ? "right-0" : "left-0"}`} />
@@ -52,7 +52,7 @@ export function HomeHero() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className={`mt-4 max-w-xl text-sm sm:text-base text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
+            className={`mt-4 max-w-xl app-text-body sm:app-text-body text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroSubheadline")}
           </motion.p>
@@ -93,7 +93,7 @@ export function HomeHero() {
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-white/10 overflow-hidden"
+          className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-border overflow-hidden"
         >
           <Image
             src={homeHeroImages.main}
@@ -103,12 +103,12 @@ export function HomeHero() {
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 50vw"
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-overlay-dark/40 via-overlay-dark/10 to-transparent" />
           <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-3">
             {homeHeroImages.gallery.map((url, i) => (
               <div
                 key={i}
-                className="relative h-20 rounded-xl overflow-hidden border border-white/20"
+                className="relative h-20 rounded-xl overflow-hidden border border-border"
               >
                 <Image
                   src={url}
@@ -119,9 +119,9 @@ export function HomeHero() {
                   className="object-cover"
                 />
                 {i === 1 && (
-                  <div className="absolute inset-0 grid place-items-center bg-black/20">
+                  <div className="absolute inset-0 grid place-items-center bg-foreground/20">
                     <svg
-                      className="size-6 text-white"
+                      className="size-6 text-primary-foreground"
                       fill="none"
                       stroke="currentColor"
                     >

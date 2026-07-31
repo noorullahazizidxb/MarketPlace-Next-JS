@@ -72,19 +72,19 @@ export default function Footer() {
             {/* Brand */}
             <div>
               <div className="flex items-center gap-3">
-                <div className="flex h-14 w-14 overflow-hidden rounded-2xl bg-white shadow-sm shrink-0">
+                <div className="flex h-14 w-14 overflow-hidden rounded-2xl bg-background shadow-sm shrink-0">
                   <Image src="/brand/devminds-logo.png" alt="DevMinds" width={56} height={56} sizes="56px" className="w-full h-full object-contain" />
                 </div>
                 <div>
-                  <div className="text-base font-semibold tracking-tight">
+                  <div className="app-text-body font-semibold tracking-tight">
                     {t("marketplace")}
                   </div>
-                  <div className="text-xs text-[var(--foreground)]/70">
+                  <div className="app-text-caption text-[var(--foreground)]/70">
                     {t("premiumTagline")}
                   </div>
                 </div>
               </div>
-              <p className="mt-4 text-sm text-[var(--foreground)]/80">
+              <p className="mt-4 app-text-body text-[var(--foreground)]/80">
                 {t("platformMissionShort")}
               </p>
               <div className="mt-4 flex items-center gap-2">
@@ -108,10 +108,10 @@ export default function Footer() {
 
             {/* Navigation */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
+              <div className="app-text-body font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("explore")}
               </div>
-              <ul className="mt-3 grid grid-cols-2 gap-2 text-sm sm:grid-cols-2">
+              <ul className="mt-3 grid grid-cols-2 gap-2 app-text-body sm:grid-cols-2">
                 {nav.map((n) => (
                   <li key={n.href}>
                     <Tooltip content={t(n.key as any)} side="right">
@@ -147,10 +147,10 @@ export default function Footer() {
 
             {/* Resources */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
+              <div className="app-text-body font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 Resources
               </div>
-              <ul className="mt-3 space-y-1 text-sm">
+              <ul className="mt-3 space-y-1 app-text-body">
                 {resources.map((r) => (
                   <li key={r.href}>
                     <Tooltip content={t(r.key as any)} side="right">
@@ -169,10 +169,10 @@ export default function Footer() {
 
             {/* Newsletter */}
             <div>
-              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
+              <div className="app-text-body font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("newsletter")}
               </div>
-              <p className="mt-3 text-sm text-[var(--foreground)]/80">
+              <p className="mt-3 app-text-body text-[var(--foreground)]/80">
                 {t("subscribeBlurb")}
               </p>
               <form
@@ -206,23 +206,23 @@ export default function Footer() {
 
             {/* QR Code */}
             <div className="flex flex-col items-start">
-              <div className="text-sm font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
+              <div className="app-text-body font-semibold uppercase tracking-wider text-[var(--foreground)]/80">
                 {t("scanVisit")}
               </div>
-              <div className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm dark:bg-white/90">
+              <div className="mt-3 rounded-2xl border border-[var(--border)] bg-background p-3 shadow-sm dark:bg-background/90">
                 <QRCode
                   value="https://noorullah-azizi.my.canva.site"
                   className="h-auto w-full"
                 />
               </div>
-              <p className="mt-2 text-xs text-[var(--foreground)]/70">
+              <p className="mt-2 app-text-caption text-[var(--foreground)]/70">
                 {t("scanToOpen")}
               </p>
             </div>
           </div>
 
           {/* Bottom bar */}
-          <div className="flex flex-col items-center justify-between gap-3 border-t border-[var(--border)] px-6 py-4 text-xs text-[var(--foreground)]/70 sm:flex-row lg:px-10">
+          <div className="flex flex-col items-center justify-between gap-3 border-t border-[var(--border)] px-6 py-4 app-text-caption text-[var(--foreground)]/70 sm:flex-row lg:px-10">
             <div>
               © {new Date().getFullYear()} {t("marketplace")}.{" "}
               {t("allRightsReserved")}

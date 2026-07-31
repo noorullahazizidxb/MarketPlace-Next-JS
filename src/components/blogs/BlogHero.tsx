@@ -48,13 +48,13 @@ export function BlogHero({
       <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden rounded-3xl">
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_0%,color-mix(in oklab, var(--accent) 25%, transparent),transparent_50%)]" />
         <motion.div
-          className="absolute -left-16 top-20 w-40 h-40 rotate-45 rounded-2xl bg-[color-mix(in oklab, var(--accent) 15%, transparent)] backdrop-blur-xl border border-white/10"
+          className="absolute -left-16 top-20 w-40 h-40 rotate-45 rounded-2xl bg-[color-mix(in oklab, var(--accent) 15%, transparent)] backdrop-blur-xl border border-border"
           animate={{ rotate: [45, 60, 45], y: [0, 10, 0] }}
           transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
         />
 
         <motion.div
-          className="absolute -right-20 bottom-24 w-64 h-24 rounded-full bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-xl border border-white/10"
+          className="absolute -right-20 bottom-24 w-64 h-24 rounded-full bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-xl border border-border"
           animate={{ x: [0, -8, 0], y: [0, 8, 0] }}
           transition={{ duration: 8.4, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -68,7 +68,7 @@ export function BlogHero({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className={`text-3xl sm:text-4xl md:text-5xl font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
+            className={`app-text-h1 sm:app-text-h1 md:app-text-h1 font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("blogs")}
             <span className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-[var(--accent)] ${isRtl ? "right-0" : "left-0"}`} />
@@ -79,7 +79,7 @@ export function BlogHero({
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.6, delay: 0.05 }}
-            className={`mt-4 max-w-xl text-sm sm:text-base text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
+            className={`mt-4 max-w-xl app-text-body sm:app-text-body text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("searchIntro")}
           </motion.p>
@@ -93,7 +93,7 @@ export function BlogHero({
           >
             <div
               ref={searchContainerRef}
-              className="relative z-20 flex-1 overflow-visible h-12 rounded-2xl border border-[var(--border)] bg-white/5 backdrop-blur-xl focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_2px_color-mix(in oklab, var(--accent) 35%, transparent)] transition-shadow duration-300"
+              className="relative z-20 flex-1 overflow-visible h-12 rounded-2xl border border-[var(--border)] bg-background/5 backdrop-blur-xl focus-within:border-[var(--accent)] focus-within:shadow-[0_0_0_2px_color-mix(in oklab, var(--accent) 35%, transparent)] transition-shadow duration-300"
             >
               <div className={`absolute top-0 h-full flex items-center ${isRtl ? "right-3" : "left-3"}`}>
                 <svg
@@ -109,7 +109,7 @@ export function BlogHero({
                 value={value}
                 onChange={(e) => onChange(e.target.value)}
                 placeholder={t("searchListingsPlaceholder")}
-                className={`h-full w-full bg-transparent outline-none text-sm ${isRtl ? "pr-11 pl-4 text-right" : "pl-11 pr-4 text-left"}`}
+                className={`h-full w-full bg-transparent outline-none app-text-body ${isRtl ? "pr-11 pl-4 text-right" : "pl-11 pr-4 text-left"}`}
                 aria-label="Search blogs"
                 onFocus={() => setShowSuggestions(true)}
                 onKeyDown={(e) => {
@@ -123,7 +123,7 @@ export function BlogHero({
 
               {showSuggestions && (
                 <div className="absolute left-0 right-0 top-[calc(100%+0.5rem)] z-30 rounded-2xl overflow-hidden border border-[var(--border)] bg-[var(--background)] shadow-[0_14px_30px_-12px_rgba(0,0,0,0.45)] backdrop-blur-sm">
-                  <div className="px-3 py-2 text-xs subtle flex items-center justify-between border-b border-[color-mix(in oklab, var(--border) 50%, transparent)]">
+                  <div className="px-3 py-2 app-text-caption subtle flex items-center justify-between border-b border-[color-mix(in oklab, var(--border) 50%, transparent)]">
                     <span>
                       {suggestions.length > 0
                         ? `${suggestions.length} suggestion${suggestions.length === 1 ? "" : "s"}`
@@ -136,7 +136,7 @@ export function BlogHero({
                       <li key={s}>
                         <button
                           type="button"
-                          className={`w-full rounded-xl px-3 py-2 text-sm transition-colors hover:bg-[var(--muted)] ${isRtl ? "text-right" : "text-left"}`}
+                          className={`w-full rounded-xl px-3 py-2 app-text-body transition-colors hover:bg-[var(--muted)] ${isRtl ? "text-right" : "text-left"}`}
                           onClick={() => {
                             onChange(s);
                             setShowSuggestions(false);
@@ -148,7 +148,7 @@ export function BlogHero({
                       </li>
                     ))}
                     {suggestions.length === 0 && (
-                      <li className="px-3 py-4 text-center text-sm subtle">{t("blogSuggestionsEmpty") as string}</li>
+                      <li className="px-3 py-4 text-center app-text-body subtle">{t("blogSuggestionsEmpty") as string}</li>
                     )}
                   </ul>
                 </div>
@@ -167,7 +167,7 @@ export function BlogHero({
             )}
           </motion.div>
           {typeof resultCount === "number" && (
-            <p className="mt-3 text-xs text-[var(--muted-foreground)]">
+            <p className="mt-3 app-text-caption text-[var(--muted-foreground)]">
               {resultCount} {resultCount === 1 ? "result" : "results"}
             </p>
           )}
@@ -179,7 +179,7 @@ export function BlogHero({
           whileInView={{ opacity: 1, scale: 1 }}
           viewport={{ once: true, amount: 0.15 }}
           transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-          className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-white/10 overflow-hidden"
+          className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-border overflow-hidden"
         >
           <Image
             src={blogHeroImage}
@@ -188,8 +188,8 @@ export function BlogHero({
             priority
             className="object-cover"
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-black/10 to-transparent" />
-          <div className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-white/10 backdrop-blur-xl border border-white/20">
+          <div className="absolute inset-0 bg-gradient-to-t from-overlay-dark/40 via-overlay-dark/10 to-transparent" />
+          <div className="absolute top-4 right-4 grid size-10 place-items-center rounded-full bg-background/10 backdrop-blur-xl border border-border">
             <svg
               className="size-5 text-[var(--accent)]"
               fill="none"

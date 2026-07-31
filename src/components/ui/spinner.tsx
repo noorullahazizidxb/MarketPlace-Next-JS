@@ -51,7 +51,7 @@ export function Spinner({
         className={cn("animate-spin", iconSizeMap[size], variantColorMap[variant])}
       />
       {label && (
-        <span className="text-xs text-[var(--muted-foreground)]">{label}</span>
+        <span className="app-text-caption text-[var(--muted-foreground)]">{label}</span>
       )}
     </span>
   );

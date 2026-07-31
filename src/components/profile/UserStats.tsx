@@ -8,16 +8,16 @@ const accent: Record<string, { icon: string; bg: string; glow: string }> = {
   "Total Listings": {
     icon: "text-[var(--primary)]",
     bg: "bg-[var(--primary)]/12",
-    glow: "shadow-[0_0_24px_rgba(var(--primary-raw,99,102,241),0.18)]",
+    glow: "shadow-lg shadow-primary/20",
   },
   Followers: {
-    icon: "text-emerald-500",
-    bg: "bg-emerald-500/12",
+    icon: "text-success",
+    bg: "bg-success/12",
     glow: "shadow-[0_0_24px_rgba(16,185,129,0.14)]",
   },
   Representatives: {
-    icon: "text-amber-500",
-    bg: "bg-amber-500/12",
+    icon: "text-warning",
+    bg: "bg-warning/12",
     glow: "shadow-[0_0_24px_rgba(245,158,11,0.14)]",
   },
 };
@@ -53,10 +53,10 @@ export default function UserStats({
             <Card className={`p-5 ${a.glow}`}>
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <p className="text-xs font-semibold uppercase tracking-wider text-[var(--foreground)]/50">
+                  <p className="app-text-caption font-semibold uppercase tracking-wider text-[var(--foreground)]/50">
                     {it.label}
                   </p>
-                  <p className="text-3xl font-extrabold tracking-tight tabular-nums">
+                  <p className="app-text-h1 font-extrabold tracking-tight tabular-nums">
                     <AnimatedNumber value={it.value} />
                   </p>
                 </div>

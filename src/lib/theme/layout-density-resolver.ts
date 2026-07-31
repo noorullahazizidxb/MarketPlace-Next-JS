@@ -61,7 +61,6 @@ export const LAYOUT_DENSITY_EM_KEYS = new Set<keyof LayoutDensityTokens>([
 /** Tokens that use a flat rem delta (not proportional to viewport baseline). */
 export const LAYOUT_DENSITY_FLAT_DELTA_KEYS = new Set<keyof LayoutDensityTokens>([
   "sidebarWidth",
-  "tablePairCol",
   "loadingSpinnerScale",
   ...LAYOUT_DENSITY_UNITLESS_KEYS,
   ...LAYOUT_DENSITY_DECIMAL_KEYS,
@@ -143,7 +142,6 @@ export const LAYOUT_DENSITY_CSS_VAR_MAP: Record<
   sidebarWidth: "app-sidebar-width",
   pillH: "pill-h",
   pillPx: "pill-px",
-  tablePairCol: "table-pair-col-rem",
   loadingSpinnerScale: "loading-spinner-scale",
   // ── Leading (line-height) ─────────────────────────────────────────────
   leadingBody: "leading-body",

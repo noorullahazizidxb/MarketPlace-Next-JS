@@ -66,7 +66,7 @@ export function AboutContent({
           />
           <div className="absolute inset-0 bg-gradient-to-b from-[var(--background)]/40 via-[var(--background)]/40 to-[var(--background)]" />
           <motion.div
-            className="absolute -left-10 top-8 h-36 w-36 rounded-3xl border border-white/20 bg-[color-mix(in oklab, var(--accent) 14%, transparent)] backdrop-blur-xl"
+            className="absolute -left-10 top-8 h-36 w-36 rounded-3xl border border-border bg-[color-mix(in oklab, var(--accent) 14%, transparent)] backdrop-blur-xl"
             animate={{ rotate: [10, 24, 10], y: [0, 10, 0] }}
             transition={{ duration: 7.2, repeat: Infinity, ease: "easeInOut" }}
             style={{ willChange: "transform" }}
@@ -80,10 +80,10 @@ export function AboutContent({
               viewport={{ once: true, amount: 0.5 }}
               transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
             >
-              <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-[var(--foreground)]">
+              <h1 className="app-text-h1 sm:app-text-h1 md:app-text-h1 font-bold tracking-tight text-[var(--foreground)]">
                 {t("futureFlexible")}
               </h1>
-              <p className="mt-4 text-base sm:text-lg text-[var(--foreground)]/85">
+              <p className="mt-4 app-text-body sm:app-text-heading-sm text-[var(--foreground)]/85">
                 {t("aboutHero").replace("{marketplaceName}", marketplaceName)}
               </p>
               <div className="mt-8 flex flex-wrap gap-3">
@@ -128,8 +128,8 @@ export function AboutContent({
               transition={{ duration: 0.5, delay: i * 0.1, ease: [0.22, 1, 0.36, 1] }}
               className={`rounded-2xl border border-[var(--border)] bg-gradient-to-br ${item.gradient} backdrop-blur-sm p-6`}
             >
-              <h2 className="text-xl font-semibold">{item.heading}</h2>
-              <p className="mt-2 text-[var(--foreground)]/80 text-sm leading-relaxed">{item.text}</p>
+              <h2 className="app-text-heading font-semibold">{item.heading}</h2>
+              <p className="mt-2 text-[var(--foreground)]/80 app-text-body leading-relaxed">{item.text}</p>
             </motion.div>
           ))}
         </div>
@@ -144,8 +144,8 @@ export function AboutContent({
           transition={{ duration: 0.5 }}
           className="text-center mb-8"
         >
-          <h2 className="text-2xl font-semibold">{t("byTheNumbers" as any) || "By the Numbers"}</h2>
-          <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+          <h2 className="app-text-h2 font-semibold">{t("byTheNumbers" as any) || "By the Numbers"}</h2>
+          <p className="mt-2 app-text-body text-[var(--muted-foreground)]">
             {t("trustedByThousands" as any) || "Trusted by thousands across Afghanistan"}
           </p>
         </motion.div>
@@ -167,10 +167,10 @@ export function AboutContent({
               <div className="size-10 mx-auto rounded-xl bg-[var(--primary)]/15 grid place-items-center ring-1 ring-[var(--primary)]/25 group-hover:bg-[var(--primary)]/25 transition-colors">
                 <stat.Icon className="size-5 text-[var(--primary)]" />
               </div>
-              <div className="mt-3 text-2xl font-bold tabular-nums bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">
+              <div className="mt-3 app-text-h2 font-bold tabular-nums bg-gradient-to-r from-[var(--primary)] to-[var(--accent)] bg-clip-text text-transparent">
                 {stat.value}
               </div>
-              <div className="mt-1 text-xs text-[var(--muted-foreground)]">
+              <div className="mt-1 app-text-caption text-[var(--muted-foreground)]">
                 {(t(stat.labelKey as any) || stat.fallback) as string}
               </div>
             </motion.div>
@@ -188,8 +188,8 @@ export function AboutContent({
           className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--primary)]/5 to-[var(--accent)]/5 p-6 md:p-10"
         >
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-semibold">{t("whyTrustUs") || "Why Trust Us?"}</h2>
-            <p className="mt-2 text-sm text-[var(--muted-foreground)]">
+            <h2 className="app-text-h2 font-semibold">{t("whyTrustUs") || "Why Trust Us?"}</h2>
+            <p className="mt-2 app-text-body text-[var(--muted-foreground)]">
               {t("builtOnTransparency") || "Built on transparency, security, and community standards"}
             </p>
           </div>
@@ -229,10 +229,10 @@ export function AboutContent({
                   <item.Icon className="size-5 text-[var(--primary)]" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-sm">
+                  <h3 className="font-semibold app-text-body">
                     {(t(item.titleKey as any) || item.titleFallback) as string}
                   </h3>
-                  <p className="mt-1 text-xs text-[var(--muted-foreground)] leading-relaxed">
+                  <p className="mt-1 app-text-caption text-[var(--muted-foreground)] leading-relaxed">
                     {(t(item.descKey as any) || item.descFallback) as string}
                   </p>
                 </div>
@@ -249,7 +249,7 @@ export function AboutContent({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl font-semibold"
+          className="app-text-h2 font-semibold"
         >
           {t("howItWorks")}
         </motion.h2>
@@ -269,16 +269,16 @@ export function AboutContent({
               className="relative rounded-2xl border border-[var(--border)] bg-[var(--card)] p-6 overflow-hidden group hover:-translate-y-1 transition-transform duration-300"
             >
               {/* Step number watermark */}
-              <span className="absolute top-3 right-4 text-6xl font-black text-[var(--foreground)]/5 select-none leading-none group-hover:text-[var(--accent)]/10 transition-colors">
+              <span className="absolute top-3 right-4 app-text-h1 font-black text-[var(--foreground)]/5 select-none leading-none group-hover:text-[var(--accent)]/10 transition-colors">
                 {item.step}
               </span>
               <div className="flex items-center gap-3 mb-3">
                 <span className="size-10 rounded-xl bg-[var(--primary)]/15 grid place-items-center ring-1 ring-[var(--primary)]/25">
                   <item.icon className="h-5 w-5 text-[var(--primary)]" />
                 </span>
-                <h3 className="font-semibold text-sm">{item.label}</h3>
+                <h3 className="font-semibold app-text-body">{item.label}</h3>
               </div>
-              <p className="text-sm text-[var(--foreground)]/75 leading-relaxed">
+              <p className="app-text-body text-[var(--foreground)]/75 leading-relaxed">
                 {item.desc}
               </p>
             </motion.div>
@@ -295,7 +295,7 @@ export function AboutContent({
           transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
           className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[var(--secondary)]/30 p-6 md:p-10"
         >
-          <h2 className="text-2xl font-semibold">
+          <h2 className="app-text-h2 font-semibold">
             {t("storyBehind")} {marketplaceName}
           </h2>
           <div className="mt-4 space-y-3 text-[var(--foreground)]/80 leading-relaxed">
@@ -317,7 +317,7 @@ export function AboutContent({
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="text-2xl font-semibold"
+          className="app-text-h2 font-semibold"
         >
           {t("meetTheTeam")}
         </motion.h2>
@@ -339,14 +339,14 @@ export function AboutContent({
               priority
             />
           </div>
-          <h3 className="mt-4 font-semibold text-lg">{AUTHOR.name}</h3>
-          <p className="text-sm text-[var(--primary)] font-medium mt-0.5">
+          <h3 className="mt-4 font-semibold app-text-heading-sm">{AUTHOR.name}</h3>
+          <p className="app-text-body text-[var(--primary)] font-medium mt-0.5">
             {AUTHOR.role}
           </p>
-          <p className="mt-2 text-sm text-[var(--foreground)]/70 leading-relaxed">
+          <p className="mt-2 app-text-body text-[var(--foreground)]/70 leading-relaxed">
             Founder of {ORGANIZATION_NAME} — building {marketplaceName} and digital products for Afghanistan.
           </p>
-          <div className="mt-4 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 text-sm">
+          <div className="mt-4 flex flex-col sm:flex-row flex-wrap items-center justify-center gap-3 app-text-body">
             <Link
               href={`mailto:${AUTHOR.email}`}
               className="inline-flex items-center gap-2 text-[var(--primary)] hover:underline"

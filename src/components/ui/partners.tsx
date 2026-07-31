@@ -99,7 +99,7 @@ export function Partners() {
       <div className="container mx-auto px-4 relative">
         {/* ── Heading ──────────────────────────────────────────────────────── */}
         <div className="text-center mb-8 md:mb-10 space-y-3">
-          <p className="text-[11px] font-semibold tracking-[0.25em] uppercase text-[var(--primary)]">
+          <p className="app-text-caption font-semibold tracking-[0.25em] uppercase text-[var(--primary)]">
             Our Partners
           </p>
           <h4 className="heading-lg bg-gradient-to-r from-[var(--primary)] via-[var(--foreground)] to-[var(--secondary)] bg-clip-text text-transparent">
@@ -137,7 +137,7 @@ export function Partners() {
                   {/* Shimmer sweep — slides left-to-right on hover */}
                   <div
                     aria-hidden="true"
-                    className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-white/[.07] to-transparent pointer-events-none"
+                    className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out bg-gradient-to-r from-transparent via-overlay-light/[.07] to-transparent pointer-events-none"
                   />
 
                   {/* Icon ring */}
@@ -149,7 +149,7 @@ export function Partners() {
                   </div>
 
                   {/* Company name */}
-                  <span className="text-[11px] font-medium tracking-wide text-[color-mix(in oklab, var(--foreground) 45%, transparent)] group-hover:text-[color-mix(in oklab, var(--foreground) 90%, transparent)] transition-colors duration-300">
+                  <span className="app-text-caption font-medium tracking-wide text-[color-mix(in oklab, var(--foreground) 45%, transparent)] group-hover:text-[color-mix(in oklab, var(--foreground) 90%, transparent)] transition-colors duration-300">
                     {company.name}
                   </span>
                 </div>
