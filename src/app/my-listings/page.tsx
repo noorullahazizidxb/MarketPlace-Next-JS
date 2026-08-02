@@ -28,13 +28,13 @@ export default function MyListingsPage() {
     return <p className="subtle">{t("myListingsLoadingSession")}</p>;
 
   return (
-    <div className="space-y-4 app-shell-page" data-app-page="my-listings">
+    <div className="space-y-[var(--space-gap)] app-shell-page" data-app-page="my-listings">
       <h2 className="heading-xl">{t("myListings")}</h2>
-      <div className="card p-4">
+      <div className="card p-[var(--space-card)]">
         {items.length === 0 ? (
           <p className="subtle">{t("myListingsEmpty")}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[var(--space-gap)]">
             {items.map((item) => (
               <ListingWithActions key={item.id} listing={item} />
             ))}
@@ -190,14 +190,14 @@ function ActionButton({
   variant?: "default" | "accent" | "destructive";
 }) {
   const base =
-    "inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 text-[11px] font-medium shadow-sm border backdrop-blur transition-all disabled:opacity-50";
+    "inline-flex items-center gap-1 rounded-xl px-2.5 py-1.5 app-text-caption font-medium shadow-sm border backdrop-blur transition-all disabled:opacity-50";
   const variants: Record<string, string> = {
     default:
       "bg-[var(--background)]/70 border-[var(--border)] hover:bg-[var(--muted)]/40",
     accent:
       "bg-[var(--accent)]/20 border-[var(--accent)]/40 text-[var(--accent)] hover:bg-[var(--accent)]/30",
     destructive:
-      "bg-red-500/15 border-red-500/30 text-red-500 hover:bg-red-500/25",
+      "bg-destructive/15 border-destructive/40 text-destructive hover:bg-destructive/25",
   };
   return (
     <button

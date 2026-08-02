@@ -165,7 +165,7 @@ export function HiddenListingsSlider({
       }}
     >
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-lg font-semibold tracking-tight">
+        <h3 className="app-text-heading-sm font-semibold tracking-tight">
           Promoted Listings
         </h3>
         <div className="flex items-center gap-2">

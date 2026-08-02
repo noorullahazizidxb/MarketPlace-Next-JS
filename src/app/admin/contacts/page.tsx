@@ -96,7 +96,7 @@ export default function AdminContactsPage() {
   }, [data, q, subjectFilter]);
 
   return (
-    <section dir={isRtl ? "rtl" : "ltr"} className="container-padded py-10 app-shell-page" data-app-page="admin-contacts">
+    <section dir={isRtl ? "rtl" : "ltr"} className="container-padded app-shell-page" data-app-page="admin-contacts">
       {!isAdmin ? (
         <div className="py-12">
           <p className="subtle">{t("adminPrivilegesNeeded")}</p>
@@ -130,7 +130,7 @@ export default function AdminContactsPage() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-[var(--space-section)]">
             <Card className="lg:col-span-2 p-0 overflow-hidden">
               <div className="flex items-center gap-2 p-3 border-b border-[var(--border)] sm:hidden">
                 <div className="w-full">
@@ -151,12 +151,12 @@ export default function AdminContactsPage() {
                 <TableBody>
                   {isLoading && (
                     <TableRow>
-                      <TableCell className="p-6 subtle">Loading…</TableCell>
+                      <TableCell className="p-[var(--space-card)] subtle">Loading…</TableCell>
                     </TableRow>
                   )}
                   {!isLoading && items.length === 0 && (
                     <TableRow>
-                      <TableCell className="p-6 subtle">
+                      <TableCell className="p-[var(--space-card)] subtle">
                         {t("noContactsYet")}
                       </TableCell>
                     </TableRow>
@@ -167,13 +167,13 @@ export default function AdminContactsPage() {
                       className="cursor-pointer"
                       onClick={() => setSelectedContact(c)}
                     >
-                      <TableCell className="p-4">
+                      <TableCell className="p-[var(--space-card)]">
                         <motion.div
                           initial={{ opacity: 0, y: 6 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ duration: 0.35 }}
                         >
-                          <div className="flex items-start gap-4">
+                          <div className="flex items-start gap-[var(--space-gap)]">
                             <div className="relative size-10 rounded-xl overflow-hidden border border-[var(--border)] bg-[var(--card)] grid place-items-center">
                               {c.user?.avatarUrl ? (
                                 <Image
@@ -197,22 +197,22 @@ export default function AdminContactsPage() {
                                 >
                                   {c.handled ? t("handled") : t("unhandled")}
                                 </Badge>
-                                <span className="text-xs subtle">
+                                <span className="app-text-caption subtle">
                                   {t("submittedAt")}:{" "}
                                   {new Date(c.createdAt).toLocaleString()}
                                 </span>
                               </div>
-                              <div className="mt-1 text-xs subtle">
+                              <div className="mt-1 app-text-caption subtle">
                                 {t("subjectLabel")}: {subjectLabel(c.subject)}
                               </div>
-                              <div className="mt-2 text-sm line-clamp-2 text-foreground/90">
+                              <div className="mt-2 app-text-body line-clamp-2 text-foreground/90">
                                 {c.message}
                               </div>
                               <div className="mt-3 flex items-center gap-2">
                                 {c.email && (
                                   <a
                                     href={`mailto:${c.email}`}
-                                    className="text-xs flex items-center gap-1 link"
+                                    className="app-text-caption flex items-center gap-1 link"
                                   >
                                     <Mail className="size-3" /> {c.email}
                                   </a>
@@ -220,7 +220,7 @@ export default function AdminContactsPage() {
                                 {c.phone && (
                                   <a
                                     href={`tel:${c.phone}`}
-                                    className="text-xs flex items-center gap-1 link"
+                                    className="app-text-caption flex items-center gap-1 link"
                                   >
                                     <Phone className="size-3" /> {c.phone}
                                   </a>
@@ -236,26 +236,26 @@ export default function AdminContactsPage() {
               </Table>
             </Card>
 
-            <Card className="p-6 bg-[linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))] border border-[var(--border)]">
+            <Card className="p-[var(--space-card)] bg-[linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))] border border-[var(--border)]">
               {selectedContact ? (
                 <div>
-                  <h2 className="text-lg font-semibold mb-2">
+                  <h2 className="app-text-heading-sm font-semibold mb-2">
                     {selectedContact.name}
                   </h2>
-                  <p className="text-sm mb-4">
+                  <p className="app-text-body mb-4">
                     <strong>{t("subjectLabel")}:</strong>{" "}
                     {subjectLabel(selectedContact.subject)}
                   </p>
-                  <p className="text-sm mb-4">
+                  <p className="app-text-body mb-4">
                     <strong>{t("message")}:</strong> {selectedContact.message}
                   </p>
                   {selectedContact.email && (
-                    <p className="text-sm mb-2">
+                    <p className="app-text-body mb-2">
                       <strong>{t("email")}:</strong> {selectedContact.email}
                     </p>
                   )}
                   {selectedContact.phone && (
-                    <p className="text-sm">
+                    <p className="app-text-body">
                       <strong>{t("phone")}:</strong> {selectedContact.phone}
                     </p>
                   )}

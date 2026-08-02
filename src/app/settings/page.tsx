@@ -49,7 +49,7 @@ export default function SettingsPage() {
   ];
 
   return (
-    <div className="space-y-6 max-w-2xl app-shell-page" data-app-page="settings">
+    <div className="space-y-[var(--space-section)] max-w-2xl app-shell-page" data-app-page="settings">
       <motion.h2
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}

@@ -31,9 +31,9 @@ function CurrencySelector() {
           <DropdownMenuTrigger
             className={cn(
               "flex items-center gap-1 sm:gap-1.5",
-              "app-text-caption sm:app-text-body text-white",
-              "hover:text-gray-200 transition-colors",
-              "focus:outline-none focus:ring-2 focus:ring-white/20 rounded"
+              "app-text-caption sm:app-text-body text-primary-foreground",
+              "hover:text-muted-foreground transition-colors",
+              "focus:outline-none focus:ring-2 focus:ring-ring/30 rounded"
             )}
           >
             <ChevronDown className="app-icon-xs sm:w-4 sm:h-4" />
@@ -63,7 +63,7 @@ export function TopBarNavbar() {
         className={cn(
           "flex items-center justify-center",
           "w-full min-h-[var(--ctrl-h)] sm:h-14 md:h-[58px]",
-          "bg-[#383A40] text-white",
+          "bg-[#383A40] text-primary-foreground",
           "px-3 sm:px-4"
         )}
       >

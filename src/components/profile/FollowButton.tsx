@@ -68,15 +68,15 @@ export default function FollowButton({
           }
         }}
         className={cn(
-          "relative inline-flex items-center gap-2 px-5 h-10 rounded-2xl text-sm font-semibold overflow-hidden",
+          "relative inline-flex items-center gap-2 px-5 h-10 rounded-2xl app-text-body font-semibold overflow-hidden",
           following &&
-            "bg-[var(--muted)]/30 border-[var(--border)]/60 text-[var(--foreground)]/80 hover:bg-red-500/10 hover:border-red-500/30 hover:text-red-400",
+            "bg-[var(--muted)]/30 border-[var(--border)]/60 text-[var(--foreground)]/80 hover:bg-destructive/10 hover:border-destructive/40 hover:text-destructive",
           !following &&
             "shadow-[0_4px_20px_-4px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:shadow-[0_6px_28px_-4px_color-mix(in oklab, var(--primary) 60%, transparent)] hover:brightness-110",
         )}
       >
         {!following && (
-          <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+          <span className="pointer-events-none absolute inset-0 bg-gradient-to-r from-transparent via-overlay-light/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
         )}
         <AnimatePresence mode="wait">
           {busy ? (

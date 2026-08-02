@@ -11,8 +11,6 @@ import { ThemeToggle } from "@/theme/theme-toggle";
 import { asset } from "@/lib/assets";
 import BottomNavigation from "@/components/ui/BottomNavigation";
 import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
-import { Partners } from "@/components/ui/partners";
-import SiteFooter from "@/components/layout/site-footer";
 import { AnimatedBg } from "@/components/ui/animated-bg";
 
 /**
@@ -65,10 +63,6 @@ export function AdminShell({ children }: PropsWithChildren) {
         >
           {children}
         </AdminBaseLayout>
-      </div>
-      <div className="relative z-10">
-        <Partners />
-        <SiteFooter />
       </div>
       <BottomNavigation />
       <MobileQuickBar />

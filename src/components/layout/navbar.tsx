@@ -46,7 +46,7 @@ export function Navbar({ className = "" }: { className?: string }) {
             className="flex items-center gap-3 min-w-0 group"
             aria-label="DevMinds home"
           >
-            <div className="size-14 sm:size-16 rounded-squircle overflow-hidden bg-white/95 shadow-sm ring-1 ring-border/40 flex shrink-0 transition-transform duration-200 group-hover:scale-[1.03]">
+            <div className="size-14 sm:size-16 rounded-squircle overflow-hidden bg-background/95 shadow-sm ring-1 ring-border/40 flex shrink-0 transition-transform duration-200 group-hover:scale-[1.03]">
               <Image
                 src="/brand/devminds-logo.png"
                 alt="DevMinds"
@@ -58,10 +58,10 @@ export function Navbar({ className = "" }: { className?: string }) {
               />
             </div>
             <div className="min-w-0 hidden xs:block sm:block">
-              <span className="block font-semibold text-base sm:text-lg tracking-tight truncate leading-tight">
+              <span className="block font-semibold app-text-body sm:app-text-heading-sm tracking-tight truncate leading-tight">
                 {t("marketplace")}
               </span>
-              <span className="block text-xs text-muted-foreground truncate">
+              <span className="block app-text-caption text-muted-foreground truncate">
                 DevMinds
               </span>
             </div>

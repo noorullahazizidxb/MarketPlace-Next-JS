@@ -62,16 +62,16 @@ const BLOG_STATUSES: StatusOption[] = ["ALL", "PENDING", "APPROVED", "REJECTED"]
 
 const STATUS_STYLES: Record<string, string> = {
   PENDING:
-    "bg-amber-500/15 text-amber-600 border-amber-400/30 dark:text-amber-400",
+    "bg-warning/15 text-warning border-warning/40 dark:text-warning",
   APPROVED:
-    "bg-emerald-500/15 text-emerald-600 border-emerald-400/30 dark:text-emerald-400",
-  REJECTED: "bg-red-500/15 text-red-600 border-red-400/30 dark:text-red-400",
-  DRAFT: "bg-slate-500/15 text-slate-500 border-slate-400/30 dark:text-slate-400",
-  EXPIRED: "bg-zinc-500/15 text-zinc-500 border-zinc-400/30",
-  SOLD: "bg-purple-500/15 text-purple-600 border-purple-400/30 dark:text-purple-400",
+    "bg-success/15 text-success border-success/35 dark:text-success",
+  REJECTED: "bg-destructive/15 text-destructive border-destructive/40 dark:text-destructive",
+  DRAFT: "bg-muted text-muted-foreground border-border dark:text-muted-foreground",
+  EXPIRED: "bg-muted text-muted-foreground border-border",
+  SOLD: "bg-primary/15 text-primary border-primary/35 dark:text-primary",
   RENTED:
-    "bg-indigo-500/15 text-indigo-600 border-indigo-400/30 dark:text-indigo-400",
-  HIDDEN: "bg-gray-500/15 text-gray-500 border-gray-400/30 dark:text-gray-400",
+    "bg-primary/15 text-primary border-primary/35 dark:text-primary",
+  HIDDEN: "bg-muted text-muted-foreground border-border dark:text-muted-foreground",
 };
 
 const STATUS_ICONS: Record<string, React.ReactNode> = {
@@ -245,7 +245,7 @@ function ListingRow({
           <Button
             size="sm"
             variant="secondary"
-            className="gap-1 px-2.5 text-red-500 hover:text-red-600"
+            className="gap-1 px-2.5 text-destructive hover:text-destructive"
             onClick={handleReject}
             loading={reject.isPending}
             disabled={isPending}
@@ -330,7 +330,7 @@ function BlogRow({
             <span>{new Date(blog.createdAt).toLocaleDateString()}</span>
           )}
           {blog.expiresAt && (
-            <span className="text-amber-500">
+            <span className="text-warning">
               Expires {new Date(blog.expiresAt).toLocaleDateString()}
             </span>
           )}
@@ -363,7 +363,7 @@ function BlogRow({
           <Button
             size="sm"
             variant="secondary"
-            className="gap-1 px-2.5 text-red-500 hover:text-red-600"
+            className="gap-1 px-2.5 text-destructive hover:text-destructive"
             onClick={handleReject}
             loading={reject.isPending}
             disabled={isPending}
@@ -392,7 +392,7 @@ function StatCard({
 }) {
   return (
     <div
-      className={`flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-4 shadow-sm`}
+      className={`flex items-center gap-3 rounded-xl border border-[var(--border)] bg-[var(--card)] p-[var(--space-card)] shadow-sm`}
     >
       <div
         className={`size-10 rounded-xl flex items-center justify-center ${color}`}
@@ -470,15 +470,15 @@ export default function ManageContentStatusPage() {
 
   // ── Stats ───────────────────────────────────────────────────────────────────
   const listingStats = [
-    { label: "Pending", status: "PENDING", icon: <Clock className="app-icon-sm" />, color: "bg-amber-500/15 text-amber-500" },
-    { label: "Approved", status: "APPROVED", icon: <CheckCircle2 className="app-icon-sm" />, color: "bg-emerald-500/15 text-emerald-500" },
-    { label: "Rejected", status: "REJECTED", icon: <XCircle className="app-icon-sm" />, color: "bg-red-500/15 text-red-500" },
+    { label: "Pending", status: "PENDING", icon: <Clock className="app-icon-sm" />, color: "bg-warning/15 text-warning" },
+    { label: "Approved", status: "APPROVED", icon: <CheckCircle2 className="app-icon-sm" />, color: "bg-success/15 text-success" },
+    { label: "Rejected", status: "REJECTED", icon: <XCircle className="app-icon-sm" />, color: "bg-destructive/15 text-destructive" },
   ];
 
   if (!isAdmin) {
     return (
-      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 p-6">
-        <XCircle className="size-10 text-red-500 opacity-60" />
+      <div className="min-h-[50vh] flex flex-col items-center justify-center gap-3 p-[var(--space-card)]">
+        <XCircle className="size-10 text-destructive opacity-60" />
         <p className="app-text-heading-sm font-semibold">Admin access required</p>
         <p className="app-text-body text-[var(--muted-foreground)]">
           You do not have permission to view this page.
@@ -488,9 +488,9 @@ export default function ManageContentStatusPage() {
   }
 
   return (
-    <div className="min-h-screen p-4 sm:p-6 space-y-6 app-shell-page" data-app-page="admin-manage-content-status">
+    <div className="min-h-screen p-[var(--space-card)] sm:p-[var(--space-card)] space-y-[var(--space-section)] app-shell-page" data-app-page="admin-manage-content-status">
       {/* ── Page header ──────────────────────────────────────────────── */}
-      <div className="flex items-center justify-between gap-4 flex-wrap">
+      <div className="flex items-center justify-between gap-[var(--space-gap)] flex-wrap">
         <div>
           <h1 className="app-text-heading font-bold tracking-tight">
             Manage Content Status
@@ -555,7 +555,7 @@ export default function ManageContentStatusPage() {
 
       {/* ── Listings tab ─────────────────────────────────────────────── */}
       {tab === "listings" && (
-        <div className="space-y-4">
+        <div className="space-y-[var(--space-gap)]">
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1 max-w-xs">
@@ -635,7 +635,7 @@ export default function ManageContentStatusPage() {
 
       {/* ── Blogs tab ────────────────────────────────────────────────── */}
       {tab === "blogs" && (
-        <div className="space-y-4">
+        <div className="space-y-[var(--space-gap)]">
           {/* Filters */}
           <div className="flex flex-col sm:flex-row gap-3 items-start sm:items-center">
             <div className="relative flex-1 max-w-xs">

@@ -152,8 +152,8 @@ export default function AdsManagementPage() {
   ];
 
   return (
-    <div className="space-y-8 pb-20 app-shell-page" data-app-page="admin-ads">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="admin-ads">
+      <div className="flex flex-col gap-[var(--space-gap)] md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="app-text-heading font-semibold tracking-tight">
             {t("adsManagement")}
@@ -186,22 +186,22 @@ export default function AdsManagementPage() {
             </Button>
           </DialogTrigger>
           <DialogContent
-            className="max-h-[90vh] overflow-y-auto rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.35)] p-0"
+            className="max-h-[90vh] overflow-y-auto rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-token-lg p-0"
             showCloseButton={false}
           >
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent rounded-t-[2rem]" />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent rounded-t-[2rem]" />
             <div className="px-6 pt-6 pb-4 border-b border-[var(--border)]/30 flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center">
                   <Plus className="size-4 text-[var(--primary)]" />
                 </div>
-                <DialogTitle className="text-base font-bold">
+                <DialogTitle className="app-text-body font-bold">
                   {editingAd ? t("editAd") : t("createNewAd")}
                 </DialogTitle>
               </div>
             </div>
             <form
-              className="px-6 py-5 space-y-5"
+              className="px-6 py-5 space-y-[var(--space-section)]"
               onSubmit={form.handleSubmit(onSubmit)}
             >
               <Controller
@@ -248,7 +248,7 @@ export default function AdsManagementPage() {
                 )}
               />
               <div className="space-y-1.5">
-                <label className="text-xs font-semibold text-[var(--foreground)]/60 uppercase tracking-wider">
+                <label className="app-text-caption font-semibold text-[var(--foreground)]/60 uppercase tracking-wider">
                   {t("placementLabel")}
                 </label>
                 <PlacementSelect
@@ -256,15 +256,15 @@ export default function AdsManagementPage() {
                   onChange={(p: AdPlacement) => form.setValue("placement", p)}
                 />
                 {form.formState.errors.placement && (
-                  <p className="text-xs text-red-400">
+                  <p className="app-text-caption text-destructive">
                     {(form.formState.errors.placement as any).message}
                   </p>
                 )}
               </div>
               <div className="flex items-center justify-between rounded-2xl border border-[var(--border)]/40 bg-[var(--muted)]/10 px-4 py-3.5">
                 <div className="space-y-0.5">
-                  <p className="text-sm font-semibold">{t("activeLabel")}</p>
-                  <p className="text-xs text-[var(--foreground)]/45">
+                  <p className="app-text-body font-semibold">{t("activeLabel")}</p>
+                  <p className="app-text-caption text-[var(--foreground)]/45">
                     {t("activeHint")}
                   </p>
                 </div>
@@ -298,8 +298,8 @@ export default function AdsManagementPage() {
         </Dialog>
       </div>
 
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="flex flex-1 flex-col gap-4 sm:flex-row">
+      <div className="flex flex-col gap-[var(--space-gap)] md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-1 flex-col gap-[var(--space-gap)] sm:flex-row">
           <div className="relative flex-1">
             <TextInputField
               label={(t as any)("searchAdsPlaceholder")}
@@ -338,21 +338,21 @@ export default function AdsManagementPage() {
 
       <AnimatePresence mode="popLayout">
         {isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
+          <div className="flex items-center gap-2 app-text-body text-muted-foreground">
             {t("loadingAds")}
           </div>
         ) : filtered.length === 0 ? (
           <motion.div
             initial={{ opacity: 0, y: 8 }}
             animate={{ opacity: 1, y: 0 }}
-            className="text-sm text-muted-foreground"
+            className="app-text-body text-muted-foreground"
           >
             {t("noAdsMatchFilters")}
           </motion.div>
         ) : (
           <motion.div
             layout
-            className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
+            className="grid gap-[var(--space-section)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4"
           >
             {filtered.map((ad) => (
               <motion.div

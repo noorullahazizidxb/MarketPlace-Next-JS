@@ -176,7 +176,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <motion.div
             ref={backdropRef}
             // extremely high z-index so the sheet is always on top
-            className="fixed inset-0 z-[99999] bg-black/40 backdrop-blur-sm"
+            className="fixed inset-0 z-[99999] bg-foreground/40 backdrop-blur-sm"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -185,7 +185,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <motion.div
             ref={sheetRef}
             className={
-              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[var(--background)]/90 backdrop-blur-xl border border-[var(--border)] shadow-[0_-4px_24px_-4px_rgba(0,0,0,0.4)] " +
+              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[var(--background)]/90 backdrop-blur-xl border border-[var(--border)] shadow-token-lg " +
               className +
               " sheet-dynamic-height"
             }
@@ -219,7 +219,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           >
             <div className="pt-3 pb-2 px-6 flex items-center justify-between select-none cursor-grab active:cursor-grabbing">
               <div className="absolute left-1/2 top-2 -translate-x-1/2 h-1.5 w-12 rounded-full bg-foreground/20" />
-              <p className="text-sm font-semibold tracking-wide pr-4 line-clamp-1">
+              <p className="app-text-body font-semibold tracking-wide pr-4 line-clamp-1">
                 {title}
               </p>
               {closable && (

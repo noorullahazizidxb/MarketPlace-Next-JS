@@ -1,92 +1,139 @@
 "use client";
 
-import * as React from "react";
 import type { CSSProperties } from "react";
-import { AppearanceLivePreview, Badge, type AppearancePreviewVariant } from "@repo/ui";
+import { Search, Sparkles } from "lucide-react";
+import { Badge, Button } from "@repo/ui";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/atoms/shadcn/card";
+import { Input } from "@/components/ui/atoms/shadcn/input";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/atoms/shadcn/table";
+import { ListingCard, type Listing } from "@/components/ui/listing-card";
 import type { AppearanceDensityTab } from "./appearance-preview-registry";
 
-type AppearanceCategoryLivePreviewPanelProps = {
-    category: AppearanceDensityTab;
-    previewVariant: AppearancePreviewVariant;
-    previewStyle: CSSProperties;
-    maxWidth: string;
+type Props = {
+  category: AppearanceDensityTab;
+  previewVariant: string;
+  previewStyle: CSSProperties;
+  maxWidth: string;
 };
 
+const PREVIEW_LISTING: Listing = {
+  id: "theme-preview",
+  title: "MacBook Pro for creative teams",
+  description: "Excellent condition, verified seller, and same-day delivery.",
+  price: "1,850",
+  currency: "USD",
+  listingType: "SALE",
+  contactVisibility: "HIDE_SELLER",
+  location: "Kabul, Afghanistan",
+  category: { name: "Electronics" },
+  averageRating: 4.8,
+  reviewCount: 32,
+  images: [],
+};
+
+function ControlsSpecimen() {
+  return (
+    <Card className="theme-specimen-card">
+      <CardHeader>
+        <CardTitle>Marketplace controls</CardTitle>
+        <CardDescription>Production primitives used by listing and contact flows.</CardDescription>
+      </CardHeader>
+      <CardContent className="grid gap-[var(--space-gap)]">
+        <div className="relative">
+          <Search className="app-icon-sm pointer-events-none absolute start-[var(--ctrl-px)] top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <Input className="ps-[calc(var(--ctrl-px)+var(--icon-sm)+0.5rem)]" placeholder="Search products and services" />
+        </div>
+        <div className="flex flex-wrap gap-[var(--space-gap)]">
+          <Button type="button">Search</Button>
+          <Button type="button" variant="outline">Filters</Button>
+          <Badge variant="secondary">128 results</Badge>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function TableSpecimen() {
+  return (
+    <Card className="theme-specimen-card">
+      <CardHeader>
+        <CardTitle>Listing moderation</CardTitle>
+        <CardDescription>Real table, badge, and card primitives from the admin experience.</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead>Listing</TableHead>
+              <TableHead>Seller</TableHead>
+              <TableHead>Status</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow>
+              <TableCell>MacBook Pro</TableCell>
+              <TableCell>DevMinds Store</TableCell>
+              <TableCell><Badge variant="success">Approved</Badge></TableCell>
+            </TableRow>
+            <TableRow>
+              <TableCell>Design services</TableCell>
+              <TableCell>Creative Hub</TableCell>
+              <TableCell><Badge variant="warning">Pending</Badge></TableCell>
+            </TableRow>
+          </TableBody>
+        </Table>
+      </CardContent>
+    </Card>
+  );
+}
+
+function CategorySpecimen({ category }: { category: AppearanceDensityTab }) {
+  if (category === "table" || category === "sidebar") return <TableSpecimen />;
+  if (category === "controls" || category === "icons" || category === "mobile") {
+    return <ControlsSpecimen />;
+  }
+  return (
+    <div className="mx-auto w-full max-w-sm">
+      <ListingCard listing={PREVIEW_LISTING} />
+    </div>
+  );
+}
+
 export function AppearanceCategoryLivePreviewPanel({
-    category,
-    previewVariant,
-    previewStyle,
-    maxWidth: _maxWidth,
-}: AppearanceCategoryLivePreviewPanelProps) {
-    const frameRef = React.useRef<HTMLDivElement>(null);
-    const contentRef = React.useRef<HTMLDivElement>(null);
-    const [scale, setScale] = React.useState(1);
-    const [contentHeight, setContentHeight] = React.useState<number | undefined>(undefined);
-
-    React.useLayoutEffect(() => {
-        const frame = frameRef.current;
-        if (!frame) return;
-
-        const updateScale = () => {
-            const content = contentRef.current;
-            if (!content) return;
-
-            const frameWidth = frame.clientWidth;
-            if (frameWidth <= 0) return;
-
-            // Measure natural width without current transform
-            const prevTransform = content.style.transform;
-            content.style.transform = "none";
-            const naturalWidth = Math.max(content.scrollWidth, content.offsetWidth, 1);
-            const naturalHeight = Math.max(content.scrollHeight, content.offsetHeight, 1);
-            content.style.transform = prevTransform;
-
-            const nextScale = Math.min(1, frameWidth / naturalWidth);
-            setScale(Number.isFinite(nextScale) && nextScale > 0 ? nextScale : 1);
-            setContentHeight(naturalHeight * (Number.isFinite(nextScale) && nextScale > 0 ? nextScale : 1));
-        };
-
-        updateScale();
-
-        const observer = new ResizeObserver(() => {
-            updateScale();
-        });
-        observer.observe(frame);
-        if (contentRef.current) observer.observe(contentRef.current);
-
-        return () => observer.disconnect();
-    }, [category, previewVariant, previewStyle]);
-
-    return (
-        <section className="flex min-w-0 flex-col gap-2 overflow-hidden rounded-xl border border-border/60 bg-background/85 p-2.5">
-            <div className="flex shrink-0 items-center gap-2">
-                <p className="app-text-label">Category Live Preview</p>
-                <Badge variant="secondary" className="ml-auto px-1.5 app-text-micro">
-                    {category}
-                </Badge>
-            </div>
-
-            <div
-                ref={frameRef}
-                className="relative min-w-0 w-full overflow-hidden"
-                style={contentHeight ? { height: contentHeight } : undefined}
-            >
-                <div
-                    ref={contentRef}
-                    className="origin-top-left min-w-0 w-full"
-                    style={{
-                        ...previewStyle,
-                        width: "100%",
-                        transform: `scale(${scale})`,
-                        transformOrigin: "top left",
-                    }}
-                >
-                    <AppearanceLivePreview
-                        variant={previewVariant}
-                        className="min-w-0 w-full max-w-full"
-                    />
-                </div>
-            </div>
-        </section>
-    );
+  category,
+  previewStyle,
+  maxWidth,
+}: Props) {
+  return (
+    <section className="appearance-category-preview" style={previewStyle}>
+      <div className="appearance-preview-toolbar">
+        <div>
+          <p className="app-text-label">Category live preview</p>
+          <p className="app-text-caption text-muted-foreground">
+            Real components already used by the Marketplace application.
+          </p>
+        </div>
+        <Badge variant="secondary" className="ms-auto">
+          <Sparkles className="app-icon-xs" />
+          {category}
+        </Badge>
+      </div>
+      <div className="appearance-category-canvas" style={{ maxWidth }}>
+        <CategorySpecimen category={category} />
+      </div>
+    </section>
+  );
 }

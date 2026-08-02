@@ -33,7 +33,7 @@ const Command = React.forwardRef<
   <CommandPrimitive
     ref={ref}
     className={cn(
-      "flex h-full w-full flex-col overflow-hidden rounded-xl bg-white dark:bg-zinc-950 text-zinc-950 dark:text-zinc-50",
+      "flex h-full w-full flex-col overflow-hidden rounded-xl bg-background dark:bg-muted text-muted-foreground dark:text-muted-foreground",
       className,
     )}
     {...props}
@@ -48,7 +48,7 @@ const CommandInput = React.forwardRef<
   <CommandPrimitive.Input
     ref={ref}
     className={cn(
-      "flex min-h-[var(--ctrl-h)] w-full border-none bg-transparent px-4 py-3 text-[17px] outline-none placeholder:text-zinc-500 dark:placeholder:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800 mb-4",
+      "flex min-h-[var(--ctrl-h)] w-full border-none bg-transparent px-4 py-3 app-text-body outline-none placeholder:text-muted-foreground dark:placeholder:text-muted-foreground border-b border-border dark:border-border mb-4",
       className,
     )}
     {...props}
@@ -77,7 +77,7 @@ const CommandEmpty = React.forwardRef<
 >((props, ref) => (
   <CommandPrimitive.Empty
     ref={ref}
-    className="flex min-h-[var(--ctrl-h)] items-center justify-center app-text-body text-zinc-500 dark:text-zinc-400"
+    className="flex min-h-[var(--ctrl-h)] items-center justify-center app-text-body text-muted-foreground dark:text-muted-foreground"
     {...props}
   />
 ));
@@ -90,7 +90,7 @@ const CommandGroup = React.forwardRef<
   <CommandPrimitive.Group
     ref={ref}
     className={cn(
-      "overflow-hidden px-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:app-text-caption [&_[cmdk-group-heading]]:app-text-label [&_[cmdk-group-heading]]:text-zinc-500 dark:[&_[cmdk-group-heading]]:text-zinc-400 [&:not(:first-child)]:mt-2",
+      "overflow-hidden px-2 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:py-2 [&_[cmdk-group-heading]]:app-text-caption [&_[cmdk-group-heading]]:app-text-label [&_[cmdk-group-heading]]:text-muted-foreground dark:[&_[cmdk-group-heading]]:text-muted-foreground [&:not(:first-child)]:mt-2",
       className,
     )}
     {...props}
@@ -105,7 +105,7 @@ const CommandItem = React.forwardRef<
   <CommandPrimitive.Item
     ref={ref}
     className={cn(
-      "relative flex min-h-[var(--ctrl-h)] cursor-pointer select-none items-center gap-2 rounded-lg px-4 app-text-body text-zinc-700 dark:text-zinc-300 outline-none transition-colors data-[disabled=true]:pointer-events-none data-[selected=true]:bg-zinc-100 dark:data-[selected=true]:bg-zinc-800 data-[selected=true]:text-zinc-900 dark:data-[selected=true]:text-zinc-100 data-[disabled=true]:opacity-50 [&+[cmdk-item]]:mt-1",
+      "relative flex min-h-[var(--ctrl-h)] cursor-pointer select-none items-center gap-2 rounded-lg px-4 app-text-body text-muted-foreground dark:text-muted-foreground outline-none transition-colors data-[disabled=true]:pointer-events-none data-[selected=true]:bg-muted dark:data-[selected=true]:bg-muted data-[selected=true]:text-muted-foreground dark:data-[selected=true]:text-muted-foreground data-[disabled=true]:opacity-50 [&+[cmdk-item]]:mt-1",
       className,
     )}
     {...props}
@@ -448,7 +448,7 @@ export function CommandSearch({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="overflow-hidden p-0 shadow-2xl border border-zinc-200 dark:border-zinc-800 max-w-[640px]">
+      <DialogContent className="overflow-hidden p-0 shadow-2xl border border-border dark:border-border max-w-[640px]">
         <DialogTitle className="sr-only">{labels.dialogTitle}</DialogTitle>
         <Command
           ref={commandRef as any}

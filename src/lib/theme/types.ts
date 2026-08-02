@@ -260,8 +260,6 @@ export type LayoutDensityTokens = Partial<{
   pillH: string;
   /** --pill-px: mobile pill horizontal padding */
   pillPx: string;
-  /** --table-pair-col-rem: rem component for min(Xrem, 70vmin) paired table columns */
-  tablePairCol: string;
   /** --loading-spinner-scale: loading spinner scale multiplier */
   loadingSpinnerScale: string;
 }>;
@@ -314,7 +312,7 @@ export type AppPageId =
   | "shell-topbar"
   | "shell-footer";
 
-/** @deprecated Prefer `AppPageId` — kept for Appearance Studio import parity with OTA. */
+/** @deprecated Prefer `AppPageId`. */
 export type AdminPageId = AppPageId;
 
 // Theme settings stored in UI context.
@@ -346,135 +344,10 @@ export interface SidebarSettings {
   width: SidebarWidthOption;
 }
 
-export interface LandingLink {
-  label: string;
-  href: string;
-}
-
-export interface LandingStatItem {
-  value: string;
-  label: string;
-  enabled: boolean;
-}
-
-export interface LandingFeatureItem {
-  title: string;
-  description: string;
-  icon: string;
-  enabled: boolean;
-}
-
-export interface LandingFaqItem {
-  question: string;
-  answer: string;
-  enabled: boolean;
-}
-
-export interface LandingHeaderSettings {
-  enabled: boolean;
-  brandHref: string;
-  signInLabel: string;
-  signInHref: string;
-}
-
-export interface LandingHeroSettings {
-  enabled: boolean;
-  eyebrow: string;
-  title: string;
-  description: string;
-  highlight: string;
-  primaryCta: LandingLink;
-  secondaryCta: LandingLink;
-  imageLightSrc: string;
-  imageDarkSrc: string;
-  imageAlt: string;
-}
-
-export interface LandingStatsSettings {
-  enabled: boolean;
-  items: LandingStatItem[];
-}
-
-export interface LandingServicesSettings {
-  enabled: boolean;
-  title: string;
-  description: string;
-  items: LandingFeatureItem[];
-  /** Paths for the two Image3D blocks in the features section */
-  featureOneLightSrc: string;
-  featureOneDarkSrc: string;
-  featureTwoLightSrc: string;
-  featureTwoDarkSrc: string;
-}
-
-export interface LandingStorySettings {
-  enabled: boolean;
-  title: string;
-  description: string;
-  bulletOne: string;
-  bulletTwo: string;
-  bulletThree: string;
-  panelTitle: string;
-  panelDescription: string;
-}
-
-export interface LandingFaqSettings {
-  enabled: boolean;
-  title: string;
-  description: string;
-  items: LandingFaqItem[];
-}
-
-export interface LandingCtaSettings {
-  enabled: boolean;
-  title: string;
-  description: string;
-  primaryCta: LandingLink;
-  secondaryCta: LandingLink;
-}
-
-export interface LandingPageSettings {
-  header: LandingHeaderSettings;
-  hero: LandingHeroSettings;
-  stats: LandingStatsSettings;
-  services: LandingServicesSettings;
-  story: LandingStorySettings;
-  faq: LandingFaqSettings;
-  cta: LandingCtaSettings;
-}
-
-export interface FooterLinkItem {
-  label: string;
-  href: string;
-}
-
-export interface FooterColumn {
-  title: string;
-  enabled: boolean;
-  links: FooterLinkItem[];
-}
-
-export interface FooterSettings {
-  enabled: boolean;
-  brandTitle: string;
-  brandDescription: string;
-  brandHref: string;
-  supportLabel: string;
-  supportHref: string;
-  supportSecondaryLabel: string;
-  supportSecondaryHref: string;
-  columns: FooterColumn[];
-  socialLinks: FooterLinkItem[];
-  legalLinks: FooterLinkItem[];
-  copyrightSuffix: string;
-}
-
 // Root UI context shape.
 export interface UiContextState {
   version: number;
   theme: ThemeSettings;
   sidebar: SidebarSettings;
-  landing: LandingPageSettings;
-  footer: FooterSettings;
   updatedAt?: string;
 }

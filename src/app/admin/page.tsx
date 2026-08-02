@@ -116,14 +116,14 @@ function ChartTooltip({
         {payload.map((p) => {
           const dataKey = String(p.dataKey ?? "");
           const colorMap: Record<string, string> = {
-            "#2563eb": "bg-[var(--primary)]",
-            "#16a34a": "bg-[var(--accent)]",
-            "#6366f1": "bg-[var(--secondary)]",
-            "#06b6d4": "bg-[var(--accent)]",
-            "#10b981": "bg-[var(--accent)]",
-            "#f43f5e": "bg-[var(--primary)]",
-            "#f59e0b": "bg-[var(--secondary)]",
-            "#0ea5e9": "bg-[var(--primary)]",
+            "var(--chart-1)": "bg-[var(--chart-1)]",
+            "var(--chart-2)": "bg-[var(--chart-2)]",
+            "var(--chart-3)": "bg-[var(--chart-3)]",
+            "var(--chart-4)": "bg-[var(--chart-4)]",
+            "var(--success)": "bg-[var(--success)]",
+            "var(--destructive)": "bg-[var(--destructive)]",
+            "var(--warning)": "bg-[var(--warning)]",
+            "var(--info)": "bg-[var(--info)]",
           };
           const swatch =
             colorMap[String(p.color ?? "")] || "bg-[var(--primary)]";
@@ -143,7 +143,7 @@ function ChartTooltip({
           return (
             <div
               key={dataKey}
-              className="flex items-center justify-between gap-4 app-text-micro"
+              className="flex items-center justify-between gap-[var(--space-gap)] app-text-micro"
             >
               <span className="flex items-center gap-1.5">
                 <span
@@ -191,51 +191,51 @@ export default function AdminDashboardPage() {
       title: t("approvedShort") || "Approved",
       icon: ShieldCheck,
       value: summary.approvedListings ?? data?.totals?.approved ?? 0,
-      accent: "text-emerald-500",
-      iconBg: "bg-emerald-500/10",
+      accent: "text-success",
+      iconBg: "bg-success/10",
       sub: null,
     },
     {
       title: t("users") || "Users",
       icon: Users2,
       value: summary.totalUsers ?? 0,
-      accent: "text-indigo-500",
-      iconBg: "bg-indigo-500/10",
+      accent: "text-primary",
+      iconBg: "bg-primary/10",
       sub: null,
     },
     {
       title: t("feedbacks") || "Feedbacks",
       icon: Star,
       value: summary.feedbackCount ?? 0,
-      accent: "text-amber-500",
-      iconBg: "bg-amber-500/10",
+      accent: "text-warning",
+      iconBg: "bg-warning/10",
       sub: summary.avgRating ? `Avg ${summary.avgRating}★` : null,
     },
   ];
 
   return (
-    <div className="space-y-8 app-shell-page" data-app-page="admin">
-      <div className="flex flex-wrap items-center justify-between gap-4">
+    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="admin">
+      <div className="flex flex-wrap items-center justify-between gap-[var(--space-gap)]">
         <h1 className="heading-xl flex items-center gap-3">
           <LineChartIcon className="app-icon-lg text-[var(--primary)]" />
           {t("adminHub") || "Admin Dashboard"}
         </h1>
         {error && (
-          <p className="app-text-body text-red-500">
+          <p className="app-text-body text-destructive">
             {(error as any)?.message || "Failed to load stats"}
           </p>
         )}
       </div>
 
       {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[var(--space-gap)]">
         {kpis.map((k, i) => (
           <div
             key={k.title}
-            className="relative overflow-hidden rounded-[1.5rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl p-5 flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
+            className="relative overflow-hidden rounded-[1.5rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl p-[var(--space-card)] flex flex-col gap-3 hover:-translate-y-1 hover:shadow-xl transition-all duration-200 cursor-default"
           >
             {/* shimmer top line */}
-            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+            <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent" />
             {/* accent glow */}
             <span className={`pointer-events-none absolute -top-8 -left-4 size-24 rounded-full blur-2xl opacity-20 ${k.iconBg}`} />
             <div className="flex items-start justify-between relative">
@@ -243,7 +243,7 @@ export default function AdminDashboardPage() {
                 <p className="app-text-micro uppercase tracking-widest font-semibold text-[var(--foreground)]/45">
                   {k.title}
                 </p>
-                <p className="text-3xl font-bold tabular-nums">
+                <p className="app-text-h1 font-bold tabular-nums">
                   {isLoading ? <span className="inline-block h-8 w-12 rounded-lg bg-[var(--muted)]/30 animate-pulse" /> : k.value.toLocaleString()}
                 </p>
               </div>
@@ -261,9 +261,9 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Secondary stats redesigned: stacked meta + wide queue stats */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-        <div className="space-y-6">
-          <Card className="p-5 space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-[var(--space-section)] items-start">
+        <div className="space-y-[var(--space-section)]">
+          <Card className="p-[var(--space-card)] space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
             <h3 className="app-text-body font-semibold tracking-wide flex items-center gap-2">
               <span className="inline-block size-2 rounded-full bg-[var(--accent)]" />
               {t("retention")}
@@ -287,7 +287,7 @@ export default function AdminDashboardPage() {
               </div>
             </div>
           </Card>
-          <Card className="p-5 space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
+          <Card className="p-[var(--space-card)] space-y-3 shadow-sm border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
             <h3 className="app-text-body font-semibold tracking-wide flex items-center gap-2">
               <span className="inline-block size-2 rounded-full bg-[var(--secondary)]" />
               {t("schedules")}
@@ -308,7 +308,7 @@ export default function AdminDashboardPage() {
             </div>
           </Card>
         </div>
-        <Card className="lg:col-span-2 p-5 space-y-4 overflow-x-auto shadow-md border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
+        <Card className="lg:col-span-2 p-[var(--space-card)] space-y-[var(--space-gap)] overflow-x-auto shadow-md border border-[var(--border)]/60 bg-[var(--card)]/90 backdrop-blur-sm">
           <div className="flex items-center justify-between">
             <h3 className="app-text-body font-semibold tracking-wide">
               {t("queueStats")}
@@ -317,19 +317,19 @@ export default function AdminDashboardPage() {
               {t("updated")}: {new Date().toLocaleTimeString()}
             </span>
           </div>
-          <div className="min-w-[620px] space-y-4">
+          <div className="min-w-[620px] space-y-[var(--space-gap)]">
             {queueStats &&
               Object.entries(queueStats).map(([q, stats]) => (
                 <div
                   key={q}
-                  className="rounded-2xl border border-[var(--border)]/60 p-4 bg-gradient-to-br from-[color-mix(in oklab, var(--muted) 8%, transparent)] to-transparent hover:from-[color-mix(in oklab, var(--muted) 15%, transparent)] transition-colors"
+                  className="rounded-2xl border border-[var(--border)]/60 p-[var(--space-card)] bg-gradient-to-br from-[color-mix(in oklab, var(--muted) 8%, transparent)] to-transparent hover:from-[color-mix(in oklab, var(--muted) 15%, transparent)] transition-colors"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2 app-text-caption mb-3">
                     <span className="font-medium text-[var(--foreground)]/90">
                       {q}
                     </span>
                     <span className="text-[var(--foreground)]/60 flex items-center gap-1">
-                      <span className="inline-block size-1.5 rounded-full bg-emerald-500" />
+                      <span className="inline-block size-1.5 rounded-full bg-success" />
                       {t("completed")}: {stats.completed}
                     </span>
                   </div>
@@ -364,7 +364,7 @@ export default function AdminDashboardPage() {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 auto-rows-[minmax(320px,_1fr)]">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-[var(--space-section)] auto-rows-[minmax(320px,_1fr)]">
         {/* Listings Type / Status Composite Chart */}
         <ChartCard
           title={(t as any)("listingsTypeStatus")}
@@ -403,7 +403,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="created"
-                    stroke="#2563eb"
+                    stroke="var(--chart-1)"
                     strokeWidth={2}
                     dot={false}
                     name={t("created")}
@@ -411,7 +411,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="approved"
-                    stroke="#16a34a"
+                    stroke="var(--chart-2)"
                     strokeWidth={2}
                     dot={false}
                     name={t("approvedShort")}
@@ -447,7 +447,7 @@ export default function AdminDashboardPage() {
                     content={(props) => <ChartTooltip {...props} />}
                     wrapperClassName="chart-tooltip"
                   />
-                  <Bar dataKey="created" fill="#2563eb" radius={[4, 4, 0, 0]} />
+                  <Bar dataKey="created" fill="var(--chart-1)" radius={[4, 4, 0, 0]} />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -480,7 +480,7 @@ export default function AdminDashboardPage() {
                 />
                 <Bar
                   dataKey="registered"
-                  fill="#6366f1"
+                  fill="var(--chart-3)"
                   radius={[4, 4, 0, 0]}
                 />
               </BarChart>
@@ -517,7 +517,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="avgHours"
-                    stroke="#0ea5e9"
+                    stroke="var(--info)"
                     strokeWidth={2}
                     dot={false}
                     name={t("avgHours")}
@@ -557,7 +557,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="feedbackCount"
-                    stroke="#f59e0b"
+                    stroke="var(--warning)"
                     strokeWidth={2}
                     dot={false}
                     name={t("feedbacks")}
@@ -565,7 +565,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="avgRating"
-                    stroke="#10b981"
+                    stroke="var(--success)"
                     strokeWidth={2}
                     dot={false}
                     name={t("avgRating") || "Avg Rating"}
@@ -605,7 +605,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="total"
-                    stroke="#6366f1"
+                    stroke="var(--chart-3)"
                     strokeWidth={2}
                     dot={false}
                     name={t("notifications")}
@@ -613,7 +613,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="email"
-                    stroke="#06b6d4"
+                    stroke="var(--chart-4)"
                     strokeWidth={2}
                     dot={false}
                     name={(t as any)("email") || "Email"}
@@ -621,7 +621,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="whatsapp"
-                    stroke="#10b981"
+                    stroke="var(--success)"
                     strokeWidth={2}
                     dot={false}
                     name={(t as any)("whatsapp") || "WhatsApp"}
@@ -629,7 +629,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="system"
-                    stroke="#f43f5e"
+                    stroke="var(--destructive)"
                     strokeWidth={2}
                     dot={false}
                     name={(t as any)("system") || "System"}
@@ -674,7 +674,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="pct"
-                    stroke="#16a34a"
+                    stroke="var(--chart-2)"
                     strokeWidth={2}
                     dot={false}
                     name={t("approvedShort")}
@@ -713,7 +713,7 @@ export default function AdminDashboardPage() {
                   <Line
                     type="monotone"
                     dataKey="avgRating"
-                    stroke="#f59e0b"
+                    stroke="var(--warning)"
                     strokeWidth={2}
                     dot={false}
                     name={t("avgRating") || "Avg Rating"}
@@ -748,7 +748,7 @@ export default function AdminDashboardPage() {
                     dataKey="count"
                     nameKey="region"
                     outerRadius={110}
-                    fill="#0ea5e9"
+                    fill="var(--info)"
                     stroke="var(--background)"
                     strokeWidth={2}
                   />
@@ -817,14 +817,14 @@ function ListingsTypeStatusCharts({
   ];
 
   const colorPalette = {
-    PENDING: "#f59e0b",
-    APPROVED: "#16a34a",
-    REJECTED: "#f43f5e",
-    SOLD: "#6366f1",
-    RENTED: "#0ea5e9",
-    EXPIRED: "#6b7280",
-    DRAFT: "#10b981",
-    HIDDEN: "#64748b",
+    PENDING: "var(--warning)",
+    APPROVED: "var(--chart-2)",
+    REJECTED: "var(--destructive)",
+    SOLD: "var(--chart-3)",
+    RENTED: "var(--info)",
+    EXPIRED: "var(--muted-foreground)",
+    DRAFT: "var(--success)",
+    HIDDEN: "var(--muted-foreground)",
   } as Record<string, string>;
 
   return (
@@ -895,14 +895,14 @@ function ListingsTypeStatusCharts({
         {statusKeys.map((k) => {
           const swatch =
             {
-              PENDING: "bg-amber-500",
-              APPROVED: "bg-emerald-600",
-              REJECTED: "bg-rose-500",
-              SOLD: "bg-indigo-500",
-              RENTED: "bg-sky-500",
-              EXPIRED: "bg-zinc-500",
-              DRAFT: "bg-emerald-400",
-              HIDDEN: "bg-slate-500",
+              PENDING: "bg-warning",
+              APPROVED: "bg-success",
+              REJECTED: "bg-destructive",
+              SOLD: "bg-primary",
+              RENTED: "bg-info",
+              EXPIRED: "bg-muted",
+              DRAFT: "bg-success",
+              HIDDEN: "bg-muted",
             }[k] || "bg-[var(--primary)]";
           return (
             <span key={k} className="flex items-center gap-1">

@@ -61,7 +61,7 @@ export function BlogDetailExample({
   if (!data) return null;
   return (
     <div>
-      <h3 className="text-lg font-semibold">{data.title}</h3>
+      <h3 className="app-text-heading-sm font-semibold">{data.title}</h3>
       <p className="opacity-80">{data.content}</p>
       <form
         onSubmit={(e) => {
@@ -85,7 +85,7 @@ export function BlogDetailExample({
       </form>
       <ul className="mt-3 space-y-2">
         {(data.comments || []).map((c) => (
-          <li key={c.tempId || c.id} className="text-sm">
+          <li key={c.tempId || c.id} className="app-text-body">
             <span className="opacity-70">
               {c.author?.fullName || "Anonymous"}:
             </span>{" "}

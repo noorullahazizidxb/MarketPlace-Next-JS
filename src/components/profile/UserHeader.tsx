@@ -32,7 +32,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
       : null;
 
   return (
-    <section className="relative overflow-hidden rounded-[2rem] border border-white/[0.08] shadow-[0_8px_40px_-12px_rgba(0,0,0,0.25)]">
+    <section className="relative overflow-hidden rounded-[2rem] border border-border/[0.08] shadow-token-lg">
       {/* Background layers */}
       <div className="absolute inset-0 bg-[var(--card)]/95 backdrop-blur-2xl" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_60%_-10%,color-mix(in oklab, var(--primary) 18%, transparent),transparent)]" />
@@ -52,7 +52,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
       />
 
       {/* Top shimmer line */}
-      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
 
       <div className="relative p-6 sm:p-8 md:p-10">
         <div className="flex flex-col sm:flex-row gap-6 sm:gap-8 items-start">
@@ -63,7 +63,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
             transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
             className="relative shrink-0"
           >
-            <div className="size-24 sm:size-32 rounded-[1.5rem] overflow-hidden border border-white/10 bg-[color-mix(in oklab, var(--muted) 20%, transparent)] shadow-[0_16px_48px_-12px_rgba(0,0,0,0.3)]">
+            <div className="size-24 sm:size-32 rounded-[1.5rem] overflow-hidden border border-border bg-[color-mix(in oklab, var(--muted) 20%, transparent)] shadow-token-lg">
               {user.photo ? (
                 <Image
                   src={asset(user.photo)}
@@ -73,13 +73,13 @@ export default function UserHeader({ user }: { user: PublicUser }) {
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full grid place-items-center bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 30%, transparent)] to-[color-mix(in oklab, var(--accent) 20%, transparent)] text-3xl font-black text-[var(--primary)]">
+                <div className="w-full h-full grid place-items-center bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 30%, transparent)] to-[color-mix(in oklab, var(--accent) 20%, transparent)] app-text-h1 font-black text-[var(--primary)]">
                   {(name || "U").slice(0, 1).toUpperCase()}
                 </div>
               )}
             </div>
             {/* Online indicator */}
-            <span className="absolute bottom-1.5 right-1.5 size-3.5 rounded-full bg-emerald-400 border-2 border-[var(--card)] shadow-sm" />
+            <span className="absolute bottom-1.5 right-1.5 size-3.5 rounded-full bg-success border-2 border-[var(--card)] shadow-sm" />
           </motion.div>
 
           {/* Info block */}
@@ -90,7 +90,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
             className="flex-1 min-w-0"
           >
             {/* Name + badge */}
-            <h1 className="text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2 flex-wrap">
+            <h1 className="app-text-h2 sm:app-text-h1 font-extrabold tracking-tight flex items-center gap-2 flex-wrap">
               {name}
               {isAdmin && (
                 <BadgeCheck className="size-6 text-[var(--primary)] shrink-0" />
@@ -107,7 +107,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
                   return (
                     <span
                       key={idx}
-                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-semibold backdrop-blur-sm ${isAdminRole
+                      className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1 app-text-caption font-semibold backdrop-blur-sm ${isAdminRole
                           ? "border-[var(--primary)]/30 bg-[var(--primary)]/10 text-[var(--primary)]"
                           : "border-[var(--border)]/60 bg-[var(--muted)]/20 text-[var(--foreground)]/70"
                         }`}
@@ -122,19 +122,19 @@ export default function UserHeader({ user }: { user: PublicUser }) {
             {/* Address & contact */}
             <div className="mt-3 flex flex-wrap items-center gap-2">
               {address && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 text-xs text-[var(--foreground)]/70">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 app-text-caption text-[var(--foreground)]/70">
                   <MapPin className="size-3.5 text-[var(--primary)]" />
                   {address}
                 </span>
               )}
               {user.email && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 text-xs text-[var(--foreground)]/70">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 app-text-caption text-[var(--foreground)]/70">
                   <Mail className="size-3.5 text-[var(--primary)]" />
                   {user.email}
                 </span>
               )}
               {user.phone && (
-                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 text-xs text-[var(--foreground)]/70">
+                <span className="inline-flex items-center gap-1.5 rounded-full border border-[var(--border)]/50 bg-[var(--background)]/50 backdrop-blur-sm px-3 py-1 app-text-caption text-[var(--foreground)]/70">
                   <Phone className="size-3.5 text-[var(--primary)]" />
                   {user.phone}
                 </span>
@@ -159,7 +159,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
                             height={32}
                           />
                         ) : (
-                          <div className="w-full h-full grid place-items-center text-xs font-bold bg-gradient-to-br from-[var(--primary)]/20 to-[var(--accent)]/20 text-[var(--primary)]">
+                          <div className="w-full h-full grid place-items-center app-text-caption font-bold bg-gradient-to-br from-[var(--primary)]/20 to-[var(--accent)]/20 text-[var(--primary)]">
                             {(f.fullName || "").slice(0, 1).toUpperCase()}
                           </div>
                         )}
@@ -167,7 +167,7 @@ export default function UserHeader({ user }: { user: PublicUser }) {
                     </Tooltip>
                   ))}
                 </div>
-                <span className="inline-flex items-center gap-1.5 text-xs text-[var(--foreground)]/60 font-medium">
+                <span className="inline-flex items-center gap-1.5 app-text-caption text-[var(--foreground)]/60 font-medium">
                   <Users className="size-3.5" />
                   {(user.followers || []).length} followers
                 </span>

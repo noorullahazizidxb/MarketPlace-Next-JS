@@ -19,7 +19,7 @@ export function UpgradeToProButton() {
         <HoverCardTrigger asChild>
           <Button
             size="lg"
-            className="px-6 py-3 bg-gradient-to-br shadow-lg from-slate-900 cursor-pointer to-slate-400 text-white app-text-heading"
+            className="px-6 py-3 bg-gradient-to-br shadow-lg from-primary cursor-pointer to-secondary text-primary-foreground app-text-heading"
             style={{ minWidth: 180 }}
             onClick={() =>
               typeof window !== "undefined" &&
@@ -88,7 +88,7 @@ export function UpgradeToProButton() {
                 <span className="absolute -top-5 -right-1">
                   <Badge
                     variant="outline"
-                    className="bg-yellow-400 text-yellow-900 border-yellow-400 app-text-caption px-2 py-0.5 rounded-full shadow"
+                    className="bg-warning text-warning border-warning/40 app-text-caption px-2 py-0.5 rounded-full shadow"
                   >
                     Coming soon
                   </Badge>

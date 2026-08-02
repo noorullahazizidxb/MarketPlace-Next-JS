@@ -127,18 +127,18 @@ export default function AdCard({
         ) : (
           <div className="flex flex-col items-center gap-2 text-[var(--muted-foreground)]/40">
             <ImageIcon className="size-10" />
-            <span className="text-[10px] uppercase tracking-widest">No Image</span>
+            <span className="app-text-micro uppercase tracking-widest">No Image</span>
           </div>
         )}
         <div className="absolute inset-0 bg-gradient-to-t from-[var(--card)]/80 via-transparent to-transparent" />
         {/* Status badges */}
         <div className="absolute top-2.5 left-2.5 flex flex-wrap gap-1.5">
-          <span className="px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide bg-[var(--card)]/80 backdrop-blur-md border border-[var(--border)]/40 text-[var(--foreground)]/80">
+          <span className="px-2.5 py-1 rounded-full app-text-micro font-semibold tracking-wide bg-[var(--card)]/80 backdrop-blur-md border border-[var(--border)]/40 text-[var(--foreground)]/80">
             {localPlacement.replace(/_/g, " ")}
           </span>
           <span
             className={cn(
-              "inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-semibold tracking-wide backdrop-blur-md border",
+              "inline-flex items-center gap-1 px-2.5 py-1 rounded-full app-text-micro font-semibold tracking-wide backdrop-blur-md border",
               localActive
                 ? "bg-[var(--accent)]/15 border-[var(--accent)]/40 text-[var(--accent)]"
                 : "bg-[var(--muted)]/30 border-[var(--muted-foreground)]/20 text-[var(--muted-foreground)]"
@@ -153,18 +153,18 @@ export default function AdCard({
       {/* Content */}
       <div className="flex flex-col flex-1 p-4 gap-4">
         <div className="space-y-1.5">
-          <h3 className="font-semibold text-sm leading-tight line-clamp-2 text-[var(--foreground)]">
+          <h3 className="font-semibold app-text-body leading-tight line-clamp-2 text-[var(--foreground)]">
             {ad.title}
           </h3>
           {ad.body && (
-            <p className="text-xs text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
+            <p className="app-text-caption text-[var(--muted-foreground)] line-clamp-2 leading-relaxed">
               {ad.body}
             </p>
           )}
         </div>
 
         {/* Timestamps */}
-        <div className="flex items-center justify-between text-[10px] text-[var(--muted-foreground)]/70 gap-2">
+        <div className="flex items-center justify-between app-text-micro text-[var(--muted-foreground)]/70 gap-2">
           <span className="inline-flex items-center gap-1">
             <Clock className="size-3" />
             {timeAgo(ad.createdAt)}
@@ -205,7 +205,7 @@ export default function AdCard({
               <Button
                 size="sm"
                 variant="ghost"
-                className="h-8 w-8 p-0 rounded-lg hover:bg-red-500/10 hover:text-red-500"
+                className="h-8 w-8 p-0 rounded-lg hover:bg-destructive/10 hover:text-destructive"
                 aria-label="Delete ad"
                 onClick={() => setConfirmOpen(true)}
               >
@@ -218,7 +218,7 @@ export default function AdCard({
       <Dialog open={confirmOpen} onOpenChange={setConfirmOpen}>
         <DialogContent>
           <DialogTitle>Delete Ad</DialogTitle>
-          <p className="mt-2 text-sm text-muted-foreground">
+          <p className="mt-2 app-text-body text-muted-foreground">
             Delete this ad? This action cannot be undone.
           </p>
           <div className="mt-4 flex justify-end gap-3">
@@ -228,7 +228,7 @@ export default function AdCard({
               </Button>
             </DialogClose>
             <Button
-              className="bg-red-500 hover:bg-red-600 text-white"
+              className="bg-destructive hover:bg-destructive text-primary-foreground"
               onClick={() => confirmAndDelete()}
             >
               Delete

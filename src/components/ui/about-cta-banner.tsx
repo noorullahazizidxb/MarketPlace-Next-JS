@@ -64,7 +64,7 @@ export function AboutCtaBanner() {
               <h2 className="heading-2xl text-[var(--foreground)] drop-shadow-md">
                 {t("joinCommunity")}
               </h2>
-              <p className="mt-3 text-base text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl">
+              <p className="mt-3 app-text-body text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl">
                 {t("joinCommunityText")}
               </p>
             </div>

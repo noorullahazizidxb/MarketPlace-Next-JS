@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { Check, ChevronDown, Globe, Search } from 'lucide-react'
+import { Check, ChevronDown, Search } from 'lucide-react'
 import { COUNTRIES, getCountryIsoFromFlagUrl } from '@repo/constants'
 import { useCountrySelector } from '@repo/hooks'
 import type { Country } from '@repo/types'
@@ -19,31 +18,20 @@ interface CountryCodeSelectorProps {
 }
 
 function CountryFlag({ country }: { country: Country }) {
-  const [failed, setFailed] = useState(false)
-
-  if (failed) {
-    return (
-      <span
-        className="flex app-icon-md shrink-0 items-center justify-center rounded-sm bg-muted ring-1 ring-border/30"
-        aria-hidden
-      >
-        <Globe className="app-icon-xs text-muted-foreground" />
-      </span>
+  const iso = getCountryIsoFromFlagUrl(country.flag) ?? "UN"
+  const emoji = iso
+    .toUpperCase()
+    .replace(/[A-Z]/g, (character: string) =>
+      String.fromCodePoint(127397 + character.charCodeAt(0)),
     )
-  }
-
   return (
-    <img
-      src={country.flag}
-      alt=""
-      aria-hidden
-      width={20}
-      height={15}
-      className="app-icon-md shrink-0 rounded-sm object-cover shadow-sm ring-1 ring-border/30"
-      loading="lazy"
-      decoding="async"
-      onError={() => setFailed(true)}
-    />
+    <span
+      className="flex app-icon-md shrink-0 items-center justify-center rounded-sm bg-muted ring-1 ring-border/30"
+      role="img"
+      aria-label={`${country.name} flag`}
+    >
+      {emoji}
+    </span>
   )
 }
 

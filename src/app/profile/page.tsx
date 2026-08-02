@@ -32,6 +32,7 @@ import { Eye, EyeOff } from "lucide-react";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { useLanguage } from "@/components/providers/language-provider";
 import { ProfileSkeleton } from "@/components/skeletons/ProfileSkeleton";
+import Image from "next/image";
 
 // ---------------- Schema ----------------
 const schema = z
@@ -121,7 +122,7 @@ function passwordStrength(pw: string) {
 // ---------------- Helper UI Primitives (inline for now) ----------------
 function FieldLabel({ icon: Icon, label }: { icon: any; label: string }) {
   return (
-    <span className="flex items-center gap-1.5 text-2xs font-medium tracking-wide uppercase text-[var(--muted-foreground)]">
+    <span className="flex items-center gap-1.5 app-text-micro font-medium tracking-wide uppercase text-[var(--muted-foreground)]">
       <Icon className="app-icon-xs" /> {label}
     </span>
   );
@@ -229,6 +230,14 @@ export default function ProfilePage() {
 
   const avatarUrl = avatarPreview || asset(user?.photo) || "/favicon.svg";
 
+  useEffect(() => {
+    return () => {
+      if (avatarPreview?.startsWith("blob:")) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
+
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
@@ -326,46 +335,47 @@ export default function ProfilePage() {
   }
   // non-blocking: if error, render page with any store user and a subtle notice
   return (
-    <div className="relative min-h-screen pb-24 app-shell-page" data-app-page="profile">
+    <div className="relative min-h-screen pb-[calc(var(--space-section)+4rem)] app-shell-page" data-app-page="profile">
       {profileError && (
         <div className="container-padded mt-4">
-          <div className="rounded-lg border border-red-500/30 bg-red-500/10 text-red-300 px-4 py-2 app-text-body">
+          <div className="rounded-lg border border-destructive/40 bg-destructive/10 text-destructive px-4 py-2 app-text-body">
             {t("profileLoadFailedCached")}
           </div>
         </div>
       )}
       {/* Ambient gradient background */}
       <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-fuchsia-500/20 via-amber-400/10 to-transparent blur-3xl" />
-        <div className="absolute top-1/3 -right-40 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-emerald-500/20 via-cyan-400/10 to-transparent blur-3xl" />
+        <div className="absolute -top-32 -left-32 w-[500px] h-[500px] rounded-full bg-gradient-to-br from-primary/20 via-warning/10 to-transparent blur-3xl" />
+        <div className="absolute top-1/3 -right-40 w-[520px] h-[520px] rounded-full bg-gradient-to-br from-success/20 via-info/10 to-transparent blur-3xl" />
       </div>
 
-      <header className="relative mx-auto max-w-6xl mt-16 px-4 sm:px-6">
+      <header className="relative mx-auto mt-[var(--space-section)] w-full max-w-6xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-xl shadow-[0_8px_40px_-4px_rgba(0,0,0,0.25)] overflow-hidden"
+          className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur-xl shadow-token-lg overflow-hidden"
         >
           {/* Banner */}
           <div className="h-40 sm:h-56 relative">
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/30 via-fuchsia-500/20 to-emerald-500/20" />
-            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,rgba(255,255,255,0.4)_0%,transparent_70%)] mix-blend-overlay" />
+            <div className="absolute inset-0 bg-gradient-to-r from-[var(--accent)]/30 via-primary/20 to-success/20" />
+            <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_30%,color-mix(in_oklch,var(--overlay-light)_72%,transparent)_0%,transparent_70%)] mix-blend-overlay" />
           </div>
           {/* Avatar & primary info */}
-          <div className="relative px-6 pb-6 -mt-16 flex flex-col sm:flex-row sm:items-end gap-6">
+          <div className="relative -mt-16 flex flex-col gap-[var(--space-section)] px-[var(--space-card)] pb-[var(--space-card)] sm:flex-row sm:items-end">
             <div className="relative group w-28 h-28 sm:w-36 sm:h-36">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
+              <Image
                 src={avatarUrl}
                 alt={t("profileAvatarAlt")}
-                className="w-full h-full object-cover rounded-2xl border-4 border-[var(--background)] shadow-xl group-hover:shadow-2xl transition-shadow"
+                fill
+                sizes="(max-width: 640px) 7rem, 9rem"
+                className="object-cover rounded-2xl border-4 border-[var(--background)] shadow-xl group-hover:shadow-2xl transition-shadow"
               />
               <button
                 type="button"
                 aria-label={t("profileAvatarChange")}
                 onClick={openFile}
-                className="absolute inset-0 rounded-2xl bg-black/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-white app-text-caption font-medium backdrop-blur-sm transition-opacity"
+                className="absolute inset-0 rounded-2xl bg-foreground/40 opacity-0 group-hover:opacity-100 flex items-center justify-center text-primary-foreground app-text-caption font-medium backdrop-blur-sm transition-opacity"
               >
                 <ImageIcon className="app-icon-md mr-1" /> {t("profileAvatarChange")}
               </button>
@@ -385,7 +395,7 @@ export default function ProfilePage() {
               <h1 className="app-text-h1 flex items-center gap-2">
                 {user?.fullName || user?.firstName || t("profileNameAnonymous")}
                 {user?.roles?.some((r: any) => r.role === "REPRESENTATIVE") && (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 px-3 py-1 text-2xs border border-emerald-500/30">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-success/15 text-success dark:text-success px-3 py-1 app-text-micro border border-success/35">
                     <ShieldCheck className="app-icon-xs" />{" "}
                     {t("profileRepresentativeBadge")}
                   </span>
@@ -403,7 +413,7 @@ export default function ProfilePage() {
                     <div className="app-text-heading-sm font-semibold tracking-tight">
                       {s.value}
                     </div>
-                    <div className="text-2xs uppercase subtle mt-1">
+                    <div className="app-text-micro uppercase subtle mt-1">
                       {s.label}
                     </div>
                   </div>
@@ -415,7 +425,7 @@ export default function ProfilePage() {
                 type="button"
                 variant={editing ? "secondary" : "primary"}
                 onClick={() => setEditing((v) => !v)}
-                className="rounded-xl px-5 shadow-sm bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white border-none hover:shadow-lg"
+                className="rounded-xl px-5 shadow-sm bg-gradient-to-r from-[var(--accent)] to-primary text-primary-foreground border-none hover:shadow-lg"
               >
                 {editing ? (
                   <X className="app-icon-sm" />
@@ -431,20 +441,20 @@ export default function ProfilePage() {
         </motion.div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 mt-10 grid gap-6 lg:grid-cols-3">
+      <main className="mx-auto mt-[var(--space-section)] grid w-full max-w-6xl gap-[var(--space-section)] lg:grid-cols-3">
         {/* Left column: contact & address */}
-        <section className="space-y-6 lg:col-span-2">
+        <section className="space-y-[var(--space-section)] lg:col-span-2">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-[var(--space-card)] shadow-token-lg"
           >
             <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
               <User2 className="app-icon-sm" /> Profile Details
             </h2>
-            <div className="grid sm:grid-cols-2 gap-6">
+            <div className="grid sm:grid-cols-2 gap-[var(--space-section)]">
               <DetailField
                 label="First Name"
                 value={firstNameValue}
@@ -483,12 +493,12 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.55 }}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-[var(--space-card)] shadow-token-lg"
           >
             <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
               <MapPin className="app-icon-sm" /> Address
             </h2>
-            <div className="grid sm:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-3 gap-[var(--space-section)]">
               <DetailField
                 label="City"
                 value={cityValue || "—"}
@@ -512,12 +522,12 @@ export default function ProfilePage() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)]"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-[var(--space-card)] shadow-token-lg"
           >
             <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
               <Globe2 className="app-icon-sm" /> Social
             </h2>
-            <div className="grid sm:grid-cols-3 gap-6">
+            <div className="grid sm:grid-cols-3 gap-[var(--space-section)]">
               <DetailField
                 label="LinkedIn"
                 value={linkedinValue || "—"}
@@ -538,13 +548,13 @@ export default function ProfilePage() {
         </section>
 
         {/* Right column: bio edit & actions */}
-        <aside className="space-y-6">
+        <aside className="space-y-[var(--space-section)]">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-6 shadow-[0_4px_30px_-4px_rgba(0,0,0,0.15)] flex flex-col"
+            className="rounded-2xl border border-[var(--border)] bg-[var(--card)]/70 backdrop-blur-xl p-[var(--space-card)] shadow-token-lg flex flex-col"
           >
             <h2 className="app-text-body font-semibold mb-4 flex items-center gap-2">
               <Edit3 className="app-icon-sm" /> Quick Bio
@@ -557,13 +567,13 @@ export default function ProfilePage() {
               value={bioValue}
               onChange={setField("bio")}
             />
-            <p className="mt-2 text-2xs subtle text-right">
+            <p className="mt-2 app-text-micro subtle text-right">
               {bioValue.length || 0}/260
             </p>
             <Button
               type="button"
               onClick={() => setEditing(true)}
-              className="mt-4 rounded-xl bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white hover:shadow-lg"
+              className="mt-4 rounded-xl bg-gradient-to-r from-[var(--accent)] to-primary text-primary-foreground hover:shadow-lg"
             >
               {t("openFullEditor")}
             </Button>
@@ -573,7 +583,7 @@ export default function ProfilePage() {
 
       {/* Edit Modal (Dialog) */}
       <Dialog open={editing} onOpenChange={(o: boolean) => setEditing(o)}>
-        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-6">
+        <DialogContent className="max-w-2xl max-h-[85vh] overflow-y-auto p-[var(--space-card)]">
           <div className="flex items-center justify-between mb-4">
             <h2 className="app-text-heading-sm font-semibold">
               {t("saveChanges") ? t("saveChanges") : t("profile")}
@@ -589,7 +599,7 @@ export default function ProfilePage() {
           </div>
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="grid grid-cols-1 sm:grid-cols-2 gap-5"
+            className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--space-section)]"
           >
             <TextInputField
               label="First Name"
@@ -713,12 +723,12 @@ export default function ProfilePage() {
                 onChange={setField("bio")}
                 error={errors.bio?.message}
               />
-              <p className="mt-1 text-2xs text-right subtle">
+              <p className="mt-1 app-text-micro text-right subtle">
                 {bioValue.length || 0}/260
               </p>
             </div>
             {error && (
-              <p className="text-red-500 app-text-body sm:col-span-2">{error}</p>
+              <p className="text-destructive app-text-body sm:col-span-2">{error}</p>
             )}
             <div className="flex gap-3 sm:col-span-2 pt-2">
               <Button
@@ -735,7 +745,7 @@ export default function ProfilePage() {
               <Button
                 type="submit"
                 disabled={isSubmitting || updateProfile.isPending}
-                className="rounded-xl bg-gradient-to-r from-[var(--accent)] to-fuchsia-500 text-white hover:shadow-lg flex items-center gap-2"
+                className="rounded-xl bg-gradient-to-r from-[var(--accent)] to-primary text-primary-foreground hover:shadow-lg flex items-center gap-2"
               >
                 <Save className="app-icon-sm" /> {t("saveChanges")}
               </Button>
@@ -787,10 +797,10 @@ function PasswordField({
     ["w-0", "w-1/4", "w-1/2", "w-3/4", "w-full"][strength] || "w-0";
   const colorClass =
     strength <= 1
-      ? "bg-red-400"
+      ? "bg-destructive"
       : strength === 2
-        ? "bg-yellow-400"
-        : "bg-emerald-400";
+        ? "bg-warning"
+        : "bg-success";
 
   return (
     <div>
@@ -818,12 +828,12 @@ function PasswordField({
         }
       />
       <div className="mt-2 flex items-center gap-2">
-        <div className="flex-1 h-2 bg-white/10 rounded-full overflow-hidden">
+        <div className="flex-1 h-2 bg-background/10 rounded-full overflow-hidden">
           <div
             className={`h-full transition-all ${widthClass} ${colorClass}`}
           />
         </div>
-        <div className="text-2xs subtle w-20 text-right">
+        <div className="app-text-micro subtle w-20 text-right">
           {value
             ? ["Very weak", "Weak", "Okay", "Good", "Strong"][strength]
             : ""}
@@ -866,12 +876,12 @@ function ConfirmPasswordField({
       suffix={
         <div className="flex items-center gap-2">
           <span
-            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md text-2xs font-medium transition-colors ${
+            className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-md app-text-micro font-medium transition-colors ${
               !filled
-                ? "bg-white/5 text-[var(--muted-foreground)]"
+                ? "bg-background/5 text-[var(--muted-foreground)]"
                 : matches
-                  ? "bg-emerald-500/10 text-emerald-400"
-                  : "bg-red-500/10 text-red-400"
+                  ? "bg-success/10 text-success"
+                  : "bg-destructive/10 text-destructive"
             }`}
             aria-live="polite"
           >

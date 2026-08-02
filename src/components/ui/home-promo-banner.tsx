@@ -80,7 +80,7 @@ export default function HomePromoBanner() {
                     whileInView={{ x: 0 }}
                     viewport={{ once: true, amount: 0 }}
                     transition={{ delay: 0.25, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-                    className="mt-3 text-base text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl"
+                    className="mt-3 app-text-body text-[color-mix(in oklab, var(--foreground) 80%, transparent)] max-w-2xl"
                   >
                     {(t as any)("homePromoSubtitle") ||
                       "پیش از صدها موبایل های جدید و مستعمل از بهترین فروشگاه های افغانستان در دسترس شما."}
@@ -104,7 +104,7 @@ export default function HomePromoBanner() {
                     aria-label={(t as any)("viewAll") || "View all"}
                   >
                     <DirectionIcon className="size-4" />
-                    <span className="font-semibold text-sm">
+                    <span className="font-semibold app-text-body">
                       {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
                     </span>
                   </Link>
@@ -119,7 +119,7 @@ export default function HomePromoBanner() {
                     aria-label={(t as any)("quickExplore") || "Quick explore"}
                   >
                     <ShoppingCart className="size-4" />
-                    <span className="text-sm">
+                    <span className="app-text-body">
                       {(t as any)("quickExplore") || "گشتی سریع"}
                     </span>
                   </Link>

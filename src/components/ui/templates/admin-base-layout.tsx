@@ -114,13 +114,13 @@ function AdminBaseLayoutInner({
           direction={direction}
         />
         <div className="flex flex-1 flex-col">
-          <div className="app-shell @container/main flex flex-1 flex-col gap-2">
-            {/* Add space so content isn't hidden behind the persistent mobile drawer toolbar. */}
-            <div className="flex flex-col gap-4 py-4 pb-20 md:gap-6 md:py-6 sm:pb-4">
+            <div className="app-shell @container/main flex flex-1 flex-col gap-[var(--space-gap)]">
+              {/* Add space so content isn't hidden behind the persistent mobile drawer toolbar. */}
+            <div className="flex flex-col gap-[var(--space-section)] py-[var(--space-page-y)] pb-[calc(var(--space-section)+4rem)] md:pb-[var(--space-page-y)]">
               {title && (
-                <div className="px-4 lg:px-6">
-                  <div className="flex flex-col gap-2">
-                    <h1 className=" app-text-heading tracking-tight">{title}</h1>
+                <div className="px-[var(--space-page-x)]">
+                  <div className="flex flex-col gap-[var(--space-gap)]">
+                    <h1 className="app-text-heading tracking-tight">{title}</h1>
                     {description && (
                       <p className="text-muted-foreground">{description}</p>
                     )}

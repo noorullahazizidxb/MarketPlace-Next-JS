@@ -54,10 +54,10 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
           <Button
             asChild
             variant="ghost"
-            className="group size-14 rounded-full border-[var(--border)] bg-transparent hover:bg-[#1877F2]/10 hover:border-[#1877F2] hover:shadow-[0_4px_12px_rgba(24,119,242,0.2)] transition-all duration-300"
+            className="group size-14 rounded-full border-[var(--border)] bg-transparent transition-all duration-300 hover:border-info hover:bg-info/10 hover:shadow-token-lg"
           >
             <Link href={facebookUrl} aria-label={t("continueWithFacebook")}>
-              <span className="text-[#1877F2]">
+              <span className="text-info">
                 <FacebookIcon />
               </span>
               <span className="sr-only">{t("continueWithFacebook")}</span>
@@ -66,7 +66,7 @@ export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: P
         ) : null}
       </div>
 
-      <p className="text-center text-xs text-[var(--muted-foreground)]">
+      <p className="text-center app-text-caption text-[var(--muted-foreground)]">
         {t("socialAuthPrompt")}
       </p>
     </div>

@@ -12,79 +12,12 @@ const cloneDefaultUiContextState = (): UiContextState =>
 const mergeUiContextState = (
   base: UiContextState,
   incoming?: Partial<UiContextState> | null,
-): UiContextState => {
-  return {
-    version: incoming?.version ?? base.version,
-    theme: {
-      ...base.theme,
-      ...incoming?.theme,
-    },
-    sidebar: {
-      ...base.sidebar,
-      ...incoming?.sidebar,
-    },
-    landing: {
-      ...base.landing,
-      ...incoming?.landing,
-      header: {
-        ...base.landing.header,
-        ...incoming?.landing?.header,
-      },
-      hero: {
-        ...base.landing.hero,
-        ...incoming?.landing?.hero,
-        primaryCta: {
-          ...base.landing.hero.primaryCta,
-          ...incoming?.landing?.hero?.primaryCta,
-        },
-        secondaryCta: {
-          ...base.landing.hero.secondaryCta,
-          ...incoming?.landing?.hero?.secondaryCta,
-        },
-      },
-      stats: {
-        ...base.landing.stats,
-        ...incoming?.landing?.stats,
-        items: incoming?.landing?.stats?.items ?? base.landing.stats.items,
-      },
-      services: {
-        ...base.landing.services,
-        ...incoming?.landing?.services,
-        items:
-          incoming?.landing?.services?.items ?? base.landing.services.items,
-      },
-      story: {
-        ...base.landing.story,
-        ...incoming?.landing?.story,
-      },
-      faq: {
-        ...base.landing.faq,
-        ...incoming?.landing?.faq,
-        items: incoming?.landing?.faq?.items ?? base.landing.faq.items,
-      },
-      cta: {
-        ...base.landing.cta,
-        ...incoming?.landing?.cta,
-        primaryCta: {
-          ...base.landing.cta.primaryCta,
-          ...incoming?.landing?.cta?.primaryCta,
-        },
-        secondaryCta: {
-          ...base.landing.cta.secondaryCta,
-          ...incoming?.landing?.cta?.secondaryCta,
-        },
-      },
-    },
-    footer: {
-      ...base.footer,
-      ...incoming?.footer,
-      columns: incoming?.footer?.columns ?? base.footer.columns,
-      socialLinks: incoming?.footer?.socialLinks ?? base.footer.socialLinks,
-      legalLinks: incoming?.footer?.legalLinks ?? base.footer.legalLinks,
-    },
-    updatedAt: incoming?.updatedAt ?? base.updatedAt ?? new Date().toISOString(),
-  };
-};
+): UiContextState => ({
+  version: incoming?.version ?? base.version,
+  theme: { ...base.theme, ...incoming?.theme },
+  sidebar: { ...base.sidebar, ...incoming?.sidebar },
+  updatedAt: incoming?.updatedAt ?? base.updatedAt ?? new Date().toISOString(),
+});
 
 const normalizeUiContextState = (
   incoming?: Partial<UiContextState> | null,

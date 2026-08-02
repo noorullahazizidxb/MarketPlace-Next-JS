@@ -180,7 +180,7 @@ export function Sidebar({
                       } catch { }
                       window.location.href = "/sign-in";
                     }}
-                    className="flex w-full items-center rounded-2xl gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] hover:bg-white/5 text-left"
+                    className="flex w-full items-center rounded-2xl gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] hover:bg-background/5 text-left"
                   >
                     <LogOut className="app-icon-sm" />
                     <span className="app-text-body">{t("logout")}</span>
@@ -240,7 +240,7 @@ export function Sidebar({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="absolute inset-0 bg-black/40"
+            className="absolute inset-0 bg-foreground/40"
             onClick={() => onClose?.()}
           />
           <motion.aside

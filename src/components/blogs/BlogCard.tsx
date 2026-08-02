@@ -185,7 +185,7 @@ export default function BlogCard({
   };
 
   return (
-    <article className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] hover:shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition-shadow duration-200">
+    <article className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)] hover:shadow-token-lg transition-shadow duration-200">
       {/* Top: media clickable */}
       <div
         role="button"
@@ -239,21 +239,21 @@ export default function BlogCard({
         <>
           {/* gradient and text overlay */}
           <div className="pointer-events-none absolute inset-0">
-            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-t from-overlay-dark/70 via-overlay-dark/20 to-transparent" />
             {/* Clickable title/description button that sits above the gradient but below the action controls */}
-            <div className="absolute left-3 bottom-3 z-[50] drop-shadow-[0_1px_1px_rgba(0,0,0,0.6)]">
+            <div className="absolute bottom-3 left-3 z-[50]">
               <Tooltip content={t("openBlog")} side="top">
                 <button
                   type="button"
                   onClick={() => router.push(`/blogs/${blog.id}`)}
                   aria-label={t("openBlog")}
-                  className="pointer-events-auto inline-block mb-10 text-left text-white bg-black/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[color-mix(in oklab, var(--accent) 18%, transparent)] hover:scale-105 transform-gpu transition-all duration-200"
+                  className="pointer-events-auto inline-block mb-10 text-left text-primary-foreground bg-foreground/30 backdrop-blur-md rounded-lg px-3 py-2 hover:bg-[color-mix(in oklab, var(--accent) 18%, transparent)] hover:scale-105 transform-gpu transition-all duration-200"
                 >
-                  <h3 className="text-lg font-semibold leading-tight line-clamp-2">
+                  <h3 className="app-text-heading-sm font-semibold leading-tight line-clamp-2">
                     {blog.title}
                   </h3>
                   {blog.excerpt && (
-                    <p className="mt-1 text-sm opacity-90 line-clamp-2">
+                    <p className="mt-1 app-text-body opacity-90 line-clamp-2">
                       {blog.excerpt}
                     </p>
                   )}
@@ -266,7 +266,7 @@ export default function BlogCard({
             <div className="flex flex-col justify-between h-full">
               {/* top-left author/meta */}
               <div className="p-3 sm:p-4 pointer-events-auto">
-                <div className="inline-flex items-center gap-2 text-[11px] text-white/90 bg-black/20 backdrop-blur rounded-full px-2 py-1 pointer-events-auto">
+                <div className="inline-flex items-center gap-2 app-text-caption text-primary-foreground/90 bg-foreground/20 backdrop-blur rounded-full px-2 py-1 pointer-events-auto">
                   <Tooltip content={t("viewAuthorProfile")} side="bottom">
                     <Link
                       href={authorId ? `/profile/${authorId}` : "#"}
@@ -276,7 +276,7 @@ export default function BlogCard({
                       }}
                       className="inline-flex items-center gap-2 hover:opacity-90"
                     >
-                      <div className="size-6 rounded-full overflow-hidden bg-white/20 grid place-items-center text-white">
+                      <div className="size-6 rounded-full overflow-hidden bg-background/20 grid place-items-center text-primary-foreground">
                         {blog.author?.photo ? (
                           <Image
                             src={asset(blog.author.photo)}
@@ -286,7 +286,7 @@ export default function BlogCard({
                             height={24} // Adding height property
                           />
                         ) : (
-                          <div className="text-[10px] font-semibold">
+                          <div className="app-text-micro font-semibold">
                             {String(
                               blog.author?.fullName || blog.author?.name || "?"
                             )
@@ -310,14 +310,14 @@ export default function BlogCard({
               </div>
               {/* bottom-left actions */}
               <div className="p-3 sm:p-4 pointer-events-auto">
-                <div className="flex items-center gap-3 text-sm pointer-events-auto">
+                <div className="flex items-center gap-3 app-text-body pointer-events-auto">
                   <Tooltip content={canInteract ? t("like") : t("signInToInteract")} side="top">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         onLike();
                       }}
-                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-border bg-foreground/30 backdrop-blur text-primary-foreground"
                       aria-label={t("like")}
                       disabled={!canInteract || likeMut.isPending}
                       title={!canInteract ? t("signInToInteract") : undefined}
@@ -333,7 +333,7 @@ export default function BlogCard({
                             e.stopPropagation();
                             setShareOpen(true);
                           }}
-                          className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                          className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-border bg-foreground/30 backdrop-blur text-primary-foreground"
                           aria-label="Share"
                           disabled={!canInteract || shareMut.isPending}
                           title={!canInteract ? t("signInToInteract") : undefined}
@@ -343,7 +343,7 @@ export default function BlogCard({
                       </DialogTrigger>
                     </Tooltip>
                     <DialogContent className="w-[min(92vw,420px)]">
-                      <DialogTitle className="mb-3 text-lg font-semibold">
+                      <DialogTitle className="mb-3 app-text-heading-sm font-semibold">
                         {t("share")}
                       </DialogTitle>
                       <div className="grid grid-cols-1 gap-2">
@@ -392,7 +392,7 @@ export default function BlogCard({
                         e.stopPropagation();
                         onOpen ? onOpen(blog) : router.push(`/blogs/${blog.id}`);
                       }}
-                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-white/30 bg-black/30 backdrop-blur text-white"
+                      className="inline-flex items-center gap-1.5 px-2 py-1 rounded-lg border border-border bg-foreground/30 backdrop-blur text-primary-foreground"
                       aria-label={t("commentsLabel")}
                     >
                       <MessageCircle className="size-4" /> {commentCount || 0}
@@ -406,7 +406,7 @@ export default function BlogCard({
       ) : (
         // Default variant: original bottom content
         <div className="p-4">
-          <div className="flex items-center gap-2 text-[11px] text-[color-mix(in oklab, var(--foreground) 75%, transparent)]">
+          <div className="flex items-center gap-2 app-text-caption text-[color-mix(in oklab, var(--foreground) 75%, transparent)]">
             <Tooltip content={t("viewAuthorProfile")} side="bottom">
               <Link
                 href={authorId ? `/profile/${authorId}` : "#"}
@@ -425,7 +425,7 @@ export default function BlogCard({
                       height={32} // Adding height property
                     />
                   ) : (
-                    <div className="text-xs font-semibold">
+                    <div className="app-text-caption font-semibold">
                       {String(blog.author?.fullName || blog.author?.name || "?")
                         .slice(0, 1)
                         .toUpperCase()}
@@ -446,17 +446,17 @@ export default function BlogCard({
           </div>
           {variant === "default" && (
             <>
-              <h3 className="mt-2 text-lg font-semibold leading-tight text-[var(--foreground)] line-clamp-2">
+              <h3 className="mt-2 app-text-heading-sm font-semibold leading-tight text-[var(--foreground)] line-clamp-2">
                 {blog.title}
               </h3>
               {blog.excerpt && (
-                <p className="mt-1 text-sm text-[color-mix(in oklab, var(--foreground) 80%, transparent)] line-clamp-2">
+                <p className="mt-1 app-text-body text-[color-mix(in oklab, var(--foreground) 80%, transparent)] line-clamp-2">
                   {blog.excerpt}
                 </p>
               )}
             </>
           )}
-          <div className="mt-3 flex items-center gap-3 text-sm">
+          <div className="mt-3 flex items-center gap-3 app-text-body">
             <Tooltip content={canInteract ? t("like") : t("signInToInteract")} side="top">
               <button
                 onClick={onLike}
@@ -483,7 +483,7 @@ export default function BlogCard({
                 </DialogTrigger>
               </Tooltip>
               <DialogContent className="w-[min(92vw,420px)]">
-                <DialogTitle className="mb-3 text-lg font-semibold">{t("share")}</DialogTitle>
+                <DialogTitle className="mb-3 app-text-heading-sm font-semibold">{t("share")}</DialogTitle>
                 <div className="grid grid-cols-1 gap-2">
                   <button
                     type="button"

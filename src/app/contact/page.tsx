@@ -10,7 +10,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default function ContactPage() {
   return (
-    <main className="pb-20 app-shell-page" data-app-page="contact">
+    <main className="app-shell-page" data-app-page="contact">
       <ContactContent />
     </main>
   );

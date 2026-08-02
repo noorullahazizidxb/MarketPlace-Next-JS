@@ -37,7 +37,7 @@ const SimpleIcon = ({ iconSlug, size = 24 }: { iconSlug: string; size?: number }
   }
 
   return (
-    <svg role='img' viewBox='0 0 24 24' className='fill-black dark:fill-white' style={{ width: size, height: size }}>
+    <svg role='img' viewBox='0 0 24 24' className='fill-current dark:fill-current' style={{ width: size, height: size }}>
       <path d={iconPath} />
     </svg>
   )
@@ -64,7 +64,7 @@ export function LogoCarousel() {
     <section className="pb-12 sm:pb-16 lg:pb-20 pt-12">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center">
-          <p className="text-sm font-medium text-muted-foreground mb-8">
+          <p className="app-text-body font-medium text-muted-foreground mb-8">
             Trusted by leading companies worldwide
           </p>
 
@@ -87,7 +87,7 @@ export function LogoCarousel() {
                   >
                     <div className="flex items-center gap-3">
                       <SimpleIcon iconSlug={company.id} size={30} />
-                      <span className="text-foreground text-lg font-semibold whitespace-nowrap">
+                      <span className="text-foreground app-text-heading-sm font-semibold whitespace-nowrap">
                         {company.name}
                       </span>
                     </div>
@@ -101,7 +101,7 @@ export function LogoCarousel() {
                   >
                     <div className="flex items-center gap-3">
                       <SimpleIcon iconSlug={company.id} size={30} />
-                      <span className="text-foreground text-lg font-semibold whitespace-nowrap">
+                      <span className="text-foreground app-text-heading-sm font-semibold whitespace-nowrap">
                         {company.name}
                       </span>
                     </div>

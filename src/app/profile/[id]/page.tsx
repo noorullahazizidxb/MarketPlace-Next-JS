@@ -34,9 +34,9 @@ export default function PublicProfilePage() {
 
   if (isLoading) {
     return (
-      <div className="container-padded space-y-6 app-shell-page" data-app-page="profile-public">
+      <div className="container-padded space-y-[var(--space-section)] app-shell-page" data-app-page="profile-public">
         <div className="h-48 rounded-3xl bg-[var(--muted)]/10 animate-pulse" />
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-[var(--space-gap)]">
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
@@ -44,7 +44,7 @@ export default function PublicProfilePage() {
             />
           ))}
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -58,8 +58,8 @@ export default function PublicProfilePage() {
 
   if (!data || !parsed) {
     return (
-      <div className="container-padded py-10 app-shell-page" data-app-page="profile-public">
-        <div className="rounded-3xl border border-[var(--border)] p-10 text-center">
+      <div className="container-padded app-shell-page" data-app-page="profile-public">
+        <div className="rounded-3xl border border-[var(--border)] p-[var(--space-card)] text-center">
           <h2 className="app-text-heading font-semibold">Profile not found</h2>
           <p className="subtle mt-1">
             The user you are looking for does not exist.
@@ -77,7 +77,7 @@ export default function PublicProfilePage() {
     : 0;
 
   return (
-    <div className="container-padded space-y-6 app-shell-page" data-app-page="profile-public">
+    <div className="container-padded space-y-[var(--space-section)] app-shell-page" data-app-page="profile-public">
       <motion.div
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
@@ -91,14 +91,14 @@ export default function PublicProfilePage() {
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, delay: 0.08 }}
-          className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[color-mix(in oklab, var(--card) 80%, transparent)] p-6 shadow-lg"
+          className="rounded-2xl border border-[var(--border)] bg-gradient-to-br from-[var(--card)] to-[color-mix(in oklab, var(--card) 80%, transparent)] p-[var(--space-card)] shadow-lg"
         >
           <h3 className="app-text-heading-sm font-bold text-[var(--accent)] mb-4">
             About
           </h3>
-          <div className="space-y-4 app-text-body text-foreground/80">
+          <div className="space-y-[var(--space-gap)] app-text-body text-foreground/80">
             {user.metadata && (
-              <div className="p-4 bg-[color-mix(in oklab, var(--muted) 20%, transparent)] rounded-lg border border-[var(--border)]">
+              <div className="p-[var(--space-card)] bg-[color-mix(in oklab, var(--muted) 20%, transparent)] rounded-lg border border-[var(--border)]">
                 <h4 className="font-semibold text-[var(--primary)] mb-2">
                   Metadata
                 </h4>
@@ -106,7 +106,7 @@ export default function PublicProfilePage() {
               </div>
             )}
             {user.contacts && (
-              <div className="p-4 bg-[color-mix(in oklab, var(--muted) 20%, transparent)] rounded-lg border border-[var(--border)]">
+              <div className="p-[var(--space-card)] bg-[color-mix(in oklab, var(--muted) 20%, transparent)] rounded-lg border border-[var(--border)]">
                 <h4 className="font-semibold text-[var(--primary)] mb-2">
                   Contacts
                 </h4>
@@ -140,9 +140,9 @@ export default function PublicProfilePage() {
       </motion.div>
       <section>
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
+          <h2 className="app-text-heading-sm font-semibold flex items-center gap-2">
             Listings
-            <span className="text-xs px-2 py-0.5 rounded-full border border-[var(--border)] bg-background/60">
+            <span className="app-text-caption px-2 py-0.5 rounded-full border border-[var(--border)] bg-background/60">
               {listingsCount}
             </span>
           </h2>

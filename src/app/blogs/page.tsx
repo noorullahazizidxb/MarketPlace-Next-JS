@@ -112,7 +112,6 @@ export default function BlogsPage() {
     const onResize = () => setPageSize(getResponsivePageSize());
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   React.useEffect(() => {
@@ -126,7 +125,7 @@ export default function BlogsPage() {
   }, [filtered, currentPage, pageSize]);
 
   return (
-    <div className="space-y-6 app-shell-page" data-app-page="blogs">
+    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="blogs">
       <BlogHero
         value={q}
         onChange={setQ}
@@ -152,10 +151,10 @@ export default function BlogsPage() {
       {/* Row pattern: 1) two equal, 2) three equal, 3) two with left wide (2/3) + right narrow (1/3) - repeat
           While loading, skeleton placeholders are rendered in the exact same grid structure so
           layout is established immediately and there are no content shifts on data arrival. */}
-      <div className="space-y-6">
+      <div className="space-y-[var(--space-section)]">
         {isLoading ? (
           // ----- Skeleton grid (uniform) -----
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[var(--space-section)]">
             {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
               <BlogCardSkeleton key={`sk-${i}`} />
             ))}
@@ -215,7 +214,7 @@ export default function BlogsPage() {
               // 2 cards — wider treatment with overlay variant
               if (count === 2) {
                 return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--space-section)]">
                     {items.map((b: any) => (
                       <BlogCard
                         key={b.id}
@@ -234,7 +233,7 @@ export default function BlogsPage() {
               // 3 cards
               if (count === 3) {
                 return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]">
                     {items.map((b: any) => (
                       <BlogCard
                         key={b.id}
@@ -250,7 +249,7 @@ export default function BlogsPage() {
               }
               // 4 cards
               return (
-                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
+                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[var(--space-section)]">
                   {items.map((b: any) => (
                     <BlogCard
                       key={b.id}
@@ -267,21 +266,21 @@ export default function BlogsPage() {
           })()
         )}
         {!isLoading && (filtered?.length ?? 0) === 0 && (
-          <div className="card p-6">
+          <div className="card p-[var(--space-card)]">
             {q.trim() ? t("noResults") || "No results" : t("noBlogsYet")}
           </div>
         )}
 
         {!isLoading && (filtered?.length ?? 0) > 0 && (
-          <div className="mt-2 flex flex-col gap-4 rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 p-4 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 text-sm">
+          <div className="mt-2 flex flex-col gap-[var(--space-gap)] rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 p-[var(--space-card)] backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-2 app-text-body">
               <span className="subtle">{t("pageSizeLabel") || "Page size"}</span>
               <div className="relative">
                 <Tooltip content={t("pageSizeLabel") || "Page size"} side="top">
                   <select
                     value={pageSize}
                     onChange={(event) => setPageSize(Number(event.target.value))}
-                    className="h-10 rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 pr-8 text-sm font-medium outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in oklab, var(--accent) 35%, transparent)]"
+                    className="h-10 rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 pr-8 app-text-body font-medium outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in oklab, var(--accent) 35%, transparent)]"
                     aria-label="Blog page size"
                   >
                     {[9, 12, 15, 18, 24].map((size) => (
@@ -300,7 +299,7 @@ export default function BlogsPage() {
                   type="button"
                   onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
                   disabled={currentPage === 1}
-                  className="h-10 rounded-xl border border-[var(--border)] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
+                  className="h-10 rounded-xl border border-[var(--border)] px-3 app-text-body disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
                 >
                   {t("prev") || "Previous"}
                 </button>
@@ -314,7 +313,7 @@ export default function BlogsPage() {
                     <button
                       type="button"
                       onClick={() => setCurrentPage(pageNumber)}
-                      className={`h-10 min-w-10 rounded-xl border px-3 text-sm font-medium transition-colors ${active
+                      className={`h-10 min-w-10 rounded-xl border px-3 app-text-body font-medium transition-colors ${active
                         ? "border-[var(--accent)] bg-[color-mix(in oklab, var(--accent) 20%, transparent)] text-[var(--accent)]"
                         : "border-[var(--border)] hover:bg-[var(--muted)]"
                         }`}
@@ -332,7 +331,7 @@ export default function BlogsPage() {
                     setCurrentPage((prev) => Math.min(totalPages, prev + 1))
                   }
                   disabled={currentPage === totalPages}
-                  className="h-10 rounded-xl border border-[var(--border)] px-3 text-sm disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
+                  className="h-10 rounded-xl border border-[var(--border)] px-3 app-text-body disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
                 >
                   {t("next") || "Next"}
                 </button>

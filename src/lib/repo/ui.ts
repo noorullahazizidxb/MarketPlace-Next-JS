@@ -4,10 +4,6 @@ export {
   ThemeCustomizer,
   ThemeCustomizerTrigger,
 } from "@/components/ui/organisms/theme-customizer";
-export {
-  AppearanceLivePreview,
-  type AppearancePreviewVariant,
-} from "@/components/ui/molecules/appearance-live-preview";
 export { ColorPicker } from "@/components/ui/molecules/color-picker";
 export { TokenRangeControl } from "@/components/ui/molecules/token-range-control";
 export { Button } from "@/components/ui/button";

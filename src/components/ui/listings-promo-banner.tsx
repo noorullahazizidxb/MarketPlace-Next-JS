@@ -90,7 +90,7 @@ export default function ListingsPromoBanner() {
                   whileInView={{ x: 0 }}
                   viewport={{ once: true, amount: 0 }}
                   transition={{ delay: 0.3 }}
-                  className="mt-3 text-base text-[color-mix(in oklab, var(--secondary-foreground) 88%, transparent)] max-w-2xl"
+                  className="mt-3 app-text-body text-[color-mix(in oklab, var(--secondary-foreground) 88%, transparent)] max-w-2xl"
                 >
                   {(t as any)("listingsPromoSubtitle") ||
                     "اکنون پیشنهادهای ویژه و تازه‌ترین آگهی‌ها را ببینید و از تخفیف‌ها بهره‌مند شوید."}
@@ -116,7 +116,7 @@ export default function ListingsPromoBanner() {
                     aria-label={(t as any)("viewAll") || "View all"}
                   >
                     <DirectionIcon className="size-4" />
-                    <span className="font-semibold text-sm">
+                    <span className="font-semibold app-text-body">
                       {(t as any)("Rent, Buy & Sale") || "کرایه و یا خرید "}
                     </span>
                   </Link>
@@ -134,7 +134,7 @@ export default function ListingsPromoBanner() {
                     aria-label={(t as any)("deals") || "Deals"}
                   >
                     <Sparkles className="size-4" />
-                    <span className="text-sm">
+                    <span className="app-text-body">
                       {(t as any)("deals") || "پیشنهادها"}
                     </span>
                   </Link>

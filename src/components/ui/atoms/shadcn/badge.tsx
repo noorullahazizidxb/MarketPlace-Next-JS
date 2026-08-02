@@ -29,7 +29,7 @@ const badgeVariants = cva(
     // Transition
     "transition-[color,box-shadow] overflow-hidden",
     // Font handled via tokens
-    "app-text-heading uppercase tracking-wider text-[var(--text-badge,0.6875rem)]",
+    "app-text-badge uppercase tracking-wider",
   ].join(" "),
   {
     variants: {
@@ -57,12 +57,6 @@ const badgeVariants = cva(
           "border-transparent bg-[var(--info)] text-[var(--info-foreground)] [a&]:hover:opacity-90",
         price:
           "border-transparent bg-[var(--price-highlight-bg)] text-[var(--price)] [a&]:hover:opacity-90",
-        cheap:
-          "border-transparent bg-[var(--badge-cheap)] text-[var(--badge-cheap-text)] [a&]:hover:opacity-90",
-        best:
-          "border-transparent bg-[var(--badge-best)] text-[var(--badge-best-text)] [a&]:hover:opacity-90",
-        fast:
-          "border-transparent bg-[var(--badge-fast)] text-[var(--badge-fast-text)] [a&]:hover:opacity-90",
       },
     },
     defaultVariants: {

@@ -20,9 +20,9 @@ function Switch({
       dir={resolvedDir}
       className={cn(
         "peer inline-flex h-[1.15rem] w-8 shrink-0 items-center rounded-full border shadow-xs transition-all outline-none focus-visible:ring-[3px] disabled:cursor-not-allowed disabled:opacity-50",
-        "data-[state=checked]:bg-[var(--switch-track-on)] data-[state=unchecked]:bg-[var(--switch-track-off)]",
-        "data-[state=checked]:border-[var(--switch-track-on-border)] data-[state=unchecked]:border-[var(--switch-track-off-border)]",
-        "focus-visible:border-[var(--ring)] focus-visible:ring-[var(--switch-ring)]",
+        "data-[state=checked]:bg-primary data-[state=unchecked]:bg-input",
+        "data-[state=checked]:border-primary data-[state=unchecked]:border-border",
+        "focus-visible:border-ring focus-visible:ring-ring/50",
         className
       )}
       {...props}
@@ -31,7 +31,7 @@ function Switch({
         data-slot="switch-thumb"
         className={cn(
           "pointer-events-none block app-icon-sm rounded-full ring-0 transition-transform data-[state=checked]:translate-x-[calc(100%-2px)] data-[state=unchecked]:translate-x-0 rtl:data-[state=checked]:-translate-x-[calc(100%-2px)]",
-          "data-[state=unchecked]:bg-[var(--switch-thumb)] data-[state=checked]:bg-[var(--switch-thumb-on)]"
+          "bg-background"
         )}
       />
     </SwitchPrimitive.Root>

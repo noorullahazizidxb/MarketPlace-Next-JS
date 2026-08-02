@@ -6,8 +6,6 @@ import type {
   FontSizeOption,
   ContentWidthOption,
   SidebarWidthOption,
-  LandingPageSettings,
-  FooterSettings,
   DensityViewportKey,
   LayoutDensityTokens,
   ResponsiveLayoutDensity,
@@ -156,7 +154,6 @@ export const defaultLayoutDensityTokens: LayoutDensityTokens = {
   sidebarWidth: sidebarWidthValues.comfortable,
   pillH: "1.75rem",
   pillPx: "0.625rem",
-  tablePairCol: "22rem",
   loadingSpinnerScale: "1.5",
   // Leading (line-height) — unitless decimals
   leadingBody: "1.5",
@@ -253,7 +250,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.5rem",
     pillH: "1.4rem",
     pillPx: "0.375rem",
-    tablePairCol: "14rem",
     loadingSpinnerScale: "1",
   },
   sm: {
@@ -315,7 +311,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.5625rem",
     pillH: "1.5rem",
     pillPx: "0.4375rem",
-    tablePairCol: "16rem",
     loadingSpinnerScale: "1",
   },
   md: {
@@ -377,7 +372,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.6875rem",
     pillH: "1.55rem",
     pillPx: "0.5rem",
-    tablePairCol: "18rem",
     loadingSpinnerScale: "1.5",
   },
   lg: {
@@ -439,7 +433,6 @@ export const defaultLayoutDensityTokensByViewport: Record<
     sbTextBadge: "0.8125rem",
     pillH: "1.65rem",
     pillPx: "0.5625rem",
-    tablePairCol: "20rem",
     loadingSpinnerScale: "1.5",
   },
   xl: defaultLayoutDensityTokens,
@@ -510,198 +503,9 @@ export const defaultSidebarSettings: SidebarSettings = {
   width: "comfortable",
 };
 
-export const defaultLandingSettings: LandingPageSettings = {
-  header: {
-    enabled: true,
-    brandHref: "/",
-    signInLabel: "Sign in",
-    signInHref: "/sign-in",
-  },
-  hero: {
-    enabled: true,
-    eyebrow: "Global travel API gateway",
-    title: "One gateway to hundreds of travel APIs worldwide",
-    description:
-      "Connect flights, hotels, transfers, visas, and tourism services through a single unified platform. Built for OTA teams who need speed, reliability, and global reach.",
-    highlight: "hundreds of travel APIs",
-    primaryCta: {
-      label: "Explore OTA Tickets",
-      href: "https://www.otatickets.com",
-    },
-    secondaryCta: {
-      label: "Sign in to dashboard",
-      href: "/sign-in",
-    },
-    imageLightSrc: "/admin/dashboard-light.png",
-    imageDarkSrc: "/admin/dashboard-dark.png",
-    imageAlt: "OTA Tickets admin dashboard preview",
-  },
-  stats: {
-    enabled: true,
-    items: [
-      { value: "500+", label: "travel API connections", enabled: true },
-      { value: "24/7", label: "real-time availability", enabled: true },
-      { value: "50+", label: "destination markets", enabled: true },
-      { value: "99.9%", label: "platform uptime", enabled: true },
-    ],
-  },
-  services: {
-    enabled: true,
-    title: "One platform for every travel product",
-    description:
-      "Manage flights, hotels, transfers, visas, and more through a unified gateway that connects directly to supplier APIs worldwide.",
-    featureOneLightSrc: "/admin/feature-1-light.png",
-    featureOneDarkSrc: "/admin/feature-1-dark.png",
-    featureTwoLightSrc: "/admin/feature-2-light.png",
-    featureTwoDarkSrc: "/admin/feature-2-dark.png",
-    items: [
-      {
-        title: "Flight inventory and scheduling",
-        description:
-          "Access real-time flight availability, fares, and seat maps from hundreds of airline APIs in a single integrated workspace.",
-        icon: "plane",
-        enabled: true,
-      },
-      {
-        title: "Hotels, transfers, and packages",
-        description:
-          "Coordinate room availability, transfer pickups, tour packages, and dynamic bundles from global accommodation providers.",
-        icon: "hotel",
-        enabled: true,
-      },
-      {
-        title: "Visa and documentation services",
-        description:
-          "Streamline visa processing, travel document validation, and service delivery workflows for international travelers.",
-        icon: "shield-check",
-        enabled: true,
-      },
-    ],
-  },
-  story: {
-    enabled: true,
-    title: "Built for modern travel commerce",
-    description:
-      "The OTA Tickets platform brings together commercial operations, inventory management, and customer service in a single intelligent gateway built for scale.",
-    bulletOne: "Secure, multi-factor authentication for your operations team.",
-    bulletTwo: "Unified management across flights, hotels, and all travel products.",
-    bulletThree: "Real-time sync with global distribution systems and supplier APIs.",
-    panelTitle: "OTA Tickets admin dashboard",
-    panelDescription:
-      "Purpose-built for OTA teams managing high volumes of international travel bookings.",
-  },
-  faq: {
-    enabled: true,
-    title: "Frequently asked questions",
-    description:
-      "Everything you need to know about the OTA Tickets platform.",
-    items: [
-      {
-        question: "What travel products can I manage through OTA Tickets?",
-        answer:
-          "Flights, hotels, transfers, car rentals, tour packages, visa services, and travel insurance — all accessible via a single unified API gateway.",
-        enabled: true,
-      },
-      {
-        question: "How does the API gateway connect to suppliers?",
-        answer:
-          "OTA Tickets integrates directly with global distribution systems (GDS), airline direct connects, hotel aggregators, and specialist API providers. New connections are added continuously.",
-        enabled: true,
-      },
-      {
-        question: "Is multi-user and role-based access supported?",
-        answer:
-          "Yes. The platform includes granular role-based permissions for commercial, operations, and support teams with full audit trails.",
-        enabled: true,
-      },
-    ],
-  },
-  cta: {
-    enabled: true,
-    title: "Ready to connect your travel operations?",
-    description:
-      "Join OTA teams worldwide using OTA Tickets to manage inventory, pricing, and customer fulfilment through one powerful gateway.",
-    primaryCta: {
-      label: "Explore OTA Tickets",
-      href: "https://www.otatickets.com",
-    },
-    secondaryCta: {
-      label: "Sign in to dashboard",
-      href: "/sign-in",
-    },
-  },
-};
-
-export const defaultFooterSettings: FooterSettings = {
-  enabled: true,
-  brandTitle: "OTA Tickets",
-  brandDescription:
-    "International travel API gateway connecting flights, hotels, transfers, visas, and tourism services worldwide.",
-  brandHref: "https://www.otatickets.com",
-  supportLabel: "Support",
-  supportHref: "mailto:support@otatickets.com",
-  supportSecondaryLabel: "Documentation",
-  supportSecondaryHref: "/docs",
-  columns: [
-    {
-      title: "Platform",
-      enabled: true,
-      links: [
-        { label: "Sign in", href: "/sign-in" },
-        { label: "Dashboard", href: "/dashboard" },
-        { label: "Subsystems", href: "/subsystems" },
-        { label: "API Gateway", href: "#api" },
-      ],
-    },
-    {
-      title: "Solutions",
-      enabled: true,
-      links: [
-        { label: "Flights", href: "#flights" },
-        { label: "Hotels", href: "#hotels" },
-        { label: "Transfers", href: "#transfers" },
-        { label: "Visa Services", href: "#visas" },
-      ],
-    },
-    {
-      title: "Company",
-      enabled: true,
-      links: [
-        { label: "About", href: "#about" },
-        { label: "Contact", href: "#contact" },
-        { label: "Partners", href: "#partners" },
-        { label: "Careers", href: "#careers" },
-      ],
-    },
-    {
-      title: "Resources",
-      enabled: true,
-      links: [
-        { label: "Help Center", href: "#help" },
-        { label: "Documentation", href: "#docs" },
-        { label: "Community", href: "#community" },
-        { label: "Status", href: "#status" },
-      ],
-    },
-  ],
-  socialLinks: [
-    { label: "LinkedIn", href: "https://www.linkedin.com/company/otatickets" },
-    { label: "Facebook", href: "https://www.facebook.com/otatickets" },
-    { label: "Twitter", href: "https://twitter.com/otatickets" },
-  ],
-  legalLinks: [
-    { label: "Privacy Policy", href: "#privacy" },
-    { label: "Terms of Service", href: "#terms" },
-    { label: "Security", href: "#security" },
-  ],
-  copyrightSuffix: "All rights reserved.",
-};
-
 // Full default UI context state (theme + sidebar).
 export const defaultUiContextState: UiContextState = {
   version: 1,
   theme: defaultThemeSettings,
   sidebar: defaultSidebarSettings,
-  landing: defaultLandingSettings,
-  footer: defaultFooterSettings,
 };

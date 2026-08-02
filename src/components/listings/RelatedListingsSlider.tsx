@@ -158,7 +158,7 @@ function HeroCarousel({
       </div>
 
       <div className="mb-4 flex items-center justify-between px-1">
-        <h3 className="text-lg md:text-xl font-semibold tracking-tight">
+        <h3 className="app-text-heading-sm md:app-text-heading font-semibold tracking-tight">
           {title}
         </h3>
         <div className="flex items-center gap-2">
@@ -232,7 +232,7 @@ function TabbedHeroCarousel({
         <div className="flex items-center gap-2">
           <button
             onClick={() => setTab("related")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "related"
+            className={`flex items-center gap-2 px-3 py-1 rounded-full app-text-body font-medium ${tab === "related"
               ? "bg-card text-accent border border-accent/20"
               : "bg-card text-foreground border border-border"
               }`}
@@ -243,23 +243,23 @@ function TabbedHeroCarousel({
 
           <button
             onClick={() => setTab("top")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "top"
+            className={`flex items-center gap-2 px-3 py-1 rounded-full app-text-body font-medium ${tab === "top"
               ? "bg-card text-accent border border-accent/20"
               : "bg-card text-foreground border border-border"
               }`}
           >
-            <Star className="size-4 text-amber-400" />
+            <Star className="size-4 text-warning" />
             Top Rated
           </button>
 
           <button
             onClick={() => setTab("promoted")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "promoted"
+            className={`flex items-center gap-2 px-3 py-1 rounded-full app-text-body font-medium ${tab === "promoted"
               ? "bg-card text-accent border border-accent/20"
               : "bg-card text-foreground border border-border"
               }`}
           >
-            <ShieldCheck className="size-4 text-emerald-500" />
+            <ShieldCheck className="size-4 text-success" />
             Promoted
           </button>
         </div>
@@ -360,7 +360,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       style={{
         transform: `perspective(900px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
       }}
-      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)]"
+      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-token-lg"
     >
       {/* Glow */}
       <div className="pointer-events-none absolute -inset-10 opacity-60 mix-blend-soft-light">
@@ -390,16 +390,16 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       </div>
 
       <div className="relative h-[40%] p-[var(--space-card)] flex flex-col">
-        <h4 className="text-sm md:text-base font-semibold line-clamp-2 pr-8">
+        <h4 className="app-text-body md:app-text-body font-semibold line-clamp-2 pr-8">
           {item.title || "Untitled"}
         </h4>
         {item.description && (
-          <p className="mt-1 text-xs subtle line-clamp-2">
+          <p className="mt-1 app-text-caption subtle line-clamp-2">
             {String(item.description || "").trim()}
           </p>
         )}
         <div className="mt-auto flex items-center justify-between">
-          <div className="inline-flex items-center gap-1 text-[11px]">
+          <div className="inline-flex items-center gap-1 app-text-caption">
             {rating != null ? (
               <>
                 <Star className="size-3 text-accent" />

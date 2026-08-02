@@ -246,7 +246,7 @@ export function NavMain({
                             initial="hidden"
                             animate="visible"
                             exit="exit"
-                            className="min-w-52 rounded-xl border border-border/70 bg-popover p-2 shadow-xl shadow-black/5 backdrop-blur-sm"
+                            className="min-w-52 rounded-xl border border-border/70 bg-popover p-2 shadow-xl shadow-overlay-dark/5 backdrop-blur-sm"
                           >
                             <div className="mb-1 px-2 pt-1 app-typo-eyebrow uppercase tracking-[0.2em] text-muted-foreground">
                               {item.title}

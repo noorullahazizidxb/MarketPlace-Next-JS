@@ -45,9 +45,9 @@ export default function ListingsPage() {
 function ListingsFallback() {
   const { t } = useLanguage();
   return (
-    <div className="space-y-4">
+    <div className="space-y-[var(--space-gap)]">
       <h2 className="heading-xl">{t("listings")}</h2>
-      <div className="card p-4">{t("loading")}</div>
+      <div className="card p-[var(--space-card)]">{t("loading")}</div>
     </div>
   );
 }
@@ -192,7 +192,7 @@ function ListingsContent() {
   }, [allItems, id, searchText]);
 
   return (
-    <div className="relative space-y-6 app-shell-page" ref={ptrRef} data-app-page="listings">
+    <div className="relative space-y-[var(--space-section)] app-shell-page" ref={ptrRef} data-app-page="listings">
       <OrbField intensity={0.18} className="fixed inset-0 -z-10" />
       {/* Hero */}
       <HomeHero />
@@ -234,17 +234,17 @@ function ListingsContent() {
             className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${pulling ? "" : "transition-[height] duration-300 ease-in-out"
               }`}
           >
-            <div className="text-[10px] tracking-wide font-medium text-foreground/60">
+            <div className="app-text-micro tracking-wide font-medium text-foreground/60">
               {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
             </div>
-            <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-fuchsia-500/40 to-cyan-400/40" />
+            <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-primary/40 to-info/40" />
           </div>
         );
       })()}
       <div id="listings" ref={listingsAnchorRef} className="card app-shell-card space-y-[var(--space-gap)]">
         <FiltersBar />
         {error && (
-          <p className="text-red-500">
+          <p className="text-destructive">
             {String((error as any).message || error)}
           </p>
         )}

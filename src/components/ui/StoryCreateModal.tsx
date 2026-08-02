@@ -2,7 +2,7 @@
 import React from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { z } from "zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,7 @@ import { Input } from "@/components/ui/input";
 import { useCreateStory, useUpdateStory } from "@/lib/stories-hooks";
 import {
   Check,
-  Image,
+  Image as ImageIcon,
   Video,
   X,
   UploadCloud,
@@ -22,6 +22,7 @@ import {
   Loader2,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
+import { ObjectUrlImage } from "@/components/ui/object-url-image";
 
 const schema = z.object({
   title: z
@@ -33,11 +34,12 @@ const schema = z.object({
   mode: z.enum(["image", "video"]).optional(),
   videoUrl: z.string().url().optional().or(z.literal("")),
 });
-type FormVals = z.infer<typeof schema>;
+type FormInput = z.input<typeof schema>;
+type FormVals = z.output<typeof schema>;
 
 const STEPS = [
   { label: "Details", icon: FileText },
-  { label: "Media", icon: Image },
+  { label: "Media", icon: ImageIcon },
   { label: "Extras", icon: Tag },
 ];
 
@@ -128,10 +130,10 @@ export default function StoryCreateModal({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     setValue,
     formState: { errors },
-  } = useForm({
+  } = useForm<FormInput, unknown, FormVals>({
     resolver: zodResolver(schema),
     mode: "onChange",
     defaultValues: {
@@ -142,8 +144,10 @@ export default function StoryCreateModal({
       mode: initial?.videoUrl ? "video" : undefined,
     },
   });
-  const mode = watch("mode");
-  const titleVal = watch("title");
+  const [mode, titleVal = ""] = useWatch({
+    control,
+    name: ["mode", "title"],
+  });
   const isPending = createMut.isPending || updateMut.isPending;
 
   const onFiles = (files: FileList | null) => {
@@ -187,11 +191,11 @@ export default function StoryCreateModal({
 
   return (
     <Dialog open={open} onOpenChange={(v) => (!v ? onClose() : null)}>
-      <DialogContent className="w-[min(96vw,640px)] p-0 overflow-hidden rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-[0_32px_80px_-20px_rgba(0,0,0,0.4)]">
+      <DialogContent className="w-[min(96vw,640px)] p-0 overflow-hidden rounded-[2rem] border border-[var(--border)]/50 bg-[var(--card)]/95 backdrop-blur-2xl shadow-token-lg">
         {/* shimmer line */}
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent z-10" />
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent z-10" />
 
-        <form onSubmit={handleSubmit((vals) => onSubmit(vals as FormVals))} className="flex flex-col">
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
           {/* Header */}
           <div className="relative px-7 pt-7 pb-5 border-b border-[var(--border)]/30">
             <div className="flex items-start justify-between mb-5">
@@ -234,7 +238,7 @@ export default function StoryCreateModal({
                   <div className="space-y-1.5">
                     <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Title</label>
                     <input {...register("title")} placeholder="Give your story a compelling title…" className={inputCls} />
-                    {errors.title && <p className="app-text-caption text-red-400">{String(errors.title.message)}</p>}
+                    {errors.title && <p className="app-text-caption text-destructive">{String(errors.title.message)}</p>}
                   </div>
                   <div className="space-y-1.5">
                     <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Description</label>
@@ -243,7 +247,7 @@ export default function StoryCreateModal({
                       className={cn(inputCls, "h-auto min-h-[100px] py-3 resize-none")}
                       placeholder="What's this story about?"
                     />
-                    {errors.description && <p className="app-text-caption text-red-400">{String(errors.description.message)}</p>}
+                    {errors.description && <p className="app-text-caption text-destructive">{String(errors.description.message)}</p>}
                   </div>
                 </motion.div>
               )}
@@ -270,7 +274,7 @@ export default function StoryCreateModal({
                             : "text-[var(--foreground)]/60 hover:text-[var(--foreground)]"
                         )}
                       >
-                        {m === "image" ? <Image className="app-icon-xs" /> : <Video className="app-icon-xs" />}
+                        {m === "image" ? <ImageIcon className="app-icon-xs" /> : <Video className="app-icon-xs" />}
                         {m === "image" ? "Images" : "Video URL"}
                       </button>
                     ))}
@@ -291,15 +295,14 @@ export default function StoryCreateModal({
                       {images.length > 0 && (
                         <div className="grid grid-cols-4 gap-2">
                           {images.map((file, idx) => {
-                            const src = URL.createObjectURL(file);
                             return (
-                              <div key={idx + src} className="relative group aspect-square">
-                                {/* eslint-disable-next-line @next/next/no-img-element */}
-                                <img src={src} alt="preview" className="w-full h-full object-cover rounded-xl" />
+                              <div key={`${file.name}-${file.lastModified}`} className="relative group aspect-square">
+                                <ObjectUrlImage file={file} alt={`Preview of ${file.name}`} className="object-cover rounded-xl" sizes="25vw" />
                                 <button
                                   type="button"
+                                  aria-label={`Remove ${file.name}`}
                                   onClick={() => setImages((p) => p.filter((_, i) => i !== idx))}
-                                  className="absolute top-1 right-1 size-6 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                                  className="absolute top-1 right-1 size-6 rounded-full bg-foreground/60 text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                                 >
                                   <X className="app-icon-xs" />
                                 </button>
@@ -314,7 +317,7 @@ export default function StoryCreateModal({
                     <div className="space-y-1.5">
                       <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/50">Video URL</label>
                       <input {...register("videoUrl")} placeholder="https://youtube.com/watch?v=..." className={inputCls} />
-                      {errors.videoUrl && <p className="app-text-caption text-red-400">{String(errors.videoUrl.message)}</p>}
+                      {errors.videoUrl && <p className="app-text-caption text-destructive">{String(errors.videoUrl.message)}</p>}
                     </div>
                   )}
                   {!mode && (
@@ -342,7 +345,7 @@ export default function StoryCreateModal({
                   <div className="rounded-2xl border border-[var(--border)]/30 bg-[var(--muted)]/10 p-4 space-y-2">
                     <p className="app-text-caption font-semibold text-[var(--foreground)]/50 uppercase tracking-wide">Summary</p>
                     <div className="app-text-body space-y-1">
-                      <div className="flex gap-2"><span className="text-[var(--foreground)]/40 w-20 flex-shrink-0">Title</span><span className="font-medium truncate">{watch("title") || "—"}</span></div>
+                      <div className="flex gap-2"><span className="text-[var(--foreground)]/40 w-20 flex-shrink-0">Title</span><span className="font-medium truncate">{titleVal || "—"}</span></div>
                       <div className="flex gap-2"><span className="text-[var(--foreground)]/40 w-20 flex-shrink-0">Media</span><span className="font-medium capitalize">{mode ? `${mode} (${mode === "image" ? images.length + " files" : "URL"})` : "None"}</span></div>
                     </div>
                   </div>
@@ -373,7 +376,7 @@ export default function StoryCreateModal({
                   onClick={() => canNext(step) && setStep((s) => Math.min(STEPS.length - 1, s + 1))}
                   className="h-[var(--ctrl-h)] px-5 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all overflow-hidden relative"
                 >
-                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                   Next
                   <ArrowRight className="app-icon-xs" />
                 </button>
@@ -383,7 +386,7 @@ export default function StoryCreateModal({
                   disabled={isPending}
                   className="h-[var(--ctrl-h)] px-6 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
                 >
-                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                  <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                   {isPending ? <Loader2 className="app-icon-sm animate-spin" /> : <Sparkles className="app-icon-sm" />}
                   {isEdit ? "Update Story" : "Publish Story"}
                 </button>
@@ -395,4 +398,3 @@ export default function StoryCreateModal({
     </Dialog>
   );
 }
-
