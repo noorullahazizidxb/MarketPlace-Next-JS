@@ -18,6 +18,7 @@ import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 
 const gradientBgClass = "gradient-bg";
 
@@ -66,6 +67,7 @@ export default function SignUpPage() {
   const { isRtl } = useLanguage();
   const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const { executeRecaptcha } = useRecaptchaV3();
 
   const {
     handleSubmit,
@@ -123,6 +125,7 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignUpValues) => {
     setGlobalError(null);
     try {
+      const recaptchaToken = await executeRecaptcha("register");
       const parts = data.fullName.trim().split(/\s+/);
       const firstName = parts[0];
       const lastName = parts.slice(1).join(" ") || parts[0];
@@ -133,6 +136,7 @@ export default function SignUpPage() {
         firstName,
         lastName,
         fullName: data.fullName.trim(),
+        recaptchaToken,
       };
       await registerMutation.mutateAsync(payload);
     } catch (e: any) {

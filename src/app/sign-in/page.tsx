@@ -20,6 +20,8 @@ import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
+import { ShieldCheck } from "lucide-react";
 
 type FormData = { email: string; password: string };
 
@@ -28,6 +30,7 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const { executeRecaptcha } = useRecaptchaV3();
   const { control, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { email: "", password: "" },
   });
@@ -57,8 +60,9 @@ export default function SignInPage() {
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
+      const recaptchaToken = await executeRecaptcha("login");
       // 1) Call backend login via api-hooks middleware and unwrap envelope
-      const res = await loginMutation.mutateAsync(data);
+      const res = await loginMutation.mutateAsync({ ...data, recaptchaToken });
       const token = res.token;
       const userObj = res.user;
       if (!token || !userObj) throw new Error("Invalid login response");
@@ -292,6 +296,12 @@ export default function SignInPage() {
                 </Button>
               </Tooltip>
             </div>
+
+            {/* reCAPTCHA v3 badge */}
+            <p className="flex items-center justify-center gap-1.5 app-text-caption text-[var(--muted-foreground)] opacity-70 pt-1">
+              <ShieldCheck className="size-3.5 text-success" aria-hidden />
+              Protected by reCAPTCHA
+            </p>
           </motion.form>
         </div>
       </motion.div>
