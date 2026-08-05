@@ -1,15 +1,7 @@
 "use client";
 import React from "react";
-import { Palette, Dices, Upload, ExternalLink, Sun, Moon } from "lucide-react";
+import { Palette, Upload, ExternalLink, Sun, Moon } from "lucide-react";
 import { Button } from "../../atoms/shadcn/button";
-import { Label } from "../../atoms/shadcn/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../../atoms/shadcn/select";
 import { Separator } from "../../atoms/shadcn/separator";
 import {
   Accordion,
@@ -29,11 +21,8 @@ import {
 } from "@repo/constants";
 import { ColorPicker } from "../../molecules/color-picker";
 import type { ImportedTheme } from "@repo/types";
-// Circular transition CSS is imported globally by the host app (apps/admin/app/globals.css)
-// to avoid global CSS imports inside component modules. Do not import it here.
-
-
 import { useThemeManager, useCircularTransition } from "@repo/hooks";
+import { PresetManagerPanel } from "./preset-manager-panel";
 
 interface ThemeTabProps {
   selectedTheme: string;
@@ -183,211 +172,69 @@ export function ThemeTab({
     toggleTheme(event);
   };
 
+  const clearOthers = (except: "shadcn" | "tweakcn" | "brand" | "sidebar") => {
+    if (except !== "shadcn") setSelectedTheme("");
+    if (except !== "tweakcn") setSelectedTweakcnTheme("");
+    if (except !== "brand") setSelectedBrandTheme("");
+    if (except !== "sidebar") setSelectedSidebarTheme("");
+    setBrandColorsValues({});
+    setImportedTheme(null);
+  };
+
   return (
     <div className="p-4 space-y-6">
-      {/* Shadcn UI Theme Presets */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="app-text-body">Shadcn UI Theme Presets</Label>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRandomShadcn}
-            className="cursor-pointer"
-          >
-            <Dices className="app-icon-xs mr-1.5" />
-            Random
-          </Button>
-        </div>
-
-        <Select
-          value={selectedTheme}
-          onValueChange={(value) => {
-            setSelectedTheme(value);
-            setSelectedTweakcnTheme(""); // Clear tweakcn selection
-            setSelectedBrandTheme("");   // Clear brand selection
-            setSelectedSidebarTheme(""); // Clear sidebar selection
-            setBrandColorsValues({}); // Clear brand colors state
-            setImportedTheme(null); // Clear imported theme
-          }}
-        >
-          <SelectTrigger className="w-full cursor-pointer">
-            <SelectValue placeholder="Choose Shadcn Theme" />
-          </SelectTrigger>
-          <SelectContent className="max-h-60">
-            <div className="p-2">
-              {colorThemes.map((theme) => (
-                <SelectItem
-                  key={theme.value}
-                  value={theme.value}
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <ThemePreviewSwatches styles={theme.preset.styles.light} />
-                    <span>{theme.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </div>
-          </SelectContent>
-        </Select>
-      </div>
+      {/* ── 4 Preset panels with full CRUD ─────────────────────────────────── */}
+      <PresetManagerPanel
+        label="Shadcn UI Theme Presets"
+        builtins={colorThemes as any}
+        value={selectedTheme}
+        onChange={setSelectedTheme}
+        onRandom={handleRandomShadcn}
+        clearOthers={() => clearOthers("shadcn")}
+        presetCategory="shadcn"
+      />
 
       <Separator />
 
-      {/* Tweakcn Theme Presets */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="app-text-body">Tweakcn Theme Presets</Label>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRandomTweakcn}
-            className="cursor-pointer"
-          >
-            <Dices className="app-icon-xs mr-1.5" />
-            Random
-          </Button>
-        </div>
-
-        <Select
-          value={selectedTweakcnTheme}
-          onValueChange={(value) => {
-            setSelectedTweakcnTheme(value);
-            setSelectedTheme("");         // Clear shadcn selection
-            setSelectedBrandTheme("");    // Clear brand selection
-            setSelectedSidebarTheme(""); // Clear sidebar selection
-            setBrandColorsValues({}); // Clear brand colors state
-            setImportedTheme(null); // Clear imported theme
-          }}
-        >
-          <SelectTrigger className="w-full cursor-pointer">
-            <SelectValue placeholder="Choose Tweakcn Theme" />
-          </SelectTrigger>
-          <SelectContent className="max-h-60">
-            <div className="p-2">
-              {tweakcnThemes.map((theme) => (
-                <SelectItem
-                  key={theme.value}
-                  value={theme.value}
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <ThemePreviewSwatches styles={theme.preset.styles.light} />
-                    <span>{theme.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </div>
-          </SelectContent>
-        </Select>
-      </div>
+      <PresetManagerPanel
+        label="Tweakcn Theme Presets"
+        builtins={tweakcnThemes as any}
+        value={selectedTweakcnTheme}
+        onChange={setSelectedTweakcnTheme}
+        onRandom={handleRandomTweakcn}
+        clearOthers={() => clearOthers("tweakcn")}
+        presetCategory="tweakcn"
+      />
 
       <Separator />
 
-      {/* Brand Theme Presets */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="app-text-body">Brand Theme Presets</Label>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRandomBrand}
-            className="cursor-pointer"
-          >
-            <Dices className="app-icon-xs mr-1.5" />
-            Random
-          </Button>
-        </div>
-
-        <Select
-          value={selectedBrandTheme}
-          onValueChange={(value) => {
-            setSelectedBrandTheme(value);
-            setSelectedTheme("");
-            setSelectedTweakcnTheme("");
-            setSelectedSidebarTheme("");
-            setBrandColorsValues({});
-            setImportedTheme(null);
-          }}
-        >
-          <SelectTrigger className="w-full cursor-pointer">
-            <SelectValue placeholder="Choose Brand Theme" />
-          </SelectTrigger>
-          <SelectContent className="max-h-60">
-            <div className="p-2">
-              {brandThemes.map((theme) => (
-                <SelectItem
-                  key={theme.value}
-                  value={theme.value}
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <ThemePreviewSwatches styles={theme.preset.styles.light} />
-                    <span>{theme.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </div>
-          </SelectContent>
-        </Select>
-      </div>
+      <PresetManagerPanel
+        label="Brand Theme Presets"
+        builtins={brandThemes as any}
+        value={selectedBrandTheme}
+        onChange={setSelectedBrandTheme}
+        onRandom={handleRandomBrand}
+        clearOthers={() => clearOthers("brand")}
+        presetCategory="brand"
+      />
 
       <Separator />
 
-      {/* Sidebar Theme Presets */}
-      <div className="space-y-3">
-        <div className="flex items-center justify-between">
-          <Label className="app-text-body">Sidebar Theme Presets</Label>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={handleRandomSidebar}
-            className="cursor-pointer"
-          >
-            <Dices className="app-icon-xs mr-1.5" />
-            Random
-          </Button>
-        </div>
-
-        <Select
-          value={selectedSidebarTheme}
-          onValueChange={(value) => {
-            setSelectedSidebarTheme(value);
-            setSelectedTheme("");
-            setSelectedTweakcnTheme("");
-            setSelectedBrandTheme("");
-            setBrandColorsValues({});
-            setImportedTheme(null);
-          }}
-        >
-          <SelectTrigger className="w-full cursor-pointer">
-            <SelectValue placeholder="Choose Sidebar Theme" />
-          </SelectTrigger>
-          <SelectContent className="max-h-60">
-            <div className="p-2">
-              {sidebarThemes.map((theme) => (
-                <SelectItem
-                  key={theme.value}
-                  value={theme.value}
-                  className="cursor-pointer"
-                >
-                  <div className="flex items-center gap-2">
-                    <ThemePreviewSwatches styles={theme.preset.styles.light} />
-                    <span>{theme.name}</span>
-                  </div>
-                </SelectItem>
-              ))}
-            </div>
-          </SelectContent>
-        </Select>
-      </div>
+      <PresetManagerPanel
+        label="Sidebar Theme Presets"
+        builtins={sidebarThemes as any}
+        value={selectedSidebarTheme}
+        onChange={setSelectedSidebarTheme}
+        onRandom={handleRandomSidebar}
+        clearOthers={() => clearOthers("sidebar")}
+        presetCategory="sidebar"
+      />
 
       <Separator />
 
-      {/* Radius Selection */}
+      {/* ── Radius ─────────────────────────────────────────────────────────── */}
       <div className="space-y-3">
-        <Label className="app-text-body">Radius</Label>
+        <div className="text-sm font-medium text-foreground">Radius</div>
         <div className="grid grid-cols-5 gap-2">
           {radiusOptions.map((option) => (
             <div
@@ -408,9 +255,9 @@ export function ThemeTab({
 
       <Separator />
 
-      {/* Mode Section */}
+      {/* ── Mode ────────────────────────────────────────────────────────────── */}
       <div className="space-y-3">
-        <Label className="app-text-body">Mode</Label>
+        <div className="text-sm font-medium text-foreground">Mode</div>
         <div className="grid grid-cols-2 gap-2">
           <Button
             variant={!isDarkMode ? "secondary" : "outline"}
@@ -435,7 +282,7 @@ export function ThemeTab({
 
       <Separator />
 
-      {/* Import Theme Button */}
+      {/* ── Import ──────────────────────────────────────────────────────────── */}
       <div className="space-y-3">
         <Button
           variant="outline"
