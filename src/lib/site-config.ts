@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 
 export const SITE_URL =
   process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-  "https://marketplace.devminds.com";
+  "https://marketplace.devminds.net";
 
 export const SITE_NAME = "DevMinds Marketplace";
 export const ORGANIZATION_NAME = "DevMinds";
