@@ -5,7 +5,7 @@ import { useAuthStore } from "@/store/auth.store";
 const baseURL =
   process.env.NEXT_PUBLIC_API_BASE_URL ||
   process.env.NEXT_PUBLIC_API_BASE ||
-  "https://api.devminds.net/api";
+  "https://marketplace.devminds.net/api";
 
 export const axiosClient = axios.create({
   baseURL,
