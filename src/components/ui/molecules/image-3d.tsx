@@ -24,7 +24,7 @@ export function Image3D({
     <div className={cn("group relative aspect-[4/3] w-full", className)}>
       <div className="perspective-distant transform-3d">
         {/* Animated background glow */}
-        <div className="absolute sm:-inset-8 rounded-3xl bg-gradient-to-r from-primary/10 via-blue-500/10 to-purple-500/10 opacity-0 group-hover:opacity-100 transition-all duration-1000 blur-2xl" />
+        <div className="absolute sm:-inset-8 rounded-3xl bg-gradient-to-r from-primary/10 via-info/10 to-primary/10 opacity-0 group-hover:opacity-100 transition-all duration-1000 blur-2xl" />
 
         {/* Main 3D container */}
         <div className="relative size-full transform-3d group-hover:rotate-x-8 group-hover:rotate-y-12 group-hover:translate-z-16 transition-all duration-700 ease-out">
@@ -38,7 +38,7 @@ export function Image3D({
           <div className="relative z-10 size-full rounded-2xl overflow-hidden shadow-2xl shadow-primary/20">
             {/* Shimmer effect */}
             <div className={cn(
-              "absolute inset-0 z-20 bg-gradient-to-r from-transparent via-white/20 to-transparent -skew-x-12 transition-transform duration-1000 ease-out pointer-events-none",
+              "absolute inset-0 z-20 bg-gradient-to-r from-transparent via-overlay-light/20 to-transparent -skew-x-12 transition-transform duration-1000 ease-out pointer-events-none",
               isRight
                 ? "translate-x-full group-hover:-translate-x-full"
                 : "-translate-x-full group-hover:translate-x-full"
@@ -80,7 +80,7 @@ export function Image3D({
             />
 
             {/* Border highlight */}
-            <div className="absolute inset-0 rounded-2xl ring-1 ring-white/20 dark:ring-white/10 group-hover:ring-primary/40 transition-all duration-500" />
+            <div className="absolute inset-0 rounded-2xl ring-1 ring-ring/30 dark:ring-ring/30 group-hover:ring-primary/40 transition-all duration-500" />
           </div>
         </div>
       </div>

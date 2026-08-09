@@ -175,7 +175,7 @@ export function RangeDatePicker({
   const renderTriggerIcon = useCallback(
     (field: ActiveField) => {
       const isActive = open && activeField === field;
-      const colorCls = isActive ? "text-violet-500" : "text-muted-foreground/70";
+      const colorCls = isActive ? "text-primary" : "text-muted-foreground/70";
 
       if (icon && isValidElement(icon)) {
         const existingClassName = (icon.props as { className?: string }).className;
@@ -302,7 +302,7 @@ export function RangeDatePicker({
                 disabled && "cursor-default",
                 "focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/30",
                 // Active-field highlight
-                open && activeField === "departure" && "bg-violet-500/5",
+                open && activeField === "departure" && "bg-primary/5",
                 buttonClassName,
               )}
             >
@@ -321,7 +321,7 @@ export function RangeDatePicker({
                       : cn(
                         "app-text-label",
                         open && activeField === "departure"
-                          ? "text-violet-600 dark:text-violet-400"
+                          ? "text-primary dark:text-primary"
                           : "text-foreground",
                       ),
                   )}
@@ -361,7 +361,7 @@ export function RangeDatePicker({
                   !disabled && "hover:bg-accent/30 cursor-pointer",
                   disabled && "cursor-default",
                   "focus-visible:ring-1 focus-visible:ring-inset focus-visible:ring-ring/30",
-                  open && activeField === "return" && "bg-violet-500/5",
+                  open && activeField === "return" && "bg-primary/5",
                   buttonClassName,
                 )}
               >
@@ -380,7 +380,7 @@ export function RangeDatePicker({
                         : cn(
                           "app-text-label",
                           open && activeField === "return"
-                            ? "text-violet-600 dark:text-violet-400"
+                            ? "text-primary dark:text-primary"
                             : "text-foreground",
                         ),
                     )}

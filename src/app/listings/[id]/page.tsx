@@ -38,7 +38,7 @@ import { Tooltip } from "@/components/ui/tooltip";
 
 export default function ListingDetailsPage() {
   return (
-    <Suspense fallback={<div className="p-6">Loading…</div>}>
+    <Suspense fallback={<div className="p-[var(--space-card)]">Loading…</div>}>
       <ListingDetailsContent />
     </Suspense>
   );
@@ -73,7 +73,7 @@ function ListingDetailsContent() {
   }, []);
 
   return (
-    <div className="space-y-6 app-shell-page" data-app-page="listing-detail">
+    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="listing-detail">
       <div className="flex flex-wrap items-center gap-3">
         <Link
           href="/listings"
@@ -95,17 +95,17 @@ function ListingDetailsContent() {
       </div>
       {isLoading && <p>{t("loading")}</p>}
       {error && (
-        <p className="text-red-500">
+        <p className="text-destructive">
           {String((error as any).message || error)}
         </p>
       )}
       {!isLoading && !error && (
-        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-          <div className="space-y-4 lg:col-span-2">
+        <div className="grid grid-cols-1 gap-[var(--space-section)] lg:grid-cols-3">
+          <div className="space-y-[var(--space-gap)] lg:col-span-2">
             <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur overflow-hidden">
               <ImageSlider images={images} aspect="1/1" />
             </div>
-            <div className="card p-5 space-y-4">
+            <div className="card p-[var(--space-card)] space-y-[var(--space-gap)]">
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
                   <div className="px-3 py-1 rounded-xl tabular-nums app-text-body border border-[var(--border)] bg-[var(--accent)]/10 text-[var(--accent)]">
@@ -202,7 +202,7 @@ function ListingDetailsContent() {
             <DetailAdSlot placement="DETAIL_PAGE_2ND" />
           </div>
 
-          <div className="space-y-4">
+          <div className="space-y-[var(--space-gap)]">
             {contactHidden ? (
               <RepresentativesCard reps={listing?.representatives || []} />
             ) : (
@@ -253,7 +253,7 @@ function RepresentativesCard({ reps }: { reps: any[] }) {
   const { t } = useLanguage();
   if (!Array.isArray(reps) || reps.length === 0) return null;
   return (
-    <div className="card p-5 space-y-3">
+    <div className="card p-[var(--space-card)] space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
         <User className="app-icon-sm" /> {t("listingRepresentatives")}
       </h3>
@@ -315,7 +315,7 @@ function SellerCard({ user }: { user?: any }) {
   const { t } = useLanguage();
   if (!user) return null;
   return (
-    <div className="card p-5 space-y-3">
+    <div className="card p-[var(--space-card)] space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
         <User className="app-icon-sm" /> {t("seller")}
       </h3>
@@ -418,7 +418,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
     }
   };
   return (
-    <div className="card p-5 space-y-3">
+    <div className="card p-[var(--space-card)] space-y-3">
       <h3 className="font-semibold flex items-center gap-2">
         <Share2 className="app-icon-sm" /> {t("quickActions")}
       </h3>
@@ -447,7 +447,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
 
 function SocialsCard() {
   return (
-    <div className="card p-5">
+    <div className="card p-[var(--space-card)]">
       <h3 className="font-semibold mb-3">Follow</h3>
       <div className="flex items-center gap-2">
         <Tooltip content="Follow on X" side="top">
@@ -503,7 +503,7 @@ function SocialsCard() {
 function NewsletterCard() {
   const { t } = useLanguage();
   return (
-    <div className="card p-5 space-y-2">
+    <div className="card p-[var(--space-card)] space-y-2">
       <h3 className="font-semibold">{t("newsletter")}</h3>
       <p className="app-text-caption subtle">{t("subscribeBlurb")}</p>
       <form
@@ -534,9 +534,9 @@ function QRCard({ url }: { url: string }) {
   const { t } = useLanguage();
   if (!url) return null;
   return (
-    <div className="card p-5">
+    <div className="card p-[var(--space-card)]">
       <h3 className="font-semibold">{t("scanVisit")}</h3>
-      <div className="mt-3 rounded-2xl border border-[var(--border)] bg-white p-3 shadow-sm dark:bg-white/90">
+      <div className="mt-3 rounded-2xl border border-[var(--border)] bg-background p-3 shadow-sm dark:bg-background/90">
         <QRCode value={url} className="h-auto w-full" />
       </div>
     </div>
@@ -550,7 +550,7 @@ function Stars({ count }: { count: number }) {
         <Star
           key={i}
           className={`app-icon-sm ${i < count
-            ? "fill-yellow-400 text-yellow-400"
+            ? "fill-warning text-warning"
             : "text-[var(--primary)]/20"
             }`}
         />
@@ -561,7 +561,7 @@ function Stars({ count }: { count: number }) {
 
 function FeedbacksSection({ feedbacks }: { feedbacks: any[] }) {
   return (
-    <div className="card p-5 space-y-4">
+    <div className="card p-[var(--space-card)] space-y-[var(--space-gap)]">
       <h3 className="font-semibold">Feedbacks</h3>
       {(!feedbacks || feedbacks.length === 0) && (
         <p className="subtle">No feedbacks yet.</p>
@@ -709,7 +709,7 @@ function FeedbackCreateForm({
   };
 
   return (
-    <div className="card p-5 space-y-3">
+    <div className="card p-[var(--space-card)] space-y-3">
       <h3 className="font-semibold">Leave a feedback</h3>
       {!canPost ? (
         <p className="app-text-body subtle">
@@ -785,7 +785,7 @@ function StarRatingInput({
             className={`transition-transform hover:scale-110 focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 rounded-md`}
           >
             <Star
-              className={`app-icon-md ${active ? "fill-yellow-400 text-yellow-400" : "text-yellow-400"
+              className={`app-icon-md ${active ? "fill-warning text-warning" : "text-warning"
                 }`}
             />
           </button>

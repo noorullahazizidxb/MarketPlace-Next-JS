@@ -21,7 +21,7 @@ export const CommandInput: React.FC<CommandInputProps> = ({
 }) => (
   <div className="p-2 border-b bg-[var(--card)]/50">
     <input
-      className={cn("w-full bg-transparent outline-none text-xs", className)}
+      className={cn("w-full bg-transparent outline-none app-text-caption", className)}
       onChange={(e) => onValueChange?.(e.target.value)}
       {...rest}
     />
@@ -36,7 +36,7 @@ export const CommandList: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
 export const CommandEmpty: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({
   className,
   ...rest
-}) => <div className={cn("p-3 text-2xs opacity-60", className)} {...rest} />;
+}) => <div className={cn("p-3 app-text-micro opacity-60", className)} {...rest} />;
 
 interface CommandItemProps
   extends React.ButtonHTMLAttributes<HTMLButtonElement> {
@@ -49,7 +49,7 @@ export const CommandItem: React.FC<CommandItemProps> = ({
 }) => (
   <button
     className={cn(
-      "w-full text-left px-3 py-2 text-xs hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)] flex items-center",
+      "w-full text-left px-3 py-2 app-text-caption hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)] flex items-center",
       className
     )}
     {...rest}

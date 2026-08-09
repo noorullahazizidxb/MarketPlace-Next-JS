@@ -47,7 +47,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
             {/** Indentation using utility classes mapping */}
             <span
               className={cn(
-                "font-medium text-sm truncate",
+                "font-medium app-text-body truncate",
                 [
                   "",
                   "pl-2",
@@ -69,9 +69,9 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               </Badge>
             )}
           </div>
-          <p className="text-2xs subtle">/{node.slug}</p>
+          <p className="app-text-micro subtle">/{node.slug}</p>
         </div>
-        <div className="hidden md:flex items-center gap-4 text-2xs">
+        <div className="hidden md:flex items-center gap-4 app-text-micro">
           <span>{node.children?.length ?? 0} sub</span>
           <span>{node.listings?.length ?? 0} listings</span>
         </div>
@@ -96,7 +96,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
             onClick={() => del.remove()}
             className="size-9 p-0"
           >
-            <Trash2 className="size-4 text-red-500" />
+            <Trash2 className="size-4 text-destructive" />
           </Button>
         </div>
       </div>
@@ -113,7 +113,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               {/* Listings preview */}
               {(node.listings?.length ?? 0) > 0 && (
                 <div className="space-y-3">
-                  <p className="text-2xs font-semibold uppercase tracking-wide">
+                  <p className="app-text-micro font-semibold uppercase tracking-wide">
                     Listings ({node.listings?.length})
                   </p>
                   <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -140,10 +140,10 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
                             ))}
                           </div>
                           <div className="flex-1 min-w-0">
-                            <p className="text-xs font-medium truncate">
+                            <p className="app-text-caption font-medium truncate">
                               {ls.title}
                             </p>
-                            <p className="text-2xs subtle">
+                            <p className="app-text-micro subtle">
                               {ls.status || "—"}{" "}
                               {ls.price != null && <span>· ${ls.price}</span>}
                             </p>
@@ -151,7 +151,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
                         </div>
                         {ls.representatives &&
                           ls.representatives.length > 0 && (
-                            <p className="text-[10px] subtle">
+                            <p className="app-text-micro subtle">
                               Reps:{" "}
                               {ls.representatives
                                 .map((r) => r.representative?.fullName)
@@ -167,7 +167,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               {/* Children categories */}
               {(node.children?.length ?? 0) > 0 && (
                 <div className="space-y-3">
-                  <p className="text-2xs font-semibold uppercase tracking-wide">
+                  <p className="app-text-micro font-semibold uppercase tracking-wide">
                     Sub Categories ({node.children?.length})
                   </p>
                   <div className="space-y-2">
@@ -176,10 +176,10 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
                         key={c.id}
                         className="flex items-center gap-3 p-2 rounded-lg border bg-[var(--card)]/60"
                       >
-                        <span className="text-xs font-medium flex-1 truncate">
+                        <span className="app-text-caption font-medium flex-1 truncate">
                           {c.name}
                         </span>
-                        <span className="text-2xs subtle">/{c.slug}</span>
+                        <span className="app-text-micro subtle">/{c.slug}</span>
                       </div>
                     ))}
                   </div>

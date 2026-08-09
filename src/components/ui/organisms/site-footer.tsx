@@ -1,42 +1,42 @@
-import { Heart } from "lucide-react";
+import { ShieldCheck, Sparkles } from "lucide-react";
 import Link from "next/link";
 
 interface SiteFooterProps {
   content?: {
-    madeWith: string;
-    by: string;
-    team: string;
+    product: string;
+    consoleLabel: string;
     description: string;
   };
 }
 
 const defaultContent = {
-  madeWith: "Made with",
-  by: "by",
-  team: "OTA Tickets Team",
+  product: "DevMinds Marketplace",
+  consoleLabel: "Operations Console",
   description:
-    "Building beautiful, accessible blocks, templates and dashboards for modern web applications.",
+    "Secure tools for managing listings, members, moderation, and platform quality.",
 };
 
 export function SiteFooter({ content = defaultContent }: SiteFooterProps) {
   return (
-    <footer className="border-t bg-background">
-      <div className="px-[length:var(--space-page-x)] py-[length:var(--space-section)] lg:px-6">
-        <div className="flex flex-col items-center justify-center space-y-2 text-center">
-          <div className="flex items-center gap-2 app-typo-filter-label text-muted-foreground">
-            <span>{content.madeWith}</span>
-            <Heart className="app-icon-sm fill-red-500 text-red-500" />
-            <span>{content.by}</span>
+    <footer className="border-t border-border/70 bg-background/80">
+      <div className="px-[var(--space-page-x)] py-[var(--space-section)]">
+        <div className="app-premium-surface flex flex-col gap-[var(--space-gap)] p-[var(--space-card)] sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
             <Link
-              href="https://OTA Tickets.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="app-text-label text-foreground hover:text-primary transition-colors"
+              href="/admin"
+              className="inline-flex items-center gap-2 app-text-heading-sm text-foreground transition-colors hover:text-primary"
             >
-              {content.team}
+              <ShieldCheck className="app-icon-sm text-primary" aria-hidden />
+              {content.product}
             </Link>
+            <p className="mt-1 app-text-caption text-muted-foreground">
+              {content.description}
+            </p>
           </div>
-          <p className="app-typo-eyebrow text-muted-foreground">{content.description}</p>
+          <span className="inline-flex shrink-0 items-center gap-2 rounded-full border border-border bg-muted/50 px-3 py-1.5 app-text-caption text-muted-foreground">
+            <Sparkles className="app-icon-xs text-primary" aria-hidden />
+            {content.consoleLabel}
+          </span>
         </div>
       </div>
     </footer>

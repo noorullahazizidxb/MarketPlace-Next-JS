@@ -17,7 +17,7 @@ const BRAND_DEFAULTS = {
   },
 } as const;
 
-const OTA_DEFAULTS = {
+const APP_DEFAULTS = {
   light: {
     success: "oklch(0.55 0.16 155)",
     "success-foreground": "oklch(0.98 0 0)",
@@ -49,8 +49,6 @@ const OTA_DEFAULTS = {
     "badge-fast-text": "oklch(0.4 0.12 240)",
     "airline-logo-bg": "oklch(0.97 0 0)",
     "layover-line": "oklch(0.85 0 0)",
-    "selected-flight": "oklch(0.96 0.03 42)",
-    "selected-flight-border": "oklch(0.65 0.2 42)",
     chip: "oklch(0.965 0 0)",
     "chip-foreground": "oklch(0.3 0 0)",
     "chip-selected": "oklch(0.65 0.2 42)",
@@ -87,8 +85,6 @@ const OTA_DEFAULTS = {
     "badge-fast-text": "oklch(0.92 0.06 240)",
     "airline-logo-bg": "oklch(0.2 0.025 260)",
     "layover-line": "oklch(0.35 0.02 260 / 40%)",
-    "selected-flight": "oklch(0.28 0.04 260)",
-    "selected-flight-border": "oklch(0.7 0.18 45)",
     chip: "oklch(0.25 0.03 260)",
     "chip-foreground": "oklch(0.9 0.01 250)",
     "chip-selected": "oklch(0.7 0.18 45)",
@@ -240,22 +236,17 @@ const withPremiumBrandVariables = <
     toOklchGlow(darkStart, BRAND_DEFAULTS.dark["brand-glow"]);
 
   const lightSuccess =
-    preset.styles.light.success ?? preset.styles.light["chart-2"] ?? OTA_DEFAULTS.light.success;
+    preset.styles.light.success ?? preset.styles.light["chart-2"] ?? APP_DEFAULTS.light.success;
   const darkSuccess =
-    preset.styles.dark.success ?? preset.styles.dark["chart-2"] ?? OTA_DEFAULTS.dark.success;
+    preset.styles.dark.success ?? preset.styles.dark["chart-2"] ?? APP_DEFAULTS.dark.success;
   const lightWarning =
-    preset.styles.light.warning ?? preset.styles.light["chart-5"] ?? OTA_DEFAULTS.light.warning;
+    preset.styles.light.warning ?? preset.styles.light["chart-5"] ?? APP_DEFAULTS.light.warning;
   const darkWarning =
-    preset.styles.dark.warning ?? preset.styles.dark["chart-5"] ?? OTA_DEFAULTS.dark.warning;
+    preset.styles.dark.warning ?? preset.styles.dark["chart-5"] ?? APP_DEFAULTS.dark.warning;
   const lightInfo =
-    preset.styles.light.info ?? preset.styles.light["chart-3"] ?? OTA_DEFAULTS.light.info;
+    preset.styles.light.info ?? preset.styles.light["chart-3"] ?? APP_DEFAULTS.light.info;
   const darkInfo =
-    preset.styles.dark.info ?? preset.styles.dark["chart-3"] ?? OTA_DEFAULTS.dark.info;
-
-  const lightSelectedFlight =
-    preset.styles.light["selected-flight"] ?? preset.styles.light.accent ?? OTA_DEFAULTS.light["selected-flight"];
-  const darkSelectedFlight =
-    preset.styles.dark["selected-flight"] ?? preset.styles.dark.accent ?? OTA_DEFAULTS.dark["selected-flight"];
+    preset.styles.dark.info ?? preset.styles.dark["chart-3"] ?? APP_DEFAULTS.dark.info;
 
   return {
     ...preset,
@@ -272,128 +263,123 @@ const withPremiumBrandVariables = <
         "success-foreground":
           preset.styles.light["success-foreground"] ??
           preset.styles.light["primary-foreground"] ??
-          OTA_DEFAULTS.light["success-foreground"],
+          APP_DEFAULTS.light["success-foreground"],
         warning: lightWarning,
         "warning-foreground":
           preset.styles.light["warning-foreground"] ??
           preset.styles.light.foreground ??
-          OTA_DEFAULTS.light["warning-foreground"],
+          APP_DEFAULTS.light["warning-foreground"],
         info: lightInfo,
         "info-foreground":
           preset.styles.light["info-foreground"] ??
           preset.styles.light["primary-foreground"] ??
-          OTA_DEFAULTS.light["info-foreground"],
+          APP_DEFAULTS.light["info-foreground"],
         price: preset.styles.light.price ?? lightSuccess,
-        "price-sale": preset.styles.light["price-sale"] ?? preset.styles.light.primary ?? OTA_DEFAULTS.light["price-sale"],
+        "price-sale": preset.styles.light["price-sale"] ?? preset.styles.light.primary ?? APP_DEFAULTS.light["price-sale"],
         "price-original":
           preset.styles.light["price-original"] ??
           preset.styles.light["muted-foreground"] ??
-          OTA_DEFAULTS.light["price-original"],
+          APP_DEFAULTS.light["price-original"],
         "price-highlight-bg":
           preset.styles.light["price-highlight-bg"] ??
           preset.styles.light.muted ??
-          OTA_DEFAULTS.light["price-highlight-bg"],
+          APP_DEFAULTS.light["price-highlight-bg"],
         "switch-track-off":
           preset.styles.light["switch-track-off"] ??
           preset.styles.light.muted ??
-          OTA_DEFAULTS.light["switch-track-off"],
+          APP_DEFAULTS.light["switch-track-off"],
         "switch-track-off-border":
           preset.styles.light["switch-track-off-border"] ??
           preset.styles.light.border ??
-          OTA_DEFAULTS.light["switch-track-off-border"],
+          APP_DEFAULTS.light["switch-track-off-border"],
         "switch-track-on":
           preset.styles.light["switch-track-on"] ??
           preset.styles.light.primary ??
-          OTA_DEFAULTS.light["switch-track-on"],
+          APP_DEFAULTS.light["switch-track-on"],
         "switch-track-on-border":
           preset.styles.light["switch-track-on-border"] ??
           preset.styles.light.ring ??
-          OTA_DEFAULTS.light["switch-track-on-border"],
+          APP_DEFAULTS.light["switch-track-on-border"],
         "switch-thumb":
           preset.styles.light["switch-thumb"] ??
           preset.styles.light.background ??
-          OTA_DEFAULTS.light["switch-thumb"],
+          APP_DEFAULTS.light["switch-thumb"],
         "switch-thumb-on":
           preset.styles.light["switch-thumb-on"] ??
           preset.styles.light["primary-foreground"] ??
-          OTA_DEFAULTS.light["switch-thumb-on"],
+          APP_DEFAULTS.light["switch-thumb-on"],
         "switch-ring":
           preset.styles.light["switch-ring"] ??
           preset.styles.light.ring ??
-          OTA_DEFAULTS.light["switch-ring"],
+          APP_DEFAULTS.light["switch-ring"],
         "scrollbar-track":
           preset.styles.light["scrollbar-track"] ??
           preset.styles.light.muted ??
-          OTA_DEFAULTS.light["scrollbar-track"],
+          APP_DEFAULTS.light["scrollbar-track"],
         "scrollbar-thumb":
           preset.styles.light["scrollbar-thumb"] ??
           preset.styles.light.border ??
-          OTA_DEFAULTS.light["scrollbar-thumb"],
+          APP_DEFAULTS.light["scrollbar-thumb"],
         "scrollbar-thumb-hover":
           preset.styles.light["scrollbar-thumb-hover"] ??
           preset.styles.light["muted-foreground"] ??
-          OTA_DEFAULTS.light["scrollbar-thumb-hover"],
+          APP_DEFAULTS.light["scrollbar-thumb-hover"],
         skeleton:
           preset.styles.light.skeleton ??
           preset.styles.light.muted ??
-          OTA_DEFAULTS.light.skeleton,
+          APP_DEFAULTS.light.skeleton,
         "skeleton-shimmer":
           preset.styles.light["skeleton-shimmer"] ??
           preset.styles.light.card ??
-          OTA_DEFAULTS.light["skeleton-shimmer"],
+          APP_DEFAULTS.light["skeleton-shimmer"],
         "badge-cheap":
           preset.styles.light["badge-cheap"] ??
           lightSuccess ??
-          OTA_DEFAULTS.light["badge-cheap"],
+          APP_DEFAULTS.light["badge-cheap"],
         "badge-cheap-text":
           preset.styles.light["badge-cheap-text"] ??
           preset.styles.light["success-foreground"] ??
-          OTA_DEFAULTS.light["badge-cheap-text"],
+          APP_DEFAULTS.light["badge-cheap-text"],
         "badge-best":
           preset.styles.light["badge-best"] ??
           preset.styles.light.primary ??
-          OTA_DEFAULTS.light["badge-best"],
+          APP_DEFAULTS.light["badge-best"],
         "badge-best-text":
           preset.styles.light["badge-best-text"] ??
           preset.styles.light["primary-foreground"] ??
-          OTA_DEFAULTS.light["badge-best-text"],
+          APP_DEFAULTS.light["badge-best-text"],
         "badge-fast":
           preset.styles.light["badge-fast"] ??
           lightInfo ??
-          OTA_DEFAULTS.light["badge-fast"],
+          APP_DEFAULTS.light["badge-fast"],
         "badge-fast-text":
           preset.styles.light["badge-fast-text"] ??
           preset.styles.light["info-foreground"] ??
-          OTA_DEFAULTS.light["badge-fast-text"],
+          APP_DEFAULTS.light["badge-fast-text"],
         "airline-logo-bg":
           preset.styles.light["airline-logo-bg"] ??
           preset.styles.light.card ??
-          OTA_DEFAULTS.light["airline-logo-bg"],
+          APP_DEFAULTS.light["airline-logo-bg"],
         "layover-line":
           preset.styles.light["layover-line"] ??
           preset.styles.light.border ??
-          OTA_DEFAULTS.light["layover-line"],
-        "selected-flight": lightSelectedFlight,
-        "selected-flight-border":
-          preset.styles.light["selected-flight-border"] ??
-          preset.styles.light.ring ??
-          OTA_DEFAULTS.light["selected-flight-border"],
+          APP_DEFAULTS.light["layover-line"],
         chip:
           preset.styles.light.chip ??
           preset.styles.light.secondary ??
-          OTA_DEFAULTS.light.chip,
+          APP_DEFAULTS.light.chip,
         "chip-foreground":
           preset.styles.light["chip-foreground"] ??
           preset.styles.light["secondary-foreground"] ??
-          OTA_DEFAULTS.light["chip-foreground"],
+          APP_DEFAULTS.light["chip-foreground"],
         "chip-selected":
           preset.styles.light["chip-selected"] ??
           preset.styles.light.primary ??
-          OTA_DEFAULTS.light["chip-selected"],
+          APP_DEFAULTS.light["chip-selected"],
         "chip-selected-foreground":
           preset.styles.light["chip-selected-foreground"] ??
           preset.styles.light["primary-foreground"] ??
-          OTA_DEFAULTS.light["chip-selected-foreground"],
+          APP_DEFAULTS.light["chip-selected-foreground"],
       },
       dark: {
         ...preset.styles.dark,
@@ -407,134 +393,169 @@ const withPremiumBrandVariables = <
         "success-foreground":
           preset.styles.dark["success-foreground"] ??
           preset.styles.dark["primary-foreground"] ??
-          OTA_DEFAULTS.dark["success-foreground"],
+          APP_DEFAULTS.dark["success-foreground"],
         warning: darkWarning,
         "warning-foreground":
           preset.styles.dark["warning-foreground"] ??
           preset.styles.dark.foreground ??
-          OTA_DEFAULTS.dark["warning-foreground"],
+          APP_DEFAULTS.dark["warning-foreground"],
         info: darkInfo,
         "info-foreground":
           preset.styles.dark["info-foreground"] ??
           preset.styles.dark["primary-foreground"] ??
-          OTA_DEFAULTS.dark["info-foreground"],
+          APP_DEFAULTS.dark["info-foreground"],
         price: preset.styles.dark.price ?? darkSuccess,
-        "price-sale": preset.styles.dark["price-sale"] ?? preset.styles.dark.primary ?? OTA_DEFAULTS.dark["price-sale"],
+        "price-sale": preset.styles.dark["price-sale"] ?? preset.styles.dark.primary ?? APP_DEFAULTS.dark["price-sale"],
         "price-original":
           preset.styles.dark["price-original"] ??
           preset.styles.dark["muted-foreground"] ??
-          OTA_DEFAULTS.dark["price-original"],
+          APP_DEFAULTS.dark["price-original"],
         "price-highlight-bg":
           preset.styles.dark["price-highlight-bg"] ??
           preset.styles.dark.accent ??
-          OTA_DEFAULTS.dark["price-highlight-bg"],
+          APP_DEFAULTS.dark["price-highlight-bg"],
         "switch-track-off":
           preset.styles.dark["switch-track-off"] ??
           preset.styles.dark.muted ??
-          OTA_DEFAULTS.dark["switch-track-off"],
+          APP_DEFAULTS.dark["switch-track-off"],
         "switch-track-off-border":
           preset.styles.dark["switch-track-off-border"] ??
           preset.styles.dark.border ??
-          OTA_DEFAULTS.dark["switch-track-off-border"],
+          APP_DEFAULTS.dark["switch-track-off-border"],
         "switch-track-on":
           preset.styles.dark["switch-track-on"] ??
           preset.styles.dark.primary ??
-          OTA_DEFAULTS.dark["switch-track-on"],
+          APP_DEFAULTS.dark["switch-track-on"],
         "switch-track-on-border":
           preset.styles.dark["switch-track-on-border"] ??
           preset.styles.dark.ring ??
-          OTA_DEFAULTS.dark["switch-track-on-border"],
+          APP_DEFAULTS.dark["switch-track-on-border"],
         "switch-thumb":
           preset.styles.dark["switch-thumb"] ??
           preset.styles.dark.background ??
-          OTA_DEFAULTS.dark["switch-thumb"],
+          APP_DEFAULTS.dark["switch-thumb"],
         "switch-thumb-on":
           preset.styles.dark["switch-thumb-on"] ??
           preset.styles.dark["primary-foreground"] ??
-          OTA_DEFAULTS.dark["switch-thumb-on"],
+          APP_DEFAULTS.dark["switch-thumb-on"],
         "switch-ring":
           preset.styles.dark["switch-ring"] ??
           preset.styles.dark.ring ??
-          OTA_DEFAULTS.dark["switch-ring"],
+          APP_DEFAULTS.dark["switch-ring"],
         "scrollbar-track":
           preset.styles.dark["scrollbar-track"] ??
           preset.styles.dark.muted ??
-          OTA_DEFAULTS.dark["scrollbar-track"],
+          APP_DEFAULTS.dark["scrollbar-track"],
         "scrollbar-thumb":
           preset.styles.dark["scrollbar-thumb"] ??
           preset.styles.dark.border ??
-          OTA_DEFAULTS.dark["scrollbar-thumb"],
+          APP_DEFAULTS.dark["scrollbar-thumb"],
         "scrollbar-thumb-hover":
           preset.styles.dark["scrollbar-thumb-hover"] ??
           preset.styles.dark["muted-foreground"] ??
-          OTA_DEFAULTS.dark["scrollbar-thumb-hover"],
+          APP_DEFAULTS.dark["scrollbar-thumb-hover"],
         skeleton:
           preset.styles.dark.skeleton ??
           preset.styles.dark.muted ??
-          OTA_DEFAULTS.dark.skeleton,
+          APP_DEFAULTS.dark.skeleton,
         "skeleton-shimmer":
           preset.styles.dark["skeleton-shimmer"] ??
           preset.styles.dark.card ??
-          OTA_DEFAULTS.dark["skeleton-shimmer"],
+          APP_DEFAULTS.dark["skeleton-shimmer"],
         "badge-cheap":
           preset.styles.dark["badge-cheap"] ??
           darkSuccess ??
-          OTA_DEFAULTS.dark["badge-cheap"],
+          APP_DEFAULTS.dark["badge-cheap"],
         "badge-cheap-text":
           preset.styles.dark["badge-cheap-text"] ??
           preset.styles.dark["success-foreground"] ??
-          OTA_DEFAULTS.dark["badge-cheap-text"],
+          APP_DEFAULTS.dark["badge-cheap-text"],
         "badge-best":
           preset.styles.dark["badge-best"] ??
           preset.styles.dark.primary ??
-          OTA_DEFAULTS.dark["badge-best"],
+          APP_DEFAULTS.dark["badge-best"],
         "badge-best-text":
           preset.styles.dark["badge-best-text"] ??
           preset.styles.dark["primary-foreground"] ??
-          OTA_DEFAULTS.dark["badge-best-text"],
+          APP_DEFAULTS.dark["badge-best-text"],
         "badge-fast":
           preset.styles.dark["badge-fast"] ??
           darkInfo ??
-          OTA_DEFAULTS.dark["badge-fast"],
+          APP_DEFAULTS.dark["badge-fast"],
         "badge-fast-text":
           preset.styles.dark["badge-fast-text"] ??
           preset.styles.dark["info-foreground"] ??
-          OTA_DEFAULTS.dark["badge-fast-text"],
+          APP_DEFAULTS.dark["badge-fast-text"],
         "airline-logo-bg":
           preset.styles.dark["airline-logo-bg"] ??
           preset.styles.dark.card ??
-          OTA_DEFAULTS.dark["airline-logo-bg"],
+          APP_DEFAULTS.dark["airline-logo-bg"],
         "layover-line":
           preset.styles.dark["layover-line"] ??
           preset.styles.dark.border ??
-          OTA_DEFAULTS.dark["layover-line"],
-        "selected-flight": darkSelectedFlight,
-        "selected-flight-border":
-          preset.styles.dark["selected-flight-border"] ??
-          preset.styles.dark.ring ??
-          OTA_DEFAULTS.dark["selected-flight-border"],
+          APP_DEFAULTS.dark["layover-line"],
         chip:
           preset.styles.dark.chip ??
           preset.styles.dark.secondary ??
-          OTA_DEFAULTS.dark.chip,
+          APP_DEFAULTS.dark.chip,
         "chip-foreground":
           preset.styles.dark["chip-foreground"] ??
           preset.styles.dark["secondary-foreground"] ??
-          OTA_DEFAULTS.dark["chip-foreground"],
+          APP_DEFAULTS.dark["chip-foreground"],
         "chip-selected":
           preset.styles.dark["chip-selected"] ??
           preset.styles.dark.primary ??
-          OTA_DEFAULTS.dark["chip-selected"],
+          APP_DEFAULTS.dark["chip-selected"],
         "chip-selected-foreground":
           preset.styles.dark["chip-selected-foreground"] ??
           preset.styles.dark["primary-foreground"] ??
-          OTA_DEFAULTS.dark["chip-selected-foreground"],
+          APP_DEFAULTS.dark["chip-selected-foreground"],
       },
     },
   };
 };
 
-export const tweakcnThemes: ColorTheme[] = Object.entries(tweakcnPresets).map(
+const PROFESSIONAL_PRESET_KEYS = {
+  tweakcn: [
+    "modern-minimal",
+    "mocha-mousse",
+    "arctic-frost",
+    "matcha-grove",
+    "midnight-sapphire",
+    "obsidian-luxe",
+    "jade-atelier",
+    "premium-imperial",
+  ],
+  color: ["default", "blue", "indigo", "emerald", "teal", "slate", "violet", "rose"],
+  brand: [
+    "obsidian-signal",
+    "aurora-borealis",
+    "arctic-frost",
+    "deep-space",
+    "jade-executive",
+    "titanium-gold",
+    "sage-studio",
+    "quiet-luxury",
+  ],
+  sidebar: [
+    "default",
+    "blue",
+    "indigo",
+    "emerald",
+    "slate",
+    "deep-teal",
+    "soft-sage",
+    "ocean-blue",
+  ],
+} as const;
+
+const curateThemes = (themes: ColorTheme[], keys: readonly string[]): ColorTheme[] =>
+  keys.flatMap((key) => {
+    const theme = themes.find((candidate) => candidate.value === key);
+    return theme ? [theme] : [];
+  });
+
+const allTweakcnThemes: ColorTheme[] = Object.entries(tweakcnPresets).map(
   ([key, preset]) => ({
     name: preset.label || key,
     value: key,
@@ -542,7 +563,7 @@ export const tweakcnThemes: ColorTheme[] = Object.entries(tweakcnPresets).map(
   })
 );
 
-export const colorThemes: ColorTheme[] = Object.entries(shadcnThemePresetsV2).map(
+const allColorThemes: ColorTheme[] = Object.entries(shadcnThemePresetsV2).map(
   ([key, preset]) => ({
     name: preset.label || key,
     value: key,
@@ -550,7 +571,7 @@ export const colorThemes: ColorTheme[] = Object.entries(shadcnThemePresetsV2).ma
   })
 );
 
-export const brandThemes: ColorTheme[] = Object.entries(brandPresets).map(
+const allBrandThemes: ColorTheme[] = Object.entries(brandPresets).map(
   ([key, preset]) => ({
     name: preset.label || key,
     value: key,
@@ -558,10 +579,24 @@ export const brandThemes: ColorTheme[] = Object.entries(brandPresets).map(
   })
 );
 
-export const sidebarThemes: ColorTheme[] = Object.entries(shadcnThemePresets).map(
+const allSidebarThemes: ColorTheme[] = Object.entries(shadcnThemePresets).map(
   ([key, preset]) => ({
     name: preset.label || key,
     value: key,
     preset: withPremiumBrandVariables(withSidebarVariables(preset)),
   })
 );
+
+/** Curated, high-coherence themes shown in Appearance Studio. */
+export const tweakcnThemes = curateThemes(allTweakcnThemes, PROFESSIONAL_PRESET_KEYS.tweakcn);
+export const colorThemes = curateThemes(allColorThemes, PROFESSIONAL_PRESET_KEYS.color);
+export const brandThemes = curateThemes(allBrandThemes, PROFESSIONAL_PRESET_KEYS.brand);
+export const sidebarThemes = curateThemes(allSidebarThemes, PROFESSIONAL_PRESET_KEYS.sidebar);
+
+/** Hidden compatibility catalog for themes saved before the preset curation. */
+export const compatibilityThemes = {
+  tweakcn: allTweakcnThemes,
+  color: allColorThemes,
+  brand: allBrandThemes,
+  sidebar: allSidebarThemes,
+} as const;

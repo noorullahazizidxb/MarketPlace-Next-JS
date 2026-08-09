@@ -1,5 +1,7 @@
 import "./globals.css";
 import { inter } from "@/lib/fonts";
+import Script from "next/script";
+import type { ReactNode } from "react";
 
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
@@ -19,13 +21,14 @@ import {
   getThemeModeInitScript,
   getUiContextState,
 } from "../theme/server-theme";
+import { NavigationProgress } from "@/components/providers/navigation-progress";
 
 export const metadata: Metadata = rootMetadata();
 
 export default async function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: ReactNode;
 }) {
   const uiContext = await getUiContextState();
   const initialThemeSettings = uiContext.theme ?? (await getInitialThemeSettings());
@@ -40,8 +43,9 @@ export default async function RootLayout({
           suppressHydrationWarning
           dangerouslySetInnerHTML={{ __html: initialThemeCss }}
         />
-        <script
+        <Script
           id="theme-mode-init"
+          strategy="beforeInteractive"
           dangerouslySetInnerHTML={{ __html: themeModeScript }}
         />
       </head>
@@ -49,19 +53,21 @@ export default async function RootLayout({
         className="bg-background text-foreground antialiased"
         style={{ fontFamily: "var(--app-font-family)" }}
       >
-        <SeoJsonLd />
-        <ThemeProvider initialThemeSettings={initialThemeSettings}>
-          <QueryProvider>
-            <LanguageProvider>
-              <UiContextGate fallback={<ThemeBootFallback />}>
-                <SkipLink />
-                <SocialRealtimeClient />
-                <AppShell>{children}</AppShell>
-                <AppToaster />
-              </UiContextGate>
-            </LanguageProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <NavigationProgress>
+          <SeoJsonLd />
+          <ThemeProvider initialThemeSettings={initialThemeSettings}>
+            <QueryProvider>
+              <LanguageProvider>
+                <UiContextGate fallback={<ThemeBootFallback />}>
+                  <SkipLink />
+                  <SocialRealtimeClient />
+                  <AppShell>{children}</AppShell>
+                  <AppToaster />
+                </UiContextGate>
+              </LanguageProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </NavigationProgress>
       </body>
     </html>
   );

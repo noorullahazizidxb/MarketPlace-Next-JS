@@ -14,9 +14,9 @@ export default function StoryCard({ story }: { story: Story }) {
         <div className="flex-1">
           <div className="flex items-center gap-3">
             <h3 className="font-semibold">{story.title}</h3>
-            <span className="text-xs subtle">{story.author?.name}</span>
+            <span className="app-text-caption subtle">{story.author?.name}</span>
           </div>
-          <p className="text-sm text-[var(--foreground)]/80 mt-2">
+          <p className="app-text-body text-[var(--foreground)]/80 mt-2">
             {story.description}
           </p>
           {Array.isArray(story.images) && story.images.length > 0 && (

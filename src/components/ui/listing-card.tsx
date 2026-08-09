@@ -145,7 +145,7 @@ export function ListingCard({
           }
         >
           {/* Rating badge - default to 0.0 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 text-[11px] text-foreground shadow-md">
+          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 app-text-caption text-foreground shadow-md">
             <div className="flex items-center -ml-1">
               {Array.from({ length: 5 }).map((_, i) => {
                 const rating =
@@ -161,10 +161,10 @@ export function ListingCard({
                     className={
                       "mr-[2px] size-3 transition-colors " +
                       (filled
-                        ? "text-amber-400 fill-amber-400"
+                        ? "text-warning fill-warning"
                         : half
-                          ? "text-amber-300"
-                          : "text-muted-foreground dark:text-white/30")
+                          ? "text-warning"
+                          : "text-muted-foreground dark:text-primary-foreground/30")
                     }
                   />
                 );
@@ -178,8 +178,8 @@ export function ListingCard({
             </span>
           </div>
           {/* Reviews badge - default to 0 */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 text-[11px] text-foreground shadow-md">
-            <MessageSquare className="size-3.5 text-amber-300 dark:text-amber-400" />
+          <div className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 app-text-caption text-foreground shadow-md">
+            <MessageSquare className="size-3.5 text-warning dark:text-warning" />
             <span className="font-medium tabular-nums">
               {typeof listing.reviewCount === "number"
                 ? listing.reviewCount
@@ -195,7 +195,7 @@ export function ListingCard({
             (hideImageOverlays ? "opacity-0" : "opacity-100")
           }
         >
-          <span className="app-text-caption px-3 py-1 rounded-full shadow-glass text-black font-semibold glass flex items-center gap-2">
+          <span className="app-text-caption px-3 py-1 rounded-full shadow-glass text-foreground font-semibold glass flex items-center gap-2">
             <CreditCard className="size-4 inline-flex" />
             <span className="font-medium tabular-nums">
               {listing.price} {listing.currency}
@@ -214,13 +214,13 @@ export function ListingCard({
             <Tooltip content={t("contactSeller")} side="top">
               <span
                 onClick={() => setContactOpen(true)}
-                className="text-2xs px-2 py-1 rounded-full bg-emerald-600 text-white border border-accent/50 flex items-center gap-1 shadow-sm cursor-pointer"
+                className="app-text-micro px-2 py-1 rounded-full bg-success text-primary-foreground border border-accent/50 flex items-center gap-1 shadow-sm cursor-pointer"
               >
                 <Phone className="size-3" /> {t("seller")}
               </span>
             </Tooltip>
           ) : (
-            <span className="text-2xs px-2 py-1 rounded-full bg-amber-400 text-black border border-accent/30 flex items-center gap-1 shadow-sm">
+            <span className="app-text-micro px-2 py-1 rounded-full bg-warning text-foreground border border-accent/30 flex items-center gap-1 shadow-sm">
               <ShieldCheck className="size-3" /> {t("promoted")}
             </span>
           )}
@@ -234,7 +234,7 @@ export function ListingCard({
               (hideImageOverlays ? "opacity-0" : "opacity-100")
             }
           >
-            <span className="text-2xs px-2 py-1 rounded-full bg-pink-500 text-white border border-accent/30 flex items-center gap-1 shadow-sm">
+            <span className="app-text-micro px-2 py-1 rounded-full bg-primary text-primary-foreground border border-accent/30 flex items-center gap-1 shadow-sm">
               <TagIcon className="size-3" /> {listing.category?.name}
             </span>
           </div>
@@ -267,7 +267,7 @@ export function ListingCard({
               <Tooltip content={t("contactSeller")} side="top">
                 <button
                   onClick={() => setContactOpen(true)}
-                  className="app-text-caption inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 hover:-translate-y-0.5 transition-all border border-emerald-500/20"
+                  className="app-text-caption inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-success/10 text-success dark:text-success hover:bg-success/20 hover:-translate-y-0.5 transition-all border border-success/35"
                 >
                   <Phone className="size-3" />
                   {t("contactSeller")}
@@ -276,7 +276,7 @@ export function ListingCard({
               <Dialog open={contactOpen} onOpenChange={setContactOpen}>
                 <DialogContent className="max-w-sm p-[var(--space-card)]">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">
+                    <h3 className="app-text-heading-sm font-semibold">
                       {t("contactSellerTitle")}
                     </h3>
                     <Tooltip content={t("close")} side="top">
@@ -297,7 +297,7 @@ export function ListingCard({
                     {listing.user?.contacts?.phone && (
                       <a
                         href={`tel:${listing.user.contacts.phone}`}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-amber-400 text-foreground border border-border hover:ring-2 ring-accent/40 transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-warning text-foreground border border-border hover:ring-2 ring-accent/40 transition-all"
                         onClick={() => setContactOpen(false)}
                       >
                         <Phone className="size-4" /> {t("call")}{" "}
@@ -311,7 +311,7 @@ export function ListingCard({
                         ).replace(/[+\s]/g, "")}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-emerald-400 border border-border text-accent-foreground hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-success border border-border text-accent-foreground hover:shadow-lg hover:-translate-y-0.5 transition-all"
                         onClick={() => setContactOpen(false)}
                       >
                         <Phone className="size-4" /> {t("whatsApp")}{" "}
@@ -340,7 +340,7 @@ export function ListingCard({
               <Dialog open={repOpen} onOpenChange={setRepOpen}>
                 <DialogContent className="max-w-md p-[var(--space-card)]">
                   <div className="flex items-center justify-between mb-2">
-                    <h3 className="text-lg font-semibold">
+                    <h3 className="app-text-heading-sm font-semibold">
                       {t("representatives")}
                     </h3>
                     <Tooltip content={t("close")} side="top">
@@ -385,7 +385,7 @@ export function ListingCard({
                                 )}`}
                                 target="_blank"
                                 rel="noreferrer"
-                                className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500 text-white hover:shadow-lg"
+                                className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-success text-primary-foreground hover:shadow-lg"
                               >
                                 {t("whatsApp")}
                               </a>

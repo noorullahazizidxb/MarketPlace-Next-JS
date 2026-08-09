@@ -129,7 +129,7 @@ const UsersDashboard: React.FC = () => {
     <div className="container-padded py-8 space-y-8">
       <header className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div className="space-y-2">
-          <h1 className="text-2xl font-bold tracking-tight flex items-center gap-3">
+          <h1 className="app-text-h2 font-bold tracking-tight flex items-center gap-3">
             <Users className="size-6 text-[var(--accent)]" /> Users
           </h1>
           <p className="subtle max-w-prose">
@@ -146,7 +146,7 @@ const UsersDashboard: React.FC = () => {
                 setPage(1);
               }}
               placeholder="Search users, listings, notifications…"
-              className="h-11 w-72 max-w-[80vw] rounded-xl border bg-[var(--card)] pl-4 pr-11 text-sm"
+              className="h-11 w-72 max-w-[80vw] rounded-xl border bg-[var(--card)] pl-4 pr-11 app-text-body"
               aria-label="Search users"
             />
             <SearchIcon className="size-4 absolute right-4 top-1/2 -translate-y-1/2 opacity-60" />
@@ -158,7 +158,7 @@ const UsersDashboard: React.FC = () => {
               setRoleFilter(e.target.value || null);
               setPage(1);
             }}
-            className="h-11 rounded-xl border bg-[var(--card)] px-3 text-sm"
+            className="h-11 rounded-xl border bg-[var(--card)] px-3 app-text-body"
           >
             <option value="">All roles</option>
             <option value="ADMIN">ADMIN</option>
@@ -188,7 +188,7 @@ const UsersDashboard: React.FC = () => {
         >
           <table className="w-full table-auto">
             <thead className="bg-[var(--card)]/90 backdrop-blur border-b sticky top-0 z-10">
-              <tr className="text-xs font-semibold text-[var(--muted-foreground)] uppercase tracking-wide">
+              <tr className="app-text-caption font-semibold text-[var(--muted-foreground)] uppercase tracking-wide">
                 <th className="px-4 py-3 text-left">User</th>
                 <th className="px-4 py-3 text-left">Roles</th>
                 <th className="px-4 py-3 text-center">Activity</th>
@@ -208,7 +208,7 @@ const UsersDashboard: React.FC = () => {
                 <tr>
                   <td
                     colSpan={5}
-                    className="p-6 text-center text-red-500 text-sm"
+                    className="p-6 text-center text-destructive app-text-body"
                   >
                     {(error as any)?.message || "Failed to load users"}
                   </td>
@@ -216,7 +216,7 @@ const UsersDashboard: React.FC = () => {
               )}
               {!isLoading && !error && current.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="p-8 text-center subtle text-sm">
+                  <td colSpan={5} className="p-8 text-center subtle app-text-body">
                     No users match your filters.
                   </td>
                 </tr>
@@ -251,14 +251,14 @@ const UsersDashboard: React.FC = () => {
                               />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-sm font-semibold truncate max-w-[160px]">
+                              <div className="app-text-body font-semibold truncate max-w-[160px]">
                                 {u.fullName || u.firstName || u.email}
                               </div>
-                              <div className="text-xs text-[var(--muted-foreground)] truncate max-w-[160px]">
+                              <div className="app-text-caption text-[var(--muted-foreground)] truncate max-w-[160px]">
                                 {u.email}
                               </div>
                               {u.phone && (
-                                <div className="text-xs text-[var(--muted-foreground)]/70 truncate">
+                                <div className="app-text-caption text-[var(--muted-foreground)]/70 truncate">
                                   {u.phone}
                                 </div>
                               )}
@@ -278,15 +278,15 @@ const UsersDashboard: React.FC = () => {
                                 ? `${label}-${idx}`
                                 : `${r?.id || label}-${idx}`;
                             const colorMap: Record<string, string> = {
-                              ADMIN: "bg-red-500/10 text-red-600 border-red-400/30 dark:text-red-400",
-                              USER: "bg-blue-500/10 text-blue-600 border-blue-400/30 dark:text-blue-400",
-                              REPRESENTATIVE: "bg-amber-500/10 text-amber-600 border-amber-400/30 dark:text-amber-400",
+                              ADMIN: "bg-destructive/10 text-destructive border-destructive/40 dark:text-destructive",
+                              USER: "bg-info/10 text-info border-info/35 dark:text-info",
+                              REPRESENTATIVE: "bg-warning/10 text-warning border-warning/40 dark:text-warning",
                             };
                             return (
                               <span
                                 key={key}
                                 className={cn(
-                                  "px-2 py-0.5 rounded-full border text-[10px] font-semibold uppercase tracking-wide",
+                                  "px-2 py-0.5 rounded-full border app-text-micro font-semibold uppercase tracking-wide",
                                   colorMap[label] ?? "bg-[var(--muted)]/40 border-[var(--border)] text-[var(--muted-foreground)]"
                                 )}
                               >
@@ -297,24 +297,24 @@ const UsersDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <div className="flex items-center justify-center gap-3 text-xs text-[var(--muted-foreground)]">
+                        <div className="flex items-center justify-center gap-3 app-text-caption text-[var(--muted-foreground)]">
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.listings || []).length || 0}</span>
-                            <span className="text-[10px] uppercase tracking-wide">Listings</span>
+                            <span className="app-text-body font-bold text-[var(--foreground)]">{(u.listings || []).length || 0}</span>
+                            <span className="app-text-micro uppercase tracking-wide">Listings</span>
                           </span>
                           <span className="w-px h-6 bg-[var(--border)]" />
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.notifications || []).length || 0}</span>
-                            <span className="text-[10px] uppercase tracking-wide">Notifs</span>
+                            <span className="app-text-body font-bold text-[var(--foreground)]">{(u.notifications || []).length || 0}</span>
+                            <span className="app-text-micro uppercase tracking-wide">Notifs</span>
                           </span>
                           <span className="w-px h-6 bg-[var(--border)]" />
                           <span className="flex flex-col items-center gap-0.5">
-                            <span className="text-sm font-bold text-[var(--foreground)]">{(u.feedbacks || []).length || 0}</span>
-                            <span className="text-[10px] uppercase tracking-wide">Feedbacks</span>
+                            <span className="app-text-body font-bold text-[var(--foreground)]">{(u.feedbacks || []).length || 0}</span>
+                            <span className="app-text-micro uppercase tracking-wide">Feedbacks</span>
                           </span>
                         </div>
                       </td>
-                      <td className="px-4 py-3 align-middle text-sm text-[var(--muted-foreground)] whitespace-nowrap">
+                      <td className="px-4 py-3 align-middle app-text-body text-[var(--muted-foreground)] whitespace-nowrap">
                         {u.createdAt
                           ? new Date(u.createdAt).toLocaleDateString()
                           : "—"}
@@ -356,7 +356,7 @@ const UsersDashboard: React.FC = () => {
         </div>
       </div>
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div className="text-sm subtle">
+        <div className="app-text-body subtle">
           Showing {Math.min(currentPage * perPage, total)} of {total} users
         </div>
         <div className="flex items-center gap-2">
@@ -368,7 +368,7 @@ const UsersDashboard: React.FC = () => {
           >
             Prev
           </Button>
-          <div className="px-3 py-1 rounded-xl border text-sm bg-[color-mix(in oklab, var(--accent) 12%, transparent)] border-[color-mix(in oklab, var(--accent) 35%, transparent)] text-[var(--accent-foreground)]">
+          <div className="px-3 py-1 rounded-xl border app-text-body bg-[color-mix(in oklab, var(--accent) 12%, transparent)] border-[color-mix(in oklab, var(--accent) 35%, transparent)] text-[var(--accent-foreground)]">
             {currentPage} / {pages}
           </div>
           <Button

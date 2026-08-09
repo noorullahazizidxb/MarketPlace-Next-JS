@@ -54,7 +54,7 @@ export function StoryViewer({
             exit={{ opacity: 0 }}
           >
             <div
-              className="absolute inset-0 bg-black/60 backdrop-blur-sm"
+              className="absolute inset-0 bg-foreground/60 backdrop-blur-sm"
               onClick={onClose}
             />
             <motion.div
@@ -97,7 +97,7 @@ export function StoryViewer({
                       {story.title}
                     </Link>
                     {story.createdAt && (
-                      <div className="text-xs subtle">
+                      <div className="app-text-caption subtle">
                         {new Date(story.createdAt).toLocaleString()}
                       </div>
                     )}
@@ -123,13 +123,13 @@ export function StoryViewer({
                       controls
                       className="absolute inset-0 w-full h-full object-cover"
                     />
-                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-black/10 to-black/0" />
+                    <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-overlay-dark/10 to-overlay-dark/0" />
                   </div>
                 ) : (
                   <ImageSlider images={slides} aspect="16/11" />
                 )}
                 {story.description && (
-                  <p className="mt-3 text-sm text-[var(--foreground)]/85 whitespace-pre-line">
+                  <p className="mt-3 app-text-body text-[var(--foreground)]/85 whitespace-pre-line">
                     {story.description}
                   </p>
                 )}

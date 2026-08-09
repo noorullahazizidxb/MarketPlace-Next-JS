@@ -36,6 +36,5 @@ export function usePrefetchOnIdle(paths: string[], enabled = true) {
     });
     return () => { cancelled = true; };
     // key is a stable string derived from paths contents — safe to use as dep
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enabled, key, router]);
 }

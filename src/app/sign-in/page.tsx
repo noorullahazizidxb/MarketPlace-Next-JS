@@ -5,7 +5,7 @@ import Image from "next/image";
 import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/button";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
 import { useAuth } from "@/lib/use-auth";
@@ -20,6 +20,8 @@ import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
+import { ShieldCheck } from "lucide-react";
 
 type FormData = { email: string; password: string };
 
@@ -28,11 +30,14 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const { handleSubmit, watch, setValue } = useForm<FormData>({
+  const { executeRecaptcha } = useRecaptchaV3();
+  const { control, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { email: "", password: "" },
   });
-  const email = watch("email");
-  const password = watch("password");
+  const [email = "", password = ""] = useWatch({
+    control,
+    name: ["email", "password"],
+  });
   const { user } = useAuth();
   const router = useRouter();
   const setSession = useAuthStore((s) => s.setSession);
@@ -55,8 +60,9 @@ export default function SignInPage() {
   const onSubmit = async (data: FormData) => {
     setError(null);
     try {
+      const recaptchaToken = await executeRecaptcha("login");
       // 1) Call backend login via api-hooks middleware and unwrap envelope
-      const res = await loginMutation.mutateAsync(data);
+      const res = await loginMutation.mutateAsync({ ...data, recaptchaToken });
       const token = res.token;
       const userObj = res.user;
       if (!token || !userObj) throw new Error("Invalid login response");
@@ -106,7 +112,7 @@ export default function SignInPage() {
     <div
       dir={isRtl ? "rtl" : "ltr"}
       data-app-page="sign-in"
-      className="min-h-screen flex items-center justify-center p-4 sm:p-6 bg-background relative overflow-hidden"
+      className="min-h-screen flex items-center justify-center p-[var(--space-card)] sm:p-[var(--space-card)] bg-background relative overflow-hidden"
     >
       <AmbientCanvas variant="ribbons" intensity={0.32} className="-z-10" />
 
@@ -127,7 +133,7 @@ export default function SignInPage() {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.08, duration: 0.4 }}
           >
-            <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-white/95">
+            <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
               <Image
                 src="/brand/devminds-logo.png"
                 alt="DevMinds"
@@ -138,10 +144,10 @@ export default function SignInPage() {
                 draggable={false}
               />
             </div>
-            <h1 className="text-2xl font-semibold tracking-tight text-[var(--foreground)]">
+            <h1 className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]">
               {t("signInTitle")}
             </h1>
-            <p className="mt-1.5 text-sm text-[var(--muted-foreground)]">
+            <p className="mt-1.5 app-text-body text-[var(--muted-foreground)]">
               {t("signInSubtitle")}
             </p>
           </motion.div>
@@ -158,7 +164,7 @@ export default function SignInPage() {
                 googleUrl={config.googleAuthUrl}
                 facebookUrl={config.facebookAuthUrl}
               />
-              <div className="relative text-center text-xs text-[var(--muted-foreground)]">
+              <div className="relative text-center app-text-caption text-[var(--muted-foreground)]">
                 <span className="relative z-10 bg-[var(--card)]/90 px-3">
                   {t("orContinueWithEmail")}
                 </span>
@@ -170,7 +176,7 @@ export default function SignInPage() {
           {/* Form */}
           <motion.form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-5"
+            className="space-y-[var(--space-section)]"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
@@ -234,7 +240,7 @@ export default function SignInPage() {
             <AnimatePresence>
               {error && (
                 <motion.p
-                  className="rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-sm text-rose-500"
+                  className="rounded-xl border border-destructive/40 bg-destructive/10 px-3 py-2 app-text-body text-destructive"
                   initial={{ opacity: 0, y: -6 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -6 }}
@@ -247,7 +253,7 @@ export default function SignInPage() {
             {/* Remember me + forgot */}
             <div className="flex items-center justify-between">
               <Tooltip content={t("tooltipRememberMe")} side="top">
-                <label className="inline-flex items-center gap-2 text-sm cursor-pointer select-none">
+                <label className="inline-flex items-center gap-2 app-text-body cursor-pointer select-none">
                   <Checkbox
                     checked={rememberMe}
                     onCheckedChange={(checked) =>
@@ -261,7 +267,7 @@ export default function SignInPage() {
               <Tooltip content={t("tooltipForgotPassword")} side="top">
                 <Link
                   href="#"
-                  className="text-sm text-[var(--accent)] hover:underline underline-offset-2 transition-colors"
+                  className="app-text-body text-[var(--accent)] hover:underline underline-offset-2 transition-colors"
                 >
                   {t("forgot")}
                 </Link>
@@ -290,6 +296,12 @@ export default function SignInPage() {
                 </Button>
               </Tooltip>
             </div>
+
+            {/* reCAPTCHA v3 badge */}
+            <p className="flex items-center justify-center gap-1.5 app-text-caption text-[var(--muted-foreground)] opacity-70 pt-1">
+              <ShieldCheck className="size-3.5 text-success" aria-hidden />
+              Protected by reCAPTCHA
+            </p>
           </motion.form>
         </div>
       </motion.div>

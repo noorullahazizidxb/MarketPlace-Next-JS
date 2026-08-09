@@ -147,11 +147,11 @@ export default function CommentsInline({
           </Button>
         </form>
       ) : (
-        <div className="rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-3 text-sm text-[var(--muted-foreground)] flex items-center justify-between gap-3">
+        <div className="rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 px-4 py-3 app-text-body text-[var(--muted-foreground)] flex items-center justify-between gap-3">
           <span>{t("signInToComment")}</span>
           <Link
             href="/sign-in"
-            className="text-xs font-medium text-[var(--primary)] hover:underline underline-offset-2"
+            className="app-text-caption font-medium text-[var(--primary)] hover:underline underline-offset-2"
           >
             {t("signIn") || "Sign in"}
           </Link>
@@ -179,7 +179,7 @@ export default function CommentsInline({
                   height={32}
                 />
               ) : (
-                <div className="w-8 h-8 grid place-items-center text-[var(--foreground)] text-xs font-semibold">
+                <div className="w-8 h-8 grid place-items-center text-[var(--foreground)] app-text-caption font-semibold">
                   {String(c.author?.fullName || c.author?.name || "?")
                     .slice(0, 1)
                     .toUpperCase()}
@@ -192,11 +192,11 @@ export default function CommentsInline({
                 onClick={(e) => {
                   if (!c.author?.id) e.preventDefault();
                 }}
-                className="text-xs font-semibold hover:underline"
+                className="app-text-caption font-semibold hover:underline"
               >
                 {c.author?.fullName || c.author?.name || t("anonymous")}
               </Link>
-              <div className="text-sm leading-relaxed">{c.body}</div>
+              <div className="app-text-body leading-relaxed">{c.body}</div>
             </div>
           </div>
         ))}

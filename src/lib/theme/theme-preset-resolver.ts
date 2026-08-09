@@ -1,8 +1,5 @@
 import {
-  brandThemes,
-  colorThemes,
-  sidebarThemes,
-  tweakcnThemes,
+  compatibilityThemes,
 } from "./presets/theme-data";
 import type { ThemeSettings } from "./types";
 
@@ -26,10 +23,10 @@ export function resolveThemePresetStyles(
   }
 
   const candidates = [
-    [settings.selectedTweakcnTheme, tweakcnThemes],
-    [settings.selectedBrandTheme, brandThemes],
-    [settings.selectedSidebarTheme, sidebarThemes],
-    [settings.selectedTheme, colorThemes],
+    [settings.selectedTweakcnTheme, compatibilityThemes.tweakcn],
+    [settings.selectedBrandTheme, compatibilityThemes.brand],
+    [settings.selectedSidebarTheme, compatibilityThemes.sidebar],
+    [settings.selectedTheme, compatibilityThemes.color],
   ] as const;
 
   for (const [selectedValue, themes] of candidates) {

@@ -17,9 +17,10 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { ObjectUrlImage } from "@/components/ui/object-url-image";
 
 const STEPS = [
   { label: "Details", key: "details", icon: FileText },
@@ -80,7 +81,7 @@ export default function BlogCreateWizard({
   const {
     register,
     handleSubmit,
-    watch,
+    control,
     formState: { errors },
   } = useForm<FormVals>({
     resolver: zodResolver(schema),
@@ -90,9 +91,10 @@ export default function BlogCreateWizard({
     },
     mode: "onChange",
   });
-
-  const title = watch("title");
-  const content = watch("content");
+  const [title = "", content = ""] = useWatch({
+    control,
+    name: ["title", "content"],
+  });
   const canNext =
     step === 0 ? !!title?.trim() && !errors.title && !errors.content : true;
   const next = () => step < STEPS.length - 1 && canNext && setStep((s) => s + 1);
@@ -138,12 +140,12 @@ export default function BlogCreateWizard({
   };
 
   const inputCls =
-    "w-full h-11 rounded-2xl border border-[var(--border)]/60 bg-[var(--card)]/60 backdrop-blur-sm px-4 text-sm focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)]/50 transition-all placeholder:text-[var(--foreground)]/30";
+    "w-full h-11 rounded-2xl border border-[var(--border)]/60 bg-[var(--card)]/60 backdrop-blur-sm px-4 app-text-body focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)]/50 transition-all placeholder:text-[var(--foreground)]/30";
 
   return (
     <div className="flex flex-col h-full min-h-0 max-h-[calc(100vh-96px)] relative">
       {/* shimmer top line */}
-      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/15 to-transparent z-10" />
+      <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/15 to-transparent z-10" />
 
       {/* Header */}
       <div className="px-6 pt-5 pb-4 border-b border-[var(--border)]/30">
@@ -153,10 +155,10 @@ export default function BlogCreateWizard({
               <Newspaper className="size-4.5 text-[var(--primary)]" />
             </div>
             <div>
-              <h2 className="text-base font-bold leading-tight">
+              <h2 className="app-text-body font-bold leading-tight">
                 {blogId ? (t("edit") as string) : (t("createBlog") as string) || (blogId ? "Edit Blog" : "New Blog Post")}
               </h2>
-              <p className="text-[11px] text-[var(--foreground)]/40">
+              <p className="app-text-caption text-[var(--foreground)]/40">
                 {step === 0 ? "Write your post details" : "Add images to your post"}
               </p>
             </div>
@@ -180,7 +182,7 @@ export default function BlogCreateWizard({
               transition={{ type: "spring", stiffness: 140, damping: 22 }}
             />
           </div>
-          <span className="text-[10px] font-medium text-[var(--foreground)]/40 tabular-nums">
+          <span className="app-text-micro font-medium text-[var(--foreground)]/40 tabular-nums">
             {step + 1} / {STEPS.length}
           </span>
         </div>
@@ -203,7 +205,7 @@ export default function BlogCreateWizard({
                 className="space-y-4"
               >
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
+                  <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
                     {t("title") || "Title"}
                   </label>
                   <input
@@ -213,11 +215,11 @@ export default function BlogCreateWizard({
                     className={inputCls}
                   />
                   {errors.title && (
-                    <p className="text-xs text-red-400">{errors.title.message as any}</p>
+                    <p className="app-text-caption text-destructive">{errors.title.message as any}</p>
                   )}
                 </div>
                 <div className="space-y-1.5">
-                  <label className="text-xs font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
+                  <label className="app-text-caption font-semibold uppercase tracking-wide text-[var(--foreground)]/45">
                     {t("description") || "Content"}
                   </label>
                   <textarea
@@ -227,7 +229,7 @@ export default function BlogCreateWizard({
                     placeholder={(t("writeSomethingAmazing") as string) || "Write something amazing…"}
                   />
                   {errors.content && (
-                    <p className="text-xs text-red-400">{errors.content.message as any}</p>
+                    <p className="app-text-caption text-destructive">{errors.content.message as any}</p>
                   )}
                 </div>
               </motion.div>
@@ -248,11 +250,11 @@ export default function BlogCreateWizard({
                   onClick={() => document.getElementById("blog-images-input")?.click()}
                 >
                   <UploadCloud className="size-8 mx-auto mb-2 text-[var(--foreground)]/25 group-hover:text-[var(--primary)]/60 transition-colors" />
-                  <p className="text-sm text-[var(--foreground)]/50 group-hover:text-[var(--foreground)]/70">
+                  <p className="app-text-body text-[var(--foreground)]/50 group-hover:text-[var(--foreground)]/70">
                     Drag & drop images, or{" "}
                     <span className="text-[var(--primary)] font-medium">browse files</span>
                   </p>
-                  <p className="text-xs text-[var(--foreground)]/30 mt-1">PNG, JPG, WebP supported</p>
+                  <p className="app-text-caption text-[var(--foreground)]/30 mt-1">PNG, JPG, WebP supported</p>
                   <input
                     id="blog-images-input"
                     type="file"
@@ -268,15 +270,14 @@ export default function BlogCreateWizard({
                 {images.length > 0 && (
                   <div className="grid grid-cols-3 gap-2">
                     {images.map((file, idx) => {
-                      const src = URL.createObjectURL(file);
                       return (
-                        <div key={idx + src} className="relative group aspect-video">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={src} alt="preview" className="w-full h-full object-cover rounded-xl" />
+                        <div key={`${file.name}-${file.lastModified}`} className="relative group aspect-video">
+                          <ObjectUrlImage file={file} alt={`Preview of ${file.name}`} className="object-cover rounded-xl" />
                           <button
                             type="button"
+                            aria-label={`Remove ${file.name}`}
                             onClick={() => setImages((p) => p.filter((_, i) => i !== idx))}
-                            className="absolute top-1 right-1 size-5 rounded-full bg-black/60 text-white flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                            className="absolute top-1 right-1 size-5 rounded-full bg-foreground/60 text-primary-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
                           >
                             <X className="size-3" />
                           </button>
@@ -285,7 +286,7 @@ export default function BlogCreateWizard({
                     })}
                   </div>
                 )}
-                <p className="text-xs text-[var(--foreground)]/35 text-center">
+                <p className="app-text-caption text-[var(--foreground)]/35 text-center">
                   {images.length > 0 ? `${images.length} image${images.length > 1 ? "s" : ""} selected` : "No images selected yet — this step is optional"}
                 </p>
               </motion.div>
@@ -298,7 +299,7 @@ export default function BlogCreateWizard({
           <button
             type="button"
             onClick={onClose}
-            className="h-9 px-3 rounded-xl text-sm text-[var(--foreground)]/50 hover:text-[var(--foreground)] hover:bg-[var(--muted)]/20 transition-colors"
+            className="h-9 px-3 rounded-xl app-text-body text-[var(--foreground)]/50 hover:text-[var(--foreground)] hover:bg-[var(--muted)]/20 transition-colors"
           >
             {t("cancel") || "Cancel"}
           </button>
@@ -307,7 +308,7 @@ export default function BlogCreateWizard({
               <button
                 type="button"
                 onClick={prev}
-                className="h-10 px-4 rounded-2xl border border-[var(--border)]/50 text-sm font-medium flex items-center gap-1.5 hover:bg-[var(--muted)]/20 transition-colors"
+                className="h-10 px-4 rounded-2xl border border-[var(--border)]/50 app-text-body font-medium flex items-center gap-1.5 hover:bg-[var(--muted)]/20 transition-colors"
               >
                 <ArrowLeft className="size-3.5" />
                 {t("back") || "Back"}
@@ -318,9 +319,9 @@ export default function BlogCreateWizard({
                 type="button"
                 disabled={!canNext}
                 onClick={next}
-                className="h-10 px-5 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] text-sm font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+                className="h-10 px-5 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-1.5 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-40 disabled:cursor-not-allowed transition-all relative overflow-hidden"
               >
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                 {t("next") || "Next"}
                 <ArrowRight className="size-3.5" />
               </button>
@@ -328,9 +329,9 @@ export default function BlogCreateWizard({
               <button
                 type="submit"
                 disabled={isPending}
-                className="h-10 px-6 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] text-sm font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
+                className="h-10 px-6 rounded-2xl bg-[var(--primary)] text-[var(--primary-foreground)] app-text-body font-semibold flex items-center gap-2 shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)] hover:brightness-110 disabled:opacity-50 disabled:cursor-not-allowed transition-all relative overflow-hidden"
               >
-                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
+                <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/25 to-transparent" />
                 {isPending ? <Loader2 className="size-4 animate-spin" /> : <Sparkles className="size-4" />}
                 {blogId ? (t("updateLabel") as string) || "Update" : (t("publish") as string) || "Publish"}
               </button>
@@ -341,4 +342,3 @@ export default function BlogCreateWizard({
     </div>
   );
 }
-

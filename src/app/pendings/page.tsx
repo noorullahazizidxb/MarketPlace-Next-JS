@@ -82,15 +82,15 @@ function PendingBlogCard({
           />
         </div>
       )}
-      <div className="p-4 flex flex-col gap-3 flex-1">
-        <h3 className="font-semibold text-base line-clamp-2">{blog.title}</h3>
+      <div className="p-[var(--space-card)] flex flex-col gap-3 flex-1">
+        <h3 className="font-semibold app-text-body line-clamp-2">{blog.title}</h3>
         {blog.content && (
-          <p className="text-sm subtle line-clamp-3 whitespace-pre-line">
+          <p className="app-text-body subtle line-clamp-3 whitespace-pre-line">
             {blog.content}
           </p>
         )}
 
-        <div className="flex items-center gap-2 mt-auto text-xs subtle">
+        <div className="flex items-center gap-2 mt-auto app-text-caption subtle">
           {authorPhoto ? (
             <Image
               src={authorPhoto}
@@ -100,7 +100,7 @@ function PendingBlogCard({
               className="rounded-full object-cover size-6"
             />
           ) : (
-            <span className="size-6 rounded-full bg-[var(--muted)] flex items-center justify-center text-[10px] font-bold uppercase">
+            <span className="size-6 rounded-full bg-[var(--muted)] flex items-center justify-center app-text-micro font-bold uppercase">
               {authorName[0]}
             </span>
           )}
@@ -203,10 +203,10 @@ export default function PendingsPageClient() {
   ).map((c: any) => ({ value: c, label: c }));
 
   return (
-    <div className="min-h-screen p-6 app-shell-page" data-app-page="pendings">
-      <div className="glass rounded-2xl p-6 border border-[var(--border)] w-full max-w-8xl mx-auto">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h1 className="text-2xl font-semibold">{t("pendingsHeading")}</h1>
+    <div className="min-h-screen p-[var(--space-card)] app-shell-page" data-app-page="pendings">
+      <div className="glass rounded-2xl p-[var(--space-card)] border border-[var(--border)] w-full max-w-8xl mx-auto">
+        <div className="flex flex-col gap-[var(--space-gap)] sm:flex-row sm:items-center sm:justify-between">
+          <h1 className="app-text-h2 font-semibold">{t("pendingsHeading")}</h1>
           <div className="flex items-center gap-2 flex-wrap">
             <Badge
               variant={
@@ -289,12 +289,12 @@ export default function PendingsPageClient() {
                 <div className="subtle">{t("pendingsLoading")}</div>
               )}
               {listingsError && (
-                <div className="text-red-400">{t("pendingsLoadFailed")}</div>
+                <div className="text-destructive">{t("pendingsLoadFailed")}</div>
               )}
               {!listingsLoading && filteredListings.length === 0 && (
                 <div className="subtle">{t("pendingsEmpty")}</div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mt-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)] mt-3">
                 {filteredListings.map((l: any) => (
                   <ApprovalCard
                     key={l.id}
@@ -313,14 +313,14 @@ export default function PendingsPageClient() {
                 <div className="subtle">{t("pendingsBlogsLoading")}</div>
               )}
               {blogsError && (
-                <div className="text-red-400">
+                <div className="text-destructive">
                   {t("pendingsBlogsLoadFailed")}
                 </div>
               )}
               {!blogsLoading && displayBlogs.length === 0 && (
                 <div className="subtle">{t("pendingsBlogsEmpty")}</div>
               )}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]">
                 {displayBlogs.map((b: any) => (
                   <PendingBlogCard
                     key={b.id}

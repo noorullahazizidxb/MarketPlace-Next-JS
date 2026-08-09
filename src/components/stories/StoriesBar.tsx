@@ -64,7 +64,7 @@ export default function StoriesBar() {
                     />
                   </div>
                 </div>
-                <div className="mt-1 text-[11px] line-clamp-1 opacity-80 group-hover:opacity-100">
+                <div className="mt-1 app-text-caption line-clamp-1 opacity-80 group-hover:opacity-100">
                   {s.title}
                 </div>
               </button>

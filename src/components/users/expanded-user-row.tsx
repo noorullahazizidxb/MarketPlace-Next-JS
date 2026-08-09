@@ -60,7 +60,7 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
     <Portal>
       <div className="fixed inset-0 z-[500] flex items-start justify-center p-4 sm:p-8">
         <div
-          className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+          className="absolute inset-0 bg-foreground/40 backdrop-blur-sm"
           onClick={onClose}
         />
         <div className="relative w-full max-w-xl bg-[var(--card)] border rounded-2xl shadow-xl p-6 flex flex-col gap-6 max-h-[90vh] overflow-y-auto">
@@ -69,10 +69,10 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
               <Link2 className="size-5" />
             </div>
             <div className="flex-1">
-              <h3 className="font-semibold text-sm">
+              <h3 className="font-semibold app-text-body">
                 Bind Representative Regions
               </h3>
-              <p className="text-2xs subtle break-all">
+              <p className="app-text-micro subtle break-all">
                 User: {user.fullName || user.email}
               </p>
             </div>
@@ -93,27 +93,27 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
                 className="grid grid-cols-1 sm:grid-cols-5 gap-3 rounded-xl border p-4 bg-[color-mix(in oklab, var(--muted) 35%, transparent)]"
               >
                 <label className="flex flex-col gap-1 sm:col-span-2">
-                  <span className="text-2xs font-medium">Region *</span>
+                  <span className="app-text-micro font-medium">Region *</span>
                   <input
                     value={row.region}
                     onChange={(e) => update(i, { region: e.target.value })}
                     placeholder="Region"
-                    className="h-10 rounded-lg border bg-[var(--card)] px-3 text-xs"
+                    className="h-10 rounded-lg border bg-[var(--card)] px-3 app-text-caption"
                   />
                 </label>
                 <label className="flex flex-col gap-1 sm:col-span-2">
-                  <span className="text-2xs font-medium">WhatsApp *</span>
+                  <span className="app-text-micro font-medium">WhatsApp *</span>
                   <input
                     value={row.whatsappNumber}
                     onChange={(e) =>
                       update(i, { whatsappNumber: e.target.value })
                     }
                     placeholder="+93..."
-                    className="h-10 rounded-lg border bg-[var(--card)] px-3 text-xs"
+                    className="h-10 rounded-lg border bg-[var(--card)] px-3 app-text-caption"
                   />
                 </label>
                 <div className="flex items-end justify-between gap-2 sm:col-span-1">
-                  <label className="flex items-center gap-2 text-2xs font-medium">
+                  <label className="flex items-center gap-2 app-text-micro font-medium">
                     <input
                       type="checkbox"
                       checked={row.active}
@@ -128,7 +128,7 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
                         aria-label="Remove row"
                         type="button"
                         onClick={() => removeRow(i)}
-                        className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-red-500/10 hover:border-red-400 transition-colors"
+                        className="size-8 rounded-lg border inline-flex items-center justify-center hover:bg-destructive/10 hover:border-destructive/40 transition-colors"
                       >
                         <X className="size-4" />
                       </button>
@@ -140,7 +140,7 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
             <button
               type="button"
               onClick={addRow}
-              className="h-9 px-3 inline-flex items-center gap-2 rounded-lg border bg-[color-mix(in oklab, var(--muted) 30%, transparent)] hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)] text-2xs font-medium"
+              className="h-9 px-3 inline-flex items-center gap-2 rounded-lg border bg-[color-mix(in oklab, var(--muted) 30%, transparent)] hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)] app-text-micro font-medium"
             >
               <Plus className="size-4" /> Add Row
             </button>
@@ -149,7 +149,7 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
             <button
               type="button"
               onClick={onClose}
-              className="h-9 px-4 rounded-lg border text-2xs font-medium hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)]"
+              className="h-9 px-4 rounded-lg border app-text-micro font-medium hover:bg-[color-mix(in oklab, var(--muted) 50%, transparent)]"
             >
               Cancel
             </button>
@@ -158,7 +158,7 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
               disabled={!canSubmit || bindMutation.isPending}
               onClick={submit}
               className={cn(
-                "h-9 px-4 rounded-lg text-2xs font-semibold inline-flex items-center gap-2 transition-colors",
+                "h-9 px-4 rounded-lg app-text-micro font-semibold inline-flex items-center gap-2 transition-colors",
                 !canSubmit || bindMutation.isPending
                   ? "bg-[var(--muted)] text-foreground/50"
                   : "bg-[var(--accent)] text-[var(--accent-foreground)] hover:brightness-110"
@@ -250,7 +250,7 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
             key={s.key}
             onClick={() => setActive(s.key)}
             className={cn(
-              "px-3 h-9 rounded-xl text-xs font-medium inline-flex items-center gap-1 border transition-colors",
+              "px-3 h-9 rounded-xl app-text-caption font-medium inline-flex items-center gap-1 border transition-colors",
               active === s.key
                 ? "bg-[color-mix(in oklab, var(--accent) 15%, transparent)] border-[var(--accent)] text-[var(--accent)]"
                 : "bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border-[var(--border)] hover:bg-[color-mix(in oklab, var(--muted) 60%, transparent)]"
@@ -263,7 +263,7 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
         <div className="ml-auto flex items-center gap-2">
           <button
             onClick={() => setShowBind(true)}
-            className="h-9 px-3 rounded-xl inline-flex items-center gap-2 text-xs font-medium bg-[color-mix(in oklab, var(--accent) 15%, transparent)] text-[var(--accent)] border border-[var(--accent)] hover:bg-[color-mix(in oklab, var(--accent) 25%, transparent)] transition-colors"
+            className="h-9 px-3 rounded-xl inline-flex items-center gap-2 app-text-caption font-medium bg-[color-mix(in oklab, var(--accent) 15%, transparent)] text-[var(--accent)] border border-[var(--accent)] hover:bg-[color-mix(in oklab, var(--accent) 25%, transparent)] transition-colors"
           >
             <Link2 className="size-4" /> Bind Rep
           </button>
@@ -272,14 +272,14 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
               value={subQuery}
               onChange={(e) => setSubQuery(e.target.value)}
               placeholder={`Search ${activeSection.label.toLowerCase()}…`}
-              className="h-9 rounded-xl border bg-[var(--card)] pl-3 pr-9 text-xs w-56"
+              className="h-9 rounded-xl border bg-[var(--card)] pl-3 pr-9 app-text-caption w-56"
             />
             <SearchIcon className="size-3 absolute right-3 top-1/2 -translate-y-1/2 opacity-60" />
           </div>
         </div>
       </div>
       <div className="overflow-x-auto touch-scroll rounded-xl border">
-        <table className="w-full min-w-[640px] text-xs">
+        <table className="w-full min-w-[640px] app-text-caption">
           <thead className="bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border-b">
             <tr>
               {activeSection.columns.map((c) => (
@@ -330,7 +330,7 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
                           </div>
                         ))}
                         {row.images && row.images.length > 2 && (
-                          <span className="text-2xs px-1 rounded bg-[color-mix(in oklab, var(--muted) 50%, transparent)]">
+                          <span className="app-text-micro px-1 rounded bg-[color-mix(in oklab, var(--muted) 50%, transparent)]">
                             +{row.images.length - 2}
                           </span>
                         )}
@@ -366,14 +366,14 @@ const ExpandedUserRow: React.FC<{ user: BaseUser }> = ({ user }) => {
       </div>
       {user.representatives && user.representatives.length > 0 && (
         <div className="mt-4 rounded-xl border p-4 space-y-3">
-          <div className="text-xs font-semibold tracking-wide uppercase text-foreground/60">
+          <div className="app-text-caption font-semibold tracking-wide uppercase text-foreground/60">
             Representative Regions
           </div>
           <div className="flex flex-wrap gap-2">
             {user.representatives.map((p, i) => (
               <span
                 key={i}
-                className="px-2 py-1 rounded-full text-2xs bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border border-[var(--border)]"
+                className="px-2 py-1 rounded-full app-text-micro bg-[color-mix(in oklab, var(--muted) 40%, transparent)] border border-[var(--border)]"
               >
                 {p.region} · {p.whatsappNumber}
               </span>

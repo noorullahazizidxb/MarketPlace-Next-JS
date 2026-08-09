@@ -18,6 +18,7 @@ import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 
 const gradientBgClass = "gradient-bg";
 
@@ -66,6 +67,7 @@ export default function SignUpPage() {
   const { isRtl } = useLanguage();
   const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
   const [globalError, setGlobalError] = useState<string | null>(null);
+  const { executeRecaptcha } = useRecaptchaV3();
 
   const {
     handleSubmit,
@@ -123,6 +125,7 @@ export default function SignUpPage() {
   const onSubmit = async (data: SignUpValues) => {
     setGlobalError(null);
     try {
+      const recaptchaToken = await executeRecaptcha("register");
       const parts = data.fullName.trim().split(/\s+/);
       const firstName = parts[0];
       const lastName = parts.slice(1).join(" ") || parts[0];
@@ -133,6 +136,7 @@ export default function SignUpPage() {
         firstName,
         lastName,
         fullName: data.fullName.trim(),
+        recaptchaToken,
       };
       await registerMutation.mutateAsync(payload);
     } catch (e: any) {
@@ -159,7 +163,7 @@ export default function SignUpPage() {
       data-app-page="sign-up"
       className={cn(
         gradientBgClass,
-        "relative flex items-center justify-center p-4 sm:p-6 lg:p-10",
+        "relative flex items-center justify-center p-[var(--space-card)] sm:p-[var(--space-card)] lg:p-[var(--space-card)]",
       )}
     >
       <AmbientCanvas variant="orbs" intensity={0.3} className="absolute inset-0" />
@@ -175,7 +179,7 @@ export default function SignUpPage() {
       >
         <motion.div
           className={cn(
-            "relative overflow-hidden rounded-3xl border border-[var(--card-border,var(--border))/0.45] bg-[var(--card-bg,var(--card))/0.9] p-8 shadow-[0_32px_70px_-40px_color-mix(in oklab, var(--primary) 55%, transparent)] backdrop-blur-2xl",
+            "relative overflow-hidden rounded-3xl border border-[var(--card-border,var(--border))/0.45] bg-[var(--card-bg,var(--card))/0.9] p-[var(--space-card)] shadow-[0_32px_70px_-40px_color-mix(in oklab, var(--primary) 55%, transparent)] backdrop-blur-2xl",
             "text-[var(--card-fg,var(--foreground))]"
           )}
           animate={errors ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }}
@@ -184,7 +188,7 @@ export default function SignUpPage() {
           <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 50%, transparent)] to-transparent" />
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 40%, transparent)] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
-            <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-white/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-white/95">
+            <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
               <Image
                 src="/brand/devminds-logo.png"
                 alt="DevMinds"
@@ -196,7 +200,7 @@ export default function SignUpPage() {
               />
             </div>
             <motion.h1
-              className="text-2xl font-semibold tracking-tight text-[var(--foreground)]"
+              className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.1, duration: 0.4 }}
@@ -204,7 +208,7 @@ export default function SignUpPage() {
               {t("createAccount")}
             </motion.h1>
             <motion.p
-              className="text-sm text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
+              className="app-text-body text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.18, duration: 0.4 }}
@@ -219,7 +223,7 @@ export default function SignUpPage() {
                 googleUrl={config.googleAuthUrl}
                 facebookUrl={config.facebookAuthUrl}
               />
-              <div className="relative text-center text-xs text-[color-mix(in oklab, var(--foreground) 60%, transparent)]">
+              <div className="relative text-center app-text-caption text-[color-mix(in oklab, var(--foreground) 60%, transparent)]">
                 <span className="relative z-10 bg-[var(--card-bg,var(--card))/0.95] px-3">
                   {t("orContinueWithEmail")}
                 </span>
@@ -229,7 +233,7 @@ export default function SignUpPage() {
           )}
 
           <motion.form
-            className="space-y-5"
+            className="space-y-[var(--space-section)]"
             onSubmit={handleSubmit(onSubmit)}
             initial={false}
             noValidate
@@ -311,7 +315,7 @@ export default function SignUpPage() {
               </div>
             </Tooltip>
 
-            <div className="grid gap-5 sm:grid-cols-2">
+            <div className="grid gap-[var(--space-section)] sm:grid-cols-2">
               <div className="space-y-2">
                 <Tooltip content={t("tooltipSignUpPassword")} side="right">
                   <div>
@@ -370,7 +374,7 @@ export default function SignUpPage() {
             <AnimatePresence>
               {(globalError || errors.root?.message) && (
                 <motion.p
-                  className="rounded-2xl border border-[color-mix(in oklab, var(--accent) 35%, transparent)] bg-[color-mix(in oklab, var(--accent) 12%, transparent)] px-3.5 py-2 text-sm text-[var(--accent)]"
+                  className="rounded-2xl border border-[color-mix(in oklab, var(--accent) 35%, transparent)] bg-[color-mix(in oklab, var(--accent) 12%, transparent)] px-3.5 py-2 app-text-body text-[var(--accent)]"
                   initial={{ opacity: 0, y: -8 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
@@ -384,7 +388,7 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 disabled={submitting || !isValid}
-                className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_var(--btn-primary-bg,var(--primary))_0%,_var(--accent)_55%,_var(--secondary)_100%)] text-base font-semibold text-[var(--btn-primary-fg,var(--primary-foreground))] shadow-[0_18px_48px_-20px_color-mix(in oklab, var(--primary) 60%, transparent)] transition-all hover:shadow-[0_22px_60px_-18px_color-mix(in oklab, var(--secondary) 55%, transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card-bg,var(--card))] disabled:cursor-not-allowed disabled:opacity-70"
+                className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_var(--btn-primary-bg,var(--primary))_0%,_var(--accent)_55%,_var(--secondary)_100%)] app-text-body font-semibold text-[var(--btn-primary-fg,var(--primary-foreground))] shadow-[0_18px_48px_-20px_color-mix(in oklab, var(--primary) 60%, transparent)] transition-all hover:shadow-[0_22px_60px_-18px_color-mix(in oklab, var(--secondary) 55%, transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card-bg,var(--card))] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <motion.span
                   animate={submitting ? { opacity: 0.6 } : { opacity: 1 }}
@@ -404,7 +408,7 @@ export default function SignUpPage() {
           </motion.form>
 
           <motion.div
-            className="mt-6 text-center text-sm text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
+            className="mt-6 text-center app-text-body text-[color-mix(in oklab, var(--foreground) 70%, transparent)]"
             initial={{ opacity: 0, y: 12 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.25, duration: 0.4 }}
@@ -448,7 +452,7 @@ function PasswordStrength({ score }: { score: number }) {
         />
       </div>
       {score > 0 && (
-        <div className="text-[10px] uppercase tracking-wide text-[color-mix(in oklab, var(--foreground) 55%, transparent)]">
+        <div className="app-text-micro uppercase tracking-wide text-[color-mix(in oklab, var(--foreground) 55%, transparent)]">
           {labels[score - 1]}
         </div>
       )}

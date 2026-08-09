@@ -39,8 +39,8 @@ export const PlacementSelect: React.FC<PlacementSelectProps> = ({
       options={PLACEMENT_OPTIONS}
       placeholder="Select placement"
       className={cn(
-        "rounded-2xl bg-input/20 text-xs tracking-tight",
-        size === "sm" ? "h-8 min-h-8 text-xs" : "h-10 min-h-10 text-sm",
+        "rounded-2xl bg-input/20 app-text-caption tracking-tight",
+        size === "sm" ? "h-8 min-h-8 app-text-caption" : "h-10 min-h-10 app-text-body",
       )}
     />
   );

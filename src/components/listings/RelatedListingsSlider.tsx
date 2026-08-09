@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -158,7 +158,7 @@ function HeroCarousel({
       </div>
 
       <div className="mb-4 flex items-center justify-between px-1">
-        <h3 className="text-lg md:text-xl font-semibold tracking-tight">
+        <h3 className="app-text-heading-sm md:app-text-heading font-semibold tracking-tight">
           {title}
         </h3>
         <div className="flex items-center gap-2">
@@ -208,7 +208,14 @@ function TabbedHeroCarousel({
   promoted: ListingLite[];
   title: string;
 }) {
-  const [tab, setTab] = useState<"related" | "top" | "promoted">("related");
+  const [tab, setTab] = useState<"related" | "top" | "promoted">(
+    related.length ? "related" : topRated.length ? "top" : "promoted"
+  );
+  const tabs: Array<{ id: "related" | "top" | "promoted"; label: string; icon: React.ReactNode; count: number }> = [
+    { id: "related", label: "Related", icon: <TagIcon className="size-3.5" />, count: related.length },
+    { id: "top", label: "Top Rated", icon: <Star className="size-3.5 fill-warning text-warning" />, count: topRated.length },
+    { id: "promoted", label: "Promoted", icon: <ShieldCheck className="size-3.5 text-success" />, count: promoted.length },
+  ];
 
   const items = useMemo(() => {
     if (tab === "related") return related;
@@ -216,53 +223,42 @@ function TabbedHeroCarousel({
     return promoted;
   }, [tab, related, topRated, promoted]);
 
-  // If active tab has no items, fall back to first available
   const effective =
-    items && items.length > 0
+    items.length > 0
       ? items
-      : related.length
-        ? related
-        : topRated.length
-          ? topRated
-          : promoted;
+      : related.length ? related : topRated.length ? topRated : promoted;
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-between px-1">
-        <div className="flex items-center gap-2">
+      {/* Premium animated tab bar */}
+      <div className="mb-5 flex items-center gap-1 p-1 rounded-2xl bg-[color-mix(in oklab,var(--card)_90%,transparent)] border border-border/50 backdrop-blur-sm w-fit shadow-sm">
+        {tabs.map((t) => (
           <button
-            onClick={() => setTab("related")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "related"
-              ? "bg-card text-accent border border-accent/20"
-              : "bg-card text-foreground border border-border"
-              }`}
+            key={t.id}
+            onClick={() => setTab(t.id)}
+            disabled={t.count === 0}
+            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors duration-200 disabled:opacity-30 disabled:pointer-events-none"
+            aria-pressed={tab === t.id}
           >
-            <TagIcon className="size-5" />
-            Related
+            {tab === t.id && (
+              <motion.span
+                layoutId="tab-pill"
+                className="absolute inset-0 rounded-xl bg-background/90 shadow-sm border border-border/50"
+                style={{ zIndex: 0 }}
+                transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+              />
+            )}
+            <span className={`relative z-10 flex items-center gap-1.5 ${tab === t.id ? "text-foreground" : "text-muted-foreground"}`}>
+              {t.icon}
+              {t.label}
+              {t.count > 0 && (
+                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${tab === t.id ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
+                  {t.count}
+                </span>
+              )}
+            </span>
           </button>
-
-          <button
-            onClick={() => setTab("top")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "top"
-              ? "bg-card text-accent border border-accent/20"
-              : "bg-card text-foreground border border-border"
-              }`}
-          >
-            <Star className="size-4 text-amber-400" />
-            Top Rated
-          </button>
-
-          <button
-            onClick={() => setTab("promoted")}
-            className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${tab === "promoted"
-              ? "bg-card text-accent border border-accent/20"
-              : "bg-card text-foreground border border-border"
-              }`}
-          >
-            <ShieldCheck className="size-4 text-emerald-500" />
-            Promoted
-          </button>
-        </div>
+        ))}
       </div>
 
       <HeroCarousel items={effective} title={title} />
@@ -360,7 +356,7 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       style={{
         transform: `perspective(900px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
       }}
-      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-[0_10px_30px_-10px_rgba(0,0,0,0.35)]"
+      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-token-lg"
     >
       {/* Glow */}
       <div className="pointer-events-none absolute -inset-10 opacity-60 mix-blend-soft-light">
@@ -390,16 +386,16 @@ function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
       </div>
 
       <div className="relative h-[40%] p-[var(--space-card)] flex flex-col">
-        <h4 className="text-sm md:text-base font-semibold line-clamp-2 pr-8">
+        <h4 className="app-text-body md:app-text-body font-semibold line-clamp-2 pr-8">
           {item.title || "Untitled"}
         </h4>
         {item.description && (
-          <p className="mt-1 text-xs subtle line-clamp-2">
+          <p className="mt-1 app-text-caption subtle line-clamp-2">
             {String(item.description || "").trim()}
           </p>
         )}
         <div className="mt-auto flex items-center justify-between">
-          <div className="inline-flex items-center gap-1 text-[11px]">
+          <div className="inline-flex items-center gap-1 app-text-caption">
             {rating != null ? (
               <>
                 <Star className="size-3 text-accent" />

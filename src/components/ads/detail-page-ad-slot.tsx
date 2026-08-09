@@ -69,13 +69,13 @@ export function DetailAdSlot({
               />
             </div>
           ) : (
-            <div className="h-full w-full grid place-items-center bg-gradient-to-br from-white/5 to-white/0 text-xs text-white/40 tracking-wide p-4 text-center">
+            <div className="h-full w-full grid place-items-center bg-gradient-to-br from-overlay-light/5 to-overlay-light/0 app-text-caption text-primary-foreground/40 tracking-wide p-4 text-center">
               {ad.title || ad.placement.replace(/_/g, " ")}
             </div>
           )
         ) : (
           // skeleton placeholder while no active ad (or while loading)
-          <div className="h-full w-full bg-white/5 animate-pulse" />
+          <div className="h-full w-full bg-background/5 animate-pulse" />
         )}
       </div>
     </div>

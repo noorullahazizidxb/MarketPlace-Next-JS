@@ -49,7 +49,7 @@ function Chip({
     >
       {/* active shimmer */}
       {active && (
-        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/30 to-transparent" />
+        <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/30 to-transparent" />
       )}
       <AnimatePresence mode="wait">
         {active ? (
@@ -130,7 +130,7 @@ export function FiltersBar() {
             {(t as any)("filters") || "Filters"}
           </span>
           {activeCount > 0 && (
-            <span className="size-5 rounded-full bg-white/20 app-text-caption font-bold flex items-center justify-center">
+            <span className="size-5 rounded-full bg-background/20 app-text-caption font-bold flex items-center justify-center">
               {activeCount}
             </span>
           )}

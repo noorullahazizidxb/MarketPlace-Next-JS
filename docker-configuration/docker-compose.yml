@@ -8,7 +8,7 @@ services:
     # If you need 'mysql_native_password' set a compatible server version or configure users later.
     environment:
       MYSQL_DATABASE: marketplace
-      MYSQL_ROOT_PASSWORD: "Mcitp@123"
+      MYSQL_ROOT_PASSWORD: "${MYSQL_ROOT_PASSWORD:?Set MYSQL_ROOT_PASSWORD in docker-configuration/.env}"
     volumes:
       - mysql-data:/var/lib/mysql
     networks:
@@ -43,7 +43,7 @@ services:
       args:
         BACKEND_REPO_URL: https://github.com/noorullahazizidxb/MarketPlace-Back-End-Node-Parisma.git
         BACKEND_REPO_REF: main
-        GIT_USERNAME: "noorullahazizidxb"
+        GIT_USERNAME: "${GIT_USERNAME:?Set GIT_USERNAME in docker-configuration/.env}"
       secrets:
         - git_password
     restart: unless-stopped
@@ -52,7 +52,7 @@ services:
     environment:
       PORT: 4000
       NODE_ENV: production
-      DATABASE_URL: "mysql://root:Mcitp%40123@mysql:3306/marketplace"
+      DATABASE_URL: "${DATABASE_URL:?Set DATABASE_URL in docker-configuration/.env}"
       REDIS_URL: "redis://redis:6379"
       REDIS_USERNAME: ""
       REDIS_PASSWORD: ""
@@ -64,7 +64,7 @@ services:
       ELASTICSEARCH_USERS_INDEX: "users"
       ELASTICSEARCH_BLOGS_INDEX: "blogs"
       ELASTICSEARCH_ALLOW_SELF_SIGNED: "true"
-      TOKEN_SECRET: "replace_with_random_token_secret"
+      TOKEN_SECRET: "${TOKEN_SECRET:?Set TOKEN_SECRET in docker-configuration/.env}"
       GOOGLE_CLIENT_ID: ""
       FACEBOOK_APP_ID: ""
       FACEBOOK_APP_SECRET: ""
@@ -77,9 +77,9 @@ services:
       TWILIO_ACCOUNT_SID: ""
       TWILIO_AUTH_TOKEN: ""
       WHATSAPP_FROM: ""
-      ADMIN_EMAIL: "noorullah.azizi2040@gmail.com"
+      ADMIN_EMAIL: "${ADMIN_EMAIL:?Set ADMIN_EMAIL in docker-configuration/.env}"
       ADMIN_PHONE: ""
-      ADMIN_PASSWORD: "ChangeMe123!"
+      ADMIN_PASSWORD: "${ADMIN_PASSWORD:?Set ADMIN_PASSWORD in docker-configuration/.env}"
       # Listing retention & renewal
       LISTING_UNAPPROVED_DELETE_AFTER_DAYS: "2"
       LISTING_RENEWAL_WINDOW_DAYS: "14"
@@ -150,7 +150,7 @@ services:
       FACEBOOK_APP_SECRET: ""
       NEXT_PUBLIC_GOOGLE_AUTH_URL: "/api/auth/google"
       NEXT_PUBLIC_FACEBOOK_AUTH_URL: "/api/auth/facebook"
-      SESSION_SECRET: "replace_with_random_session_secret"
+      SESSION_SECRET: "${SESSION_SECRET:?Set SESSION_SECRET in docker-configuration/.env}"
       NEXT_PUBLIC_SITE_URL: "https://marketplace.devminds.net"
       NEXT_PUBLIC_USE_MOCK_DATA: "false"
       # Server-side internal API base (used by Next.js API routes / auth callbacks / uploads proxy)
@@ -196,4 +196,4 @@ volumes:
 
 secrets:
   git_password:
-    file: ./secrets/git_password.txt
+    file: "${GIT_PASSWORD_FILE:?Set GIT_PASSWORD_FILE in docker-configuration/.env}"

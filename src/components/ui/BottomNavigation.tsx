@@ -101,9 +101,9 @@ const BottomNavItem: React.FC<{
     >
       <span
         className={
-          "grid place-items-center relative size-9 rounded-xl transition-all shadow-[inset_0_0_0_1px_var(--border),0_4px_12px_-3px_rgba(0,0,0,0.35)] " +
+          "grid place-items-center relative size-9 rounded-xl transition-all shadow-token-lg " +
           (active
-            ? "bg-gradient-to-br from-primary/30 via-fuchsia-500/30 to-cyan-500/30 text-foreground ring-1 ring-primary/50"
+            ? "bg-gradient-to-br from-primary/30 via-primary/30 to-info/30 text-foreground ring-1 ring-primary/50"
             : "bg-background/50 backdrop-blur supports-[backdrop-filter]:bg-background/35")
         }
       >
@@ -165,7 +165,7 @@ const CenterOverlay: React.FC<CenterOverlayProps> = ({
             transition={{ type: "spring", stiffness: 300, damping: 28 }}
             onClick={(e) => e.stopPropagation()}
             className={
-              "relative w-full max-w-md rounded-3xl bg-background/85 backdrop-blur-xl border border-border shadow-[0_8px_50px_-10px_rgba(0,0,0,0.55),0_0_0_1px_var(--border)] p-[var(--space-card)] flex flex-col gap-[var(--space-gap)] " +
+              "relative w-full max-w-md rounded-3xl bg-background/85 backdrop-blur-xl border border-border shadow-token-lg p-[var(--space-card)] flex flex-col gap-[var(--space-gap)] " +
               className
             }
           >
@@ -339,7 +339,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               </div>
               <motion.div
                 layout
-                className="group relative flex justify-around gap-1 rounded-[32px] px-2 py-2 glass border border-border bg-background/75 supports-[backdrop-filter]:bg-background/55 shadow-[0_2px_4px_-2px_rgba(0,0,0,0.4),0_12px_40px_-8px_rgba(0,0,0,0.55),0_0_0_1px_var(--border)] before:absolute before:inset-0 before:rounded-[32px] before:shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(0,0,0,0.35)] overflow-hidden"
+                className="group relative flex justify-around gap-1 rounded-[32px] px-2 py-2 glass border border-border bg-background/75 supports-[backdrop-filter]:bg-background/55 shadow-token-lg before:absolute before:inset-0 before:rounded-[32px] before:shadow-token-lg overflow-hidden"
               >
                 {computedItems.map((item, i) => {
                   const active = activeCheck(item);
@@ -353,7 +353,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
                         index={i}
                       />
                       {item.key === "notifications" && unreadCount > 0 && (
-                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-accent/90 text-accent-foreground text-[10px] font-semibold grid place-items-center badge-pop">
+                        <span className="absolute top-0.5 right-2 min-w-[18px] h-5 px-1 rounded-full bg-accent/90 text-accent-foreground app-text-micro font-semibold grid place-items-center badge-pop">
                           {unreadCount > 99 ? "99+" : unreadCount}
                         </span>
                       )}
@@ -462,7 +462,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           />
           <div className="flex flex-col gap-2 items-center justify-center">
             <ThemeToggle />
-            <span className="text-[10px] subtle">{t("theme")}</span>
+            <span className="app-text-micro subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
             <Button
@@ -470,11 +470,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               variant="ghost"
               size="sm"
               onClick={toggleDensity}
-              className="size-10 p-0 text-[10px]"
+              className="size-10 p-0 app-text-micro"
             >
               {density === "comfort" ? "Co" : "Cm"}
             </Button>
-            <span className="text-[10px] subtle">{t("density")}</span>
+            <span className="app-text-micro subtle">{t("density")}</span>
           </div>
         </div>
         <ButtonRowLogout onDone={() => setAdminOpen(false)} />
@@ -523,7 +523,7 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
           />
           <div className="flex flex-col gap-2 items-center justify-center">
             <ThemeToggle />
-            <span className="text-[10px] subtle">{t("theme")}</span>
+            <span className="app-text-micro subtle">{t("theme")}</span>
           </div>
           <div className="flex flex-col gap-2 items-center justify-center">
             <Button
@@ -531,11 +531,11 @@ export const BottomNavigation: React.FC<BottomNavigationProps> = ({
               variant="ghost"
               size="sm"
               onClick={toggleDensity}
-              className="size-10 p-0 text-[10px]"
+              className="size-10 p-0 app-text-micro"
             >
               {density === "comfort" ? "Co" : "Cm"}
             </Button>
-            <span className="text-[10px] subtle">{t("density")}</span>
+            <span className="app-text-micro subtle">{t("density")}</span>
           </div>
         </div>
         <ButtonRowLogout onDone={() => setUserOpen(false)} />
@@ -626,9 +626,9 @@ const ActionTile: React.FC<ActionTileProps> = ({
     animate={{ scale: 1, opacity: 1, y: 0 }}
     whileTap={{ scale: 0.92 }}
     onClick={onClick}
-    className="flex flex-col items-center gap-1 p-[var(--space-filter)] rounded-2xl bg-white/5 hover:bg-white/10 active:scale-95 transition-all"
+    className="flex flex-col items-center gap-1 p-[var(--space-filter)] rounded-2xl bg-background/5 hover:bg-background/10 active:scale-95 transition-all"
   >
-    <span className="size-10 grid place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-fuchsia-500/25 text-accent shadow-inner">
+    <span className="size-10 grid place-items-center rounded-xl bg-gradient-to-br from-primary/25 to-primary/25 text-accent shadow-inner">
       <Icon className="size-5" />
     </span>
     <span className="app-text-caption font-medium text-center leading-tight line-clamp-2">
@@ -667,7 +667,7 @@ const ButtonRowLogout: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
         onClick={handleLogout}
         disabled={isPending}
         loading={isPending}
-        className="text-red-400 hover:text-red-300 hover:bg-red-500/15"
+        className="text-destructive hover:text-destructive hover:bg-destructive/15"
         LeftIcon={LogOut}
       >
         {t("logout")}

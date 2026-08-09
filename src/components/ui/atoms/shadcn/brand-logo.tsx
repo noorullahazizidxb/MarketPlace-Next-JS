@@ -1,13 +1,9 @@
 "use client";
 
-import * as React from "react";
-import Image, { type StaticImageData } from "next/image";
+import Image, { type ImageProps, type StaticImageData } from "next/image";
 import { Logo } from "../logo";
 
-interface BrandLogoProps extends Omit<
-  React.ImgHTMLAttributes<HTMLImageElement>,
-  "src" | "width" | "height"
-> {
+interface BrandLogoProps extends Omit<ImageProps, "src" | "width" | "height" | "alt"> {
   src?: string | StaticImageData;
   alt?: string;
   size?: number;
@@ -22,7 +18,7 @@ export function BrandLogo({
 }: BrandLogoProps) {
   // If no image source provided, fall back to the inline SVG Logo
   if (!src) {
-    return <Logo size={size} className={className} {...(props as any)} />;
+    return <Logo size={size} className={className} alt={alt} {...props} />;
   }
 
   return (
@@ -32,8 +28,8 @@ export function BrandLogo({
         alt={alt}
         width={size}
         height={size}
-        // allow callers to pass additional image props via `props` if needed
-        {...(props as any)}
+        sizes={`${size}px`}
+        {...props}
       />
     </div>
   );

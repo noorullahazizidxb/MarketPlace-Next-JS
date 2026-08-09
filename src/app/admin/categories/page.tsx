@@ -12,7 +12,7 @@ export default async function AdminCategoriesPage() {
   const isAdmin = roles.includes("ADMIN");
   if (!isAdmin) {
     return (
-      <div className="container-padded py-24 text-center space-y-6 app-shell-page" data-app-page="admin-categories">
+      <div className="container-padded text-center space-y-[var(--space-section)] app-shell-page" data-app-page="admin-categories">
         <h1 className="heading-xl">Not Authorized</h1>
         <p className="subtle max-w-md mx-auto">
           You need administrator privileges to manage categories.
@@ -27,7 +27,7 @@ export default async function AdminCategoriesPage() {
     );
   }
   return (
-    <div className="container-padded py-10 space-y-8 app-shell-page" data-app-page="admin-categories">
+    <div className="container-padded space-y-[var(--space-section)] app-shell-page" data-app-page="admin-categories">
       <div className="space-y-2">
         <h1 className="app-text-heading font-semibold tracking-tight">Categories</h1>
         <p className="app-text-body subtle max-w-2xl">

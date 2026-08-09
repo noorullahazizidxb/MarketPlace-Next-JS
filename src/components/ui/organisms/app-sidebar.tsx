@@ -19,7 +19,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo } from "../atoms/shadcn/brand-logo";
-import { SidebarNotification } from "../molecules/sidebar-notification";
 
 import { NavMain } from "../molecules/nav-main";
 import { NavUser } from "../molecules/nav-user";
@@ -64,8 +63,8 @@ const defaultSidebarData: {
   navGroups: SidebarNavGroup[];
 } = {
   user: {
-    name: "OTA Tickets",
-    email: "store@example.com",
+    name: "DevMinds Marketplace",
+    email: "admin@devminds.com",
     avatar: "",
   },
   navGroups: [
@@ -320,7 +319,6 @@ export function AppSidebar({
         ))}
       </SidebarContent>
       <SidebarFooter>
-        {/* <SidebarNotification /> */}
         <NavUser
           user={user}
           onLogout={onLogout}

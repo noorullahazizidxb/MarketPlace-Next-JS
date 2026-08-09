@@ -9,7 +9,7 @@ import { cn } from "../../lib/cn";
  *
  * Improvements over the base:
  *  - Font size uses clamp() via CSS vars from globals.css
- *  - Height uses clamp() matching --action-btn-height token
+ *  - Height is resolved from the responsive --ctrl-h token
  *  - Micro-interaction: active:scale-[0.97] on all variants
  *  - New `brand` variant using the violet→indigo gradient token
  *  - Improved focus ring consistency

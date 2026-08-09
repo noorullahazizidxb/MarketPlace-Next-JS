@@ -17,6 +17,7 @@ import { AnimatedBg } from "@/components/ui/animated-bg";
 import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
 import { Partners } from "@/components/ui/partners";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
+import { useLanguage } from "@/components/providers/language-provider";
 
 // Below-fold heavy components — lazy loaded so they don't block initial render
 const HomePromoBanner = dynamic(
@@ -45,6 +46,8 @@ export function AppShell({ children }: PropsWithChildren) {
   const pathname = usePathname();
   const router = useRouter();
   const density = useUIStore((s) => s.density);
+  const { isRtl } = useLanguage();
+  const direction = isRtl ? "rtl" : "ltr";
 
   useEffect(() => {
     if (typeof document !== "undefined") {
@@ -128,7 +131,7 @@ export function AppShell({ children }: PropsWithChildren) {
   /* ----------  AUTH PAGES  ---------- */
   if (hideChrome || hideChromeGlobal) {
     return (
-      <main id="main-content" className="flex-1" dir="ltr">
+      <main id="main-content" className="flex-1" dir={direction}>
         <PageTransition>{children}</PageTransition>
       </main>
     );
@@ -152,8 +155,8 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
       <main
         id="main-content"
-        className="relative z-10 flex-1 container-padded py-4 md:py-5"
-        dir="ltr"
+        className="relative z-10 flex-1 container-padded py-[var(--space-page-y)]"
+        dir={direction}
       >
         <PageTransition>{children}</PageTransition>
       </main>

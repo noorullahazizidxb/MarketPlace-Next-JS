@@ -22,5 +22,5 @@ yarn-error.log*
 .next/*
 client_secret_*.apps.googleusercontent.com.json
 docker-configuration/secrets/*
-!docker-configuration/secrets/git_password.txt
+tmp/*.heapsnapshot
 /.next/*

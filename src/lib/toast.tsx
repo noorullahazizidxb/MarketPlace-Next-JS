@@ -22,7 +22,7 @@ function ToastCard({
     color === "success"
       ? "ring-[var(--primary)]/30"
       : color === "error"
-      ? "ring-red-500/30"
+      ? "ring-destructive/30"
       : "ring-[var(--accent)]/30";
   return (
     <div
@@ -46,7 +46,7 @@ function ToastCard({
                 color === "success"
                   ? "bg-[var(--primary)]/10"
                   : color === "error"
-                  ? "bg-red-50"
+                  ? "bg-destructive"
                   : "bg-[var(--accent)]/10"
               )}
             >
@@ -59,7 +59,7 @@ function ToastCard({
                 {title}
               </div>
             ) : null}
-            <div className="text-sm opacity-90 truncate">{message}</div>
+            <div className="app-text-body opacity-90 truncate">{message}</div>
           </div>
         </div>
       </div>
@@ -86,7 +86,7 @@ export function toastError(message: string, title?: string) {
       title={title}
       message={message}
       color="error"
-      icon={<XOctagon className="h-5 w-5 text-red-500" />}
+      icon={<XOctagon className="h-5 w-5 text-destructive" />}
     />
   ));
 }

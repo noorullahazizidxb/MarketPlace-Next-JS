@@ -18,7 +18,7 @@ export function AppToaster() {
           },
         },
         error: {
-          iconTheme: { primary: "#ef4444", secondary: "var(--card)" },
+          iconTheme: { primary: "var(--destructive)", secondary: "var(--card)" },
         },
       }}
     />

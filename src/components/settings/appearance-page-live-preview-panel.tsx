@@ -2,192 +2,160 @@
 
 import * as React from "react";
 import type { CSSProperties } from "react";
+import { ExternalLink, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import type { AdminPageId } from "@repo/types";
-import { Badge } from "@repo/ui";
-import {
-    resolvePreviewLoader,
-    resolvePreviewPageLabel,
-} from "./appearance-preview-registry";
+import { Badge, Button } from "@repo/ui";
+import { resolvePreviewPage } from "./appearance-preview-registry";
 
 type AppearancePageLivePreviewPanelProps = {
-    pageScope: "global" | AdminPageId;
-    previewStyle: CSSProperties;
-    /**
-     * Logical CSS width of the selected viewport (e.g. 320 for XS, 1280 for XL).
-     * The preview page is laid out at this width, then scaled to fit the panel.
-     */
-    viewportWidthPx: number;
-    /**
-     * `contain` — fit width and height (Typography / denser control column).
-     * `width` — scale to column width so the wider 70% preview grows; vertical overflow scrolls.
-     */
-    fitMode?: "contain" | "width";
+  pageScope: "global" | AdminPageId;
+  previewStyle: CSSProperties;
+  viewportWidthPx: number;
+  fitMode?: "contain" | "width";
 };
 
-const FALLBACK_VIEWPORT_WIDTH_PX = 1280;
-
-function resolveLogicalViewportWidth(viewportWidthPx: number): number {
-    return Number.isFinite(viewportWidthPx) && viewportWidthPx > 0
-        ? viewportWidthPx
-        : FALLBACK_VIEWPORT_WIDTH_PX;
+function getViewportHeight(width: number) {
+  if (width <= 640) return 667;
+  if (width <= 1024) return 900;
+  return 900;
 }
 
 export function AppearancePageLivePreviewPanel({
-    pageScope,
-    previewStyle,
-    viewportWidthPx,
-    fitMode = "contain",
+  pageScope,
+  previewStyle,
+  viewportWidthPx,
 }: AppearancePageLivePreviewPanelProps) {
-    const selectedPage = pageScope === "global" ? null : pageScope;
-    const loader = selectedPage ? resolvePreviewLoader(selectedPage) : null;
-    const logicalWidth = resolveLogicalViewportWidth(viewportWidthPx);
+  const page = pageScope === "global" ? null : resolvePreviewPage(pageScope);
+  const logicalWidth = Number.isFinite(viewportWidthPx) ? viewportWidthPx : 1280;
+  const logicalHeight = getViewportHeight(logicalWidth);
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const iframeRef = React.useRef<HTMLIFrameElement>(null);
+  const [reloadKey, setReloadKey] = React.useState(0);
+  const [autoScale, setAutoScale] = React.useState(0.7);
+  const [zoom, setZoom] = React.useState(1);
+  const [loaded, setLoaded] = React.useState(false);
 
-    const PagePreview = React.useMemo(() => {
-        if (!loader) return null;
-        return React.lazy(loader);
-    }, [loader]);
+  const scale = Math.max(0.25, Math.min(1.35, autoScale * zoom));
+  const applyPreviewTokens = React.useCallback(() => {
+    const frameDocument = iframeRef.current?.contentWindow?.document;
+    if (!frameDocument) return;
 
-    const previewStyleKey = React.useMemo(
-        () =>
-            Object.entries(previewStyle)
-                .sort(([left], [right]) => left.localeCompare(right))
-                .map(([key, value]) => `${key}:${String(value)}`)
-                .join(";"),
-        [previewStyle],
-    );
+    const sourceRoot = document.documentElement;
+    const targetRoot = frameDocument.documentElement;
+    targetRoot.dataset.appearancePreview = "true";
+    targetRoot.dataset.theme = sourceRoot.dataset.theme ?? "light";
+    targetRoot.classList.toggle("dark", sourceRoot.classList.contains("dark"));
+    targetRoot.classList.toggle("light", !sourceRoot.classList.contains("dark"));
 
-    const frameRef = React.useRef<HTMLDivElement>(null);
-    const contentRef = React.useRef<HTMLDivElement>(null);
-    const [scale, setScale] = React.useState(0.5);
-    const [scaledHeight, setScaledHeight] = React.useState<number | undefined>(undefined);
+    Object.entries(previewStyle).forEach(([property, value]) => {
+      if (property.startsWith("--") && value != null) {
+        targetRoot.style.setProperty(property, String(value));
+      }
+    });
+  }, [previewStyle]);
 
-    React.useLayoutEffect(() => {
-        if (!selectedPage || !PagePreview) return;
+  React.useLayoutEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
 
-        const frame = frameRef.current;
-        if (!frame) return;
+    const updateScale = () => {
+      const widthFit = frame.clientWidth / logicalWidth;
+      const heightFit = Math.min(720, window.innerHeight * 0.68) / logicalHeight;
+      const fit = Math.min(widthFit, heightFit, 1);
+      setAutoScale(Number.isFinite(fit) && fit > 0 ? fit : 0.7);
+    };
 
-        const updateScale = () => {
-            const content = contentRef.current;
-            if (!content) return;
+    updateScale();
+    const observer = new ResizeObserver(updateScale);
+    observer.observe(frame);
+    return () => observer.disconnect();
+  }, [logicalHeight, logicalWidth]);
 
-            const frameWidth = frame.clientWidth;
-            const frameHeight = frame.clientHeight;
+  React.useEffect(() => {
+    if (loaded) applyPreviewTokens();
+  }, [applyPreviewTokens, loaded]);
 
-            // Measure natural height without the active transform.
-            // Layout width is locked to the selected viewport so the page
-            // reflows as it would at that breakpoint.
-            const prevTransform = content.style.transform;
-            content.style.transform = "none";
-            const contentHeight = Math.max(content.scrollHeight, 1);
-            content.style.transform = prevTransform;
+  React.useEffect(() => {
+    setZoom(1);
+    setLoaded(false);
+  }, [pageScope, logicalWidth]);
 
-            if (frameWidth <= 0) return;
-
-            // Zoom out when the selected viewport is wider than the panel;
-            // never zoom in past 1 so small viewports render at true size.
-            const widthScale = frameWidth / logicalWidth;
-            const nextScale =
-                fitMode === "width"
-                    ? Math.min(widthScale, 1)
-                    : frameHeight > 0
-                      ? Math.min(widthScale, frameHeight / contentHeight, 1)
-                      : Math.min(widthScale, 1);
-
-            const safeScale = Number.isFinite(nextScale) && nextScale > 0 ? nextScale : 0.5;
-            setScale(safeScale);
-            setScaledHeight(fitMode === "width" ? contentHeight * safeScale : undefined);
-        };
-
-        updateScale();
-
-        const observer = new ResizeObserver(() => {
-            updateScale();
-        });
-        observer.observe(frame);
-        if (contentRef.current) observer.observe(contentRef.current);
-
-        return () => observer.disconnect();
-    }, [selectedPage, PagePreview, previewStyleKey, fitMode, logicalWidth]);
-
+  if (!page) {
     return (
-        <section className="flex min-w-0 flex-col gap-2 rounded-xl border border-border/60 bg-background/85 p-3">
-            <div className="flex items-center gap-2">
-                <p className="app-text-label">Page-Based Live Preview</p>
-                <Badge variant={selectedPage ? "secondary" : "outline"} className="ml-auto px-1.5 app-text-micro">
-                    {selectedPage ? "Active" : "Inactive"}
-                </Badge>
-                {selectedPage && (
-                    <Badge variant="outline" className="px-1.5 app-text-micro font-mono">
-                        {logicalWidth}px
-                    </Badge>
-                )}
-            </div>
-
-            {!selectedPage && (
-                <p className="app-text-caption text-muted-foreground">
-                    Select a page override to activate this preview container.
-                </p>
-            )}
-
-            {selectedPage && !PagePreview && (
-                <p className="app-text-caption text-muted-foreground">
-                    No widget preview is registered for {resolvePreviewPageLabel(selectedPage)}.
-                </p>
-            )}
-
-            {selectedPage && PagePreview && (
-                <>
-                    <p className="app-text-caption text-muted-foreground">
-                        Preview template: {resolvePreviewPageLabel(selectedPage)} · viewport{" "}
-                        {logicalWidth}px
-                        {scale < 1 ? ` · zoomed to ${Math.round(scale * 100)}%` : null}
-                    </p>
-                    <div
-                        ref={frameRef}
-                        className={
-                            fitMode === "width"
-                                ? "relative min-w-0 w-full overflow-x-hidden overflow-y-auto rounded-xl border border-border/50 bg-background/60"
-                                : "relative min-w-0 w-full overflow-hidden rounded-xl border border-border/50 bg-background/60"
-                        }
-                        style={{ height: "min(70vh, calc(100vh - 8rem))" }}
-                    >
-                        <div
-                            className="relative w-full"
-                            style={
-                                scaledHeight
-                                    ? { height: scaledHeight }
-                                    : fitMode === "contain"
-                                      ? { height: "100%" }
-                                      : undefined
-                            }
-                        >
-                            <div
-                                key={`${selectedPage}:${previewStyleKey}:${fitMode}:${logicalWidth}`}
-                                ref={contentRef}
-                                className="origin-top-left"
-                                style={{
-                                    ...previewStyle,
-                                    width: logicalWidth,
-                                    maxWidth: logicalWidth,
-                                    transform: `scale(${scale})`,
-                                    transformOrigin: "top left",
-                                }}
-                            >
-                                <React.Suspense
-                                    fallback={
-                                        <p className="app-text-caption text-muted-foreground p-2">
-                                            Loading preview...
-                                        </p>
-                                    }
-                                >
-                                    <PagePreview />
-                                </React.Suspense>
-                            </div>
-                        </div>
-                    </div>
-                </>
-            )}
-        </section>
+      <section className="appearance-preview-panel">
+        <div className="appearance-preview-empty">
+          <p className="app-text-label">Full-page live preview</p>
+          <p className="app-text-caption text-muted-foreground">
+            Select a real application page above to open it in an isolated responsive frame.
+          </p>
+        </div>
+      </section>
     );
+  }
+
+  const src = `${page.path}${page.path.includes("?") ? "&" : "?"}appearance-preview=1`;
+
+  return (
+    <section className="appearance-preview-panel">
+      <div className="appearance-preview-toolbar">
+        <div className="min-w-0">
+          <div className="flex flex-wrap items-center gap-2">
+            <p className="app-text-label truncate">{page.label}</p>
+            <Badge variant="secondary" className="app-text-micro">
+              {logicalWidth} × {logicalHeight}
+            </Badge>
+            <Badge variant="outline" className="app-text-micro">
+              {Math.round(scale * 100)}%
+            </Badge>
+          </div>
+          <p className="app-text-caption text-muted-foreground line-clamp-1">
+            {page.description}
+          </p>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-1">
+          <Button type="button" size="icon" variant="ghost" onClick={() => setZoom((value) => Math.max(0.5, value - 0.1))} aria-label="Zoom out preview">
+            <ZoomOut className="app-icon-sm" />
+          </Button>
+          <Button type="button" size="icon" variant="ghost" onClick={() => setZoom((value) => Math.min(1.75, value + 0.1))} aria-label="Zoom in preview">
+            <ZoomIn className="app-icon-sm" />
+          </Button>
+          <Button
+            type="button"
+            size="icon"
+            variant="ghost"
+            onClick={() => {
+              setLoaded(false);
+              setReloadKey((value) => value + 1);
+            }}
+            aria-label="Reload preview"
+          >
+            <RefreshCw className="app-icon-sm" />
+          </Button>
+          <Button type="button" size="icon" variant="ghost" asChild>
+            <a href={page.path} target="_blank" rel="noreferrer" aria-label="Open page">
+              <ExternalLink className="app-icon-sm" />
+            </a>
+          </Button>
+        </div>
+      </div>
+
+      <div ref={frameRef} className="appearance-preview-stage">
+        <div className="appearance-preview-canvas" style={{ width: logicalWidth * scale, height: logicalHeight * scale }}>
+          <iframe
+            key={`${page.id}:${reloadKey}`}
+            ref={iframeRef}
+            src={src}
+            title={`${page.label} responsive theme preview`}
+            className="appearance-preview-iframe"
+            style={{ width: logicalWidth, height: logicalHeight, transform: `scale(${scale})` }}
+            onLoad={() => {
+              setLoaded(true);
+              applyPreviewTokens();
+            }}
+          />
+        </div>
+      </div>
+    </section>
+  );
 }

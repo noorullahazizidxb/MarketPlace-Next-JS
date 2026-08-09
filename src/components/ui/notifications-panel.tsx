@@ -326,7 +326,7 @@ export function NotificationsPanel({
             <div
               ref={contentRef}
               className={cn(
-                "rounded-2xl border bg-[var(--background)] text-[var(--foreground)] shadow-[0_0_0_1px_var(--border),0_8px_24px_-4px_rgba(0,0,0,0.25)] before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-[inset_0_1px_0_rgba(255,255,255,0.15),inset_0_0_0_1px_rgba(255,255,255,0.05)] relative",
+                "rounded-2xl border bg-[var(--background)] text-[var(--foreground)] shadow-token-lg before:pointer-events-none before:absolute before:inset-0 before:rounded-2xl before:shadow-token-lg relative",
                 anchor === "center"
                   ? "w-full max-w-md max-h-[84vh] overflow-y-auto p-4"
                   : "w-full",
@@ -335,19 +335,19 @@ export function NotificationsPanel({
             >
               {(markOneMutation.isPending || markAllMutation.isPending) && (
                 <div className="absolute inset-0 z-10 rounded-2xl backdrop-blur-sm bg-[color-mix(in oklab, var(--background) 8%, transparent)] grid place-items-center">
-                  <div className="h-8 w-8 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                  <div className="h-8 w-8 rounded-full border-2 border-border border-t-white animate-spin" />
                 </div>
               )}
               <div className="flex items-center justify-between p-4 border-b border-[var(--border)]">
                 <div className="flex items-center gap-2">
-                  <div className="size-8 rounded-xl bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 60%, transparent)] to-[color-mix(in oklab, var(--secondary) 50%, transparent)] grid place-items-center text-background shadow-[inset_0_-6px_20px_rgba(0,0,0,.2)]">
+                  <div className="size-8 rounded-xl bg-gradient-to-br from-[color-mix(in oklab, var(--primary) 60%, transparent)] to-[color-mix(in oklab, var(--secondary) 50%, transparent)] grid place-items-center text-background shadow-token-lg">
                     <Bell className="size-4" />
                   </div>
                   <div>
-                    <div className="text-sm font-semibold">
+                    <div className="app-text-body font-semibold">
                       {t("notifications")}
                     </div>
-                    <div className="text-xs subtle">
+                    <div className="app-text-caption subtle">
                       {unreadCount} {t("unread")}
                     </div>
                   </div>
@@ -355,7 +355,7 @@ export function NotificationsPanel({
                 {unreadCount > 0 && (
                   <button
                     onClick={markAll}
-                    className="px-3 h-9 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/30 text-sm"
+                    className="px-3 h-9 rounded-xl border border-[var(--border)] hover:bg-[var(--muted)]/30 app-text-body"
                   >
                     {t("markAllAsRead")}
                   </button>
@@ -364,13 +364,13 @@ export function NotificationsPanel({
 
               <div className="max-h-[60vh] overflow-y-auto p-2">
                 {isLoading ? (
-                  <div className="p-4 subtle text-sm">{t("loading")}</div>
+                  <div className="p-4 subtle app-text-body">{t("loading")}</div>
                 ) : error ? (
-                  <div className="p-4 text-sm text-red-500">
+                  <div className="p-4 app-text-body text-destructive">
                     {String((error as any)?.message || error)}
                   </div>
                 ) : displayList.length === 0 ? (
-                  <div className="p-6 text-center subtle text-sm">
+                  <div className="p-6 text-center subtle app-text-body">
                     {t("noNotifications")}
                   </div>
                 ) : (
@@ -379,7 +379,7 @@ export function NotificationsPanel({
                       if (!grouped[g]?.length) return null;
                       return (
                         <section key={g} className="space-y-2" aria-label={g}>
-                          <div className="px-2 text-[10px] font-semibold tracking-wide uppercase text-foreground/60">
+                          <div className="px-2 app-text-micro font-semibold tracking-wide uppercase text-foreground/60">
                             {g === "Today"
                               ? t("today")
                               : g === "Yesterday"
@@ -419,7 +419,7 @@ export function NotificationsPanel({
                                     )}
                                   >
                                     <div className="absolute inset-y-0 right-0 w-20 flex items-center justify-center bg-[color-mix(in oklab, var(--accent) 12%, transparent)] opacity-0 group-active:opacity-100 pointer-events-none">
-                                      <span className="text-[10px] font-semibold text-[var(--accent)] rotate-6">
+                                      <span className="app-text-micro font-semibold text-[var(--accent)] rotate-6">
                                         {t("swipe")}
                                       </span>
                                     </div>
@@ -437,20 +437,20 @@ export function NotificationsPanel({
                                       <div className="min-w-0 flex-1">
                                         <div className="flex items-start justify-between gap-3">
                                           <div>
-                                            <div className="text-sm font-semibold line-clamp-1">
+                                            <div className="app-text-body font-semibold line-clamp-1">
                                               {n.title ||
                                                 t("notificationSingular")}
                                             </div>
                                             {(() => {
                                               const msg = getMessage(n as any);
                                               return msg ? (
-                                                <div className="text-sm subtle line-clamp-2">
+                                                <div className="app-text-body subtle line-clamp-2">
                                                   {msg}
                                                 </div>
                                               ) : null;
                                             })()}
                                           </div>
-                                          <div className="text-2xs subtle whitespace-nowrap">
+                                          <div className="app-text-micro subtle whitespace-nowrap">
                                             {formatTimeAgo(n.createdAt)}
                                           </div>
                                         </div>
@@ -458,13 +458,13 @@ export function NotificationsPanel({
                                           {unread ? (
                                             <button
                                               onClick={() => markOne(n.id)}
-                                              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--accent)]/20 text-[var(--accent)] text-xs hover:bg-[var(--accent)]/30"
+                                              className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--accent)]/20 text-[var(--accent)] app-text-caption hover:bg-[var(--accent)]/30"
                                             >
                                               <CheckCircle2 className="size-4" />
                                               {t("markAsRead")}
                                             </button>
                                           ) : (
-                                            <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--muted)] text-foreground/70 text-xs">
+                                            <span className="inline-flex items-center gap-1.5 px-2.5 h-8 rounded-lg bg-[var(--muted)] text-foreground/70 app-text-caption">
                                               <CheckCircle2 className="size-4" />
                                               {t("read")}
                                             </span>
@@ -472,7 +472,7 @@ export function NotificationsPanel({
                                         </div>
                                       </div>
                                     </div>
-                                    <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-[0_12px_40px_rgba(0,0,0,0.25)]" />
+                                    <div className="pointer-events-none absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity shadow-token-lg" />
                                   </motion.div>
                                 </motion.li>
                               );

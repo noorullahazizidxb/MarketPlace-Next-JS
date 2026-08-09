@@ -16,6 +16,7 @@ import { Search } from "lucide-react";
 import { asset } from "@/lib/assets";
 import { ImageSlider } from "@/components/ui/image-slider";
 import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import Image from "next/image";
 
 type Story = {
   id: string;
@@ -35,12 +36,12 @@ const Hero: React.FC<{
 }> = ({ q, setQ, onCreate }) => (
   <div className="relative overflow-hidden rounded-3xl border border-[var(--border)]">
     <div className="absolute inset-0 -z-10 bg-[radial-gradient(1200px_600px_at_80%_-10%,color-mix(in oklab, var(--primary) 20%, transparent),transparent_60%),_linear-gradient(to_bottom_right,var(--card),color-mix(in oklab, var(--card) 80%, transparent))]" />
-    <div className="p-6 sm:p-8 md:p-10 grid gap-4">
+    <div className="p-[var(--space-card)] sm:p-[var(--space-card)] md:p-[var(--space-card)] grid gap-[var(--space-gap)]">
       <motion.h1
         initial={{ opacity: 0, y: 8 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.3 }}
-        className="text-2xl sm:text-3xl font-extrabold tracking-tight"
+        className="app-text-h2 sm:app-text-h1 font-extrabold tracking-tight"
       >
         Admin Stories
       </motion.h1>
@@ -84,7 +85,7 @@ const StoryCard: React.FC<{
     animate={{ opacity: 1, y: 0 }}
     whileHover={{ y: -3 }}
     transition={{ duration: 0.25 }}
-    className="rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--card)] shadow-[0_6px_24px_-10px_rgba(0,0,0,0.45)]"
+    className="rounded-2xl border border-[var(--border)] overflow-hidden bg-[var(--card)] shadow-token-lg"
   >
     <button
       type="button"
@@ -98,8 +99,8 @@ const StoryCard: React.FC<{
         heightClass="h-80"
       />
     </button>
-    <div className="p-4">
-      <div className="flex items-center gap-2 text-xs subtle">
+    <div className="p-[var(--space-card)]">
+      <div className="flex items-center gap-2 app-text-caption subtle">
         <Link
           href={s.user?.id ? `/profile/${s.user.id}` : "#"}
           onClick={(e) => {
@@ -109,14 +110,15 @@ const StoryCard: React.FC<{
         >
           <div className="size-7 rounded-full overflow-hidden bg-[color-mix(in oklab, var(--muted) 20%, transparent)] grid place-items-center">
             {s.user?.photo ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img
+              <Image
                 src={asset(s.user.photo)}
                 alt={s.user.fullName || "avatar"}
-                className="w-7 h-7 object-cover"
+                width={28}
+                height={28}
+                className="size-7 object-cover"
               />
             ) : (
-              <div className="text-[10px] font-semibold">
+              <div className="app-text-micro font-semibold">
                 {(s.user?.fullName || "S").slice(0, 1)}
               </div>
             )}
@@ -135,7 +137,7 @@ const StoryCard: React.FC<{
           </Badge>
         )}
       </div>
-      <h3 className="mt-2 text-base font-semibold line-clamp-2">{s.title}</h3>
+      <h3 className="mt-2 app-text-body font-semibold line-clamp-2">{s.title}</h3>
       <div className="mt-3 flex items-center gap-2">
         <Button variant="secondary" onClick={onView} size="sm">
           View
@@ -145,7 +147,7 @@ const StoryCard: React.FC<{
         </Button>
         <Button
           variant="secondary"
-          className="text-red-500 hover:text-red-600"
+          className="text-destructive hover:text-destructive"
           onClick={onDelete}
           size="sm"
         >
@@ -182,14 +184,14 @@ export default function AdminStoriesIndexPage() {
   if (!isAdmin) return null;
 
   return (
-    <div className="space-y-6 app-shell-page" data-app-page="admin-stories">
+    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="admin-stories">
       <Hero
         q={q}
         setQ={setQ}
         onCreate={() => router.push("/admin/stories/create")}
       />
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]">
           {Array.from({ length: 6 }).map((_, i) => (
             <div
               key={i}
@@ -205,7 +207,7 @@ export default function AdminStoriesIndexPage() {
             hidden: {},
             show: { transition: { staggerChildren: 0.05 } },
           }}
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5"
+          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]"
         >
           <AnimatePresence>
             {items.map((s) => (
