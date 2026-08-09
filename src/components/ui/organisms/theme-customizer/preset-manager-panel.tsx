@@ -260,7 +260,7 @@ function PresetDialog({
                 {/* Footer */}
                 <div className="flex items-center justify-end gap-2 px-5 py-4 border-t border-border bg-muted/30">
                     <Button variant="ghost" onClick={onClose} disabled={saving}>Cancel</Button>
-                    <Button variant="primary" onClick={handleSave} loading={saving}>
+                    <Button variant="default" onClick={handleSave} loading={saving}>
                         <Check className="size-3.5 mr-1" />
                         {initial?.id ? "Save Changes" : "Create Preset"}
                     </Button>
