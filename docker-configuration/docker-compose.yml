@@ -127,6 +127,7 @@ services:
         NEXT_PUBLIC_FACEBOOK_AUTH_URL: "/api/auth/facebook"
         NEXT_PUBLIC_SITE_URL: "https://marketplace.devminds.net"
         NEXT_PUBLIC_USE_MOCK_DATA: "false"
+        NEXT_PUBLIC_RECAPTCHA_SITE_KEY: "${NEXT_PUBLIC_RECAPTCHA_SITE_KEY:-}"
         BLOG_ORIGIN: "https://blogs.devminds.net"
         MARKETPLACE_ORIGIN: "https://marketplace.devminds.net"
     restart: unless-stopped
