@@ -7,3 +7,5 @@ export {
   MobileThemeCustomizerSheetContent,
   type ThemeCustomizerProps,
 } from "./theme-customizer/main";
+
+export { CustomPresetStudio } from "./theme-customizer/custom-preset-studio";

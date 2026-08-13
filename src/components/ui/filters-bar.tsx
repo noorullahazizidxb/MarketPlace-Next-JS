@@ -3,14 +3,54 @@
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Box, Home, Tag, SlidersHorizontal, Check } from "lucide-react";
+import {
+  Box,
+  BriefcaseBusiness,
+  Car,
+  Check,
+  Home,
+  Laptop,
+  Layers3,
+  RotateCcw,
+  Shirt,
+  SlidersHorizontal,
+  Tag,
+  Wrench,
+} from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useApiGet } from "@/lib/api-hooks";
 import { cn } from "@/lib/cn";
 import { BottomSheet } from "@/components/ui/bottom-sheet";
 import { Button } from "@/components/ui/button";
 
-type Category = { id: number; name: string; slug: string };
+type Category = {
+  id: number;
+  name: string;
+  slug: string;
+  listings?: unknown[];
+  _count?: { listings?: number };
+  _counts?: { listings?: number };
+};
+
+function categoryIcon(slug: string) {
+  const value = slug.toLowerCase();
+  if (/car|auto|motor|vehicle/.test(value)) return Car;
+  if (/home|house|property|estate|apartment|land/.test(value)) return Home;
+  if (/electronic|phone|computer|tech/.test(value)) return Laptop;
+  if (/fashion|cloth|apparel|shoe/.test(value)) return Shirt;
+  if (/job|career|employment/.test(value)) return BriefcaseBusiness;
+  if (/service|repair|maintenance/.test(value)) return Wrench;
+  return Box;
+}
+
+function categoryCount(category: Category) {
+  return (
+    category._count?.listings ??
+    category._counts?.listings ??
+    category.listings?.length ??
+    0
+  );
+}
 
 function setParam(params: URLSearchParams, key: string, value?: string | null) {
   const p = new URLSearchParams(params.toString());
@@ -25,12 +65,14 @@ function Chip({
   onClick,
   id,
   Icon,
+  count,
 }: {
   label: string;
   active: boolean;
   onClick: () => void;
   id: string;
   Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  count?: number;
 }) {
   return (
     <motion.button
@@ -41,7 +83,7 @@ function Chip({
       animate={{ opacity: 1 }}
       onClick={onClick}
       className={cn(
-        "relative px-4 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-full app-text-label font-medium inline-flex items-center gap-1.5 border transition-all duration-200 overflow-hidden select-none",
+        "relative min-h-[var(--ctrl-h-sm)] shrink-0 overflow-hidden rounded-full border px-3.5 app-text-label font-medium inline-flex items-center gap-1.5 transition-all duration-200 select-none",
         active
           ? "bg-primary border-primary/40 text-primary-foreground shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)]"
           : "bg-card/60 backdrop-blur-sm border-border/60 text-foreground/70 hover:border-primary/40 hover:text-foreground hover:bg-card"
@@ -76,6 +118,16 @@ function Chip({
         ) : null}
       </AnimatePresence>
       <span>{label}</span>
+      {typeof count === "number" && count > 0 && (
+        <span
+          className={cn(
+            "rounded-full px-1.5 py-0.5 app-text-micro font-semibold tabular-nums",
+            active ? "bg-background/18 text-primary-foreground" : "bg-muted text-muted-foreground",
+          )}
+        >
+          {count}
+        </span>
+      )}
     </motion.button>
   );
 }
@@ -114,11 +166,19 @@ export function FiltersBar() {
   };
 
   const activeCount = (type ? 1 : 0) + (categoryId ? 1 : 0);
+  const clearFilters = () => {
+    const q = new URLSearchParams(search.toString());
+    q.delete("type");
+    q.delete("categoryId");
+    q.delete("page");
+    q.delete("id");
+    router.push(q.size ? `${pathname}?${q.toString()}` : pathname);
+  };
 
   return (
     <>
       {/* Mobile trigger */}
-      <div className="flex items-center gap-[var(--space-gap)] sm:hidden">
+      <div className="flex items-center justify-between gap-[var(--space-gap)] sm:hidden">
         <Button
           type="button"
           variant="primary"
@@ -135,44 +195,61 @@ export function FiltersBar() {
             </span>
           )}
         </Button>
-        {activeCount > 0 && (
-          <motion.span
-            initial={{ opacity: 0, x: -4 }}
-            animate={{ opacity: 1, x: 0 }}
-            className="app-text-caption text-primary font-medium"
-          >
-            {activeCount} {(t as any)("filtersActive") || "active"}
-          </motion.span>
-        )}
+        <span className="app-text-caption text-muted-foreground">
+          {activeCount > 0
+            ? `${activeCount} ${(t as any)("filtersActive") || "active"}`
+            : `${cats.length} ${t("categoryLabel")}`}
+        </span>
       </div>
 
       {/* Desktop pill chips */}
-      <div className="hidden sm:flex flex-wrap items-center gap-[var(--space-gap)]">
-        {/* Divider label */}
-        <span className="app-text-caption uppercase tracking-widest font-semibold text-foreground/35 mr-1">
-          {t("typeLabel")}
-        </span>
-        <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="type-all" Icon={Home} />
-        <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="type-rent" Icon={Home} />
-        <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="type-sale" Icon={Tag} />
+      <div className="hidden space-y-4 sm:block">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <div className="inline-flex items-center gap-1.5 app-text-caption font-semibold uppercase tracking-[0.12em] text-primary">
+              <Layers3 className="size-3.5" /> {t("categoryLabel")}
+            </div>
+            <p className="mt-1 app-text-body text-muted-foreground">
+              Narrow the marketplace by offer type and category.
+            </p>
+          </div>
+          {activeCount > 0 && (
+            <button
+              type="button"
+              onClick={clearFilters}
+              className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl px-3 app-text-label font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <RotateCcw className="size-3.5" /> Clear filters
+            </button>
+          )}
+        </div>
 
-        {/* Divider */}
-        <div className="mx-2 h-5 w-px rounded-full bg-border/50" />
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <span className="mr-1 shrink-0 app-text-micro font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            {t("typeLabel")}
+          </span>
+          <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="type-all" Icon={Layers3} />
+          <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="type-rent" Icon={Home} />
+          <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="type-sale" Icon={Tag} />
+        </div>
 
-        <span className="app-text-caption uppercase tracking-widest font-semibold text-foreground/35 mr-1">
-          {t("categoryLabel")}
-        </span>
-        <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="category-all" Icon={Box} />
-        {cats.map((c) => (
-          <Chip
-            key={c.id}
-            label={c.name}
-            active={categoryId === String(c.id)}
-            onClick={() => onCategory(String(c.id))}
-            id={`category-${c.id}`}
-            Icon={Box}
-          />
-        ))}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+          <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="category-all" Icon={Layers3} />
+          {cats.map((category) => {
+            const Icon = categoryIcon(category.slug || category.name);
+            return (
+              <Chip
+                key={category.id}
+                label={category.name}
+                count={categoryCount(category)}
+                active={categoryId === String(category.id)}
+                onClick={() => onCategory(String(category.id))}
+                id={`category-${category.id}`}
+                Icon={Icon}
+              />
+            );
+          })}
+        </div>
       </div>
 
       {/* Bottom sheet for mobile */}
@@ -198,21 +275,30 @@ export function FiltersBar() {
             </p>
             <div className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto pr-1">
               <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="m-cat-all" Icon={Box} />
-              {cats.map((c) => (
-                <Chip
-                  key={c.id}
-                  label={c.name}
-                  active={categoryId === String(c.id)}
-                  onClick={() => onCategory(String(c.id))}
-                  id={`m-cat-${c.id}`}
-                  Icon={Box}
-                />
-              ))}
+              {cats.map((category) => {
+                const Icon = categoryIcon(category.slug || category.name);
+                return (
+                  <Chip
+                    key={category.id}
+                    label={category.name}
+                    count={categoryCount(category)}
+                    active={categoryId === String(category.id)}
+                    onClick={() => onCategory(String(category.id))}
+                    id={`m-cat-${category.id}`}
+                    Icon={Icon}
+                  />
+                );
+              })}
             </div>
           </div>
-          <div className="flex justify-end pt-1">
-            <Button variant="accent" size="sm" onClick={() => setOpen(false)}>
-              {t("close") || "Close"}
+          <div className="sticky bottom-0 flex items-center gap-2 border-t border-border bg-card/95 pt-3 backdrop-blur">
+            {activeCount > 0 && (
+              <Button variant="secondary" size="sm" onClick={clearFilters} className="flex-1">
+                Clear
+              </Button>
+            )}
+            <Button variant="accent" size="sm" onClick={() => setOpen(false)} className="flex-1">
+              Show results
             </Button>
           </div>
         </div>

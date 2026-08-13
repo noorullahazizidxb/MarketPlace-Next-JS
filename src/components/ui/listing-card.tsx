@@ -1,80 +1,285 @@
 "use client";
 
-import Image from "next/image";
+import { useState } from "react";
+import { motion } from "framer-motion";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
 import {
+  ArrowUpRight,
+  BadgeCheck,
+  Building2,
+  MapPin,
+  MessageSquare,
   Phone,
   ShieldCheck,
-  ArrowRight,
   Star,
-  MessageSquare,
-  TagIcon,
-  CreditCard,
 } from "lucide-react";
 import { ImageSlider } from "@/components/ui/image-slider";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
-import { useLanguage } from "@/components/providers/language-provider";
+import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useLanguage } from "@/components/providers/language-provider";
+import { listingFallbackImage, type AssetImage } from "@/lib/assets";
 
-type ListingImage = { url: string; alt?: string | null };
 type Representative = {
-  representative: {
-    id: number;
-    region: string;
-    whatsappNumber?: string;
-    active: boolean;
+  representative?: {
+    id?: number;
+    region?: string | null;
+    whatsappNumber?: string | null;
+    whatsapp?: string | null;
+    active?: boolean;
   };
+  id?: number;
+  region?: string | null;
+  whatsappNumber?: string | null;
+  whatsapp?: string | null;
+  active?: boolean;
 };
 
 export type Listing = {
-  id: string;
+  id: string | number;
   title: string;
   description?: string | null;
   price?: string | number | null;
   currency?: string | null;
   listingType?: string | null;
   contactVisibility?: "SHOW_SELLER" | "HIDE_SELLER" | string | null;
-  images?: ListingImage[];
+  images?: Array<AssetImage | string | null> | null;
+  imageUrl?: string | null;
   representatives?: Representative[];
   user?: {
     id: string;
     name?: string | null;
-    contacts?: { phone?: string; whatsapp?: string };
+    fullName?: string | null;
+    contacts?: { phone?: string; whatsapp?: string } | null;
   };
   location?: string | null;
+  categoryId?: string | number | null;
   category?: {
+    id?: string | number | null;
     name: string;
-  };
+  } | null;
   averageRating?: number | null;
   reviewCount?: number | null;
+  promoted?: boolean | null;
 };
+
+function normalizeImages(listing: Listing) {
+  const images = Array.isArray(listing.images) ? listing.images : [];
+  if (images.length > 0) return images;
+  return listing.imageUrl
+    ? [{ url: listing.imageUrl, alt: listing.title }]
+    : [];
+}
+
+function ContactDialog({
+  listing,
+  open,
+  onOpenChange,
+}: {
+  listing: Listing;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const { t } = useLanguage();
+  const phone = listing.user?.contacts?.phone;
+  const whatsapp = listing.user?.contacts?.whatsapp;
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="flex max-h-[min(88dvh,38rem)] max-w-md flex-col overflow-hidden p-0">
+        <div className="flex items-start gap-3 border-b border-border px-5 py-4">
+          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-success/12 text-success">
+            <Phone className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="app-text-heading-sm font-semibold">
+              {t("contactSellerTitle")}
+            </DialogTitle>
+            <p className="mt-1 app-text-caption text-muted-foreground">
+              {t("contactSellerSubtitle")}
+            </p>
+          </div>
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label={t("close")}
+              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <span aria-hidden>×</span>
+            </button>
+          </DialogClose>
+        </div>
+
+        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-5">
+          {phone && (
+            <a
+              href={`tel:${phone}`}
+              className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-border bg-muted/25 px-4 py-3 font-medium transition-colors hover:border-primary/35 hover:bg-primary/5"
+            >
+              <span className="inline-flex items-center gap-2">
+                <Phone className="size-4 text-primary" /> {t("call")}
+              </span>
+              <span className="app-text-caption text-muted-foreground">{phone}</span>
+            </a>
+          )}
+          {whatsapp && (
+            <a
+              href={`https://wa.me/${String(whatsapp).replace(/[^\d]/g, "")}`}
+              target="_blank"
+              rel="noreferrer"
+              className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-success/25 bg-success/8 px-4 py-3 font-medium text-success transition-colors hover:bg-success/12"
+            >
+              <span className="inline-flex items-center gap-2">
+                <MessageSquare className="size-4" /> {t("whatsApp")}
+              </span>
+              <span className="app-text-caption">{whatsapp}</span>
+            </a>
+          )}
+          {!phone && !whatsapp && (
+            <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
+              {t("noContact")}
+            </div>
+          )}
+        </div>
+
+        <div className="shrink-0 border-t border-border bg-card/95 p-4 backdrop-blur">
+          <DialogClose asChild>
+            <button className="min-h-11 w-full rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-opacity hover:opacity-90">
+              {t("close")}
+            </button>
+          </DialogClose>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+function RepresentativesDialog({
+  listing,
+  open,
+  onOpenChange,
+}: {
+  listing: Listing;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}) {
+  const { t } = useLanguage();
+  const representatives = Array.isArray(listing.representatives)
+    ? listing.representatives
+    : [];
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="flex max-h-[min(88dvh,40rem)] max-w-lg flex-col overflow-hidden p-0">
+        <div className="flex items-start gap-3 border-b border-border px-5 py-4">
+          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+            <ShieldCheck className="size-4" />
+          </span>
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="app-text-heading-sm font-semibold">
+              {t("representatives")}
+            </DialogTitle>
+            <p className="mt-1 app-text-caption text-muted-foreground">
+              {t("representativesSubtitle")}
+            </p>
+          </div>
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label={t("close")}
+              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              <span aria-hidden>×</span>
+            </button>
+          </DialogClose>
+        </div>
+
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-5">
+          {representatives.length > 0 ? (
+            representatives.map((row, index) => {
+              const representative = row.representative ?? row;
+              const phone =
+                representative.whatsappNumber ?? representative.whatsapp ?? "";
+              return (
+                <div
+                  key={representative.id ?? index}
+                  className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 p-3"
+                >
+                  <div className="min-w-0">
+                    <p className="font-medium">
+                      {representative.region || t("unknown")}
+                    </p>
+                    <p className="mt-0.5 app-text-caption text-muted-foreground">
+                      {phone || t("noContact")}
+                    </p>
+                  </div>
+                  {phone && (
+                    <a
+                      href={`https://wa.me/${String(phone).replace(/[^\d]/g, "")}`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-success px-3 app-text-label font-medium text-primary-foreground"
+                    >
+                      <MessageSquare className="size-4" /> {t("whatsApp")}
+                    </a>
+                  )}
+                </div>
+              );
+            })
+          ) : (
+            <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
+              {t("noRepresentatives")}
+            </div>
+          )}
+        </div>
+
+        <div className="shrink-0 border-t border-border bg-card/95 p-4 backdrop-blur">
+          <DialogClose asChild>
+            <button className="min-h-11 w-full rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-opacity hover:opacity-90">
+              {t("close")}
+            </button>
+          </DialogClose>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
 
 export function ListingCard({
   listing,
   cleanImageOverlayOnEngage = false,
+  priority = false,
 }: {
   listing: Listing;
   cleanImageOverlayOnEngage?: boolean;
+  priority?: boolean;
 }) {
   const { t } = useLanguage();
   const [contactOpen, setContactOpen] = useState(false);
-  const [repOpen, setRepOpen] = useState(false);
+  const [representativesOpen, setRepresentativesOpen] = useState(false);
   const [isImageEngaged, setIsImageEngaged] = useState(false);
   const showSeller = listing.contactVisibility === "SHOW_SELLER";
-  const hideImageOverlays = cleanImageOverlayOnEngage && isImageEngaged;
-  const showHoverCta = isImageEngaged;
+  const promoted = listing.promoted || !showSeller;
+  const rating =
+    typeof listing.averageRating === "number" ? listing.averageRating : null;
+  const reviews =
+    typeof listing.reviewCount === "number" ? listing.reviewCount : 0;
+  const price = listing.price != null && String(listing.price).trim()
+    ? `${listing.price}${listing.currency ? ` ${listing.currency}` : ""}`
+    : t("contactSeller");
+  const images = normalizeImages(listing);
+  const fallbackSrc = listingFallbackImage(listing.category?.name);
+  const hideOverlays = cleanImageOverlayOnEngage && isImageEngaged;
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 12 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.2 }}
-      className="group hover-ambient relative rounded-2xl bg-card border border-border shadow-sm transition-transform duration-300 hover:-translate-y-1 hover:shadow-lg overflow-hidden"
+      viewport={{ once: true, amount: 0.15 }}
+      transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+      className="group relative flex h-full min-w-0 flex-col overflow-hidden rounded-[1.35rem] border border-border/70 bg-card shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-token-lg"
     >
       <div
-        className="relative overflow-hidden rounded-t-2xl"
+        className="relative overflow-hidden bg-muted"
         onMouseEnter={() => setIsImageEngaged(true)}
         onMouseLeave={() => setIsImageEngaged(false)}
         onFocus={() => setIsImageEngaged(true)}
@@ -84,347 +289,134 @@ export function ListingCard({
             setIsImageEngaged(false);
           }
         }}
-        onTouchStart={() => setIsImageEngaged(true)}
-        onTouchEnd={() => setIsImageEngaged(false)}
-        onTouchCancel={() => setIsImageEngaged(false)}
       >
-        {listing.images && listing.images.length > 0 ? (
-          <ImageSlider
-            images={listing.images}
-            autoPlay
-            forceEngaged={isImageEngaged}
-            className="transition-transform duration-500 group-hover:scale-103"
-            aspect="1/1"
-          />
-        ) : (
-          <div className="relative aspect-square w-full animate-pulse bg-gradient-to-br from-[color-mix(in oklab, var(--card) 8%, transparent)] via-[color-mix(in oklab, var(--card) 4%, transparent)] to-transparent" />
-        )}
-        {/* ── Static overlays — CSS transitions, no framer runtime cost ─────── */}
-        {/* Gradient + radial blend — always present, opacity via CSS */}
-        <div
-          className={
-            "absolute inset-0 pointer-events-none transition-opacity duration-200 " +
-            (hideImageOverlays ? "opacity-0" : "opacity-100")
-          }
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-[color-mix(in oklab, var(--background) 80%, transparent)] via-[color-mix(in oklab, var(--background) 10%, transparent)] to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,color-mix(in oklab, var(--accent) 12%, transparent),transparent_70%)] mix-blend-soft-light" />
-        </div>
+        <ImageSlider
+          images={images}
+          aspect="3/2"
+          autoPlay
+          forceEngaged={isImageEngaged}
+          intervalMs={4200}
+          firstSlideIsPriority={priority}
+          fallbackSrc={fallbackSrc}
+          className="transition-transform duration-700 group-hover:scale-[1.025]"
+        />
+        <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-overlay-dark/55 via-transparent to-overlay-dark/10" />
 
-        {/* Hover CTA — single AnimatePresence for the one element that truly needs a spring */}
-        <AnimatePresence initial={false}>
-          {showHoverCta && (
-            <motion.div
-              initial={{ opacity: 0, y: 8 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8 }}
-              transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute inset-0 flex items-end justify-center p-[var(--space-card)] pointer-events-none z-10"
-            >
-              <div className="pointer-events-auto w-full flex justify-between items-center">
-                <Link
-                  className="inline-flex items-center gap-2 rounded-2xl bg-primary px-4 py-2 text-primary-foreground no-underline shadow-md transition-all duration-200 hover:bg-primary hover:text-primary-foreground hover:no-underline hover:shadow-lg"
-                  href={`/listings/${listing.id}`}
-                >
-                  {t("details")}
-                  <ArrowRight className="size-4" />
-                </Link>
-                <span className="app-text-caption px-3 py-1 rounded-full bg-background/70 border border-border">
-                  {listing.price} {listing.currency}
-                </span>
-              </div>
-            </motion.div>
+        <div
+          className={`absolute inset-x-3 top-3 flex items-start justify-between gap-2 transition-opacity duration-200 ${hideOverlays ? "opacity-0" : "opacity-100"}`}
+        >
+          <div className="flex min-w-0 flex-wrap gap-1.5">
+            {listing.listingType && (
+              <span className="rounded-full border border-overlay-light/20 bg-overlay-dark/55 px-2.5 py-1 app-text-micro font-semibold uppercase tracking-[0.08em] text-overlay-light backdrop-blur-md">
+                {listing.listingType}
+              </span>
+            )}
+            {promoted && (
+              <span className="inline-flex items-center gap-1 rounded-full border border-warning/25 bg-warning/90 px-2.5 py-1 app-text-micro font-semibold text-warning-foreground shadow-sm">
+                <BadgeCheck className="size-3" /> {t("promoted")}
+              </span>
+            )}
+          </div>
+          {rating != null && (
+            <span className="inline-flex shrink-0 items-center gap-1 rounded-full border border-overlay-light/20 bg-overlay-dark/55 px-2.5 py-1 app-text-caption font-semibold text-overlay-light backdrop-blur-md">
+              <Star className="size-3 fill-warning text-warning" />
+              {rating.toFixed(1)}
+              {reviews > 0 && <span className="font-normal opacity-70">({reviews})</span>}
+            </span>
           )}
-        </AnimatePresence>
-
-        {/* Badges — CSS opacity transitions, no per-badge AnimatePresence */}
-        <div
-          className={
-            "absolute top-2 right-2 z-[0] flex flex-col items-end gap-2 pointer-events-none transition-opacity duration-200 " +
-            (hideImageOverlays ? "opacity-0" : "opacity-100")
-          }
-        >
-          {/* Rating badge - default to 0.0 */}
-          <div className="inline-flex items-center gap-2 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 app-text-caption text-foreground shadow-md">
-            <div className="flex items-center -ml-1">
-              {Array.from({ length: 5 }).map((_, i) => {
-                const rating =
-                  typeof listing.averageRating === "number"
-                    ? listing.averageRating
-                    : 0;
-                const filled = i + 1 <= Math.floor(rating);
-                const half =
-                  !filled && i < Math.ceil(rating) && rating % 1 >= 0.5;
-                return (
-                  <Star
-                    key={i}
-                    className={
-                      "mr-[2px] size-3 transition-colors " +
-                      (filled
-                        ? "text-warning fill-warning"
-                        : half
-                          ? "text-warning"
-                          : "text-muted-foreground dark:text-primary-foreground/30")
-                    }
-                  />
-                );
-              })}
-            </div>
-            <span className="ml-1 font-medium tabular-nums">
-              {(typeof listing.averageRating === "number"
-                ? listing.averageRating
-                : 0
-              ).toFixed(1)}
-            </span>
-          </div>
-          {/* Reviews badge - default to 0 */}
-          <div className="inline-flex items-center gap-1 rounded-full border border-accent/30 bg-background/80 backdrop-blur px-2 py-1 app-text-caption text-foreground shadow-md">
-            <MessageSquare className="size-3.5 text-warning dark:text-warning" />
-            <span className="font-medium tabular-nums">
-              {typeof listing.reviewCount === "number"
-                ? listing.reviewCount
-                : 0}
-            </span>
-          </div>
         </div>
 
-        {/* Price — top-left */}
         <div
-          className={
-            "absolute top-2 left-2 z-[0] transition-opacity duration-200 " +
-            (hideImageOverlays ? "opacity-0" : "opacity-100")
-          }
+          className={`absolute inset-x-3 bottom-3 flex items-end justify-between gap-2 transition-opacity duration-200 ${hideOverlays ? "opacity-0" : "opacity-100"}`}
         >
-          <span className="app-text-caption px-3 py-1 rounded-full shadow-glass text-foreground font-semibold glass flex items-center gap-2">
-            <CreditCard className="size-4 inline-flex" />
-            <span className="font-medium tabular-nums">
-              {listing.price} {listing.currency}
+          {listing.category?.name ? (
+            <span className="inline-flex min-w-0 items-center gap-1.5 rounded-full border border-overlay-light/20 bg-overlay-dark/55 px-2.5 py-1 app-text-caption text-overlay-light backdrop-blur-md">
+              <Building2 className="size-3 shrink-0" />
+              <span className="truncate">{listing.category.name}</span>
             </span>
+          ) : <span />}
+          <span className="shrink-0 rounded-xl bg-background/92 px-3 py-1.5 app-text-label font-bold text-foreground shadow-lg backdrop-blur-md">
+            {price}
           </span>
         </div>
+      </div>
 
-        {/* Seller / Promoted — bottom-left */}
-        <div
-          className={
-            "absolute bottom-2 left-2 z-[0] flex items-center gap-2 transition-opacity duration-200 " +
-            (hideImageOverlays ? "opacity-0" : "opacity-100")
-          }
-        >
-          {showSeller ? (
-            <Tooltip content={t("contactSeller")} side="top">
-              <span
-                onClick={() => setContactOpen(true)}
-                className="app-text-micro px-2 py-1 rounded-full bg-success text-primary-foreground border border-accent/50 flex items-center gap-1 shadow-sm cursor-pointer"
-              >
-                <Phone className="size-3" /> {t("seller")}
-              </span>
-            </Tooltip>
-          ) : (
-            <span className="app-text-micro px-2 py-1 rounded-full bg-warning text-foreground border border-accent/30 flex items-center gap-1 shadow-sm">
-              <ShieldCheck className="size-3" /> {t("promoted")}
+      <div className="flex flex-1 flex-col p-[var(--space-card)]">
+        <div className="min-w-0">
+          <Link
+            href={`/listings/${listing.id}`}
+            className="block rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+          >
+            <h3 className="line-clamp-2 app-text-heading-sm font-semibold leading-snug tracking-tight text-foreground transition-colors group-hover:text-primary">
+              {listing.title}
+            </h3>
+          </Link>
+          {listing.description && (
+            <p className="mt-2 line-clamp-2 app-text-body leading-relaxed text-muted-foreground">
+              {String(listing.description).trim()}
+            </p>
+          )}
+        </div>
+
+        <div className="mt-3 flex min-h-6 items-center gap-3 app-text-caption text-muted-foreground">
+          {listing.location && (
+            <span className="inline-flex min-w-0 items-center gap-1.5">
+              <MapPin className="size-3.5 shrink-0 text-primary" />
+              <span className="truncate">{listing.location}</span>
+            </span>
+          )}
+          {!listing.location && (
+            <span className="inline-flex items-center gap-1.5">
+              <ShieldCheck className="size-3.5 text-success" />
+              {showSeller ? t("seller") : t("promoted")}
             </span>
           )}
         </div>
 
-        {/* Category — bottom-right */}
-        {listing.category?.name && (
-          <div
-            className={
-              "absolute bottom-2 right-2 z-[0] flex items-center gap-2 transition-opacity duration-200 " +
-              (hideImageOverlays ? "opacity-0" : "opacity-100")
-            }
+        <div className="mt-auto flex items-center gap-2 border-t border-border/60 pt-4">
+          <Tooltip
+            content={showSeller ? t("contactSeller") : t("chooseRepresentative")}
+            side="top"
           >
-            <span className="app-text-micro px-2 py-1 rounded-full bg-primary text-primary-foreground border border-accent/30 flex items-center gap-1 shadow-sm">
-              <TagIcon className="size-3" /> {listing.category?.name}
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="p-[var(--space-card)]">
-        <h3 className="font-semibold tracking-tight line-clamp-1 app-text-body">
-          {listing.title}
-        </h3>
-        {listing.description && (
-          <p
-            className="mt-1 app-text-caption leading-snug text-muted-foreground truncate"
-            title={String(listing.description || "").trim()}
-          >
-            {String(listing.description || "").trim()}
-          </p>
-        )}
-
-        {listing.location && (
-          <p className="subtle mt-1 app-text-caption flex items-center gap-1">
-            <span className="inline-block size-1.5 rounded-full bg-accent" />
-            {listing.location}
-          </p>
-        )}
-
-        <div className="mt-3 flex items-center justify-between">
-          {showSeller ? (
-            <>
-              <Tooltip content={t("contactSeller")} side="top">
-                <button
-                  onClick={() => setContactOpen(true)}
-                  className="app-text-caption inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-success/10 text-success dark:text-success hover:bg-success/20 hover:-translate-y-0.5 transition-all border border-success/35"
-                >
-                  <Phone className="size-3" />
-                  {t("contactSeller")}
-                </button>
-              </Tooltip>
-              <Dialog open={contactOpen} onOpenChange={setContactOpen}>
-                <DialogContent className="max-w-sm p-[var(--space-card)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="app-text-heading-sm font-semibold">
-                      {t("contactSellerTitle")}
-                    </h3>
-                    <Tooltip content={t("close")} side="top">
-                      <DialogClose asChild>
-                        <button
-                          aria-label={t("close")}
-                          className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
-                        >
-                          ×
-                        </button>
-                      </DialogClose>
-                    </Tooltip>
-                  </div>
-                  <p className="subtle mb-4 app-text-body">
-                    {t("contactSellerSubtitle")}
-                  </p>
-                  <div className="flex flex-col gap-[var(--space-gap)]">
-                    {listing.user?.contacts?.phone && (
-                      <a
-                        href={`tel:${listing.user.contacts.phone}`}
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-warning text-foreground border border-border hover:ring-2 ring-accent/40 transition-all"
-                        onClick={() => setContactOpen(false)}
-                      >
-                        <Phone className="size-4" /> {t("call")}{" "}
-                        {listing.user.contacts.phone}
-                      </a>
-                    )}
-                    {listing.user?.contacts?.whatsapp && (
-                      <a
-                        href={`https://wa.me/${String(
-                          listing.user.contacts.whatsapp,
-                        ).replace(/[+\s]/g, "")}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-success border border-border text-accent-foreground hover:shadow-lg hover:-translate-y-0.5 transition-all"
-                        onClick={() => setContactOpen(false)}
-                      >
-                        <Phone className="size-4" /> {t("whatsApp")}{" "}
-                        {listing.user.contacts.whatsapp}
-                      </a>
-                    )}
-                    <DialogClose asChild>
-                      <button className="mt-2 app-text-body inline-flex items-center justify-center bg-accent gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-accent/30 hover:-translate-y-0.5 transition-all">
-                        {t("close")}
-                      </button>
-                    </DialogClose>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </>
-          ) : (
-            <>
-              <Tooltip content={t("chooseRepresentative")} side="top">
-                <button
-                  onClick={() => setRepOpen(true)}
-                  className="app-text-body inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-accent/30 hover:-translate-y-0.5 transition-all"
-                >
-                  {t("chooseRepresentative")}
-                </button>
-              </Tooltip>
-              <Dialog open={repOpen} onOpenChange={setRepOpen}>
-                <DialogContent className="max-w-md p-[var(--space-card)]">
-                  <div className="flex items-center justify-between mb-2">
-                    <h3 className="app-text-heading-sm font-semibold">
-                      {t("representatives")}
-                    </h3>
-                    <Tooltip content={t("close")} side="top">
-                      <DialogClose asChild>
-                        <button
-                          aria-label={t("close")}
-                          className="size-8 grid place-items-center rounded-xl hover:bg-foreground/5"
-                        >
-                          ×
-                        </button>
-                      </DialogClose>
-                    </Tooltip>
-                  </div>
-                  <p className="subtle mb-4 app-text-body">
-                    {t("representativesSubtitle")}
-                  </p>
-                  <div className="flex flex-col gap-[var(--space-gap)] max-h-[50vh] overflow-y-auto pr-1">
-                    {Array.isArray(listing.representatives) &&
-                      listing.representatives.length > 0 ? (
-                      listing.representatives.map((r, idx) => {
-                        const rep = (r as any).representative ?? r;
-                        const phone =
-                          rep?.whatsappNumber || rep?.whatsapp || "";
-                        return (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between gap-2 p-[var(--space-filter)] rounded-lg border border-border bg-card"
-                          >
-                            <div>
-                              <div className="font-medium">
-                                {rep?.region ?? t("unknown")}
-                              </div>
-                              {phone && (
-                                <div className="app-text-caption subtle">{phone}</div>
-                              )}
-                            </div>
-                            {phone ? (
-                              <a
-                                href={`https://wa.me/${String(phone).replace(
-                                  /[+\s]/g,
-                                  "",
-                                )}`}
-                                target="_blank"
-                                rel="noreferrer"
-                                className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-success text-primary-foreground hover:shadow-lg"
-                              >
-                                {t("whatsApp")}
-                              </a>
-                            ) : (
-                              <button
-                                className="px-3 py-1 rounded-lg bg-muted text-muted-foreground"
-                                disabled
-                              >
-                                {t("noContact")}
-                              </button>
-                            )}
-                          </div>
-                        );
-                      })
-                    ) : (
-                      <p className="app-text-body">{t("noRepresentatives")}</p>
-                    )}
-                  </div>
-                  <div className="mt-4">
-                    <DialogClose asChild>
-                      <button className="w-full px-4 py-2 rounded-lg bg-accent text-accent-foreground">
-                        {t("close")}
-                      </button>
-                    </DialogClose>
-                  </div>
-                </DialogContent>
-              </Dialog>
-            </>
-          )}
+            <button
+              type="button"
+              onClick={() =>
+                showSeller ? setContactOpen(true) : setRepresentativesOpen(true)
+              }
+              className="inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-xl border border-primary/20 bg-primary/8 px-3 app-text-label font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+            >
+              {showSeller ? (
+                <Phone className="size-4" />
+              ) : (
+                <ShieldCheck className="size-4" />
+              )}
+              <span className="truncate">
+                {showSeller ? t("contactSeller") : t("chooseRepresentative")}
+              </span>
+            </button>
+          </Tooltip>
           <Tooltip content={t("details")} side="top">
             <Link
               href={`/listings/${listing.id}`}
-              className="app-text-body inline-flex items-center gap-1 p-2 rounded-2xl subtle hover:ring-2 ring-accent/30 hover:-translate-y-0.5 transition-all"
+              aria-label={`${t("details")}: ${listing.title}`}
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-xl bg-primary text-primary-foreground transition-transform hover:-translate-y-0.5 hover:shadow-md"
             >
-              {t("details")} <ArrowRight className="size-4" />
+              <ArrowUpRight className="size-4" />
             </Link>
           </Tooltip>
         </div>
       </div>
+
+      <ContactDialog
+        listing={listing}
+        open={contactOpen}
+        onOpenChange={setContactOpen}
+      />
+      <RepresentativesDialog
+        listing={listing}
+        open={representativesOpen}
+        onOpenChange={setRepresentativesOpen}
+      />
     </motion.article>
   );
 }

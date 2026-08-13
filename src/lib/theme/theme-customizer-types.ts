@@ -62,3 +62,15 @@ export interface ImportedTheme {
   light: Record<string, string>;
   dark: Record<string, string>;
 }
+
+export type ThemeStyleMode = "light" | "dark";
+
+/** A user-owned immutable theme preset persisted inside UI context. */
+export interface CustomThemePreset {
+  id: string;
+  name: string;
+  styles: ImportedTheme;
+  sourcePresetId?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}

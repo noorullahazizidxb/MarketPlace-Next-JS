@@ -1,456 +1,357 @@
 "use client";
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion, type PanInfo } from "framer-motion";
-import Link from "next/link";
-import Image from "next/image";
-import { ImageSpinner } from "@/components/ui/spinner";
 import {
   ChevronLeft,
   ChevronRight,
-  Star,
-  ArrowRight,
-  Tag as TagIcon,
+  Compass,
   ShieldCheck,
+  Star,
+  Tag,
 } from "lucide-react";
-import { useApiGet } from "@/lib/api-hooks";
-import { asset } from "@/lib/assets";
-import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
+import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 import { Tooltip } from "@/components/ui/tooltip";
+import { useApiGet } from "@/lib/api-hooks";
+import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 
-type ListingLite = {
-  id: string | number;
-  title?: string | null;
-  description?: string | null;
-  images?: { url?: string | null; alt?: string | null }[];
-  price?: string | number | null;
-  currency?: string | null;
-  averageRating?: number | null;
-  reviewCount?: number | null;
-  categoryId?: string | number | null;
-  category?: { id?: string | number | null; name?: string | null } | null;
-};
+type SliderTab = "related" | "top" | "promoted";
+
+function chunk<T>(items: T[], size: number) {
+  const result: T[][] = [];
+  for (let index = 0; index < items.length; index += size) {
+    result.push(items.slice(index, index + size));
+  }
+  return result;
+}
+
+function RelatedListingsSkeleton({ title }: { title: string }) {
+  return (
+    <section className="mt-10 rounded-[1.75rem] border border-border/60 bg-card/75 p-4 sm:p-5 lg:p-6">
+      <div className="mb-5 flex items-end justify-between gap-4">
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-28 rounded-full" />
+          <Skeleton className="h-7 w-48 rounded-xl" />
+          <span className="sr-only">{title}</span>
+        </div>
+        <div className="flex gap-2">
+          <Skeleton className="size-10 rounded-xl" />
+          <Skeleton className="size-10 rounded-xl" />
+        </div>
+      </div>
+      <div className="grid gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="overflow-hidden rounded-[1.35rem] border border-border/60">
+            <Skeleton className="aspect-[3/2] w-full rounded-none" />
+            <div className="space-y-3 p-4">
+              <Skeleton className="h-5 w-4/5" />
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-10 w-full rounded-xl" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+  );
+}
 
 export function RelatedListingsSlider({
   categoryId,
   currentId,
   limit = 12,
-  title = "Related Listings",
+  title = "More worth exploring",
 }: {
   categoryId?: string | number | null;
   currentId: string | number;
   limit?: number;
   title?: string;
 }) {
-  // Fetch all listings and filter client-side to follow existing patterns
-  const { data, isLoading, error } = useApiGet<ListingLite[] | ListingLite>(
+  const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
-    "/listings"
+    "/listings",
   );
 
-  const all: ListingLite[] = useMemo(
+  const all = useMemo(
     () => (Array.isArray(data) ? data : data ? [data] : []),
-    [data]
+    [data],
   );
 
-  const related: ListingLite[] = useMemo(() => {
-    if (!categoryId) return [];
-    const cid = String(categoryId);
-    return all
-      .filter((it) => String(it.id) !== String(currentId))
-      .filter((it) => {
-        const itemCid = (it as any).categoryId ?? it.category?.id;
-        return itemCid != null && String(itemCid) === cid;
+  const buckets = useMemo(() => {
+    const candidates = all.filter(
+      (listing) => String(listing.id) !== String(currentId),
+    );
+    const related = categoryId
+      ? candidates
+          .filter((listing) => {
+            const candidateId = listing.categoryId ?? listing.category?.id;
+            return candidateId != null && String(candidateId) === String(categoryId);
+          })
+          .slice(0, limit)
+      : [];
+    const top = [...candidates]
+      .filter((listing) => typeof listing.averageRating === "number")
+      .sort((left, right) =>
+        (right.averageRating ?? 0) - (left.averageRating ?? 0),
+      )
+      .slice(0, limit);
+    const promoted = candidates
+      .filter((listing) => {
+        const visibility = String(listing.contactVisibility ?? "").toUpperCase();
+        return listing.promoted === true || (visibility && visibility !== "SHOW_SELLER");
       })
-      .slice(0, Math.max(3, limit));
+      .slice(0, limit);
+
+    return { related, top, promoted };
   }, [all, categoryId, currentId, limit]);
 
-  // Top rated: across all listings, sorted by averageRating desc
-  const topRated: ListingLite[] = useMemo(() => {
-    return [...all]
-      .filter((it) => String(it.id) !== String(currentId))
-      .filter((it) => typeof it.averageRating === "number")
-      .sort((a, b) => (b.averageRating || 0) - (a.averageRating || 0))
-      .slice(0, Math.max(3, limit));
-  }, [all, currentId, limit]);
-
-  // Promoted: try common signals - contactVisibility !== SHOW_SELLER OR presence of a promoted flag
-  const promoted: ListingLite[] = useMemo(() => {
-    return all
-      .filter((it) => String(it.id) !== String(currentId))
-      .filter((it) => {
-        const cv = String((it as any).contactVisibility ?? "").toUpperCase();
-        if (cv && cv !== "SHOW_SELLER") return true; // treat as promoted/paid
-        // fallback: check a promoted boolean or flag
-        if ((it as any).promoted === true) return true;
-        return false;
-      })
-      .slice(0, Math.max(3, limit));
-  }, [all, currentId, limit]);
-
-  if (isLoading) return null;
+  if (isLoading) return <RelatedListingsSkeleton title={title} />;
   if (error) return null;
-  // If there are no items across all buckets, don't render
-  const anyCount =
-    (related?.length || 0) + (topRated?.length || 0) + (promoted?.length || 0);
-  if (!anyCount) return null;
+  if (!buckets.related.length && !buckets.top.length && !buckets.promoted.length) {
+    return null;
+  }
 
-  return (
-    <TabbedHeroCarousel
-      related={related}
-      topRated={topRated}
-      promoted={promoted}
-      title={title}
-    />
-  );
+  return <RelatedCarousel buckets={buckets} title={title} />;
 }
 
-function HeroCarousel({
-  items,
+function RelatedCarousel({
+  buckets,
   title,
 }: {
-  items: ListingLite[];
+  buckets: Record<SliderTab, Listing[]>;
   title: string;
 }) {
-  const [index, setIndex] = useState(0);
-  const [dir, setDir] = useState<1 | -1>(1);
+  const firstTab: SliderTab = buckets.related.length
+    ? "related"
+    : buckets.top.length
+      ? "top"
+      : "promoted";
+  const [activeTab, setActiveTab] = useState<SliderTab>(firstTab);
+  const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState<1 | -1>(1);
+  const [pageSize, setPageSize] = useState(1);
   const intervalRef = useRef<number | null>(null);
   const { isEngaged, engagementProps } = useEngagedAutoplay();
-  const prefersReducedMotion =
+  const reducedMotion =
     typeof window !== "undefined" &&
     window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
 
-  const visible = items; // no windowing for simplicity
+  useEffect(() => {
+    const updatePageSize = () => {
+      const width = window.innerWidth;
+      setPageSize(width >= 1280 ? 4 : width >= 1024 ? 3 : width >= 640 ? 2 : 1);
+    };
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    return () => window.removeEventListener("resize", updatePageSize);
+  }, []);
 
-  const next = useCallback(() => {
-    setDir(1);
-    setIndex((i) => (i + 1) % visible.length);
-  }, [visible.length]);
-  const prev = useCallback(() => {
-    setDir(-1);
-    setIndex((i) => (i - 1 + visible.length) % visible.length);
-  }, [visible.length]);
+  const activeItems = buckets[activeTab].length
+    ? buckets[activeTab]
+    : buckets.related.length
+      ? buckets.related
+      : buckets.top.length
+        ? buckets.top
+        : buckets.promoted;
+  const pages = useMemo(
+    () => chunk(activeItems, pageSize),
+    [activeItems, pageSize],
+  );
+  const safePage = Math.min(page, Math.max(0, pages.length - 1));
 
   useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    if (!isEngaged || prefersReducedMotion || visible.length <= 1) return;
-    intervalRef.current = window.setInterval(next, 4500);
+    setPage(0);
+  }, [activeTab, pageSize]);
+
+  const next = useCallback(() => {
+    setDirection(1);
+    setPage((current) => (current + 1) % Math.max(1, pages.length));
+  }, [pages.length]);
+
+  const previous = useCallback(() => {
+    setDirection(-1);
+    setPage(
+      (current) =>
+        (current - 1 + Math.max(1, pages.length)) % Math.max(1, pages.length),
+    );
+  }, [pages.length]);
+
+  useEffect(() => {
+    if (intervalRef.current) window.clearInterval(intervalRef.current);
+    if (isEngaged || reducedMotion || pages.length <= 1) return;
+
+    intervalRef.current = window.setInterval(next, 6200);
     return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
+      if (intervalRef.current) window.clearInterval(intervalRef.current);
     };
-  }, [isEngaged, prefersReducedMotion, visible.length, next]);
+  }, [isEngaged, next, pages.length, reducedMotion]);
+
+  const tabs: Array<{
+    id: SliderTab;
+    label: string;
+    count: number;
+    icon: typeof Tag;
+  }> = [
+    { id: "related", label: "Similar", count: buckets.related.length, icon: Tag },
+    { id: "top", label: "Top rated", count: buckets.top.length, icon: Star },
+    { id: "promoted", label: "Promoted", count: buckets.promoted.length, icon: ShieldCheck },
+  ];
 
   return (
     <section
-      className="relative mt-10"
-      {...engagementProps}
-      tabIndex={0}
-      aria-label={title}
+      className="relative isolate mt-10 overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/75 p-4 shadow-sm backdrop-blur-xl sm:p-5 lg:p-6"
       role="region"
+      aria-roledescription="carousel"
+      aria-label={title}
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "ArrowRight") next();
+        if (event.key === "ArrowLeft") previous();
+      }}
+      {...engagementProps}
     >
-      {/* Ambient background */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute inset-x-0 -top-10 h-[220px] bg-[radial-gradient(80%_60%_at_50%_0%,color-mix(in oklab, var(--primary) 15%, transparent),transparent_60%)]" />
-        <div className="absolute inset-x-0 bottom-0 h-[180px] bg-[radial-gradient(60%_50%_at_50%_100%,color-mix(in oklab, var(--accent) 15%, transparent),transparent_60%)]" />
-      </div>
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_90%_at_100%_0%,color-mix(in_oklab,var(--primary)_12%,transparent),transparent_70%)]" />
 
-      <div className="mb-4 flex items-center justify-between px-1">
-        <h3 className="app-text-heading-sm md:app-text-heading font-semibold tracking-tight">
-          {title}
-        </h3>
-        <div className="flex items-center gap-2">
-          <Tooltip content="Previous" side="bottom">
-            <button
-              aria-label="Previous"
-              onClick={prev}
-              className="size-10 rounded-full grid place-items-center bg-background/50 border border-border/40 hover:bg-foreground/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
-            >
-              <ChevronLeft className="size-4" />
-            </button>
-          </Tooltip>
-          <Tooltip content="Next" side="bottom">
-            <button
-              aria-label="Next"
-              onClick={next}
-              className="size-10 rounded-full grid place-items-center bg-background/50 border border-border/40 hover:bg-foreground/10 hover:border-transparent hover:scale-110 active:scale-95 transition-all duration-300 shadow-sm"
-            >
-              <ChevronRight className="size-4" />
-            </button>
-          </Tooltip>
+      <div className="mb-5 flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+        <div className="min-w-0">
+          <div className="mb-1.5 inline-flex items-center gap-1.5 app-text-micro font-semibold uppercase tracking-[0.12em] text-primary">
+            <Compass className="size-3.5" /> Continue discovering
+          </div>
+          <h2 className="app-text-heading font-semibold tracking-tight">{title}</h2>
+          <p className="mt-1 app-text-body text-muted-foreground">
+            Compare similar, highly rated, and promoted marketplace offers.
+          </p>
+        </div>
+
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex max-w-full items-center gap-1 overflow-x-auto rounded-xl border border-border/60 bg-background/65 p-1 no-scrollbar" role="tablist">
+            {tabs.map((tab) => {
+              const Icon = tab.icon;
+              const selected = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={selected}
+                  disabled={tab.count === 0}
+                  onClick={() => setActiveTab(tab.id)}
+                  className={`relative inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-lg px-2.5 app-text-caption font-semibold transition-colors disabled:pointer-events-none disabled:opacity-35 ${
+                    selected ? "text-foreground" : "text-muted-foreground hover:text-foreground"
+                  }`}
+                >
+                  {selected && (
+                    <motion.span
+                      layoutId="related-listing-tab"
+                      className="absolute inset-0 rounded-lg border border-border/60 bg-card shadow-sm"
+                      transition={{ type: "spring", bounce: 0.18, duration: 0.4 }}
+                    />
+                  )}
+                  <span className="relative z-10 inline-flex items-center gap-1.5">
+                    <Icon className="size-3.5" /> {tab.label}
+                    <span className="rounded-full bg-muted px-1.5 py-0.5 app-text-micro tabular-nums">
+                      {tab.count}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="hidden items-center gap-2 sm:flex">
+            <Tooltip content="Previous" side="bottom">
+              <button
+                type="button"
+                aria-label="Previous listings"
+                disabled={pages.length <= 1}
+                onClick={previous}
+                className="grid size-10 place-items-center rounded-xl border border-border bg-background/75 shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 disabled:pointer-events-none disabled:opacity-40"
+              >
+                <ChevronLeft className="size-4" />
+              </button>
+            </Tooltip>
+            <Tooltip content="Next" side="bottom">
+              <button
+                type="button"
+                aria-label="Next listings"
+                disabled={pages.length <= 1}
+                onClick={next}
+                className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
+              >
+                <ChevronRight className="size-4" />
+              </button>
+            </Tooltip>
+          </div>
         </div>
       </div>
 
-      <div className="relative overflow-hidden rounded-3xl border border-border bg-card/80 supports-[backdrop-filter]:bg-card/60">
-        <CarouselTrack
-          index={index}
-          dir={dir}
-          items={visible}
-          onSwipePrev={prev}
-          onSwipeNext={next}
-        />
-        <ProgressDots count={visible.length} index={index} onDot={setIndex} />
-      </div>
-    </section>
-  );
-}
-
-function TabbedHeroCarousel({
-  related,
-  topRated,
-  promoted,
-  title,
-}: {
-  related: ListingLite[];
-  topRated: ListingLite[];
-  promoted: ListingLite[];
-  title: string;
-}) {
-  const [tab, setTab] = useState<"related" | "top" | "promoted">(
-    related.length ? "related" : topRated.length ? "top" : "promoted"
-  );
-  const tabs: Array<{ id: "related" | "top" | "promoted"; label: string; icon: React.ReactNode; count: number }> = [
-    { id: "related", label: "Related", icon: <TagIcon className="size-3.5" />, count: related.length },
-    { id: "top", label: "Top Rated", icon: <Star className="size-3.5 fill-warning text-warning" />, count: topRated.length },
-    { id: "promoted", label: "Promoted", icon: <ShieldCheck className="size-3.5 text-success" />, count: promoted.length },
-  ];
-
-  const items = useMemo(() => {
-    if (tab === "related") return related;
-    if (tab === "top") return topRated;
-    return promoted;
-  }, [tab, related, topRated, promoted]);
-
-  const effective =
-    items.length > 0
-      ? items
-      : related.length ? related : topRated.length ? topRated : promoted;
-
-  return (
-    <div>
-      {/* Premium animated tab bar */}
-      <div className="mb-5 flex items-center gap-1 p-1 rounded-2xl bg-[color-mix(in oklab,var(--card)_90%,transparent)] border border-border/50 backdrop-blur-sm w-fit shadow-sm">
-        {tabs.map((t) => (
-          <button
-            key={t.id}
-            onClick={() => setTab(t.id)}
-            disabled={t.count === 0}
-            className="relative flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-sm font-medium transition-colors duration-200 disabled:opacity-30 disabled:pointer-events-none"
-            aria-pressed={tab === t.id}
-          >
-            {tab === t.id && (
-              <motion.span
-                layoutId="tab-pill"
-                className="absolute inset-0 rounded-xl bg-background/90 shadow-sm border border-border/50"
-                style={{ zIndex: 0 }}
-                transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-              />
-            )}
-            <span className={`relative z-10 flex items-center gap-1.5 ${tab === t.id ? "text-foreground" : "text-muted-foreground"}`}>
-              {t.icon}
-              {t.label}
-              {t.count > 0 && (
-                <span className={`rounded-full px-1.5 py-0.5 text-[10px] font-semibold leading-none ${tab === t.id ? "bg-primary/15 text-primary" : "bg-muted text-muted-foreground"}`}>
-                  {t.count}
-                </span>
-              )}
-            </span>
-          </button>
-        ))}
-      </div>
-
-      <HeroCarousel items={effective} title={title} />
-    </div>
-  );
-}
-
-function CarouselTrack({
-  index,
-  dir,
-  items,
-  onSwipePrev,
-  onSwipeNext,
-}: {
-  index: number;
-  dir: 1 | -1;
-  items: ListingLite[];
-  onSwipePrev: () => void;
-  onSwipeNext: () => void;
-}) {
-  return (
-    <div className="relative">
-      <div className="relative h-[420px] md:h-[440px]">
+      <div className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-background/55 p-3 sm:p-4">
         <AnimatePresence initial={false} mode="wait">
           <motion.div
-            key={index}
-            initial={{ opacity: 0, x: dir === 1 ? 60 : -60 }}
+            key={`${activeTab}-${safePage}-${pageSize}`}
+            initial={{ opacity: 0, x: direction > 0 ? 44 : -44 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: dir === 1 ? -60 : 60 }}
-            transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-            className="h-full"
+            exit={{ opacity: 0, x: direction > 0 ? -44 : 44 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="grid items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 app-density-grid-gap"
             drag="x"
             dragConstraints={{ left: 0, right: 0 }}
-            dragElastic={0.16}
-            onDragEnd={(
-              _e: PointerEvent | MouseEvent | TouchEvent,
-              info: PanInfo
-            ) => {
-              const offset = info.offset.x;
-              const velocity = info.velocity.x;
-              if (offset < -80 || velocity < -600) onSwipeNext();
-              else if (offset > 80 || velocity > 600) onSwipePrev();
+            dragElastic={0.14}
+            onDragEnd={(_event, info: PanInfo) => {
+              if (info.offset.x < -70 || info.velocity.x < -550) next();
+              if (info.offset.x > 70 || info.velocity.x > 550) previous();
             }}
           >
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-gap)] app-density-grid-gap p-[var(--space-card)]">
-              {slice3(items, index).map((it, i) => (
-                <TiltCard key={`${String(it.id)}-${i}`} item={it} rank={i} />
-              ))}
-            </div>
+            {(pages[safePage] ?? []).map((listing) => (
+              <ListingCard key={listing.id} listing={listing} cleanImageOverlayOnEngage />
+            ))}
           </motion.div>
         </AnimatePresence>
       </div>
-    </div>
-  );
-}
 
-function slice3(arr: ListingLite[], center: number) {
-  if (arr.length <= 3) return arr;
-  const out: ListingLite[] = [];
-  out.push(arr[center % arr.length]);
-  out.push(arr[(center + 1) % arr.length]);
-  out.push(arr[(center + 2) % arr.length]);
-  return out;
-}
-
-function TiltCard({ item, rank }: { item: ListingLite; rank: number }) {
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const cardRef = useRef<HTMLDivElement | null>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = cardRef.current;
-    if (!el) return;
-    const r = el.getBoundingClientRect();
-    const px = (e.clientX - r.left) / r.width;
-    const py = (e.clientY - r.top) / r.height;
-    setTilt({ x: (px - 0.5) * 8, y: (0.5 - py) * 8 });
-  };
-  const onLeave = () => setTilt({ x: 0, y: 0 });
-
-  const [imgLoaded, setImgLoaded] = useState(false);
-  const img = item.images?.[0]?.url
-    ? asset(item.images[0]?.url || "")
-    : "/favicon.svg";
-  const price = item.price != null ? String(item.price) : null;
-  const ccy = item.currency || "";
-  const rating =
-    typeof item.averageRating === "number" ? item.averageRating : null;
-  const reviews =
-    typeof item.reviewCount === "number" ? item.reviewCount : null;
-
-  return (
-    <motion.article
-      ref={cardRef}
-      onMouseMove={onMove}
-      onMouseLeave={onLeave}
-      style={{
-        transform: `perspective(900px) rotateX(${tilt.y}deg) rotateY(${tilt.x}deg)`,
-      }}
-      className="relative h-[360px] overflow-hidden rounded-2xl border border-border bg-card shadow-token-lg"
-    >
-      {/* Glow */}
-      <div className="pointer-events-none absolute -inset-10 opacity-60 mix-blend-soft-light">
-        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_10%_-10%,color-mix(in oklab, var(--primary) 25%, transparent),transparent_70%)]" />
-        <div className="absolute -inset-16 bg-[radial-gradient(600px_220px_at_90%_120%,color-mix(in oklab, var(--accent) 22%, transparent),transparent_70%)]" />
-      </div>
-
-      <div className="relative h-[60%]">
-        {!imgLoaded && <ImageSpinner />}
-        <Image
-          src={img}
-          alt={item.title || "Listing"}
-          fill
-          sizes="(max-width: 1024px) 100vw, 33vw"
-          className={`object-cover transition-all duration-500 will-change-transform hover:scale-[1.03] ${imgLoaded ? "opacity-100" : "opacity-0"}`}
-          onLoad={() => setImgLoaded(true)}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-[color-mix(in oklab, var(--background) 85%, transparent)] via-transparent to-transparent" />
-        {/* Price pill */}
-        {price && (
-          <div className="absolute top-3 left-3 rounded-full bg-background/80 backdrop-blur px-3 py-1 app-text-caption border border-border shadow-sm">
-            <span className="tabular-nums font-medium">
-              {price} {ccy}
-            </span>
-          </div>
-        )}
-      </div>
-
-      <div className="relative h-[40%] p-[var(--space-card)] flex flex-col">
-        <h4 className="app-text-body md:app-text-body font-semibold line-clamp-2 pr-8">
-          {item.title || "Untitled"}
-        </h4>
-        {item.description && (
-          <p className="mt-1 app-text-caption subtle line-clamp-2">
-            {String(item.description || "").trim()}
-          </p>
-        )}
-        <div className="mt-auto flex items-center justify-between">
-          <div className="inline-flex items-center gap-1 app-text-caption">
-            {rating != null ? (
-              <>
-                <Star className="size-3 text-accent" />
-                <span className="tabular-nums">{rating.toFixed(1)}</span>
-                {reviews != null && <span className="subtle">({reviews})</span>}
-              </>
-            ) : (
-              <span className="subtle">New</span>
-            )}
-          </div>
-          <Link
-            href={`/listings/${item.id}`}
-            className="inline-flex items-center gap-1 app-text-caption font-medium px-3 py-1 rounded-full border border-border hover:bg-foreground/5 transition-colors"
-          >
-            View <ArrowRight className="size-3" />
-          </Link>
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <span className="app-text-caption text-muted-foreground">
+          {activeItems.length} {activeItems.length === 1 ? "recommendation" : "recommendations"}
+        </span>
+        <div className="flex items-center gap-1.5">
+          {pages.map((_, index) => (
+            <button
+              key={index}
+              type="button"
+              aria-label={`Go to slide ${index + 1}`}
+              onClick={() => {
+                setDirection(index > safePage ? 1 : -1);
+                setPage(index);
+              }}
+              className={`h-1.5 rounded-full transition-all ${
+                index === safePage
+                  ? "w-6 bg-primary"
+                  : "w-2 bg-foreground/20 hover:bg-foreground/40"
+              }`}
+            />
+          ))}
         </div>
       </div>
 
-      {/* Rank accent */}
-      <div
-        className={`pointer-events-none absolute -right-6 -top-6 size-20 rounded-full blur-2xl opacity-40 ${rank === 0
-          ? "bg-primary"
-          : rank === 1
-            ? "bg-accent"
-            : "bg-secondary"
-          }`}
-      />
-    </motion.article>
-  );
-}
-
-function ProgressDots({
-  count,
-  index,
-  onDot,
-}: {
-  count: number;
-  index: number;
-  onDot: (i: number) => void;
-}) {
-  return (
-    <div className="absolute bottom-3 inset-x-0 flex items-center justify-center gap-2">
-      {Array.from({ length: count }).map((_, i) => (
+      <div className="mt-3 grid grid-cols-2 gap-2 sm:hidden">
         <button
-          key={i}
-          onClick={() => onDot(i)}
-          aria-label={`Go to slide ${i + 1}`}
-          className={`h-1.5 rounded-full transition-all go-to-slide ${i === index
-            ? "w-6 bg-accent"
-            : "w-3 bg-[color-mix(in oklab, var(--foreground) 30%, transparent)] hover:bg-[color-mix(in oklab, var(--foreground) 50%, transparent)]"
-            }`}
-        />
-      ))}
-    </div>
+          type="button"
+          onClick={previous}
+          disabled={pages.length <= 1}
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl border border-border bg-background/75 app-text-label font-semibold disabled:opacity-40"
+        >
+          <ChevronLeft className="size-4" /> Previous
+        </button>
+        <button
+          type="button"
+          onClick={next}
+          disabled={pages.length <= 1}
+          className="inline-flex min-h-10 items-center justify-center gap-2 rounded-xl bg-primary app-text-label font-semibold text-primary-foreground disabled:opacity-40"
+        >
+          Next <ChevronRight className="size-4" />
+        </button>
+      </div>
+    </section>
   );
 }
 

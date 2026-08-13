@@ -5,7 +5,7 @@ import { ImageSlider } from "@/components/ui/image-slider";
 import { motion } from "framer-motion";
 import { useApiMutation } from "@/lib/api-hooks";
 import { twMerge } from "tailwind-merge";
-import { asset } from "@/lib/assets";
+import { asset, DEFAULT_LISTING_IMAGE } from "@/lib/assets";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
 import { X } from "lucide-react";
@@ -35,7 +35,7 @@ export function ApprovalCard({
   const reject = useApiMutation("post", `/listings/${listing?.id}/reject`);
 
   const cover =
-    asset(listing?.images?.[0]?.url) || "/images/placeholder-card.jpg";
+    asset(listing?.images?.[0]?.url) || DEFAULT_LISTING_IMAGE;
   const gallery: Array<{
     id?: number | string;
     url?: string | null;
@@ -357,7 +357,7 @@ export function ApprovalCard({
                       className="relative aspect-square overflow-hidden rounded-xl"
                     >
                       <Image
-                        src={asset(img.url) || "/images/placeholder-card.jpg"}
+                        src={asset(img.url) || DEFAULT_LISTING_IMAGE}
                         alt={img.alt || ""}
                         fill
                         className="object-cover"

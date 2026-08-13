@@ -1,4 +1,7 @@
-import type { ImportedTheme } from "./theme-customizer-types";
+import type {
+  CustomThemePreset,
+  ImportedTheme,
+} from "./theme-customizer-types";
 
 // Theme mode used by the UI (light, dark, or follow system).
 export type ThemeMode = "dark" | "light" | "system";
@@ -325,6 +328,10 @@ export interface ThemeSettings {
   selectedRadius: string;
   brandColors: Record<string, string>;
   importedTheme: ImportedTheme | null;
+  /** User-created presets stored with the rest of the UI context. */
+  customThemePresets?: CustomThemePreset[];
+  /** Selected custom preset. Custom selection takes priority over built-ins. */
+  selectedCustomThemeId?: string;
   fontFamily: FontFamilyOption;
   fontFamilyByLocale?: LocaleFontFamilySettings;
   headingTextDecoration?: HeadingTextDecoration;

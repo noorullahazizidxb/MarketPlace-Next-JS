@@ -1,12 +1,17 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import { asset } from "@/lib/assets";
+import {
+  asset,
+  DEFAULT_LISTING_IMAGE,
+  normalizeAssetImages,
+  type AssetImage,
+} from "@/lib/assets";
 import { ChevronLeft, ChevronRight, LoaderIcon } from "lucide-react";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 import { Tooltip } from "@/components/ui/tooltip";
 
-type Slide = { url?: string | null; alt?: string | null };
+type Slide = AssetImage | string | null | undefined;
 
 export function ImageSlider({
   images,
@@ -18,6 +23,7 @@ export function ImageSlider({
   forceEngaged = false,
   intervalMs = 5000,
   firstSlideIsPriority = false,
+  fallbackSrc = DEFAULT_LISTING_IMAGE,
 }: {
   images?: Slide[] | null;
   className?: string;
@@ -28,6 +34,7 @@ export function ImageSlider({
   forceEngaged?: boolean; // parent-driven engagement (e.g., wrapper hover/focus)
   intervalMs?: number; // autoplay interval
   firstSlideIsPriority?: boolean; // whether the first slide gets priority loading
+  fallbackSrc?: string;
 }) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const getAspectClass = (a: string) => {
@@ -44,10 +51,11 @@ export function ImageSlider({
         return "ar-16-9";
     }
   };
-  const slides =
-    Array.isArray(images) && images.length > 0
-      ? images
-      : [{ url: "/images/placeholder-card.jpg", alt: "placeholder" }];
+  const slides = normalizeAssetImages(images, "Listing image");
+  const displaySlides =
+    slides.length > 0
+      ? slides
+      : [{ url: fallbackSrc, alt: "Image unavailable" }];
   const [index, setIndex] = useState(0);
   const timer = useRef<number | null>(null);
   const immediateTimer = useRef<number | null>(null);
@@ -62,6 +70,10 @@ export function ImageSlider({
     window.matchMedia &&
     window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    setIndex((current) => Math.min(current, displaySlides.length - 1));
+  }, [displaySlides.length]);
 
   // Cache scroller width via ResizeObserver — avoids forced reflow on slide change
   useEffect(() => {
@@ -109,15 +121,15 @@ export function ImageSlider({
       (isEngaged || forceEngaged) &&
       !prefersReducedMotion &&
       inView &&
-      slides.length > 1
+      displaySlides.length > 1
     ) {
       if (justActivated) {
         immediateTimer.current = window.setTimeout(() => {
-          setIndex((i) => (i + 1) % slides.length);
+          setIndex((i) => (i + 1) % displaySlides.length);
         }, 120);
       }
       timer.current = window.setInterval(() => {
-        setIndex((i) => (i + 1) % slides.length);
+        setIndex((i) => (i + 1) % displaySlides.length);
       }, intervalMs);
     }
     return () => {
@@ -125,7 +137,7 @@ export function ImageSlider({
       if (immediateTimer.current) window.clearTimeout(immediateTimer.current);
     };
   }, [
-    slides.length,
+    displaySlides.length,
     autoPlay,
     isEngaged,
     forceEngaged,
@@ -161,7 +173,7 @@ export function ImageSlider({
             "h-full flex overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
           }
         >
-          {slides.map((s, i) => (
+          {displaySlides.map((s, i) => (
             <SlideImage
               key={i}
               slide={s}
@@ -169,13 +181,14 @@ export function ImageSlider({
               sizes={sizes}
               isActive={i === index}
               firstSlideIsPriority={firstSlideIsPriority}
+              fallbackSrc={fallbackSrc}
             />
           ))}
         </div>
       </div>
 
       {/* controls */}
-      {slides.length > 1 && (
+      {displaySlides.length > 1 && (
         <>
           <Tooltip content="Previous image" side="right">
             <button
@@ -184,7 +197,10 @@ export function ImageSlider({
               data-slider-control="true"
               onClick={(event) => {
                 event.stopPropagation();
-                setIndex((i) => (i - 1 + slides.length) % slides.length);
+                setIndex(
+                  (i) =>
+                    (i - 1 + displaySlides.length) % displaySlides.length,
+                );
               }}
               className={`absolute left-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-border hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
             >
@@ -198,7 +214,7 @@ export function ImageSlider({
               data-slider-control="true"
               onClick={(event) => {
                 event.stopPropagation();
-                setIndex((i) => (i + 1) % slides.length);
+                setIndex((i) => (i + 1) % displaySlides.length);
               }}
               className={`absolute right-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-border hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
             >
@@ -206,7 +222,7 @@ export function ImageSlider({
             </button>
           </Tooltip>
           <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-2 z-30 px-3 py-1.5 rounded-full bg-foreground/20 backdrop-blur-md">
-            {slides.map((_, i) => (
+            {displaySlides.map((_, i) => (
               <button
                 type="button"
                 key={i}
@@ -236,14 +252,25 @@ function SlideImage({
   sizes,
   isActive,
   firstSlideIsPriority,
+  fallbackSrc,
 }: {
   slide: { url?: string | null; alt?: string | null };
   index: number;
   sizes: string;
   isActive: boolean;
   firstSlideIsPriority: boolean;
+  fallbackSrc: string;
 }) {
   const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const resolvedUrl = asset(slide?.url);
+  const src = failed || !resolvedUrl ? fallbackSrc : resolvedUrl;
+
+  useEffect(() => {
+    setLoaded(false);
+    setFailed(false);
+  }, [resolvedUrl]);
+
   return (
     <div className="relative min-w-full h-full snap-start">
       {!loaded && (
@@ -255,7 +282,7 @@ function SlideImage({
         </span>
       )}
       <Image
-        src={asset(slide?.url) || "/images/placeholder-card.jpg"}
+        src={src}
         alt={slide?.alt || `Slide ${index + 1}`}
         fill
         className="object-cover will-change-transform"
@@ -267,7 +294,15 @@ function SlideImage({
         fetchPriority={firstSlideIsPriority && index === 0 ? "high" : "auto"}
         draggable={false}
         onLoad={() => setLoaded(true)}
-        onError={() => setLoaded(true)}
+        onError={() => {
+          if (!failed && src !== fallbackSrc) {
+            setFailed(true);
+            setLoaded(false);
+            return;
+          }
+          setLoaded(true);
+        }}
+        unoptimized={src.endsWith(".svg")}
       />
     </div>
   );

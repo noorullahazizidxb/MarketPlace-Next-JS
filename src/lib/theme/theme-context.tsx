@@ -171,6 +171,13 @@ const cloneThemeSettings = (settings: ThemeSettings): ThemeSettings => ({
       dark: { ...settings.importedTheme.dark },
     }
     : null,
+  customThemePresets: (settings.customThemePresets ?? []).map((preset) => ({
+    ...preset,
+    styles: {
+      light: { ...preset.styles.light },
+      dark: { ...preset.styles.dark },
+    },
+  })),
   layoutDensity: cloneResponsiveLayoutDensity(settings.layoutDensity),
   layoutDensityByPage: settings.layoutDensityByPage
     ? Object.fromEntries(

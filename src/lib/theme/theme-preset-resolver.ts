@@ -22,6 +22,18 @@ export function resolveThemePresetStyles(
     };
   }
 
+  if (settings.selectedCustomThemeId) {
+    const customPreset = settings.customThemePresets?.find(
+      (preset) => preset.id === settings.selectedCustomThemeId,
+    );
+    if (customPreset) {
+      return {
+        light: customPreset.styles.light,
+        dark: customPreset.styles.dark,
+      };
+    }
+  }
+
   const candidates = [
     [settings.selectedTweakcnTheme, compatibilityThemes.tweakcn],
     [settings.selectedBrandTheme, compatibilityThemes.brand],

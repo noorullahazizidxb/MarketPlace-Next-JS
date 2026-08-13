@@ -1,350 +1,341 @@
 "use client";
+
 import React from "react";
 import { useRouter } from "next/navigation";
-import { useApiGet } from "@/lib/api-hooks";
-import BlogCard from "@/components/blogs/BlogCard";
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  RefreshCw,
+  SearchX,
+  Sparkles,
+} from "lucide-react";
+import BlogCard, { type Blog } from "@/components/blogs/BlogCard";
 import { BlogCardSkeleton } from "@/components/blogs/BlogCardSkeleton";
-import { useAuth } from "@/lib/use-auth";
-import { useLanguage } from "@/components/providers/language-provider";
 import { BlogHero } from "@/components/blogs/BlogHero";
-import StoriesBar from "@/components/stories/StoriesBar";
 import { HiddenListingsSlider } from "@/components/listings/HiddenListingsSlider";
-import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
+import StoriesBar from "@/components/stories/StoriesBar";
+import { Button } from "@/components/ui/button";
+import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
+import { Tooltip } from "@/components/ui/tooltip";
+import { useLanguage } from "@/components/providers/language-provider";
+import { useApiGet } from "@/lib/api-hooks";
 import { config as appConfig } from "@/lib/config";
 import { filterBlogsByQuery } from "@/lib/search-utils";
-import { Tooltip } from "@/components/ui/tooltip";
+import { useAuth } from "@/lib/use-auth";
 
-// Skeleton: uniform 4-col grid
-const SKELETON_COUNT = 12;
+type CountPatch = { likes?: number; shares?: number; comments?: number };
+
+function getResponsivePageSize() {
+  if (typeof window === "undefined") return 12;
+  if (window.innerWidth >= 1536) return 14;
+  if (window.innerWidth >= 1280) return 12;
+  if (window.innerWidth >= 768) return 10;
+  return 8;
+}
+
+function visiblePages(current: number, total: number) {
+  if (total <= 5) return Array.from({ length: total }, (_, index) => index + 1);
+  const pages = new Set([1, total, current - 1, current, current + 1]);
+  return [...pages].filter((page) => page > 0 && page <= total).sort((a, b) => a - b);
+}
 
 export default function BlogsPage() {
-  const [q, setQ] = React.useState("");
+  const [query, setQuery] = React.useState("");
   const [submittedQuery, setSubmittedQuery] = React.useState("");
   const [currentPage, setCurrentPage] = React.useState(1);
-  // Responsive default page size: more blogs on wider screens
-  const getResponsivePageSize = () => {
-    if (typeof window === "undefined") return 12;
-    if (window.innerWidth >= 1536) return 18;  // 2xl
-    if (window.innerWidth >= 1280) return 15;  // xl
-    if (window.innerWidth >= 1024) return 12;  // lg
-    return 9;
-  };
-  const [pageSize, setPageSize] = React.useState(12); // safe SSR default; updated client-side in effect
-  const [countOverrides, setCountOverrides] = React.useState<
-    Record<string, { likes?: number; shares?: number; comments?: number }>
-  >({});
+  const [pageSize, setPageSize] = React.useState(12);
+  const [countOverrides, setCountOverrides] = React.useState<Record<string, CountPatch>>({});
   const elasticSearchEnabled = appConfig.elasticSearchEnabled;
-  const effectiveQuery = elasticSearchEnabled ? submittedQuery.trim() : q.trim();
+  const effectiveQuery = elasticSearchEnabled ? submittedQuery.trim() : query.trim();
   const deferredQuery = React.useDeferredValue(effectiveQuery);
-  const { data: blogs, isLoading } = useApiGet(
-    ["blogs", deferredQuery, elasticSearchEnabled ? "elastic" : "local"],
-    "/blogs",
-    elasticSearchEnabled && deferredQuery ? { q: deferredQuery } : undefined
-  );
-  const { data: listingsData } = useApiGet(["listings", "all"], "/listings");
   const { user } = useAuth();
   const { t } = useLanguage();
   const router = useRouter();
-  const onOpen = (blog: any) => {
-    router.push(`/blogs/${blog.id}`);
-  };
-  const filtered = React.useMemo(() => {
-    const list = blogs || [];
-    if (elasticSearchEnabled) return list;
-    return filterBlogsByQuery(list, submittedQuery || q);
-  }, [blogs, elasticSearchEnabled, q, submittedQuery]);
 
-  const suggestions = React.useMemo(() => {
-    if (!Array.isArray(blogs)) return [];
-    const term = q.trim().toLowerCase();
-    const pool = blogs
-      .map((b: any) => String(b?.title || "").trim())
-      .filter(Boolean);
-    const unique = Array.from(new Set(pool));
-    const filteredTitles = term
-      ? unique.filter((title) => title.toLowerCase().includes(term))
-      : unique;
-    return filteredTitles.slice(0, 5);
-  }, [blogs, q]);
-
-  const updateBlogCounts = React.useCallback(
-    (
-      blogId: string,
-      patch: { likes?: number; shares?: number; comments?: number }
-    ) => {
-      setCountOverrides((prev) => {
-        const current = prev[blogId] || {};
-        const nextForBlog = {
-          ...current,
-          ...patch,
-        };
-        if (
-          current.likes === nextForBlog.likes &&
-          current.shares === nextForBlog.shares &&
-          current.comments === nextForBlog.comments
-        ) {
-          return prev;
-        }
-        return {
-          ...prev,
-          [blogId]: nextForBlog,
-        };
-      });
-    },
-    []
+  const {
+    data: blogData,
+    isLoading,
+    error,
+    refetch,
+  } = useApiGet<Blog[] | Blog>(
+    ["blogs", deferredQuery, elasticSearchEnabled ? "elastic" : "local"],
+    "/blogs",
+    elasticSearchEnabled && deferredQuery ? { q: deferredQuery } : undefined,
+  );
+  const { data: listingData } = useApiGet(["listings", "all"], "/listings");
+  const blogs = React.useMemo(
+    () => (Array.isArray(blogData) ? blogData : blogData ? [blogData] : []),
+    [blogData],
+  );
+  const listings = React.useMemo(
+    () => (Array.isArray(listingData) ? listingData : listingData ? [listingData] : []),
+    [listingData],
   );
 
-  const runSearch = React.useCallback(() => {
-    setSubmittedQuery(q.trim());
-    setCurrentPage(1);
-  }, [q]);
+  const filtered = React.useMemo(() => {
+    if (elasticSearchEnabled) return blogs;
+    return filterBlogsByQuery(blogs, submittedQuery || query) as Blog[];
+  }, [blogs, elasticSearchEnabled, query, submittedQuery]);
 
-  const totalPages = Math.max(1, Math.ceil((filtered?.length ?? 0) / pageSize));
+  const suggestions = React.useMemo(() => {
+    const term = query.trim().toLowerCase();
+    const titles = Array.from(
+      new Set(blogs.map((blog) => blog.title.trim()).filter(Boolean)),
+    );
+    return titles
+      .filter((title) => !term || title.toLowerCase().includes(term))
+      .slice(0, 5);
+  }, [blogs, query]);
+
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const pagedBlogs = React.useMemo(() => {
+    const start = (currentPage - 1) * pageSize;
+    return filtered.slice(start, start + pageSize);
+  }, [currentPage, filtered, pageSize]);
+  const featuredBlogs = pagedBlogs.slice(0, Math.min(2, pagedBlogs.length));
+  const latestBlogs = pagedBlogs.slice(featuredBlogs.length);
 
   React.useEffect(() => {
-    setCurrentPage((prev) => Math.min(prev, totalPages));
-  }, [totalPages]);
-
-  // Sync page size to viewport on mount and resize (avoids SSR/hydration mismatch)
-  React.useEffect(() => {
-    setPageSize(getResponsivePageSize());
-    const onResize = () => setPageSize(getResponsivePageSize());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const updatePageSize = () => setPageSize(getResponsivePageSize());
+    updatePageSize();
+    window.addEventListener("resize", updatePageSize);
+    return () => window.removeEventListener("resize", updatePageSize);
   }, []);
 
   React.useEffect(() => {
-    setCurrentPage(1);
-  }, [pageSize, deferredQuery]);
+    setCurrentPage((previous) => Math.min(previous, totalPages));
+  }, [totalPages]);
 
-  const pagedBlogs = React.useMemo(() => {
-    const list = filtered || [];
-    const start = (currentPage - 1) * pageSize;
-    return list.slice(start, start + pageSize);
-  }, [filtered, currentPage, pageSize]);
+  React.useEffect(() => {
+    setCurrentPage(1);
+  }, [deferredQuery, pageSize]);
+
+  const updateBlogCounts = React.useCallback((blogId: string, patch: CountPatch) => {
+    setCountOverrides((previous) => ({
+      ...previous,
+      [blogId]: { ...previous[blogId], ...patch },
+    }));
+  }, []);
+
+  const openBlog = React.useCallback(
+    (blog: Blog) => router.push(`/blogs/${blog.id}`),
+    [router],
+  );
+
+  const runSearch = React.useCallback(() => {
+    setSubmittedQuery(query.trim());
+    setCurrentPage(1);
+  }, [query]);
 
   return (
-    <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="blogs">
+    <div className="app-shell-page space-y-[var(--space-section)]" data-app-page="blogs">
       <BlogHero
-        value={q}
-        onChange={setQ}
+        value={query}
+        onChange={setQuery}
         onSubmit={runSearch}
         suggestions={suggestions}
-        canCreate={true}
-        onCreate={() => {
-          if (!user) {
-            router.push("/sign-in");
-            return;
-          }
-          router.push("/blogs/create");
-        }}
-        resultCount={filtered?.length ?? 0}
+        canCreate
+        onCreate={() => router.push(user ? "/blogs/create" : "/sign-in")}
+        resultCount={filtered.length}
       />
-      {/* Reused components from listings page */}
+
       <StoriesBar />
-      {Array.isArray(listingsData) && listingsData.length > 0 && (
-        <HiddenListingsSlider items={listingsData as any} />
-      )}
-      {/* Promotional banners inserted for blogs page */}
+
+      {listings.length > 0 && <HiddenListingsSlider items={listings} />}
+
       <ListingsPromoBanner />
-      {/* Row pattern: 1) two equal, 2) three equal, 3) two with left wide (2/3) + right narrow (1/3) - repeat
-          While loading, skeleton placeholders are rendered in the exact same grid structure so
-          layout is established immediately and there are no content shifts on data arrival. */}
-      <div className="space-y-[var(--space-section)]">
-        {isLoading ? (
-          // ----- Skeleton grid (uniform) -----
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[var(--space-section)]">
-            {Array.from({ length: SKELETON_COUNT }).map((_, i) => (
-              <BlogCardSkeleton key={`sk-${i}`} />
-            ))}
+
+      <section
+        className="overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/80 shadow-sm backdrop-blur-xl"
+        aria-labelledby="stories-heading"
+      >
+        <div className="flex flex-col gap-3 border-b border-border/60 p-4 sm:flex-row sm:items-end sm:justify-between sm:p-5 lg:p-6">
+          <div>
+            <div className="mb-1.5 inline-flex items-center gap-1.5 app-text-caption font-semibold uppercase tracking-[0.12em] text-primary">
+              <BookOpen className="size-3.5" /> Ideas and field notes
+            </div>
+            <h2 id="stories-heading" className="app-text-heading font-semibold tracking-tight">
+              Latest stories
+            </h2>
+            <p className="mt-1 app-text-body text-muted-foreground" aria-live="polite">
+              {isLoading
+                ? t("loading")
+                : `${filtered.length} ${filtered.length === 1 ? "story" : "stories"}${query.trim() ? ` matching “${query.trim()}”` : " from the community"}`}
+            </p>
           </div>
-        ) : (
-          // ----- Real content: justified grid -----
-          // Rows of 2–4 cards. Only the very last row may have 1 card.
-          // Cycle: 4 → 3 → 2 for visual variety; if taking N would
-          // leave exactly 1 remaining, take N-1 so the next row gets 2.
-          (() => {
-            const CYCLE = [4, 3, 2];
-            const list = pagedBlogs || [];
-            const rowSizes: number[] = [];
-            let remaining = list.length;
-            let ci = 0;
+          {!isLoading && filtered.length > 0 && (
+            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-primary/15 bg-primary/10 px-3 py-1.5 app-text-caption font-semibold text-primary">
+              <Sparkles className="size-3.5" /> Fresh perspectives
+            </span>
+          )}
+        </div>
 
-            while (remaining > 4) {
-              const want = CYCLE[ci % CYCLE.length];
-              if (remaining - want === 1) {
-                // Prevent a following single-item row
-                rowSizes.push(want - 1);
-                remaining -= want - 1;
-              } else {
-                rowSizes.push(want);
-                remaining -= want;
-              }
-              ci++;
-            }
-            if (remaining > 0) rowSizes.push(remaining);
+        <div className="space-y-5 p-3 sm:p-4 lg:p-5">
+          {error && (
+            <div className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center">
+              <div>
+                <p className="font-semibold text-destructive">Unable to load stories</p>
+                <p className="mt-1 app-text-caption text-muted-foreground">
+                  {String((error as Error).message || error)}
+                </p>
+              </div>
+              <Button variant="secondary" size="sm" LeftIcon={RefreshCw} onClick={() => void refetch()}>
+                Try again
+              </Button>
+            </div>
+          )}
 
-            // Build row slices
-            let offset = 0;
-            const rows = rowSizes.map((size) => {
-              const items = list.slice(offset, offset + size);
-              offset += size;
-              return items;
-            });
-            return rows.map((items, idx) => {
-              const count = items.length;
-
-              // Single card — only possible as last row
-              if (count === 1) {
-                return (
-                  <div key={idx} className="grid grid-cols-1">
+          {isLoading ? (
+            <>
+              <div className="grid gap-[var(--space-gap)] lg:grid-cols-2">
+                <BlogCardSkeleton variant="overlay" />
+                <BlogCardSkeleton variant="overlay" />
+              </div>
+              <div className="grid items-stretch gap-[var(--space-gap)] sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                {Array.from({ length: 8 }).map((_, index) => (
+                  <BlogCardSkeleton key={index} />
+                ))}
+              </div>
+            </>
+          ) : !error && filtered.length === 0 ? (
+            <div className="grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
+              <div>
+                <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+                  <SearchX className="size-5" />
+                </span>
+                <h3 className="mt-4 app-text-heading-sm font-semibold">
+                  {query.trim() ? t("noResults") || "No results" : t("noBlogsYet")}
+                </h3>
+                <p className="mx-auto mt-2 max-w-md app-text-body text-muted-foreground">
+                  {query.trim()
+                    ? "Try a shorter phrase or explore the latest community stories."
+                    : "New stories will appear here as the community publishes them."}
+                </p>
+                {query.trim() && (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    className="mt-4"
+                    onClick={() => {
+                      setQuery("");
+                      setSubmittedQuery("");
+                    }}
+                  >
+                    Clear search
+                  </Button>
+                )}
+              </div>
+            </div>
+          ) : (
+            <>
+              {featuredBlogs.length > 0 && (
+                <div className={`grid gap-[var(--space-gap)] ${featuredBlogs.length > 1 ? "lg:grid-cols-2" : "grid-cols-1"}`}>
+                  {featuredBlogs.map((blog, index) => (
                     <BlogCard
-                      blog={items[0]}
-                      onOpen={onOpen}
+                      key={blog.id}
+                      blog={blog}
                       variant="overlay"
-                      imageHeightClass="h-64 md:h-80 lg:h-96"
-                      countOverride={countOverrides[String(items[0].id)]}
+                      onOpen={openBlog}
+                      countOverride={countOverrides[String(blog.id)]}
                       onCountsChange={updateBlogCounts}
-                      isPriority={idx === 0}
-                    />
-                  </div>
-                );
-              }
-              // 2 cards — wider treatment with overlay variant
-              if (count === 2) {
-                return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 gap-[var(--space-section)]">
-                    {items.map((b: any) => (
-                      <BlogCard
-                        key={b.id}
-                        blog={b}
-                        onOpen={onOpen}
-                        variant="overlay"
-                        imageHeightClass="h-64 md:h-80 lg:h-96"
-                        countOverride={countOverrides[String(b.id)]}
-                        onCountsChange={updateBlogCounts}
-                        isPriority={idx === 0}
-                      />
-                    ))}
-                  </div>
-                );
-              }
-              // 3 cards
-              if (count === 3) {
-                return (
-                  <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-section)]">
-                    {items.map((b: any) => (
-                      <BlogCard
-                        key={b.id}
-                        blog={b}
-                        onOpen={onOpen}
-                        countOverride={countOverrides[String(b.id)]}
-                        onCountsChange={updateBlogCounts}
-                        isPriority={idx === 0}
-                      />
-                    ))}
-                  </div>
-                );
-              }
-              // 4 cards
-              return (
-                <div key={idx} className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-[var(--space-section)]">
-                  {items.map((b: any) => (
-                    <BlogCard
-                      key={b.id}
-                      blog={b}
-                      onOpen={onOpen}
-                      countOverride={countOverrides[String(b.id)]}
-                      onCountsChange={updateBlogCounts}
-                      isPriority={idx === 0}
+                      isPriority={currentPage === 1 && index === 0}
                     />
                   ))}
                 </div>
-              );
-            });
-          })()
-        )}
-        {!isLoading && (filtered?.length ?? 0) === 0 && (
-          <div className="card p-[var(--space-card)]">
-            {q.trim() ? t("noResults") || "No results" : t("noBlogsYet")}
-          </div>
-        )}
+              )}
 
-        {!isLoading && (filtered?.length ?? 0) > 0 && (
-          <div className="mt-2 flex flex-col gap-[var(--space-gap)] rounded-2xl border border-[var(--border)] bg-[var(--card)]/60 p-[var(--space-card)] backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between">
-            <div className="flex items-center gap-2 app-text-body">
-              <span className="subtle">{t("pageSizeLabel") || "Page size"}</span>
-              <div className="relative">
-                <Tooltip content={t("pageSizeLabel") || "Page size"} side="top">
-                  <select
-                    value={pageSize}
-                    onChange={(event) => setPageSize(Number(event.target.value))}
-                    className="h-10 rounded-xl border border-[var(--border)] bg-[var(--background)] px-3 pr-8 app-text-body font-medium outline-none focus-visible:ring-2 focus-visible:ring-[color-mix(in oklab, var(--accent) 35%, transparent)]"
-                    aria-label="Blog page size"
+              {latestBlogs.length > 0 && (
+                <div className="grid items-stretch gap-[var(--space-gap)] sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
+                  {latestBlogs.map((blog) => (
+                    <BlogCard
+                      key={blog.id}
+                      blog={blog}
+                      onOpen={openBlog}
+                      countOverride={countOverrides[String(blog.id)]}
+                      onCountsChange={updateBlogCounts}
+                    />
+                  ))}
+                </div>
+              )}
+            </>
+          )}
+
+          {!isLoading && !error && filtered.length > 0 && (
+            <div className="flex flex-col gap-3 border-t border-border/60 pt-4 sm:flex-row sm:items-center sm:justify-between">
+              <label className="inline-flex items-center gap-2 app-text-caption text-muted-foreground">
+                Stories per page
+                <select
+                  value={pageSize}
+                  onChange={(event) => setPageSize(Number(event.target.value))}
+                  className="min-h-10 rounded-xl border border-border bg-background px-3 app-text-label font-semibold text-foreground outline-none focus-visible:ring-2 focus-visible:ring-primary/35"
+                >
+                  {[8, 10, 12, 14, 16].map((size) => (
+                    <option key={size} value={size}>{size}</option>
+                  ))}
+                </select>
+              </label>
+
+              <nav className="flex items-center gap-1.5" aria-label="Blog pagination">
+                <Tooltip content={t("prev") || "Previous"} side="top">
+                  <button
+                    type="button"
+                    aria-label={t("prev") || "Previous"}
+                    disabled={currentPage <= 1}
+                    onClick={() => setCurrentPage((page) => Math.max(1, page - 1))}
+                    className="grid size-10 place-items-center rounded-xl border border-border bg-background transition-colors hover:border-primary/30 hover:bg-primary/5 disabled:pointer-events-none disabled:opacity-40"
                   >
-                    {[9, 12, 15, 18, 24].map((size) => (
-                      <option key={size} value={size}>
-                        {size} {t("perPage") || "per page"}
-                      </option>
-                    ))}
-                  </select>
+                    <ChevronLeft className="size-4" />
+                  </button>
                 </Tooltip>
-              </div>
-            </div>
 
-            <div className="flex flex-wrap items-center gap-2">
-              <Tooltip content={t("prev") || "Previous"} side="top">
-                <button
-                  type="button"
-                  onClick={() => setCurrentPage((prev) => Math.max(1, prev - 1))}
-                  disabled={currentPage === 1}
-                  className="h-10 rounded-xl border border-[var(--border)] px-3 app-text-body disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
-                >
-                  {t("prev") || "Previous"}
-                </button>
-              </Tooltip>
-
-              {Array.from({ length: totalPages }).map((_, index) => {
-                const pageNumber = index + 1;
-                const active = currentPage === pageNumber;
-                return (
-                  <Tooltip key={pageNumber} content={`${t("page") || "Page"} ${pageNumber}`} side="top">
-                    <button
-                      type="button"
-                      onClick={() => setCurrentPage(pageNumber)}
-                      className={`h-10 min-w-10 rounded-xl border px-3 app-text-body font-medium transition-colors ${active
-                        ? "border-[var(--accent)] bg-[color-mix(in oklab, var(--accent) 20%, transparent)] text-[var(--accent)]"
-                        : "border-[var(--border)] hover:bg-[var(--muted)]"
+                {visiblePages(currentPage, totalPages).map((pageNumber, index, pages) => {
+                  const previous = pages[index - 1];
+                  return (
+                    <React.Fragment key={pageNumber}>
+                      {previous != null && pageNumber - previous > 1 && (
+                        <span className="px-1 text-muted-foreground">…</span>
+                      )}
+                      <button
+                        type="button"
+                        aria-current={pageNumber === currentPage ? "page" : undefined}
+                        onClick={() => setCurrentPage(pageNumber)}
+                        className={`min-h-10 min-w-10 rounded-xl border px-2 app-text-label font-semibold transition-colors ${
+                          pageNumber === currentPage
+                            ? "border-primary bg-primary text-primary-foreground"
+                            : "border-border bg-background hover:border-primary/30 hover:bg-primary/5"
                         }`}
-                    >
-                      {pageNumber}
-                    </button>
-                  </Tooltip>
-                );
-              })}
+                      >
+                        {pageNumber}
+                      </button>
+                    </React.Fragment>
+                  );
+                })}
 
-              <Tooltip content={t("next") || "Next"} side="top">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setCurrentPage((prev) => Math.min(totalPages, prev + 1))
-                  }
-                  disabled={currentPage === totalPages}
-                  className="h-10 rounded-xl border border-[var(--border)] px-3 app-text-body disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[var(--muted)]"
-                >
-                  {t("next") || "Next"}
-                </button>
-              </Tooltip>
+                <Tooltip content={t("next") || "Next"} side="top">
+                  <button
+                    type="button"
+                    aria-label={t("next") || "Next"}
+                    disabled={currentPage >= totalPages}
+                    onClick={() => setCurrentPage((page) => Math.min(totalPages, page + 1))}
+                    className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground transition-opacity hover:opacity-90 disabled:pointer-events-none disabled:opacity-40"
+                  >
+                    <ChevronRight className="size-4" />
+                  </button>
+                </Tooltip>
+              </nav>
             </div>
-          </div>
-        )}
-      </div>
-      {/* Related listings slider (placed before the partners section in layout) */}
-      {Array.isArray(listingsData) && listingsData.length > 0 && (
-        <RelatedListingsSlider currentId={0} />
-      )}
+          )}
+        </div>
+      </section>
 
+      {listings.length > 0 && (
+        <RelatedListingsSlider
+          currentId={0}
+          title="Marketplace picks for curious readers"
+        />
+      )}
     </div>
   );
 }

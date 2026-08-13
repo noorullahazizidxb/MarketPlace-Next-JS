@@ -2,7 +2,7 @@
 import React, { useRef, useState } from "react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useApiGet } from "@/lib/api-hooks";
-import { asset } from "@/lib/assets";
+import { asset, DEFAULT_LISTING_IMAGE } from "@/lib/assets";
 import { StoryViewer } from "@/components/stories/StoryViewer";
 import Image from "next/image";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -55,7 +55,7 @@ export default function StoriesBar() {
                           ? typeof s.images[0] === "string"
                             ? s.images[0]
                             : s.images[0]?.url
-                          : undefined) || "/images/placeholder-card.jpg"
+                          : undefined) || DEFAULT_LISTING_IMAGE
                       )}
                       alt={s.title}
                       className="size-full object-cover"

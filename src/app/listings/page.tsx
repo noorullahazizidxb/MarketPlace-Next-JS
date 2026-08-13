@@ -8,7 +8,6 @@ import {
   useState,
   useEffect,
   useTransition,
-  memo,
 } from "react";
 import dynamic from "next/dynamic";
 import { useApiGet } from "@/lib/api-hooks";
@@ -27,6 +26,7 @@ import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ComponentLoading } from "@/components/ui/component-loading";
 import { OrbField } from "@/components/ui/atoms/ambient-canvas";
+import { LayoutGrid, RefreshCw, SearchX, SlidersHorizontal } from "lucide-react";
 
 // Lazy-load below-fold / heavy components to keep initial bundle small
 const HiddenListingsSlider = dynamic(
@@ -45,9 +45,11 @@ export default function ListingsPage() {
 function ListingsFallback() {
   const { t } = useLanguage();
   return (
-    <div className="space-y-[var(--space-gap)]">
-      <h2 className="heading-xl">{t("listings")}</h2>
-      <div className="card p-[var(--space-card)]">{t("loading")}</div>
+    <div className="app-shell-page space-y-[var(--space-section)]" data-app-page="listings">
+      <div className="rounded-[1.5rem] border border-border bg-card p-[var(--space-card)]">
+        <h2 className="heading-xl">{t("listings")}</h2>
+        <p className="mt-2 app-text-body text-muted-foreground">{t("loading")}</p>
+      </div>
     </div>
   );
 }
@@ -62,7 +64,7 @@ function usePullToRefresh(onRefresh: () => void) {
     const el = ref.current;
     if (!el) return;
     const onTouchStart = (e: TouchEvent) => {
-      if (el.scrollTop > 0) return;
+      if (window.scrollY > 0 || el.scrollTop > 0) return;
       startY.current = e.touches[0].clientY;
     };
     const onTouchMove = (e: TouchEvent) => {
@@ -115,16 +117,16 @@ function ListingsContent() {
     if (window.innerWidth >= 640) return 2;
     return 1;
   };
-  // Initialize from window immediately (not 1) to avoid layout shift on desktop
-  const [numCols, setNumCols] = useState(() => computeNumCols());
+  // Keep the first render deterministic for SSR; sync to the viewport after mount.
+  const [numCols, setNumCols] = useState(1);
   useEffect(() => {
     const onResize = () => setNumCols(computeNumCols());
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
-  const pageSize = numCols * 4; // 4 complete rows per page
+  const pageSize = 12;
   // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
-  const { data, isLoading, error } = useApiGet<Listing[] | Listing>(
+  const { data, isLoading, error, refetch } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
     "/listings",
     undefined,
@@ -165,13 +167,14 @@ function ListingsContent() {
     pulling,
     distance,
   } = usePullToRefresh(() => {
-    // Soft reload: just refresh the route (Next.js navigation) or window reload fallback
-    try {
-      router.refresh?.();
-    } catch {
-      window.location.reload();
-    }
+    void refetch();
   });
+
+  const activeFilters = [
+    type ? `${t("typeLabel")}: ${type}` : null,
+    categoryId ? t("categoryLabel") : null,
+    searchText ? `“${searchText}”` : null,
+  ].filter(Boolean);
 
   // Scroll to listings anchor when navigated from search (router pushes include #listings)
   const listingsAnchorRef = useRef<HTMLDivElement | null>(null);
@@ -241,30 +244,79 @@ function ListingsContent() {
           </div>
         );
       })()}
-      <div id="listings" ref={listingsAnchorRef} className="card app-shell-card space-y-[var(--space-gap)]">
-        <FiltersBar />
+      <section
+        id="listings"
+        ref={listingsAnchorRef}
+        className="app-shell-card overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/80 shadow-sm backdrop-blur-xl"
+        aria-labelledby="listings-heading"
+      >
+        <div className="border-b border-border/60 p-4 sm:p-5 lg:p-6">
+          <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="mb-1.5 inline-flex items-center gap-1.5 app-text-caption font-semibold uppercase tracking-[0.12em] text-primary">
+                <LayoutGrid className="size-3.5" /> Marketplace catalog
+              </div>
+              <h2 id="listings-heading" className="app-text-heading font-semibold tracking-tight">
+                {t("listings")}
+              </h2>
+              <p className="mt-1 app-text-body text-muted-foreground" aria-live="polite">
+                {isLoading
+                  ? t("loading")
+                  : `${total} ${total === 1 ? "listing" : "listings"}${activeFilters.length ? " match your filters" : " available"}`}
+              </p>
+            </div>
+            {activeFilters.length > 0 && (
+              <div className="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:justify-end">
+                <SlidersHorizontal className="size-3.5 shrink-0 text-muted-foreground" />
+                {activeFilters.map((filter) => (
+                  <span
+                    key={filter}
+                    className="shrink-0 rounded-full border border-primary/15 bg-primary/8 px-2.5 py-1 app-text-caption font-medium text-primary"
+                  >
+                    {filter}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+          <FiltersBar />
+        </div>
+
+        <div className="p-3 sm:p-4 lg:p-5">
         {error && (
-          <p className="text-destructive">
-            {String((error as any).message || error)}
-          </p>
+          <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center">
+            <div>
+              <p className="font-semibold text-destructive">Unable to load listings</p>
+              <p className="mt-1 app-text-caption text-muted-foreground">
+                {String((error as any).message || error)}
+              </p>
+            </div>
+            <Button variant="secondary" size="sm" LeftIcon={RefreshCw} onClick={() => void refetch()}>
+              Try again
+            </Button>
+          </div>
         )}
         {/* Grid is always rendered — skeletons occupy the same space as cards
             while data loads so there is no layout shift when content arrives. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-[var(--space-gap)] app-density-grid-gap">
+        <div className="grid grid-cols-1 items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 app-density-grid-gap">
           {isLoading
             ? Array.from({ length: pageSize }).map((_, i) => (
               <div
                 key={i}
-                className="rounded-2xl border border-border overflow-hidden bg-card"
+                className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-card"
               >
-                <Skeleton className="h-40 w-full rounded-none" />
-                <div className="p-[var(--space-card)] space-y-2">
-                  <Skeleton className="h-5 w-3/4" />
+                <div className="relative aspect-[3/2]">
+                  <Skeleton className="absolute inset-0 rounded-none" />
+                  <Skeleton className="absolute left-3 top-3 h-6 w-16 rounded-full" />
+                  <Skeleton className="absolute bottom-3 right-3 h-7 w-20 rounded-xl" />
+                </div>
+                <div className="space-y-3 p-[var(--space-card)]">
+                  <Skeleton className="h-5 w-4/5" />
+                  <Skeleton className="h-4 w-full" />
                   <Skeleton className="h-4 w-2/3" />
-                  <Skeleton className="h-4 w-1/3" />
-                  <div className="flex items-center gap-[var(--space-gap)] pt-1">
-                    <Skeleton className="h-6 w-16 rounded-xl" />
-                    <Skeleton className="h-6 w-20 rounded-xl" />
+                  <div className="flex items-center gap-2 border-t border-border/50 pt-3">
+                    <Skeleton className="h-10 flex-1 rounded-xl" />
+                    <Skeleton className="size-10 rounded-xl" />
                   </div>
                 </div>
               </div>
@@ -273,7 +325,27 @@ function ListingsContent() {
               !error && (
                 items.length === 0
                   ? (
-                    <p className="col-span-full">{t("noListingsFound")}</p>
+                    <div className="col-span-full grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
+                      <div>
+                        <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+                          <SearchX className="size-5" />
+                        </span>
+                        <h3 className="mt-4 app-text-heading-sm font-semibold">
+                          {t("noListingsFound")}
+                        </h3>
+                        <p className="mx-auto mt-2 max-w-md app-text-body text-muted-foreground">
+                          Try a broader search or clear one of the active filters.
+                        </p>
+                        <Button
+                          variant="secondary"
+                          size="sm"
+                          className="mt-4"
+                          onClick={() => router.push(pathname)}
+                        >
+                          Clear filters
+                        </Button>
+                      </div>
+                    </div>
                   )
                   : (
                     <>
@@ -282,6 +354,7 @@ function ListingsContent() {
                           <ListingCard
                             listing={item}
                             cleanImageOverlayOnEngage
+                            priority={current === 1 && idx < Math.min(2, numCols)}
                           />
                           {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
                           {((idx + 1) % numCols === 0 ||
@@ -305,7 +378,8 @@ function ListingsContent() {
         {!isLoading && !error && items.length > 0 && (
           <Pagination page={current} pageCount={pageCount} />
         )}
-      </div>
+        </div>
+      </section>
     </div>
   );
 }

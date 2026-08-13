@@ -482,6 +482,8 @@ export const defaultThemeSettings: ThemeSettings = {
   selectedRadius: "0.5rem",
   brandColors: {},
   importedTheme: null,
+  customThemePresets: [],
+  selectedCustomThemeId: "",
   fontFamily: "inter",
   fontFamilyByLocale: {
     en: "inter",

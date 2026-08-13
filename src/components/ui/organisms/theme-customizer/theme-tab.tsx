@@ -21,8 +21,9 @@ import {
 } from "@repo/constants";
 import { ColorPicker } from "../../molecules/color-picker";
 import type { ImportedTheme } from "@repo/types";
-import { useThemeManager, useCircularTransition } from "@repo/hooks";
+import { useTheme, useThemeManager, useCircularTransition } from "@repo/hooks";
 import { PresetManagerPanel } from "./preset-manager-panel";
+import { CustomPresetStudio } from "./custom-preset-studio";
 
 interface ThemeTabProps {
   selectedTheme: string;
@@ -101,12 +102,14 @@ export function ThemeTab({
 }: ThemeTabProps) {
   const {
     isDarkMode,
+    setTheme,
     brandColorsValues,
     setBrandColorsValues,
     handleColorChange,
   } = useThemeManager();
 
-  const { toggleTheme } = useCircularTransition();
+  const { startTransition } = useCircularTransition();
+  const { updateThemeSettings } = useTheme();
 
   const handleRandomShadcn = () => {
     // Apply a random shadcn theme
@@ -119,6 +122,7 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({}); // Clear brand colors state
     setImportedTheme(null); // Clear imported theme
+    updateThemeSettings({ selectedCustomThemeId: "" });
   };
 
   const handleRandomTweakcn = () => {
@@ -132,6 +136,7 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({}); // Clear brand colors state
     setImportedTheme(null); // Clear imported theme
+    updateThemeSettings({ selectedCustomThemeId: "" });
   };
 
   const handleRandomBrand = () => {
@@ -144,6 +149,7 @@ export function ThemeTab({
     setSelectedSidebarTheme("");
     setBrandColorsValues({});
     setImportedTheme(null);
+    updateThemeSettings({ selectedCustomThemeId: "" });
   };
 
   const handleRandomSidebar = () => {
@@ -156,20 +162,22 @@ export function ThemeTab({
     setSelectedBrandTheme("");
     setBrandColorsValues({});
     setImportedTheme(null);
+    updateThemeSettings({ selectedCustomThemeId: "" });
   };
 
   const handleRadiusSelect = (radius: string) => {
     setSelectedRadius(radius);
   };
 
-  const handleLightMode = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (isDarkMode === false) return;
-    toggleTheme(event);
-  };
-
-  const handleDarkMode = (event: React.MouseEvent<HTMLButtonElement>) => {
-    if (isDarkMode === true) return;
-    toggleTheme(event);
+  const setMode = (
+    mode: "light" | "dark",
+    event: React.MouseEvent<HTMLButtonElement>,
+  ) => {
+    if ((mode === "dark") === isDarkMode) return;
+    startTransition(
+      { x: event.clientX, y: event.clientY },
+      () => setTheme(mode),
+    );
   };
 
   const clearOthers = (except: "shadcn" | "tweakcn" | "brand" | "sidebar") => {
@@ -179,11 +187,46 @@ export function ThemeTab({
     if (except !== "sidebar") setSelectedSidebarTheme("");
     setBrandColorsValues({});
     setImportedTheme(null);
+    updateThemeSettings({ selectedCustomThemeId: "" });
   };
 
   return (
     <div className="p-4 space-y-6">
-      {/* ── 4 Preset panels with full CRUD ─────────────────────────────────── */}
+      {/* ── Mode ────────────────────────────────────────────────────────────── */}
+      <div className="space-y-3">
+        <div>
+          <div className="app-text-label font-semibold text-foreground">Preview mode</div>
+          <p className="mt-1 app-text-micro text-muted-foreground">
+            Edit and preview each preset in a dedicated light or dark mode.
+          </p>
+        </div>
+        <div className="grid grid-cols-2 gap-2 rounded-2xl border border-border/60 bg-muted/20 p-1.5">
+          <Button
+            variant={!isDarkMode ? "default" : "ghost"}
+            size="sm"
+            onClick={(event) => setMode("light", event)}
+            className="mode-toggle-button cursor-pointer"
+          >
+            <Sun className="app-icon-sm mr-1" />
+            Light
+          </Button>
+          <Button
+            variant={isDarkMode ? "default" : "ghost"}
+            size="sm"
+            onClick={(event) => setMode("dark", event)}
+            className="mode-toggle-button cursor-pointer"
+          >
+            <Moon className="app-icon-sm mr-1" />
+            Dark
+          </Button>
+        </div>
+      </div>
+
+      <CustomPresetStudio />
+
+      <Separator />
+
+      {/* ── Built-in preset libraries ─────────────────────────────────────── */}
       <PresetManagerPanel
         label="Shadcn UI Theme Presets"
         builtins={colorThemes as any}
@@ -250,33 +293,6 @@ export function ThemeTab({
               </div>
             </div>
           ))}
-        </div>
-      </div>
-
-      <Separator />
-
-      {/* ── Mode ────────────────────────────────────────────────────────────── */}
-      <div className="space-y-3">
-        <div className="text-sm font-medium text-foreground">Mode</div>
-        <div className="grid grid-cols-2 gap-2">
-          <Button
-            variant={!isDarkMode ? "secondary" : "outline"}
-            size="sm"
-            onClick={handleLightMode}
-            className="mode-toggle-button cursor-pointer"
-          >
-            <Sun className="app-icon-sm mr-1" />
-            Light
-          </Button>
-          <Button
-            variant={isDarkMode ? "secondary" : "outline"}
-            size="sm"
-            onClick={handleDarkMode}
-            className="mode-toggle-button cursor-pointer"
-          >
-            <Moon className="app-icon-sm mr-1" />
-            Dark
-          </Button>
         </div>
       </div>
 

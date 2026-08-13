@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Layout, Palette, RotateCcw, Settings, X } from "lucide-react";
+import { CheckCircle2, Layout, Palette, RotateCcw, Settings, X } from "lucide-react";
 import { Button } from "../../atoms/shadcn/button";
 import {
   Sheet,
@@ -60,13 +60,18 @@ export function ThemeCustomizer({
   const selectedRadius = themeSettings.selectedRadius;
 
   const handleReset = () => {
-    updateThemeSettings(defaultThemeSettings);
+    updateThemeSettings({
+      ...defaultThemeSettings,
+      customThemePresets: themeSettings.customThemePresets ?? [],
+      selectedCustomThemeId: "",
+    });
     updateSidebarConfig(defaultSidebarSettings);
   };
 
   const handleImport = (themeData: ImportedTheme) => {
     updateThemeSettings({
       importedTheme: themeData,
+      selectedCustomThemeId: "",
       selectedTheme: "",
       selectedTweakcnTheme: "",
       selectedBrandTheme: "",
@@ -97,7 +102,7 @@ export function ThemeCustomizer({
             "flex flex-col gap-0 overflow-hidden p-0 pointer-events-auto [&>button]:hidden",
             sheetPresentation === "bottom"
               ? "h-auto max-h-[min(88dvh,36rem)] w-full max-w-[100vw] rounded-t-[22px] border-x-0 border-b-0"
-              : "h-full w-[min(100%,25rem)] max-w-[100vw]",
+              : "h-full w-[min(100%,27rem)] max-w-[100vw]",
           )}
           onInteractOutside={(e) => {
             // Prevent the sheet from closing when dialog is open
@@ -108,22 +113,29 @@ export function ThemeCustomizer({
         >
           <SheetHeader
             className={cn(
-              "space-y-0 p-4 pb-2",
+              "space-y-0 border-b border-border/50 p-4",
               sheetPresentation === "bottom" && "shrink-0 border-b border-border/40",
             )}
           >
             <div className="flex items-center gap-2">
-              <div className="rounded-lg bg-primary/10 p-2">
+              <div className="rounded-xl bg-primary/10 p-2.5 text-primary">
                 <Settings className="app-icon-sm" />
               </div>
-              <SheetTitle className="app-typo-section-heading">
-                Customizer
-              </SheetTitle>
+              <div className="min-w-0 flex-1">
+                <SheetTitle className="app-typo-section-heading">
+                  Appearance studio
+                </SheetTitle>
+                <SheetDescription className="mt-0.5 app-text-micro text-muted-foreground">
+                  Build, clone, and preview a complete visual system.
+                </SheetDescription>
+              </div>
               <div className="ml-auto flex items-center gap-2">
                 <Button
                   variant="outline"
                   size="icon"
                   onClick={handleReset}
+                  aria-label="Reset appearance"
+                  title="Reset appearance"
                   className="cursor-pointer min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)]"
                 >
                   <RotateCcw className="app-icon-sm" />
@@ -132,15 +144,13 @@ export function ThemeCustomizer({
                   variant="outline"
                   size="icon"
                   onClick={() => onOpenChange(false)}
+                  aria-label="Close appearance studio"
                   className="cursor-pointer min-h-[var(--ctrl-h-sm)] min-w-[var(--ctrl-h-sm)]"
                 >
                   <X className="app-icon-sm" />
                 </Button>
               </div>
             </div>
-            <SheetDescription className="app-typo-filter-label text-muted-foreground sr-only">
-              Customize the them and layout of your dashboard.
-            </SheetDescription>
           </SheetHeader>
 
           <div
@@ -211,6 +221,9 @@ export function ThemeCustomizer({
                 <LayoutTab />
               </TabsContent>
             </Tabs>
+          </div>
+          <div className="flex shrink-0 items-center justify-center gap-1.5 border-t border-border/50 bg-card/95 px-4 py-2 app-text-micro text-muted-foreground backdrop-blur">
+            <CheckCircle2 className="size-3.5 text-success" /> Changes save automatically
           </div>
         </SheetContent>
       </Sheet>

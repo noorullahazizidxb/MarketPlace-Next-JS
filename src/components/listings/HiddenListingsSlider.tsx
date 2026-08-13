@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ShieldCheck, Sparkles } from "lucide-react";
 import { ListingCard, type Listing } from "../ui/listing-card";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 import { Tooltip } from "@/components/ui/tooltip";
@@ -107,7 +107,7 @@ export function HiddenListingsSlider({
       intervalRef.current = null;
     }
 
-    const autoplayEnabled = pauseOnHover ? isEngaged : true;
+    const autoplayEnabled = pauseOnHover ? !isEngaged : true;
     if (!autoplayEnabled) return;
     if (prefersReducedMotion) return;
     if (!inView) return;
@@ -139,8 +139,7 @@ export function HiddenListingsSlider({
     prefersReducedMotion,
   ]);
 
-  const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${slides.length
-    }`;
+  const announce = `Slide ${Math.min(idx + 1, slides.length)} of ${slides.length}`;
 
   if (hidden.length === 0) return null;
 
@@ -148,7 +147,7 @@ export function HiddenListingsSlider({
     <section
       ref={rootRef as any}
       dir="ltr"
-      className="relative mt-8"
+      className="relative isolate overflow-hidden rounded-[1.75rem] border border-border/70 bg-card/75 p-4 shadow-sm backdrop-blur-xl sm:p-5 lg:p-6"
       {...engagementProps}
       tabIndex={0}
       role="region"
@@ -164,16 +163,26 @@ export function HiddenListingsSlider({
         }
       }}
     >
-      <div className="mb-3 flex items-center justify-between">
-        <h3 className="app-text-heading-sm font-semibold tracking-tight">
-          Promoted Listings
-        </h3>
+      <div className="pointer-events-none absolute inset-0 -z-10 bg-[radial-gradient(70%_90%_at_0%_0%,color-mix(in_oklab,var(--primary)_13%,transparent),transparent_70%)]" />
+      <div className="mb-4 flex items-end justify-between gap-4">
+        <div className="min-w-0">
+          <div className="mb-1.5 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-primary/8 px-2.5 py-1 app-text-micro font-semibold uppercase tracking-[0.12em] text-primary">
+            <Sparkles className="size-3" /> Curated marketplace
+          </div>
+          <h2 className="app-text-heading font-semibold tracking-tight">
+            Promoted listings
+          </h2>
+          <p className="mt-1 max-w-2xl app-text-body text-muted-foreground">
+            Seller-protected offers backed by an available marketplace representative.
+          </p>
+        </div>
         <div className="flex items-center gap-2">
           <Tooltip content="Previous" side="bottom">
             <button
               aria-label="Previous"
               onClick={prev}
-              className="size-9 rounded-full grid place-items-center border border-border hover:bg-foreground/10"
+              disabled={slides.length <= 1}
+              className="grid size-10 place-items-center rounded-xl border border-border bg-background/75 text-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:border-primary/30 hover:bg-primary/8 disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronLeft className="size-4" />
             </button>
@@ -182,25 +191,25 @@ export function HiddenListingsSlider({
             <button
               aria-label="Next"
               onClick={next}
-              className="size-9 rounded-full grid place-items-center border border-border hover:bg-foreground/10"
+              disabled={slides.length <= 1}
+              className="grid size-10 place-items-center rounded-xl bg-primary text-primary-foreground shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md disabled:pointer-events-none disabled:opacity-40"
             >
               <ChevronRight className="size-4" />
             </button>
           </Tooltip>
         </div>
       </div>
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-card/80">
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_10%_-20%,color-mix(in oklab, var(--primary) 12%, transparent),transparent_70%)]" />
-        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_200px_at_90%_120%,color-mix(in oklab, var(--accent) 12%, transparent),transparent_70%)]" />
-        <div className="relative p-[var(--space-card)] min-h-[320px]">
+      <div className="relative overflow-hidden rounded-[1.35rem] border border-border/60 bg-background/55">
+        <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(600px_240px_at_100%_120%,color-mix(in_oklab,var(--accent)_10%,transparent),transparent_70%)]" />
+        <div className="relative p-3 sm:p-4">
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={idx}
               initial={{ opacity: 0, x: dir === 1 ? 40 : -40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: dir === 1 ? -40 : 40 }}
-              transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--space-gap)] app-density-grid-gap"
+              transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+              className="grid grid-cols-1 items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 app-density-grid-gap"
               drag="x"
               dragConstraints={{ left: 0, right: 0 }}
               dragElastic={0.16}
@@ -243,7 +252,12 @@ export function HiddenListingsSlider({
         {announce}
       </div>
 
-      <div className="mt-2 flex items-center justify-center gap-2">
+      <div className="mt-4 flex items-center justify-between gap-3">
+        <span className="inline-flex items-center gap-1.5 app-text-caption text-muted-foreground">
+          <ShieldCheck className="size-3.5 text-success" />
+          {hidden.length} protected {hidden.length === 1 ? "offer" : "offers"}
+        </span>
+        <div className="flex items-center justify-center gap-1.5">
         {slides.map((_, i) => (
           <button
             key={i}
@@ -253,13 +267,14 @@ export function HiddenListingsSlider({
               setDir(i > idx ? 1 : -1);
               setIdx(i);
             }}
-            className={
+            className={`h-1.5 rounded-full transition-all ${
               i === idx
-                ? "go-to-slide size-1.5 rounded-full"
-                : "size-1.5 rounded-full bg-[color-mix(in oklab, var(--foreground) 30%, transparent)] hover:opacity-90"
-            }
+                ? "w-6 bg-primary"
+                : "w-2 bg-foreground/20 hover:bg-foreground/40"
+            }`}
           />
         ))}
+        </div>
       </div>
     </section>
   );
