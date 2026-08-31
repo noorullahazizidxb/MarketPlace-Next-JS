@@ -13,7 +13,8 @@ import type {
 
 // Map of font family option to CSS font-family value.
 export const fontFamilyValues: Record<FontFamilyOption, string> = {
-  inter: 'var(--font-inter), "Inter Fallback", system-ui, -apple-system, sans-serif',
+  inter:
+    'var(--font-inter), "Inter Fallback", system-ui, -apple-system, sans-serif',
   roboto: "'Roboto', 'Helvetica Neue', Arial, sans-serif",
   "open-sans": "'Open Sans', 'Segoe UI', system-ui, -apple-system, sans-serif",
   poppins: "'Poppins', 'Segoe UI', system-ui, -apple-system, sans-serif",
@@ -442,7 +443,10 @@ const hasResponsiveDensityShape = (
   value: unknown,
 ): value is ResponsiveLayoutDensity => {
   if (!value || typeof value !== "object" || Array.isArray(value)) return false;
-  return "base" in (value as Record<string, unknown>) || "viewports" in (value as Record<string, unknown>);
+  return (
+    "base" in (value as Record<string, unknown>) ||
+    "viewports" in (value as Record<string, unknown>)
+  );
 };
 
 export const normalizeResponsiveLayoutDensity = (
@@ -458,7 +462,9 @@ export const normalizeResponsiveLayoutDensity = (
 
     if (value.viewports) {
       const viewports = Object.fromEntries(
-        Object.entries(value.viewports).filter(([, tokens]) => tokens && Object.keys(tokens).length > 0),
+        Object.entries(value.viewports).filter(
+          ([, tokens]) => tokens && Object.keys(tokens).length > 0,
+        ),
       ) as ResponsiveLayoutDensity["viewports"];
 
       if (viewports && Object.keys(viewports).length > 0) {
@@ -510,4 +516,14 @@ export const defaultUiContextState: UiContextState = {
   version: 1,
   theme: defaultThemeSettings,
   sidebar: defaultSidebarSettings,
+  componentVariants: {
+    listingCard: "grid",
+    navbar: "standard",
+    footer: "standard",
+    sidebar: "default",
+    blogCard: "card",
+    storiesBar: "bubble",
+    skeletonTheme: "shimmer",
+    captchaVariant: "classic",
+  },
 };

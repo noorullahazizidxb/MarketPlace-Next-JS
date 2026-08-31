@@ -20,7 +20,7 @@ import {
   getInitialThemeSettings,
   getThemeModeInitScript,
   getUiContextState,
-} from "../theme/server-theme";
+} from "@/lib/theme/server-theme";
 import { NavigationProgress } from "@/components/providers/navigation-progress";
 
 export const metadata: Metadata = rootMetadata();
@@ -31,7 +31,8 @@ export default async function RootLayout({
   children: ReactNode;
 }) {
   const uiContext = await getUiContextState();
-  const initialThemeSettings = uiContext.theme ?? (await getInitialThemeSettings());
+  const initialThemeSettings =
+    uiContext.theme ?? (await getInitialThemeSettings());
   const initialThemeCss = await getInitialThemeCss();
   const themeModeScript = getThemeModeInitScript(initialThemeSettings.mode);
 

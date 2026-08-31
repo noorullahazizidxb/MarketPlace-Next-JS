@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -19,6 +19,7 @@ import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
 import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
+import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
 
 const gradientBgClass = "gradient-bg";
 
@@ -35,7 +36,7 @@ const signUpSchema = z
       .optional()
       .refine(
         (v) => !v || /^\+?[0-9]{8,15}$/.test(v.replace(/\s+/g, "")),
-        "signUpValidationPhoneInvalid"
+        "signUpValidationPhoneInvalid",
       ),
     password: z
       .string()
@@ -55,7 +56,7 @@ type SignUpValues = z.infer<typeof signUpSchema>;
 
 function translateError(
   t: (key: string) => string,
-  message?: string
+  message?: string,
 ): string | undefined {
   if (!message) return undefined;
   return (t as any)(message) || message;
@@ -92,8 +93,7 @@ export default function SignUpPage() {
   const email = useWatch({ control, name: "email" }) || "";
   const phone = useWatch({ control, name: "phone" }) || "";
   const passwordValue = useWatch({ control, name: "password" }) || "";
-  const confirmPassword =
-    useWatch({ control, name: "confirmPassword" }) || "";
+  const confirmPassword = useWatch({ control, name: "confirmPassword" }) || "";
 
   // Simple password strength scoring (0-5)
   const passwordScore = (() => {
@@ -119,7 +119,7 @@ export default function SignUpPage() {
       onSuccess: () => {
         router.push("/sign-in?registered=1");
       },
-    }
+    },
   );
 
   const onSubmit = async (data: SignUpValues) => {
@@ -147,11 +147,12 @@ export default function SignUpPage() {
   };
 
   const submitting = isSubmitting || registerMutation.isPending;
+  const [captchaValid, setCaptchaValid] = React.useState(false);
 
   const fieldError = (
     name: keyof SignUpValues,
     touched?: boolean,
-    dirty?: boolean
+    dirty?: boolean,
   ) => {
     if (!(touched || dirty)) return undefined;
     return translateError(t, errors[name]?.message as string | undefined);
@@ -166,7 +167,11 @@ export default function SignUpPage() {
         "relative flex items-center justify-center p-[var(--space-card)] sm:p-[var(--space-card)] lg:p-[var(--space-card)]",
       )}
     >
-      <AmbientCanvas variant="orbs" intensity={0.3} className="absolute inset-0" />
+      <AmbientCanvas
+        variant="orbs"
+        intensity={0.3}
+        className="absolute inset-0"
+      />
       <div className="absolute inset-0 -z-10 opacity-40">
         {/* Kept as soft wash; primary motion is AmbientCanvas */}
       </div>
@@ -180,7 +185,7 @@ export default function SignUpPage() {
         <motion.div
           className={cn(
             "relative overflow-hidden rounded-3xl border border-[var(--card-border,var(--border))/0.45] bg-[var(--card-bg,var(--card))/0.9] p-[var(--space-card)] shadow-[0_32px_70px_-40px_color-mix(in oklab, var(--primary) 55%, transparent)] backdrop-blur-2xl",
-            "text-[var(--card-fg,var(--foreground))]"
+            "text-[var(--card-fg,var(--foreground))]",
           )}
           animate={errors ? { x: [-6, 6, -4, 4, 0] } : { x: 0 }}
           transition={{ type: "spring", stiffness: 200, damping: 16 }}
@@ -258,7 +263,7 @@ export default function SignUpPage() {
                   error={fieldError(
                     "fullName",
                     touchedFields.fullName,
-                    dirtyFields.fullName
+                    dirtyFields.fullName,
                   )}
                 />
               </div>
@@ -284,7 +289,7 @@ export default function SignUpPage() {
                   error={fieldError(
                     "email",
                     touchedFields.email,
-                    dirtyFields.email
+                    dirtyFields.email,
                   )}
                 />
               </div>
@@ -309,7 +314,7 @@ export default function SignUpPage() {
                   error={fieldError(
                     "phone",
                     touchedFields.phone,
-                    dirtyFields.phone
+                    dirtyFields.phone,
                   )}
                 />
               </div>
@@ -337,7 +342,7 @@ export default function SignUpPage() {
                       error={fieldError(
                         "password",
                         touchedFields.password,
-                        dirtyFields.password
+                        dirtyFields.password,
                       )}
                     />
                   </div>
@@ -364,7 +369,7 @@ export default function SignUpPage() {
                     error={fieldError(
                       "confirmPassword",
                       touchedFields.confirmPassword,
-                      dirtyFields.confirmPassword
+                      dirtyFields.confirmPassword,
                     )}
                   />
                 </div>
@@ -384,10 +389,12 @@ export default function SignUpPage() {
               )}
             </AnimatePresence>
 
+            <CaptchaWidget onVerified={setCaptchaValid} className="my-1" />
+
             <Tooltip content={t("tooltipCreateAccountBtn")} side="top">
               <Button
                 type="submit"
-                disabled={submitting || !isValid}
+                disabled={submitting || !isValid || !captchaValid}
                 className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_var(--btn-primary-bg,var(--primary))_0%,_var(--accent)_55%,_var(--secondary)_100%)] app-text-body font-semibold text-[var(--btn-primary-fg,var(--primary-foreground))] shadow-[0_18px_48px_-20px_color-mix(in oklab, var(--primary) 60%, transparent)] transition-all hover:shadow-[0_22px_60px_-18px_color-mix(in oklab, var(--secondary) 55%, transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card-bg,var(--card))] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <motion.span

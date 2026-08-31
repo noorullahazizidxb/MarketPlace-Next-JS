@@ -4,24 +4,27 @@
 @import "../styles/responsive-tokens.css";
 
 @source "../**/*.{ts,tsx}";
-@config "../../tailwind.config.ts";
 
 @custom-variant dark (&:is(.dark *, [data-theme="dark"] *, [data-theme=dark] *));
 
 /* LOCAL FONTS — marketplace */
 @font-face {
-  font-family: 'PoppinsLocal';
-  src: url('../english_font/Poppins-Regular.woff2') format('woff2');
+  font-family: "PoppinsLocal";
+  src: url("../english_font/Poppins-Regular.woff2") format("woff2");
   font-display: swap;
 }
 @font-face {
-  font-family: 'Yekan';
-  src: url('../persian_font/Yekan.woff2') format('woff2'), url('../persian_font/Yekan.woff') format('woff');
+  font-family: "Yekan";
+  src:
+    url("../persian_font/Yekan.woff2") format("woff2"),
+    url("../persian_font/Yekan.woff") format("woff");
   font-display: swap;
 }
 @font-face {
-  font-family: 'HSDream';
-  src: url('../persian_font/HSDreamRegular.woff2') format('woff2'), url('../persian_font/HSDreamRegular.woff') format('woff');
+  font-family: "HSDream";
+  src:
+    url("../persian_font/HSDreamRegular.woff2") format("woff2"),
+    url("../persian_font/HSDreamRegular.woff") format("woff");
   font-display: swap;
 }
 
@@ -34,7 +37,9 @@
 @theme inline {
   /* Typography */
   --font-sans: var(--app-font-family);
-  --app-font-family: var(--font-inter), "Inter Fallback", PoppinsLocal, ui-sans-serif, system-ui, sans-serif;
+  --app-font-family:
+    var(--font-inter), "Inter Fallback", PoppinsLocal, ui-sans-serif, system-ui,
+    sans-serif;
   /* Typography scale — resolved at runtime from :root canonical --text-* vars */
   --app-font-size: var(--text-body);
   --app-heading-font-size: var(--text-heading);
@@ -99,7 +104,6 @@
   --color-overlay-dark: var(--overlay-dark);
   --color-overlay-light: var(--overlay-light);
   --radius-squircle: var(--squircle-radius);
-
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -293,7 +297,9 @@
 
   /* TextField floating-label geometry (component-level constants) */
   --text-input-label-float-y: 0.25rem;
-  --text-input-padding-block-start: calc(0.25rem + calc(var(--text-label) * 1.33) + 0.125rem);
+  --text-input-padding-block-start: calc(
+    0.25rem + calc(var(--text-label) * 1.33) + 0.125rem
+  );
   --text-input-padding-block-start-rest: calc((var(--ctrl-h) - 1.25em) / 2);
   --text-input-padding-block-end: calc(var(--ctrl-h) * 0.125);
   --text-input-padding-inline: var(--ctrl-px);
@@ -301,10 +307,18 @@
   /* ── Brand accent gradient ── */
   --brand-gradient-start: oklch(0.54 0.24 280);
   --brand-gradient-end: oklch(0.46 0.26 265);
-  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  --brand-gradient: linear-gradient(
+    135deg,
+    var(--brand-gradient-start),
+    var(--brand-gradient-end)
+  );
   --hover-gradient-start: oklch(0.58 0.24 280);
   --hover-gradient-end: oklch(0.5 0.26 265);
-  --hover-gradient: linear-gradient(135deg, var(--hover-gradient-start), var(--hover-gradient-end));
+  --hover-gradient: linear-gradient(
+    135deg,
+    var(--hover-gradient-start),
+    var(--hover-gradient-end)
+  );
   --brand-glow: oklch(0.54 0.24 280 / 0.25);
   --brand-foreground: oklch(0.985 0 0);
 
@@ -320,14 +334,15 @@
   --skeleton: oklch(0.94 0 0);
   --skeleton-shimmer: oklch(0.98 0 0);
   --scrollbar-thumb: oklch(0.85 0 0);
-  --font-family-english: Inter, PoppinsLocal, Roboto, Open Sans, Lato, ui-sans-serif, system-ui;
+  --font-family-english:
+    Inter, PoppinsLocal, Roboto, Open Sans, Lato, ui-sans-serif, system-ui;
   --font-family-persian: Vazirmatn, Yekan, HSDream, Tahoma, sans-serif;
-  --font-family-heading: "Space Grotesk", Poppins, PoppinsLocal, Inter, ui-sans-serif, system-ui;
+  --font-family-heading:
+    "Space Grotesk", Poppins, PoppinsLocal, Inter, ui-sans-serif, system-ui;
   --font-family-heading-persian: HSDream, Vazirmatn, Yekan, sans-serif;
-  --app-heading-mask-image: url('/mask.png');
+  --app-heading-mask-image: url("/mask.png");
   --text-small: 0.75rem;
   --shell-header-h: 3.5rem;
-
 
   /* ── Font weights ── */
   --weight-body: 400;
@@ -423,10 +438,18 @@
   /* Dark mode brand overrides */
   --brand-gradient-start: oklch(0.73 0.18 272);
   --brand-gradient-end: oklch(0.63 0.2 248);
-  --brand-gradient: linear-gradient(135deg, var(--brand-gradient-start), var(--brand-gradient-end));
+  --brand-gradient: linear-gradient(
+    135deg,
+    var(--brand-gradient-start),
+    var(--brand-gradient-end)
+  );
   --hover-gradient-start: oklch(0.77 0.18 272);
   --hover-gradient-end: oklch(0.67 0.2 248);
-  --hover-gradient: linear-gradient(135deg, var(--hover-gradient-start), var(--hover-gradient-end));
+  --hover-gradient: linear-gradient(
+    135deg,
+    var(--hover-gradient-start),
+    var(--hover-gradient-end)
+  );
   --brand-glow: oklch(0.73 0.18 272 / 0.3);
   --brand-foreground: oklch(0.985 0 0);
 
@@ -441,7 +464,6 @@
   --skeleton: oklch(0.25 0.02 260);
   --skeleton-shimmer: oklch(0.32 0.02 260);
   --scrollbar-thumb: oklch(0.32 0.02 260);
-
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -459,7 +481,9 @@
     font-optical-sizing: auto;
     font-synthesis: none;
     font-kerning: normal;
-    font-feature-settings: "kern" 1, "liga" 1;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -552,7 +576,9 @@
     font-optical-sizing: auto;
     font-synthesis: none;
     font-kerning: normal;
-    font-feature-settings: "kern" 1, "liga" 1;
+    font-feature-settings:
+      "kern" 1,
+      "liga" 1;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
   }
@@ -593,6 +619,23 @@
   max-width: var(--app-content-width);
   min-width: 0;
   margin-inline: auto;
+}
+
+/* ── Tailwind v4: utilities previously defined in tailwind.config.ts ── */
+@utility shadow-soft {
+  box-shadow: 0 10px 30px -12px
+    color-mix(in oklch, var(--foreground) 25%, transparent);
+}
+@utility shadow-glass {
+  box-shadow:
+    inset 0 1px color-mix(in oklch, var(--foreground) 12%, transparent),
+    0 10px 30px -12px color-mix(in oklch, var(--foreground) 28%, transparent);
+}
+@utility backdrop-blur-xs {
+  backdrop-filter: blur(2px);
+}
+@utility ease-premium {
+  transition-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 @utility squircle {
@@ -1028,7 +1071,9 @@
 }
 
 .brand-gradient-hover {
-  transition: background 0.2s ease, filter 0.2s ease;
+  transition:
+    background 0.2s ease,
+    filter 0.2s ease;
 }
 
 .brand-gradient-hover:hover {
@@ -1037,7 +1082,9 @@
 }
 
 .hover-gradient {
-  transition: background 0.2s ease, filter 0.2s ease;
+  transition:
+    background 0.2s ease,
+    filter 0.2s ease;
 }
 
 .hover-gradient:hover {
@@ -1127,10 +1174,12 @@
 }
 
 .animate-shimmer {
-  background: linear-gradient(90deg,
-      var(--muted) 25%,
-      oklch(from var(--muted-foreground) l c h / 0.15) 50%,
-      var(--muted) 75%);
+  background: linear-gradient(
+    90deg,
+    var(--muted) 25%,
+    oklch(from var(--muted-foreground) l c h / 0.15) 50%,
+    var(--muted) 75%
+  );
   background-size: 200% 100%;
   animation: shimmer 1.6s ease-in-out infinite;
 }
@@ -1154,10 +1203,41 @@
   animation-play-state: paused;
 }
 
+/* Aurora — slow scale/translate shimmer for decorative background blobs */
+@keyframes aurora {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(10%, -10%, 0) scale(1.05);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+.animate-aurora {
+  animation: aurora 12s ease-in-out infinite;
+}
+
+/* Float — subtle vertical bob for feature icons / hero elements */
+@keyframes float {
+  0% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0);
+  }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
 /* Gentle pulse — slightly different from Tailwind's default: holds steady
    briefly before re-pulsing, giving a more "breathing" quality. */
 @keyframes breathe {
-
   0%,
   100% {
     opacity: 1;
@@ -1208,7 +1288,6 @@
 
 /* Gradient flow — decorative background animation for stat cards on hover */
 @keyframes gradient-flow {
-
   0%,
   100% {
     background-position: 0% 50%;
@@ -1385,27 +1464,39 @@ textarea[data-slot="textarea"],
 
 /* Fix for right-side inset variant */
 @media (min-width: 768px) {
-  html:not([dir="rtl"]) [data-side="right"][data-variant="inset"]~[data-slot="sidebar-inset"] {
+  html:not([dir="rtl"])
+    [data-side="right"][data-variant="inset"]
+    ~ [data-slot="sidebar-inset"] {
     margin-right: 0 !important;
     margin-left: 0 !important;
   }
 
-  html:not([dir="rtl"]) [data-side="right"][data-variant="inset"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
+  html:not([dir="rtl"])
+    [data-side="right"][data-variant="inset"][data-state="collapsed"]
+    ~ [data-slot="sidebar-inset"] {
     margin-right: 0.5rem !important;
     margin-left: 0 !important;
   }
 
-  html[dir="rtl"] [data-side="right"][data-variant="inset"]~[data-slot="sidebar-inset"] {
+  html[dir="rtl"]
+    [data-side="right"][data-variant="inset"]
+    ~ [data-slot="sidebar-inset"] {
     margin-right: var(--sidebar-width) !important;
     margin-left: 0 !important;
   }
 
-  html[dir="rtl"] [data-side="right"][data-variant="inset"][data-collapsible="icon"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
-    margin-right: calc(var(--sidebar-width-icon) + var(--spacing) * 4 + 2px) !important;
+  html[dir="rtl"]
+    [data-side="right"][data-variant="inset"][data-collapsible="icon"][data-state="collapsed"]
+    ~ [data-slot="sidebar-inset"] {
+    margin-right: calc(
+      var(--sidebar-width-icon) + var(--spacing) * 4 + 2px
+    ) !important;
     margin-left: 0 !important;
   }
 
-  html[dir="rtl"] [data-side="right"][data-variant="inset"][data-collapsible="offcanvas"][data-state="collapsed"]~[data-slot="sidebar-inset"] {
+  html[dir="rtl"]
+    [data-side="right"][data-variant="inset"][data-collapsible="offcanvas"][data-state="collapsed"]
+    ~ [data-slot="sidebar-inset"] {
     margin-right: 0.5rem !important;
     margin-left: 0 !important;
   }
@@ -1423,11 +1514,13 @@ textarea[data-slot="textarea"],
   outline: none;
   cursor: pointer;
   /* Use oklch-native CSS vars directly — no hsl() wrapper needed */
-  background: linear-gradient(to right,
-      var(--primary) 0%,
-      var(--primary) var(--range-fill, 50%),
-      var(--muted) var(--range-fill, 50%),
-      var(--muted) 100%);
+  background: linear-gradient(
+    to right,
+    var(--primary) 0%,
+    var(--primary) var(--range-fill, 50%),
+    var(--muted) var(--range-fill, 50%),
+    var(--muted) 100%
+  );
   transition: background 0.08s ease;
 }
 
@@ -1442,7 +1535,9 @@ textarea[data-slot="textarea"],
     0 0 0 2px color-mix(in oklch, var(--primary) 40%, transparent),
     0 2px 8px color-mix(in oklch, var(--primary) 30%, transparent);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .rem-range-slider-input::-moz-range-thumb {
@@ -1455,7 +1550,9 @@ textarea[data-slot="textarea"],
     0 0 0 2px color-mix(in oklch, var(--primary) 40%, transparent),
     0 2px 8px color-mix(in oklch, var(--primary) 30%, transparent);
   cursor: pointer;
-  transition: transform 0.12s ease, box-shadow 0.12s ease;
+  transition:
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
 }
 
 .rem-range-slider-input:hover::-webkit-slider-thumb {
@@ -1490,10 +1587,12 @@ textarea[data-slot="textarea"],
   background: transparent;
 }
 
-
 /* ── Marketplace locale fonts ── */
 html[lang="en"] body {
-  font-family: var(--app-font-family, var(--font-family-english, Inter, PoppinsLocal, ui-sans-serif, system-ui));
+  font-family: var(
+    --app-font-family,
+    var(--font-family-english, Inter, PoppinsLocal, ui-sans-serif, system-ui)
+  );
   font-size: var(--text-body);
 }
 html[lang="en"] h1,
@@ -1502,11 +1601,25 @@ html[lang="en"] h3,
 html[lang="en"] h4,
 html[lang="en"] h5,
 html[lang="en"] h6 {
-  font-family: var(--font-family-heading, Poppins, PoppinsLocal, Inter, sans-serif);
+  font-family: var(
+    --font-family-heading,
+    Poppins,
+    PoppinsLocal,
+    Inter,
+    sans-serif
+  );
 }
-html[lang="fa"] { direction: rtl; }
+html[lang="fa"] {
+  direction: rtl;
+}
 html[lang="fa"] body {
-  font-family: var(--font-family-persian, Vazirmatn, Yekan, HSDream, sans-serif);
+  font-family: var(
+    --font-family-persian,
+    Vazirmatn,
+    Yekan,
+    HSDream,
+    sans-serif
+  );
   font-size: var(--text-body);
 }
 html[lang="fa"] h1,
@@ -1515,7 +1628,13 @@ html[lang="fa"] h3,
 html[lang="fa"] h4,
 html[lang="fa"] h5,
 html[lang="fa"] h6 {
-  font-family: var(--font-family-heading-persian, HSDream, Vazirmatn, Yekan, sans-serif);
+  font-family: var(
+    --font-family-heading-persian,
+    HSDream,
+    Vazirmatn,
+    Yekan,
+    sans-serif
+  );
 }
 
 /* Textured heading mask */
@@ -1549,47 +1668,99 @@ html[lang="fa"] h6 {
 /* Marketplace motion — theme-var driven */
 .bg-grid-overlay {
   background-image:
-    linear-gradient(90deg, color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px),
-    linear-gradient(color-mix(in oklch, var(--foreground) 6%, transparent) 1px, transparent 1px);
+    linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      color-mix(in oklch, var(--foreground) 6%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 80px 80px;
 }
 .bg-aurora-one {
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--primary) 55%, transparent), transparent 70%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklch, var(--primary) 55%, transparent),
+    transparent 70%
+  );
 }
 .bg-aurora-two {
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--secondary) 55%, transparent), transparent 70%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklch, var(--secondary) 55%, transparent),
+    transparent 70%
+  );
 }
 @keyframes marquee {
-  from { transform: translateX(0); }
-  to { transform: translateX(-50%); }
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
 }
-.animate-marquee { animation: marquee 28s linear infinite; }
-.animate-marquee:hover { animation-play-state: paused; }
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+.animate-marquee:hover {
+  animation-play-state: paused;
+}
 @keyframes spin-slow {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
 }
-.animate-spin-slow { animation: spin-slow 60s linear infinite; }
+.animate-spin-slow {
+  animation: spin-slow 60s linear infinite;
+}
 @keyframes drift-a {
-  0% { transform: translate(0, 0); }
-  33% { transform: translate(20px, -10px); }
-  66% { transform: translate(-10px, 15px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(20px, -10px);
+  }
+  66% {
+    transform: translate(-10px, 15px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
 @keyframes drift-b {
-  0% { transform: translate(0, 0); }
-  33% { transform: translate(-16px, 12px); }
-  66% { transform: translate(12px, -8px); }
-  100% { transform: translate(0, 0); }
+  0% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(-16px, 12px);
+  }
+  66% {
+    transform: translate(12px, -8px);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
 }
-.animate-drift-a { animation: drift-a 20s ease-in-out infinite; }
-.animate-drift-b { animation: drift-b 22s ease-in-out infinite; }
+.animate-drift-a {
+  animation: drift-a 20s ease-in-out infinite;
+}
+.animate-drift-b {
+  animation: drift-b 22s ease-in-out infinite;
+}
 
 .glass {
   background-color: color-mix(in oklch, var(--background) 60%, transparent);
   backdrop-filter: blur(12px);
   border: 1px solid color-mix(in oklch, var(--border) 60%, transparent);
-  box-shadow: var(--shadow-md, 0 10px 30px -12px color-mix(in oklch, var(--foreground) 20%, transparent));
+  box-shadow: var(
+    --shadow-md,
+    0 10px 30px -12px color-mix(in oklch, var(--foreground) 20%, transparent)
+  );
 }
 .dark .glass {
   background-color: color-mix(in oklch, var(--card) 40%, transparent);
@@ -1609,11 +1780,18 @@ html[lang="fa"] h6 {
   pointer-events: none;
   border-radius: inherit;
   padding: 1px;
-  background: conic-gradient(from 180deg at 50% 50%, color-mix(in oklch, var(--primary) 85%, transparent), color-mix(in oklch, var(--secondary) 85%, transparent), color-mix(in oklch, var(--primary) 85%, transparent));
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    color-mix(in oklch, var(--primary) 85%, transparent),
+    color-mix(in oklch, var(--secondary) 85%, transparent),
+    color-mix(in oklch, var(--primary) 85%, transparent)
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
-  opacity: .9;
+  opacity: 0.9;
 }
 
 .app-navbar {
@@ -1621,7 +1799,11 @@ html[lang="fa"] h6 {
   top: 0;
   z-index: 40;
   backdrop-filter: blur(8px);
-  background-color: color-mix(in oklch, var(--navbar-bg, var(--background)) 92%, transparent);
+  background-color: color-mix(
+    in oklch,
+    var(--navbar-bg, var(--background)) 92%,
+    transparent
+  );
   border-bottom: 1px solid var(--navbar-border, var(--border));
   color: var(--navbar-fg, var(--foreground));
   height: var(--navbar-height, var(--shell-header-h, 4rem));
@@ -1637,14 +1819,20 @@ html[lang="fa"] h6 {
   box-shadow: var(--card-shadow, none);
   transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-.card:hover { transform: translateY(-2px); }
+.card:hover {
+  transform: translateY(-2px);
+}
 
 .theme-range {
   appearance: none;
   width: 100%;
   height: 0.5rem;
   border-radius: 9999px;
-  background: linear-gradient(90deg, color-mix(in oklch, var(--primary) 85%, transparent), color-mix(in oklch, var(--accent) 85%, transparent));
+  background: linear-gradient(
+    90deg,
+    color-mix(in oklch, var(--primary) 85%, transparent),
+    color-mix(in oklch, var(--accent) 85%, transparent)
+  );
   outline: none;
 }
 .theme-range::-webkit-slider-thumb {
@@ -1658,21 +1846,44 @@ html[lang="fa"] h6 {
 }
 
 .bg-conic-primary-secondary {
-  background: conic-gradient(from 180deg at 50% 50%, color-mix(in oklch, var(--primary) 12%, transparent), transparent 30%, color-mix(in oklch, var(--secondary) 12%, transparent), transparent 70%, color-mix(in oklch, var(--primary) 12%, transparent));
+  background: conic-gradient(
+    from 180deg at 50% 50%,
+    color-mix(in oklch, var(--primary) 12%, transparent),
+    transparent 30%,
+    color-mix(in oklch, var(--secondary) 12%, transparent),
+    transparent 70%,
+    color-mix(in oklch, var(--primary) 12%, transparent)
+  );
 }
 .bg-radial-accent {
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--accent) 18%, transparent), transparent 70%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklch, var(--accent) 18%, transparent),
+    transparent 70%
+  );
 }
 .bg-radial-secondary {
-  background: radial-gradient(closest-side, color-mix(in oklch, var(--secondary) 18%, transparent), transparent 70%);
+  background: radial-gradient(
+    closest-side,
+    color-mix(in oklch, var(--secondary) 18%, transparent),
+    transparent 70%
+  );
 }
 
 .gradient-bg {
   min-height: 100vh;
   overflow: hidden;
   background:
-    radial-gradient(circle at top, color-mix(in oklch, var(--primary) 28%, transparent), transparent 58%),
-    radial-gradient(circle at bottom, color-mix(in oklch, var(--accent) 22%, transparent), transparent 64%);
+    radial-gradient(
+      circle at top,
+      color-mix(in oklch, var(--primary) 28%, transparent),
+      transparent 58%
+    ),
+    radial-gradient(
+      circle at bottom,
+      color-mix(in oklch, var(--accent) 22%, transparent),
+      transparent 64%
+    );
 }
 
 .go-to-slide,
@@ -1688,8 +1899,12 @@ button[aria-label^="Go to slide"],
   animation: partners-marquee 24s linear infinite;
 }
 @keyframes partners-marquee {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
 }
 @media (prefers-reduced-motion: reduce) {
   .partners-marquee-track,
@@ -1702,11 +1917,20 @@ button[aria-label^="Go to slide"],
   }
 }
 
-.no-scrollbar::-webkit-scrollbar { display: none; }
-.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
 
-.safe-pb { padding-bottom: calc(var(--safe-bottom, 0px) + 0.25rem); }
-.safe-pt { padding-top: calc(var(--safe-top, 0px) + 0.25rem); }
+.safe-pb {
+  padding-bottom: calc(var(--safe-bottom, 0px) + 0.25rem);
+}
+.safe-pt {
+  padding-top: calc(var(--safe-top, 0px) + 0.25rem);
+}
 .container-padded {
   width: min(100%, var(--app-content-width));
   min-width: 0;
@@ -1715,7 +1939,9 @@ button[aria-label^="Go to slide"],
 }
 
 @media (max-width: 640px) {
-  input, select, textarea {
+  input,
+  select,
+  textarea {
     font-size: 16px !important;
     line-height: 1.35;
   }
@@ -1728,7 +1954,8 @@ button[aria-label^="Go to slide"],
   border: 1px solid color-mix(in oklch, var(--border) 78%, transparent);
   border-radius: calc(var(--radius) + 0.5rem);
   background: color-mix(in oklch, var(--card) 90%, transparent);
-  box-shadow: 0 1rem 3rem -2rem color-mix(in oklch, var(--foreground) 28%, transparent);
+  box-shadow: 0 1rem 3rem -2rem
+    color-mix(in oklch, var(--foreground) 28%, transparent);
 }
 
 .modern-navbar {
@@ -1802,9 +2029,13 @@ button[aria-label^="Go to slide"],
 .app-premium-surface {
   border: 1px solid color-mix(in oklch, var(--border) 82%, transparent);
   border-radius: calc(var(--radius) + 0.75rem);
-  background:
-    linear-gradient(145deg, color-mix(in oklch, var(--card) 96%, transparent), color-mix(in oklch, var(--card) 82%, var(--background)));
-  box-shadow: 0 1.5rem 4rem -2.75rem color-mix(in oklch, var(--foreground) 32%, transparent);
+  background: linear-gradient(
+    145deg,
+    color-mix(in oklch, var(--card) 96%, transparent),
+    color-mix(in oklch, var(--card) 82%, var(--background))
+  );
+  box-shadow: 0 1.5rem 4rem -2.75rem
+    color-mix(in oklch, var(--foreground) 32%, transparent);
 }
 
 .app-state-shell {
@@ -1849,7 +2080,9 @@ button[aria-label^="Go to slide"],
   min-height: var(--ctrl-h-sm);
   border-radius: var(--radius-sm);
   color: var(--muted-foreground);
-  transition: color 160ms ease, background-color 160ms ease;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease;
 }
 
 .app-footer-link:hover {
@@ -1858,7 +2091,10 @@ button[aria-label^="Go to slide"],
 
 @media (min-width: 768px) {
   .app-footer-grid {
-    grid-template-columns: minmax(14rem, 1.25fr) repeat(2, minmax(10rem, 0.75fr));
+    grid-template-columns: minmax(14rem, 1.25fr) repeat(
+        2,
+        minmax(10rem, 0.75fr)
+      );
   }
 }
 
@@ -1873,7 +2109,10 @@ button[aria-label^="Go to slide"],
   font-size: var(--text-label);
   font-weight: var(--weight-label);
   color: var(--muted-foreground);
-  transition: color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    transform 160ms ease;
 }
 
 .app-nav-link:hover,
@@ -1921,8 +2160,15 @@ button[aria-label^="Go to slide"],
   overflow: auto;
   padding: var(--space-filter);
   background:
-    linear-gradient(90deg, color-mix(in oklch, var(--border) 28%, transparent) 1px, transparent 1px),
-    linear-gradient(color-mix(in oklch, var(--border) 28%, transparent) 1px, transparent 1px);
+    linear-gradient(
+      90deg,
+      color-mix(in oklch, var(--border) 28%, transparent) 1px,
+      transparent 1px
+    ),
+    linear-gradient(
+      color-mix(in oklch, var(--border) 28%, transparent) 1px,
+      transparent 1px
+    );
   background-size: 1.25rem 1.25rem;
 }
 
@@ -1933,8 +2179,11 @@ button[aria-label^="Go to slide"],
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--background);
-  box-shadow: 0 1.5rem 4rem -2rem color-mix(in oklch, var(--foreground) 35%, transparent);
-  transition: width 180ms ease, height 180ms ease;
+  box-shadow: 0 1.5rem 4rem -2rem
+    color-mix(in oklch, var(--foreground) 35%, transparent);
+  transition:
+    width 180ms ease,
+    height 180ms ease;
 }
 
 .appearance-preview-iframe {

@@ -20,18 +20,26 @@ import { Button } from "@/components/ui/button";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSocialRealtime } from "@/lib/use-social-realtime";
-import StoriesBar from "@/components/stories/StoriesBar";
+import { StoriesBarSelector } from "@/components/stories/stories-bar-selector";
 import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
 import { Tooltip } from "@/components/ui/tooltip";
 import { ComponentLoading } from "@/components/ui/component-loading";
 import { OrbField } from "@/components/ui/atoms/ambient-canvas";
-import { LayoutGrid, RefreshCw, SearchX, SlidersHorizontal } from "lucide-react";
+import {
+  LayoutGrid,
+  RefreshCw,
+  SearchX,
+  SlidersHorizontal,
+} from "lucide-react";
 
 // Lazy-load below-fold / heavy components to keep initial bundle small
 const HiddenListingsSlider = dynamic(
-  () => import("@/components/listings/HiddenListingsSlider").then((m) => m.HiddenListingsSlider),
-  { ssr: false, loading: () => <ComponentLoading rows={2} className="h-24" /> }
+  () =>
+    import("@/components/listings/HiddenListingsSlider").then(
+      (m) => m.HiddenListingsSlider,
+    ),
+  { ssr: false, loading: () => <ComponentLoading rows={2} className="h-24" /> },
 );
 
 export default function ListingsPage() {
@@ -45,10 +53,15 @@ export default function ListingsPage() {
 function ListingsFallback() {
   const { t } = useLanguage();
   return (
-    <div className="app-shell-page space-y-[var(--space-section)]" data-app-page="listings">
+    <div
+      className="app-shell-page space-y-[var(--space-section)]"
+      data-app-page="listings"
+    >
       <div className="rounded-[1.5rem] border border-border bg-card p-[var(--space-card)]">
         <h2 className="heading-xl">{t("listings")}</h2>
-        <p className="mt-2 app-text-body text-muted-foreground">{t("loading")}</p>
+        <p className="mt-2 app-text-body text-muted-foreground">
+          {t("loading")}
+        </p>
       </div>
     </div>
   );
@@ -191,16 +204,20 @@ function ListingsContent() {
           }
         }, 120);
       }
-    } catch { }
+    } catch {}
   }, [allItems, id, searchText]);
 
   return (
-    <div className="relative space-y-[var(--space-section)] app-shell-page" ref={ptrRef} data-app-page="listings">
+    <div
+      className="relative space-y-[var(--space-section)] app-shell-page"
+      ref={ptrRef}
+      data-app-page="listings"
+    >
       <OrbField intensity={0.18} className="fixed inset-0 -z-10" />
       {/* Hero */}
       <HomeHero />
       {/* Stories bar */}
-      <StoriesBar />
+      <StoriesBarSelector />
       {/* Hidden listings slider */}
       <HiddenListingsSlider items={allItems} />
       {/* Promo banner placed in listings page (before global Partners section) */}
@@ -234,8 +251,9 @@ function ListingsContent() {
                                 : "h-0";
         return (
           <div
-            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${pulling ? "" : "transition-[height] duration-300 ease-in-out"
-              }`}
+            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${
+              pulling ? "" : "transition-[height] duration-300 ease-in-out"
+            }`}
           >
             <div className="app-text-micro tracking-wide font-medium text-foreground/60">
               {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
@@ -256,10 +274,16 @@ function ListingsContent() {
               <div className="mb-1.5 inline-flex items-center gap-1.5 app-text-caption font-semibold uppercase tracking-[0.12em] text-primary">
                 <LayoutGrid className="size-3.5" /> Marketplace catalog
               </div>
-              <h2 id="listings-heading" className="app-text-heading font-semibold tracking-tight">
+              <h2
+                id="listings-heading"
+                className="app-text-heading font-semibold tracking-tight"
+              >
                 {t("listings")}
               </h2>
-              <p className="mt-1 app-text-body text-muted-foreground" aria-live="polite">
+              <p
+                className="mt-1 app-text-body text-muted-foreground"
+                aria-live="polite"
+              >
                 {isLoading
                   ? t("loading")
                   : `${total} ${total === 1 ? "listing" : "listings"}${activeFilters.length ? " match your filters" : " available"}`}
@@ -283,101 +307,102 @@ function ListingsContent() {
         </div>
 
         <div className="p-3 sm:p-4 lg:p-5">
-        {error && (
-          <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center">
-            <div>
-              <p className="font-semibold text-destructive">Unable to load listings</p>
-              <p className="mt-1 app-text-caption text-muted-foreground">
-                {String((error as any).message || error)}
-              </p>
-            </div>
-            <Button variant="secondary" size="sm" LeftIcon={RefreshCw} onClick={() => void refetch()}>
-              Try again
-            </Button>
-          </div>
-        )}
-        {/* Grid is always rendered — skeletons occupy the same space as cards
-            while data loads so there is no layout shift when content arrives. */}
-        <div className="grid grid-cols-1 items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 app-density-grid-gap">
-          {isLoading
-            ? Array.from({ length: pageSize }).map((_, i) => (
-              <div
-                key={i}
-                className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-card"
-              >
-                <div className="relative aspect-[3/2]">
-                  <Skeleton className="absolute inset-0 rounded-none" />
-                  <Skeleton className="absolute left-3 top-3 h-6 w-16 rounded-full" />
-                  <Skeleton className="absolute bottom-3 right-3 h-7 w-20 rounded-xl" />
-                </div>
-                <div className="space-y-3 p-[var(--space-card)]">
-                  <Skeleton className="h-5 w-4/5" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                  <div className="flex items-center gap-2 border-t border-border/50 pt-3">
-                    <Skeleton className="h-10 flex-1 rounded-xl" />
-                    <Skeleton className="size-10 rounded-xl" />
-                  </div>
-                </div>
+          {error && (
+            <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center">
+              <div>
+                <p className="font-semibold text-destructive">
+                  Unable to load listings
+                </p>
+                <p className="mt-1 app-text-caption text-muted-foreground">
+                  {String((error as any).message || error)}
+                </p>
               </div>
-            ))
-            : (
-              !error && (
-                items.length === 0
-                  ? (
-                    <div className="col-span-full grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
-                      <div>
-                        <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
-                          <SearchX className="size-5" />
-                        </span>
-                        <h3 className="mt-4 app-text-heading-sm font-semibold">
-                          {t("noListingsFound")}
-                        </h3>
-                        <p className="mx-auto mt-2 max-w-md app-text-body text-muted-foreground">
-                          Try a broader search or clear one of the active filters.
-                        </p>
-                        <Button
-                          variant="secondary"
-                          size="sm"
-                          className="mt-4"
-                          onClick={() => router.push(pathname)}
-                        >
-                          Clear filters
-                        </Button>
+              <Button
+                variant="secondary"
+                size="sm"
+                LeftIcon={RefreshCw}
+                onClick={() => void refetch()}
+              >
+                Try again
+              </Button>
+            </div>
+          )}
+          {/* Grid is always rendered — skeletons occupy the same space as cards
+            while data loads so there is no layout shift when content arrives. */}
+          <div className="grid grid-cols-1 items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 app-density-grid-gap">
+            {isLoading
+              ? Array.from({ length: pageSize }).map((_, i) => (
+                  <div
+                    key={i}
+                    className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-card"
+                  >
+                    <div className="relative aspect-[3/2]">
+                      <Skeleton className="absolute inset-0 rounded-none" />
+                      <Skeleton className="absolute left-3 top-3 h-6 w-16 rounded-full" />
+                      <Skeleton className="absolute bottom-3 right-3 h-7 w-20 rounded-xl" />
+                    </div>
+                    <div className="space-y-3 p-[var(--space-card)]">
+                      <Skeleton className="h-5 w-4/5" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/3" />
+                      <div className="flex items-center gap-2 border-t border-border/50 pt-3">
+                        <Skeleton className="h-10 flex-1 rounded-xl" />
+                        <Skeleton className="size-10 rounded-xl" />
                       </div>
                     </div>
-                  )
-                  : (
-                    <>
-                      {pageItems.map((item, idx) => (
-                        <Fragment key={item.id}>
-                          <ListingCard
-                            listing={item}
-                            cleanImageOverlayOnEngage
-                            priority={current === 1 && idx < Math.min(2, numCols)}
-                          />
-                          {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
-                          {((idx + 1) % numCols === 0 ||
-                            (idx === pageItems.length - 1 &&
-                              (idx + 1) % numCols !== 0)) && (
-                              <div
-                                key={`ad-${item.id}-${idx}`}
-                                className="col-span-full"
-                              >
-                                <AdPlaceholder index={Math.floor(idx / numCols)} />
-                              </div>
-                            )}
-                        </Fragment>
-                      ))}
-                    </>
-                  )
-              )
-            )
-          }
-        </div>
-        {!isLoading && !error && items.length > 0 && (
-          <Pagination page={current} pageCount={pageCount} />
-        )}
+                  </div>
+                ))
+              : !error &&
+                (items.length === 0 ? (
+                  <div className="col-span-full grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
+                    <div>
+                      <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
+                        <SearchX className="size-5" />
+                      </span>
+                      <h3 className="mt-4 app-text-heading-sm font-semibold">
+                        {t("noListingsFound")}
+                      </h3>
+                      <p className="mx-auto mt-2 max-w-md app-text-body text-muted-foreground">
+                        Try a broader search or clear one of the active filters.
+                      </p>
+                      <Button
+                        variant="secondary"
+                        size="sm"
+                        className="mt-4"
+                        onClick={() => router.push(pathname)}
+                      >
+                        Clear filters
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    {pageItems.map((item, idx) => (
+                      <Fragment key={item.id}>
+                        <ListingCard
+                          listing={item}
+                          cleanImageOverlayOnEngage
+                          priority={current === 1 && idx < Math.min(2, numCols)}
+                        />
+                        {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
+                        {((idx + 1) % numCols === 0 ||
+                          (idx === pageItems.length - 1 &&
+                            (idx + 1) % numCols !== 0)) && (
+                          <div
+                            key={`ad-${item.id}-${idx}`}
+                            className="col-span-full"
+                          >
+                            <AdPlaceholder index={Math.floor(idx / numCols)} />
+                          </div>
+                        )}
+                      </Fragment>
+                    ))}
+                  </>
+                ))}
+          </div>
+          {!isLoading && !error && items.length > 0 && (
+            <Pagination page={current} pageCount={pageCount} />
+          )}
         </div>
       </section>
     </div>
@@ -414,7 +439,9 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const visible = generateVisible(page, pageCount);
 
   return (
-    <div className={`mt-4 flex items-center justify-center gap-[var(--space-gap)] transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}>
+    <div
+      className={`mt-4 flex items-center justify-center gap-[var(--space-gap)] transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}
+    >
       <Tooltip content={t("prev")} side="top">
         <Button
           variant="accent"
@@ -434,7 +461,10 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
               {showEllipsis && (
                 <span className="px-2 app-text-caption opacity-60">…</span>
               )}
-              <Tooltip content={`${t("page" as any) || "Page"} ${p}`} side="top">
+              <Tooltip
+                content={`${t("page" as any) || "Page"} ${p}`}
+                side="top"
+              >
                 <motion.button
                   whileTap={{ scale: 0.98 }}
                   onClick={() => set(p)}

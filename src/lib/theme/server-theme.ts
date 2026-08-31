@@ -1,6 +1,7 @@
 /**
  * Server-side theme bootstrap for FOUC-free first paint.
  * Reads `.data/ui-context.json` directly (no self-HTTP) and emits CSS via generateThemeCss.
+ * Canonical location: src/lib/theme/server-theme.ts
  */
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
@@ -41,7 +42,6 @@ async function ensureUiContextFile() {
   }
 }
 
-/** Direct secured file read — preferred over self-HTTP in root layout. */
 export async function getUiContextState(): Promise<UiContextState> {
   try {
     await ensureUiContextFile();
@@ -52,7 +52,9 @@ export async function getUiContextState(): Promise<UiContextState> {
   }
 }
 
-export async function getInitialThemeCss(locale?: string | null): Promise<string> {
+export async function getInitialThemeCss(
+  locale?: string | null,
+): Promise<string> {
   const uiContext = await getUiContextState();
   return generateThemeCss(uiContext.theme, locale);
 }
@@ -62,14 +64,11 @@ export async function getInitialThemeSettings(): Promise<ThemeSettings> {
   return uiContext.theme;
 }
 
-/**
- * Tiny pre-hydration mode script. Colors come from SSR `app-inline-css`;
- * this only toggles `.dark` / `data-theme` so the correct block applies.
- */
 export function getThemeModeInitScript(modeHint?: string | null) {
-  const safeMode = modeHint === "light" || modeHint === "dark" || modeHint === "system"
-    ? modeHint
-    : "system";
+  const safeMode =
+    modeHint === "light" || modeHint === "dark" || modeHint === "system"
+      ? modeHint
+      : "system";
 
   return `(function(){try{var root=document.documentElement;var mode=${JSON.stringify(safeMode)};try{var saved=localStorage.getItem("theme-mode");if(saved==="light"||saved==="dark"||saved==="system")mode=saved;}catch(_){}var dark=mode==="dark"||(mode==="system"&&window.matchMedia("(prefers-color-scheme: dark)").matches);root.classList.toggle("dark",dark);root.classList.toggle("light",!dark);root.setAttribute("data-theme",dark?"dark":"light");root.style.colorScheme=dark?"dark":"light";}catch(_){}})();`;
 }

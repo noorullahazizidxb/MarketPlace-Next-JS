@@ -16,6 +16,10 @@ const mergeUiContextState = (
   version: incoming?.version ?? base.version,
   theme: { ...base.theme, ...incoming?.theme },
   sidebar: { ...base.sidebar, ...incoming?.sidebar },
+  componentVariants: {
+    ...base.componentVariants,
+    ...incoming?.componentVariants,
+  },
   updatedAt: incoming?.updatedAt ?? base.updatedAt ?? new Date().toISOString(),
 });
 

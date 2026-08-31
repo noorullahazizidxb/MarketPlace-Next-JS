@@ -6,6 +6,115 @@ import type { UiContextState } from "@/lib/theme/types";
 
 const DATA_DIR = path.join(process.cwd(), ".data");
 const UI_CONTEXT_FILE = path.join(DATA_DIR, "ui-context.json");
+const PRESETS_FILE = path.join(DATA_DIR, "custom-presets.json");
+
+const cloneDefaultUiContextState = (): UiContextState =>
+  JSON.parse(JSON.stringify(defaultUiContextState)) as UiContextState;
+
+const mergeUiContextState = (
+  base: UiContextState,
+  incoming?: Partial<UiContextState> | null,
+): UiContextState => ({
+  version: incoming?.version ?? base.version,
+  theme: { ...base.theme, ...incoming?.theme },
+  sidebar: { ...base.sidebar, ...incoming?.sidebar },
+  componentVariants: {
+    ...base.componentVariants,
+    ...incoming?.componentVariants,
+  },
+  updatedAt: incoming?.updatedAt ?? base.updatedAt ?? new Date().toISOString(),
+});
+
+const normalizeUiContextState = (
+  incoming?: Partial<UiContextState> | null,
+): UiContextState => {
+  return mergeUiContextState(cloneDefaultUiContextState(), incoming);
+};
+
+async function ensureUiContextFile() {
+  await mkdir(DATA_DIR, { recursive: true });
+
+  try {
+    await readFile(UI_CONTEXT_FILE, "utf-8");
+  } catch {
+    const initial = normalizeUiContextState({
+      updatedAt: new Date().toISOString(),
+    });
+    await writeFile(
+      UI_CONTEXT_FILE,
+      `${JSON.stringify(initial, null, 2)}\n`,
+      "utf-8",
+    );
+  }
+}
+
+async function readUiContextState(): Promise<UiContextState> {
+  await ensureUiContextFile();
+
+  try {
+    const raw = await readFile(UI_CONTEXT_FILE, "utf-8");
+    return normalizeUiContextState(JSON.parse(raw) as Partial<UiContextState>);
+  } catch {
+    const fallback = normalizeUiContextState({
+      updatedAt: new Date().toISOString(),
+    });
+    await writeUiContextState(fallback);
+    return fallback;
+  }
+}
+
+async function writeUiContextState(state: UiContextState) {
+  await ensureUiContextFile();
+  await writeFile(
+    UI_CONTEXT_FILE,
+    `${JSON.stringify(state, null, 2)}\n`,
+    "utf-8",
+  );
+}
+
+export async function GET() {
+  const state = await readUiContextState();
+
+  return NextResponse.json(state, {
+    headers: {
+      "Cache-Control": "no-store, no-cache, must-revalidate",
+    },
+  });
+}
+
+export async function PATCH(req: Request) {
+  try {
+    const incoming = (await req.json()) as Partial<UiContextState>;
+    const current = await readUiContextState();
+    const next = mergeUiContextState(current, {
+      ...incoming,
+      updatedAt: new Date().toISOString(),
+    });
+
+    await writeUiContextState(next);
+    return NextResponse.json(next);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to persist ui context";
+
+    return NextResponse.json({ message }, { status: 500 });
+  }
+}
+
+// Reset ui-context to factory defaults (CRUD: Delete/Reset operation)
+export async function DELETE() {
+  try {
+    const reset = normalizeUiContextState({
+      updatedAt: new Date().toISOString(),
+    });
+    await writeUiContextState(reset);
+    return NextResponse.json(reset);
+  } catch (error) {
+    const message =
+      error instanceof Error ? error.message : "Failed to reset ui context";
+    return NextResponse.json({ message }, { status: 500 });
+  }
+}
 
 const cloneDefaultUiContextState = (): UiContextState =>
   JSON.parse(JSON.stringify(defaultUiContextState)) as UiContextState;
@@ -48,9 +157,7 @@ async function readUiContextState(): Promise<UiContextState> {
 
   try {
     const raw = await readFile(UI_CONTEXT_FILE, "utf-8");
-    return normalizeUiContextState(
-      JSON.parse(raw) as Partial<UiContextState>,
-    );
+    return normalizeUiContextState(JSON.parse(raw) as Partial<UiContextState>);
   } catch {
     const fallback = normalizeUiContextState({
       updatedAt: new Date().toISOString(),

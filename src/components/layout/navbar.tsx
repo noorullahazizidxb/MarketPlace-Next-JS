@@ -3,7 +3,7 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ThemeToggle } from "../../theme/theme-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { SearchBox } from "../ui/search-box";
 import { Menu } from "lucide-react";
 import { useUIStore } from "@/store/ui.store";

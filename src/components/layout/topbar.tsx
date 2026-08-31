@@ -18,7 +18,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { SearchBox } from "@/components/ui/search-box";
-import { ThemeToggle } from "../../theme/theme-toggle";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
@@ -62,11 +62,21 @@ export function Topbar() {
                 whileHover={{ y: -2 }}
                 className="flex items-center gap-[var(--space-gap)]"
               >
-                <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
+                <Tooltip
+                  content={t("toggleTheme" as any) || "Toggle theme"}
+                  side="bottom"
+                >
                   <ThemeToggle iconOnly className="hidden sm:grid" />
                 </Tooltip>
                 <div className="modern-navbar-logo">
-                  <Image src="/brand/devminds-logo.png" alt="DevMinds" width={48} height={48} sizes="48px" className="w-full h-full object-contain" />
+                  <Image
+                    src="/brand/devminds-logo.png"
+                    alt="DevMinds"
+                    width={48}
+                    height={48}
+                    sizes="48px"
+                    className="w-full h-full object-contain"
+                  />
                 </div>
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
@@ -160,16 +170,23 @@ export function Topbar() {
                 {/* Notifications */}
                 {user && (
                   <>
-                    <Tooltip content={unreadCount > 0 ? `${unreadCount} unread notification${unreadCount !== 1 ? 's' : ''}` : 'Notifications'} side="bottom">
+                    <Tooltip
+                      content={
+                        unreadCount > 0
+                          ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}`
+                          : "Notifications"
+                      }
+                      side="bottom"
+                    >
                       <button
                         className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-ring/30"
                         aria-label="Toggle notifications"
                         onClick={() => {
                           try {
                             console.log(
-                              "[notifications] bell clicked -> toggle panel"
+                              "[notifications] bell clicked -> toggle panel",
                             );
-                          } catch { }
+                          } catch {}
                           setNotifOpen((v) => !v);
                         }}
                       >
@@ -249,14 +266,18 @@ export function Topbar() {
                             className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <User2 className="size-4" />
-                            <span className="app-text-body">{t("profile")}</span>
+                            <span className="app-text-body">
+                              {t("profile")}
+                            </span>
                           </Link>
                           <Link
                             href="/my-listings"
                             className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
                           >
                             <LayoutGrid className="size-4" />
-                            <span className="app-text-body">{t("myListings")}</span>
+                            <span className="app-text-body">
+                              {t("myListings")}
+                            </span>
                             {!!counts?.listings && (
                               <span className="ml-auto app-text-caption px-2 py-0.5 rounded bg-background/10">
                                 {counts.listings}
@@ -306,19 +327,18 @@ function LogoutButton() {
       onClick={async () => {
         try {
           await mutateAsync({} as any);
-        } catch { }
+        } catch {}
         try {
           const { setCachedToken } = await import("@/lib/axiosClient");
           const { useAuthStore } = await import("@/store/auth.store");
           const { useListingsStore } = await import("@/store/listings.store");
-          const { useNotificationsStore } = await import(
-            "@/store/notifications.store"
-          );
+          const { useNotificationsStore } =
+            await import("@/store/notifications.store");
           setCachedToken(null);
           useAuthStore.getState().clear();
           useListingsStore.getState().clear();
           useNotificationsStore.getState().clear();
-        } catch { }
+        } catch {}
         window.location.href = "/sign-in";
       }}
       className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-background/10 text-left"

@@ -1,7 +1,6 @@
-"use client";
+// Canonical location: atoms/object-url-image
+export { ObjectUrlImage } from "./atoms/object-url-image";
 
-import Image from "next/image";
-import { useEffect, useState } from "react";
 
 type ObjectUrlImageProps = {
   file: Blob;

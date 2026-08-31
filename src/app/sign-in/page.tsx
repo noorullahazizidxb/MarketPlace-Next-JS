@@ -20,7 +20,7 @@ import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
-import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
+import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
 import { ShieldCheck } from "lucide-react";
 
 type FormData = { email: string; password: string };
@@ -30,6 +30,7 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
+  const [captchaValid, setCaptchaValid] = useState(false);
   const { executeRecaptcha } = useRecaptchaV3();
   const { control, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { email: "", password: "" },
@@ -45,7 +46,7 @@ export default function SignInPage() {
   const setListings = useListingsStore((s) => s.set);
   const loginMutation = useApiMutation<{ token: string; user: any }>(
     "post",
-    "/auth/login"
+    "/auth/login",
   );
   const setServerSession = useLocalMutation("post", "/api/login-session");
   const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
@@ -88,13 +89,13 @@ export default function SignInPage() {
               title: it.title ?? it.type ?? "Notification",
               read: !!it.read,
               createdAt: it.createdAt,
-            }))
+            })),
           );
         }
         if (Array.isArray(u.listings) && u.listings.length) {
           setListings(u.listings);
         }
-      } catch { }
+      } catch {}
 
       // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
       await setServerSession
@@ -274,6 +275,9 @@ export default function SignInPage() {
               </Tooltip>
             </div>
 
+            {/* CAPTCHA */}
+            <CaptchaWidget onVerified={setCaptchaValid} className="my-1" />
+
             {/* Action buttons */}
             <div className="flex gap-3 pt-1">
               <Tooltip content={t("tooltipSignInBtn")} side="top">
@@ -282,6 +286,7 @@ export default function SignInPage() {
                   variant="primary"
                   className="flex-1 flex items-center justify-center gap-2"
                   loading={loginMutation.isPending}
+                  disabled={!captchaValid}
                 >
                   <LogIn className="size-4" />
                   {t("signIn")}

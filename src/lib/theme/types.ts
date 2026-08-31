@@ -53,7 +53,11 @@ export type FontSizeOption =
 // Width choices for content and sidebar.
 export type ContentWidthOption = "fluid" | "fixed" | "container";
 export type SidebarWidthOption = "compact" | "comfortable" | "spacious";
-export type HeadingTextDecoration = "none" | "underline" | "overline" | "line-through";
+export type HeadingTextDecoration =
+  | "none"
+  | "underline"
+  | "overline"
+  | "line-through";
 
 export type DensityViewportKey = "xs" | "sm" | "md" | "lg" | "xl";
 
@@ -351,10 +355,31 @@ export interface SidebarSettings {
   width: SidebarWidthOption;
 }
 
+// Component variant keys — 4 visual styles for switchable UI components.
+export type ListingCardVariant =
+  | "grid"
+  | "horizontal"
+  | "editorial"
+  | "minimal";
+export type NavbarVariant = "standard" | "glass" | "minimal" | "fullwidth";
+export type FooterVariant = "standard" | "compact" | "editorial" | "minimal";
+export type SidebarVariantStyle = "default" | "glass" | "minimal" | "brand";
+export type BlogCardVariant = "card" | "horizontal" | "editorial" | "compact";
+
+// Switchable per-component style variants persisted in ui-context.json.
+export interface ComponentVariantSettings {
+  listingCard: ListingCardVariant;
+  navbar: NavbarVariant;
+  footer: FooterVariant;
+  sidebar: SidebarVariantStyle;
+  blogCard: BlogCardVariant;
+}
+
 // Root UI context shape.
 export interface UiContextState {
   version: number;
   theme: ThemeSettings;
   sidebar: SidebarSettings;
+  componentVariants?: Partial<ComponentVariantSettings>;
   updatedAt?: string;
 }
