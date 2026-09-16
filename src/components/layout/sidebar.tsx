@@ -25,7 +25,7 @@ import { useAuth } from "@/lib/use-auth";
 import { useLocalMutation } from "@/lib/api-hooks";
 import { asset } from "@/lib/assets";
 import { useLanguage } from "@/components/providers/language-provider";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 export function Sidebar({
   isOpen,
   onClose,

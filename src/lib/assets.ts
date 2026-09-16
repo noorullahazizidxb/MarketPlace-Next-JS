@@ -21,6 +21,10 @@ function asString(value?: unknown) {
   return "";
 }
 
+/**
+ * Map any representation of an uploads path to same-origin `/uploads/...`
+ * so next/image hits the App Router proxy (never Express cross-origin directly).
+ */
 function sameOriginUploadPath(value: string) {
   const normalized = value.replace(/\\/g, "/");
 
@@ -33,6 +37,8 @@ function sameOriginUploadPath(value: string) {
       if (/^\/api\/uploads\//i.test(parsed.pathname)) {
         return `${parsed.pathname.replace(/^\/api/i, "")}${parsed.search}`;
       }
+      // Foreign absolute URLs (Blob/CDN) are not rewritten here.
+      return "";
     }
   } catch {
     return "";
@@ -49,29 +55,27 @@ function sameOriginUploadPath(value: string) {
 }
 
 /**
- * Resolve API assets without exposing the backend origin to the browser.
- * Uploads intentionally stay on `/uploads/*`, where the App Router proxy can
- * reach the configured backend in local, Docker, and production deployments.
+ * Resolve API assets for the browser.
+ * - Disk uploads → same-origin `/uploads/*` (App Router proxies to Express).
+ * - Absolute https/blob/data (e.g. Vercel Blob) → pass through unchanged.
  */
 export function asset(url?: unknown) {
   const value = asString(url);
   if (!value) return "";
 
+  if (/^(blob:|data:)/i.test(value)) {
+    return value;
+  }
+
+  if (/^https?:\/\//i.test(value)) {
+    const uploadPath = sameOriginUploadPath(value);
+    return uploadPath || value;
+  }
+
   const uploadPath = sameOriginUploadPath(value);
   if (uploadPath) return uploadPath;
 
-  if (/^(https?:\/\/|blob:|data:)/i.test(value)) return value;
-
-  const base = (
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_BASE ||
-    ""
-  ).replace(/\/?api\/?$/, "");
-  if (!base) return value.startsWith("/") ? value : `/${value}`;
-
-  const left = base.endsWith("/") ? base.slice(0, -1) : base;
-  const right = value.startsWith("/") ? value : `/${value}`;
-  return `${left}${right}`;
+  return value.startsWith("/") ? value : `/${value}`;
 }
 
 export function listingFallbackImage(categoryName?: string | null) {
@@ -106,7 +110,17 @@ export function normalizeAssetImages(
     const rawUrl = typeof image === "string" ? image : image?.url;
     const url = asset(rawUrl);
     if (!url) return [];
-    const alt = typeof image === "string" ? fallbackAlt : image?.alt || fallbackAlt;
+    const alt =
+      typeof image === "string" ? fallbackAlt : image?.alt || fallbackAlt;
     return [{ url, alt }];
   });
+}
+
+/** First usable cover URL from a story/listing-like image list. */
+export function firstAssetUrl(
+  images?: Array<AssetImage | string | null | undefined> | null,
+  fallback: string = DEFAULT_LISTING_IMAGE,
+) {
+  const [first] = normalizeAssetImages(images);
+  return first?.url || fallback;
 }

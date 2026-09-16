@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useEffect } from "react";
 import { useAppStore } from "@/store/app.store";

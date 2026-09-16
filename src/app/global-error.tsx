@@ -1,7 +1,7 @@
 "use client";
 
 import "./globals.css";
-import { AppErrorState } from "@/components/ui/app-error-state";
+import { AppErrorState } from "@/components/ui/organisms/app-error-state";
 
 export default function GlobalError({ reset }: { reset: () => void }) {
   return (

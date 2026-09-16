@@ -8,20 +8,21 @@ import { useUIStore } from "@/store/ui.store";
 import { usePathname, useRouter } from "next/navigation";
 import { AdminShell } from "@/components/layout/admin-shell";
 import { Topbar } from "@/components/layout/topbar";
-import BottomNavigation from "@/components/ui/BottomNavigation";
-import { PageTransition } from "@/components/ui/page-transition";
-import Loading from "@/components/ui/loading";
+import BottomNavigation from "@/components/ui/organisms/BottomNavigation";
+import { PageTransition } from "@/components/ui/atoms/page-transition";
+import Loading from "@/components/ui/molecules/loading";
 import { useAppStore } from "@/store/app.store";
 import SiteFooter from "@/components/layout/site-footer";
-import { AnimatedBg } from "@/components/ui/animated-bg";
-import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
-import { Partners } from "@/components/ui/partners";
+import { AnimatedBg } from "@/components/ui/atoms/animated-bg";
+import { MobileQuickBar } from "@/components/ui/organisms/MobileQuickBar";
+import { Partners } from "@/components/ui/organisms/partners";
+import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useRealtimeSocial } from "../../hooks/useRealtimeSocial";
 import { useLanguage } from "@/components/providers/language-provider";
 
 // Below-fold heavy components — lazy loaded so they don't block initial render
 const HomePromoBanner = dynamic(
-  () => import("@/components/ui/home-promo-banner"),
+  () => import("@/components/ui/organisms/home-promo-banner"),
   { ssr: false }
 );
 
@@ -148,22 +149,25 @@ export function AppShell({ children }: PropsWithChildren) {
 
   /* ----------  NORMAL USER LAYOUT  ---------- */
   return (
-    <div className="relative isolate min-h-screen flex flex-col">
+    <div className="relative isolate flex min-h-screen flex-col">
       <AnimatedBg />
-      <div className="relative z-10 hidden md:block">
+      <div className="relative z-[500] hidden md:block">
         <Topbar />
       </div>
       <main
         id="main-content"
-        className="relative z-10 flex-1 container-padded py-[var(--space-page-y)]"
+        className="relative z-10 flex-1 overflow-x-clip container-padded py-[var(--space-page-y)]"
         dir={direction}
       >
         <PageTransition>{children}</PageTransition>
       </main>
 
-      <div className="relative z-10">
+      <div className="relative z-10 overflow-x-clip">
         {appReady ? <HomePromoBanner /> : null}
         <Partners />
+        <div className="container-padded py-[var(--space-section)]">
+          <AdPlaceholder index={2} />
+        </div>
         <SiteFooter />
       </div>
       <BottomNavigation />

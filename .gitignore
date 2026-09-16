@@ -1,5 +1,7 @@
 /node_modules
-/.env
+.env
+.env.local
+.env.vercel.local
 /dist
 .data/
 .specstory/

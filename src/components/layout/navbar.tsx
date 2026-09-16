@@ -3,13 +3,13 @@
 import type { CSSProperties } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { SearchBox } from "../ui/search-box";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
+import { SearchBox } from "@/components/ui/molecules/search-box";
 import { Menu } from "lucide-react";
 import { useUIStore } from "@/store/ui.store";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { Button } from "@/components/ui/atoms/shadcn/button";
 import { cn } from "@/lib/cn";
 

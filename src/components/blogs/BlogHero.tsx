@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { Search } from "lucide-react";
 import React from "react";
 import { blogHeroImage } from "@/lib/public-images";

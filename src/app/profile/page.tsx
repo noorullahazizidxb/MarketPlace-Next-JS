@@ -25,11 +25,11 @@ import { useApiMutation, useApiGet } from "@/lib/api-hooks";
 import { useAuthStore } from "@/store/auth.store";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { asset } from "@/lib/assets";
 
 import { Eye, EyeOff } from "lucide-react";
-import { Dialog, DialogContent, DialogClose } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose } from "@/components/ui/molecules/dialog";
 import { useLanguage } from "@/components/providers/language-provider";
 import { ProfileSkeleton } from "@/components/skeletons/ProfileSkeleton";
 import Image from "next/image";

@@ -9,27 +9,20 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, Play, Eye } from "lucide-react";
 import { useApiGet } from "@/lib/api-hooks";
-import { asset, DEFAULT_LISTING_IMAGE } from "@/lib/assets";
 import { StoryViewer } from "@/components/stories/StoryViewer";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
-
-function resolveImage(s: any): string {
-  const raw =
-    Array.isArray(s.images) && s.images.length > 0
-      ? typeof s.images[0] === "string"
-        ? s.images[0]
-        : s.images[0]?.url
-      : undefined;
-  return asset(raw || DEFAULT_LISTING_IMAGE) || DEFAULT_LISTING_IMAGE;
-}
+import {
+  resolveStoryCoverSrc,
+  type StoryLike,
+} from "@/components/stories/story-media";
 
 // ── V2: Wide Cards ────────────────────────────────────────────────────────────
 // Each story is a vertical card with a preview image, title and a "Watch" CTA.
 
 export function StoriesBarCards({ className }: { className?: string }) {
   const { t } = useLanguage();
-  const { data: stories, isLoading } = useApiGet<any[]>(
+  const { data: stories, isLoading } = useApiGet<StoryLike[]>(
     ["stories"],
     "/stories",
   );
@@ -45,7 +38,7 @@ export function StoriesBarCards({ className }: { className?: string }) {
     setActive((i) => Math.min((stories?.length ?? 1) - 1, i + 1));
 
   return (
-    <section className={cn("space-y-2", className)}>
+    <section className={cn("min-w-0 space-y-2", className)}>
       <div className="flex gap-3 overflow-x-auto no-scrollbar pb-1">
         {isLoading &&
           Array.from({ length: 6 }).map((_, i) => (
@@ -64,7 +57,7 @@ export function StoriesBarCards({ className }: { className?: string }) {
             {/* Image */}
             <div className="relative h-44 w-full overflow-hidden rounded-2xl">
               <Image
-                src={resolveImage(s)}
+                src={resolveStoryCoverSrc(s)}
                 alt={s.title}
                 fill
                 className="object-cover transition-transform duration-400 group-hover:scale-105"
@@ -105,7 +98,7 @@ export function StoriesBarCards({ className }: { className?: string }) {
 
 export function StoriesBarStrip({ className }: { className?: string }) {
   const { t } = useLanguage();
-  const { data: stories, isLoading } = useApiGet<any[]>(
+  const { data: stories, isLoading } = useApiGet<StoryLike[]>(
     ["stories"],
     "/stories",
   );
@@ -122,7 +115,7 @@ export function StoriesBarStrip({ className }: { className?: string }) {
     setActive((i) => Math.min((stories?.length ?? 1) - 1, i + 1));
 
   return (
-    <section className={cn("relative", className)}>
+    <section className={cn("relative min-w-0", className)}>
       {/* Scroll hint arrows */}
       <button
         type="button"
@@ -164,7 +157,7 @@ export function StoriesBarStrip({ className }: { className?: string }) {
             className="group relative h-20 w-56 shrink-0 overflow-hidden rounded-xl focus:outline-none"
           >
             <Image
-              src={resolveImage(s)}
+              src={resolveStoryCoverSrc(s)}
               alt={s.title}
               fill
               className="object-cover transition-transform duration-500 group-hover:scale-105"

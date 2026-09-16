@@ -1,5 +1,5 @@
 "use client";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/molecules/card";
 import { cn } from "@/lib/cn";
 import { Loader2 } from "lucide-react";
 import React from "react";

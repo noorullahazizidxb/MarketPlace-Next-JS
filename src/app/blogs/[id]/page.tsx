@@ -4,10 +4,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { ImageSlider } from "@/components/ui/image-slider";
-import { PageSpinner, ImageSpinner } from "@/components/ui/spinner";
+import { Button } from "@/components/ui/molecules/button";
+import { ConfirmDialog } from "@/components/ui/organisms/confirm-dialog";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
+import { PageSpinner, ImageSpinner } from "@/components/ui/atoms/spinner";
 import CommentsInline from "@/components/blogs/CommentsInline";
 import Image from "next/image";
 import Link from "next/link";
@@ -28,7 +28,7 @@ import {
   BadgeCheck,
 } from "lucide-react";
 import { cn } from "@/lib/cn";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

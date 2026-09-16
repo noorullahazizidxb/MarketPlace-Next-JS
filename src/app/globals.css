@@ -961,8 +961,6 @@
 @utility app-shell-page {
   width: 100%;
   min-width: 0;
-  padding-inline: var(--space-page-x);
-  padding-block: var(--space-page-y);
   display: flex;
   flex-direction: column;
   gap: var(--space-section);
@@ -1012,6 +1010,29 @@
 
 @utility app-density-grid-gap {
   gap: var(--space-gap);
+}
+
+/* Marketplace listings: 1 / sm:2 / md:5 / lg:5 / xl:6 — locked in CSS so columns cannot be purged. */
+@utility listing-marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  align-items: stretch;
+
+  @media (width >= 40rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (width >= 48rem) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  @media (width >= 64rem) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  @media (width >= 80rem) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }
 
 @utility app-density-stat-tile-pad {
@@ -1587,6 +1608,13 @@ textarea[data-slot="textarea"],
   background: transparent;
 }
 
+/* Prevent page-level horizontal scroll from decorative blur / wide tracks */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 /* ── Marketplace locale fonts ── */
 html[lang="en"] body {
   font-family: var(
@@ -1959,17 +1987,41 @@ button[aria-label^="Go to slide"],
 }
 
 .modern-navbar {
-  position: sticky;
-  inset-block-start: 0;
+  --modern-navbar-height: 5.5rem;
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
   z-index: 500;
   width: 100%;
   padding: calc(var(--space-gap) * 0.5) var(--space-page-x);
+  background: color-mix(in oklch, var(--background) 22%, transparent);
+  backdrop-filter: saturate(160%) blur(18px);
+  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
+  box-shadow: 0 0.75rem 2rem -1.25rem
+    color-mix(in oklch, var(--foreground) 22%, transparent);
+  isolation: isolate;
+}
+
+/* Offset page content under the fixed bar (desktop Topbar only). */
+@media (min-width: 768px) {
+  body:has(.modern-navbar) {
+    --modern-navbar-height: 5.5rem;
+    padding-top: var(--modern-navbar-height);
+  }
+}
+
+.modern-navbar::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
   background: linear-gradient(
     to bottom,
-    color-mix(in oklch, var(--background) 92%, transparent),
-    color-mix(in oklch, var(--background) 68%, transparent)
+    color-mix(in oklch, var(--overlay-light, #fff) 8%, transparent),
+    transparent 55%
   );
-  backdrop-filter: blur(1rem) saturate(140%);
+  opacity: 0.7;
 }
 
 .modern-navbar-grid {

@@ -20,7 +20,7 @@ import { cn } from "@/lib/cn";
 import { useForm, useWatch } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ObjectUrlImage } from "@/components/ui/object-url-image";
+import { ObjectUrlImage } from "@/components/ui/atoms/object-url-image";
 
 const STEPS = [
   { label: "Details", key: "details", icon: FileText },

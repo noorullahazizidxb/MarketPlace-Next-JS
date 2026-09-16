@@ -6,7 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { motion, AnimatePresence } from "framer-motion";
 import { Switch } from "@/components/ui/atoms/shadcn/switch";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { ParentAutocomplete } from "./ParentAutocomplete";
 import { useCreateCategory } from "./useCategoryData";
 import type { CreateCategoryInput } from "./types";

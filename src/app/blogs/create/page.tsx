@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { Dialog, DialogContent } from "@/components/ui/molecules/dialog";
 import BlogCreateWizard from "@/components/blogs/BlogCreateWizard";
 
 export default function BlogCreatePage() {

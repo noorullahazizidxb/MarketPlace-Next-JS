@@ -6,7 +6,11 @@
     "dev": "node ./scripts/dev.js",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "deploy:vercel": "bash ./scripts/deploy-vercel.sh",
+    "docker:build": "bash ./scripts/docker-build.sh",
+    "ubuntu:bootstrap": "bash ./scripts/ubuntu-bootstrap.sh",
+    "ubuntu:run": "bash ./scripts/ubuntu-run.sh"
   },
   "dependencies": {
     "@bprogress/next": "^3.2.12",

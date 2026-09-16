@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api } from "./axiosClient";
 import { initSocket, getSocket } from "./socket";
 import { useAuth } from "./use-auth";
+import { isSocketIoEnabled } from "./realtime";
 
 // Minimal Story shape per spec
 export type Story = {
@@ -135,7 +136,9 @@ export function useStoriesSocket(enabled = true) {
 
   useEffect(() => {
     if (!enabled || !token) return;
+    if (!isSocketIoEnabled()) return;
     const sock = initSocket(token);
+    if (!sock) return;
 
     const onCreated = (payload: Story) => {
       qc.setQueryData<Story[]>(qk.stories, (prev = []) => {
@@ -173,6 +176,9 @@ export function useStoriesSocket(enabled = true) {
 // Generic socket accessor hook if needed by components
 export function useSocket() {
   const { token } = useAuth();
-  const socket = useMemo(() => (token ? initSocket(token) : getSocket()), [token]);
+  const socket = useMemo(
+    () => (isSocketIoEnabled() && token ? initSocket(token) : getSocket()),
+    [token]
+  );
   return socket;
 }

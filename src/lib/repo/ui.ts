@@ -6,7 +6,7 @@ export {
 } from "@/components/ui/organisms/theme-customizer";
 export { ColorPicker } from "@/components/ui/molecules/color-picker";
 export { TokenRangeControl } from "@/components/ui/molecules/token-range-control";
-export { Button } from "@/components/ui/button";
+export { Button } from "@/components/ui/molecules/button";
 export { Badge } from "@/components/ui/atoms/shadcn/badge";
 export {
   Tabs,

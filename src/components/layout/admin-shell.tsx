@@ -6,12 +6,12 @@ import { useLocalMutation } from "@/lib/api-hooks";
 import { useLanguage } from "@/components/providers/language-provider";
 import { AdminBaseLayout } from "@/components/ui/templates/admin-base-layout";
 import { buildAdminNavGroups } from "@/components/layout/admin-nav";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
-import { ThemeToggle } from "@/theme/theme-toggle";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { asset } from "@/lib/assets";
-import BottomNavigation from "@/components/ui/BottomNavigation";
-import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
-import { AnimatedBg } from "@/components/ui/animated-bg";
+import BottomNavigation from "@/components/ui/organisms/BottomNavigation";
+import { MobileQuickBar } from "@/components/ui/organisms/MobileQuickBar";
+import { AnimatedBg } from "@/components/ui/atoms/animated-bg";
 
 /**
  * Admin chrome via AdminBaseLayout + AppSidebar.
@@ -35,7 +35,7 @@ export function AdminShell({ children }: PropsWithChildren) {
   );
 
   return (
-    <div className="relative isolate min-h-screen flex flex-col">
+    <div className="relative isolate min-h-screen flex flex-col overflow-x-clip">
       <AnimatedBg />
       <div className="relative z-10 flex-1 min-h-0">
         <AdminBaseLayout

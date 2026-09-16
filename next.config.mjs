@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
+  output: "standalone",
   experimental: {
     // Always tree-shake heavy barrel exports — prevents slow dev compilations
     // when navigating between pages that import from lucide-react or framer-motion.
@@ -19,20 +20,40 @@ const nextConfig = {
       { protocol: "http", hostname: "192.168.11.205", pathname: "/**" },
       { protocol: "http", hostname: "180.222.140.40", pathname: "/**" },
       { protocol: "http", hostname: "cdn.4imprint.com", pathname: "/**" },
+      { protocol: "https", hostname: "marketplace.devminds.net", pathname: "/**" },
+      { protocol: "https", hostname: "*.public.blob.vercel-storage.com", pathname: "/**" },
+      { protocol: "https", hostname: "public.blob.vercel-storage.com", pathname: "/**" },
       { protocol: "https", hostname: "**", pathname: "/**" },
     ],
   },
-  // Proxy /uploads/** to the backend so asset() relative paths resolve correctly.
   async rewrites() {
-    const apiBase = (
-      process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:3002/api"
-    ).replace(/\/api\/?$/, "");
-    return [
+    // Prefer BACKEND_VERCEL_URL so /uploads never targets …/backend (self-loop).
+    // App Router src/app/uploads/[...path] usually handles /uploads; this is fallback.
+    const backendOrigin = (process.env.BACKEND_VERCEL_URL || "").replace(/\/$/, "");
+    let uploadOrigin = backendOrigin;
+    if (!uploadOrigin) {
+      const apiBase = (
+        process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:4000/api"
+      )
+        .replace(/\/?api\/?$/i, "")
+        .replace(/\/$/, "");
+      uploadOrigin = /\/backend$/i.test(apiBase)
+        ? "http://localhost:4000"
+        : apiBase || "http://localhost:4000";
+    }
+    const rules = [
       {
         source: "/uploads/:path*",
-        destination: `${apiBase}/uploads/:path*`,
+        destination: `${uploadOrigin}/uploads/:path*`,
       },
     ];
+    if (backendOrigin) {
+      rules.unshift({
+        source: "/backend/:path*",
+        destination: `${backendOrigin}/:path*`,
+      });
+    }
+    return rules;
   },
 };
 

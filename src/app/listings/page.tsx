@@ -11,21 +11,25 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import { useApiGet } from "@/lib/api-hooks";
-import { ListingCard, type Listing } from "@/components/ui/listing-card";
-import { FiltersBar } from "@/components/ui/filters-bar";
+import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
+import { FiltersBar } from "@/components/ui/organisms/filters-bar";
 import { HomeHero } from "@/components/listings/HomeHero";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useSocialRealtime } from "@/lib/use-social-realtime";
 import { StoriesBarSelector } from "@/components/stories/stories-bar-selector";
-import ListingsPromoBanner from "@/components/ui/listings-promo-banner";
+import ListingsPromoBanner from "@/components/ui/organisms/listings-promo-banner";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
-import { Tooltip } from "@/components/ui/tooltip";
-import { ComponentLoading } from "@/components/ui/component-loading";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
+import { ComponentLoading } from "@/components/ui/molecules/component-loading";
 import { OrbField } from "@/components/ui/atoms/ambient-canvas";
+import {
+  LISTING_GRID_CLASS,
+  listingGridNumCols,
+} from "@/lib/listing-grid";
 import {
   LayoutGrid,
   RefreshCw,
@@ -121,23 +125,17 @@ function ListingsContent() {
   const searchText = search.get("search") || undefined;
   const page = parseInt(search.get("page") || "1", 10);
 
-  // ── Viewport-aware columns (mirrors Tailwind grid breakpoints) ──────────
-  const computeNumCols = () => {
-    if (typeof window === "undefined") return 1;
-    if (window.innerWidth >= 1536) return 5;
-    if (window.innerWidth >= 1280) return 4;
-    if (window.innerWidth >= 1024) return 3;
-    if (window.innerWidth >= 640) return 2;
-    return 1;
-  };
-  // Keep the first render deterministic for SSR; sync to the viewport after mount.
+  // ── Viewport-aware columns (mirrors LISTING_GRID_CLASS) ──────────
   const [numCols, setNumCols] = useState(1);
   useEffect(() => {
-    const onResize = () => setNumCols(computeNumCols());
-    window.addEventListener("resize", onResize);
-    return () => window.removeEventListener("resize", onResize);
+    const sync = () => setNumCols(listingGridNumCols(window.innerWidth));
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
   }, []);
-  const pageSize = 12;
+  const isMobileViewport = numCols === 1;
+  // Mobile: 9 listings (3 groups of 3). Larger: three full rows.
+  const pageSize = isMobileViewport ? 9 : Math.max(numCols, 1) * 3;
   // Always fetch the list from backend; apply client-side filters so FiltersBar works without round trips.
   const { data, isLoading, error, refetch } = useApiGet<Listing[] | Listing>(
     ["listings", "all"],
@@ -329,25 +327,25 @@ function ListingsContent() {
           )}
           {/* Grid is always rendered — skeletons occupy the same space as cards
             while data loads so there is no layout shift when content arrives. */}
-          <div className="grid grid-cols-1 items-stretch gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 app-density-grid-gap">
+          <div className={LISTING_GRID_CLASS}>
             {isLoading
               ? Array.from({ length: pageSize }).map((_, i) => (
                   <div
                     key={i}
-                    className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-card"
+                    className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm"
                   >
                     <div className="relative aspect-[3/2]">
                       <Skeleton className="absolute inset-0 rounded-none" />
-                      <Skeleton className="absolute left-3 top-3 h-6 w-16 rounded-full" />
-                      <Skeleton className="absolute bottom-3 right-3 h-7 w-20 rounded-xl" />
+                      <Skeleton className="absolute left-1.5 top-1.5 h-5 w-14 rounded-full" />
+                      <Skeleton className="absolute bottom-1.5 right-1.5 h-5 w-14 rounded-md" />
                     </div>
-                    <div className="space-y-3 p-[var(--space-card)]">
-                      <Skeleton className="h-5 w-4/5" />
-                      <Skeleton className="h-4 w-full" />
-                      <Skeleton className="h-4 w-2/3" />
-                      <div className="flex items-center gap-2 border-t border-border/50 pt-3">
-                        <Skeleton className="h-10 flex-1 rounded-xl" />
-                        <Skeleton className="size-10 rounded-xl" />
+                    <div className="space-y-1.5 p-2 sm:p-2.5">
+                      <Skeleton className="h-4 w-4/5 rounded-lg" />
+                      <Skeleton className="h-3 w-full rounded-lg" />
+                      <Skeleton className="h-3 w-2/5 rounded-lg" />
+                      <div className="flex items-center gap-1 border-t border-border/50 pt-2">
+                        <Skeleton className="h-7 flex-1 rounded-md" />
+                        <Skeleton className="size-7 rounded-md" />
                       </div>
                     </div>
                   </div>
@@ -377,26 +375,39 @@ function ListingsContent() {
                   </div>
                 ) : (
                   <>
-                    {pageItems.map((item, idx) => (
-                      <Fragment key={item.id}>
-                        <ListingCard
-                          listing={item}
-                          cleanImageOverlayOnEngage
-                          priority={current === 1 && idx < Math.min(2, numCols)}
-                        />
-                        {/* Insert an ad after finishing each row (every 5 cards to match widest grid) */}
-                        {((idx + 1) % numCols === 0 ||
-                          (idx === pageItems.length - 1 &&
-                            (idx + 1) % numCols !== 0)) && (
-                          <div
-                            key={`ad-${item.id}-${idx}`}
-                            className="col-span-full"
-                          >
-                            <AdPlaceholder index={Math.floor(idx / numCols)} />
-                          </div>
-                        )}
-                      </Fragment>
-                    ))}
+                    {pageItems.map((item, idx) => {
+                      // Mobile: ads after 3rd & 6th only (not after last 3).
+                      // md+: ads after first two complete grid rows.
+                      // 3rd ad lives after Partners in app-shell.
+                      const adIndex = isMobileViewport
+                        ? idx === 2
+                          ? 0
+                          : idx === 5
+                            ? 1
+                            : null
+                        : (idx + 1) % numCols === 0 &&
+                            Math.floor(idx / numCols) < 2
+                          ? Math.floor(idx / numCols)
+                          : null;
+                      return (
+                        <Fragment key={item.id}>
+                          <ListingCard
+                            listing={item}
+                            cleanImageOverlayOnEngage
+                            priority={
+                              current === 1 && idx < Math.min(2, numCols)
+                            }
+                          />
+                          {adIndex != null ? (
+                            <AdPlaceholder
+                              key={`ad-slot-${adIndex}`}
+                              index={adIndex}
+                              className="col-span-full"
+                            />
+                          ) : null}
+                        </Fragment>
+                      );
+                    })}
                   </>
                 ))}
           </div>

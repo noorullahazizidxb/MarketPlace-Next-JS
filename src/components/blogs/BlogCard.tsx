@@ -14,9 +14,9 @@ import {
   MessageSquareShare,
   Share2,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { ImageSlider } from "@/components/ui/image-slider";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Dialog, DialogContent, DialogTitle, DialogTrigger } from "@/components/ui/molecules/dialog";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useApiMutation } from "@/lib/api-hooks";
 import { asset, normalizeAssetImages, type AssetImage } from "@/lib/assets";

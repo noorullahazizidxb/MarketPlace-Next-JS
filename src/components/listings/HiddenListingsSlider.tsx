@@ -2,9 +2,9 @@
 import { useMemo, useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence, type PanInfo } from "framer-motion";
 import { ChevronLeft, ChevronRight, ShieldCheck, Sparkles } from "lucide-react";
-import { ListingCard, type Listing } from "../ui/listing-card";
+import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 function chunk<T>(arr: T[], size: number): T[][] {
   const out: T[][] = [];

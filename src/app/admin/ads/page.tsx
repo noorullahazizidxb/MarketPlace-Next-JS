@@ -20,7 +20,7 @@ import AdCard from "@/components/ads/ad-card";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
 import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 
 // Enum list derived from Prisma model
 const AD_PLACEMENTS = [

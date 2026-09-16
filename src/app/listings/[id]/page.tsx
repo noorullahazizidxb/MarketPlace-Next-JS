@@ -24,8 +24,8 @@ import {
   CreditCard,
 } from "lucide-react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { ImageSlider } from "@/components/ui/image-slider";
+import { Button } from "@/components/ui/molecules/button";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
 import QRCode from "react-qr-code";
 import { useAuth } from "@/lib/use-auth";
 import { asset } from "@/lib/assets";
@@ -34,7 +34,7 @@ import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { listingPlaceholderImages } from "@/lib/public-images";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 export default function ListingDetailsPage() {
   return (

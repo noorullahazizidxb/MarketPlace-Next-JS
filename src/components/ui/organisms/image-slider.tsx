@@ -1,2 +1,313 @@
-// Canonical organism location
-export { ImageSlider } from "../image-slider";
+"use client";
+import { useEffect, useRef, useState } from "react";
+import Image from "next/image";
+import {
+  asset,
+  DEFAULT_LISTING_IMAGE,
+  normalizeAssetImages,
+  type AssetImage,
+} from "@/lib/assets";
+import { ChevronLeft, ChevronRight, LoaderIcon } from "lucide-react";
+import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
+import { usePrefersReducedMotion } from "@/hooks/use-prefers-reduced-motion";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
+
+type Slide = AssetImage | string | null | undefined;
+
+export type ImageAspectRatio =
+  | "16/9"
+  | "4/1"
+  | "1/1"
+  | "3/2"
+  | "4/3"
+  | "16/11"
+  | (string & {});
+
+/** Real Tailwind aspect utilities — fake `ar-*` classes collapse fill height to ~0. */
+const ASPECT_CLASS_MAP: Record<string, string> = {
+  "16/9": "aspect-[16/9]",
+  "4/1": "aspect-[4/1]",
+  "1/1": "aspect-square",
+  "3/2": "aspect-[3/2]",
+  "4/3": "aspect-[4/3]",
+  "16/11": "aspect-[16/11]",
+};
+
+function aspectClass(aspect: string) {
+  return ASPECT_CLASS_MAP[aspect] || ASPECT_CLASS_MAP["16/9"];
+}
+
+export function ImageSlider({
+  images,
+  className = "",
+  aspect = "4/1",
+  heightClass,
+  sizes = "(max-width: 640px) 92vw, (max-width: 1024px) 46vw, (max-width: 1536px) 30vw, 22vw",
+  autoPlay = false,
+  forceEngaged = false,
+  intervalMs = 5000,
+  firstSlideIsPriority = false,
+  fallbackSrc = DEFAULT_LISTING_IMAGE,
+}: {
+  images?: Slide[] | null;
+  className?: string;
+  aspect?: ImageAspectRatio; // ignored when heightClass is provided
+  heightClass?: string;
+  sizes?: string;
+  autoPlay?: boolean;
+  forceEngaged?: boolean;
+  intervalMs?: number;
+  firstSlideIsPriority?: boolean;
+  fallbackSrc?: string;
+}) {
+  const rootRef = useRef<HTMLDivElement | null>(null);
+  const slides = normalizeAssetImages(images, "Listing image");
+  const displaySlides =
+    slides.length > 0
+      ? slides
+      : [{ url: fallbackSrc, alt: "Image unavailable" }];
+  const [index, setIndex] = useState(0);
+  const timer = useRef<number | null>(null);
+  const immediateTimer = useRef<number | null>(null);
+  const scrollerRef = useRef<HTMLDivElement | null>(null);
+  const { isEngaged, engagementProps } = useEngagedAutoplay();
+  const prevActiveRef = useRef(false);
+  const cachedWidthRef = useRef<number>(0);
+  const prefersReducedMotion = usePrefersReducedMotion();
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    setIndex((current) => Math.min(current, displaySlides.length - 1));
+  }, [displaySlides.length]);
+
+  // Cache scroller width via ResizeObserver — avoids forced reflow on slide change
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || typeof ResizeObserver === "undefined") return;
+    // Seed the initial value
+    cachedWidthRef.current = el.clientWidth;
+    const ro = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (entry) cachedWidthRef.current = entry.contentRect.width;
+    });
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  // Observe visibility to avoid running autoplay offscreen
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        const e = entries[0];
+        setInView(!!e?.isIntersecting);
+      },
+      { root: null, rootMargin: "0px", threshold: 0.1 },
+    );
+    obs.observe(el);
+    return () => {
+      try {
+        obs.disconnect();
+      } catch { }
+    };
+  }, []);
+
+  useEffect(() => {
+    const activeNow = autoPlay && (isEngaged || forceEngaged);
+    const justActivated = activeNow && !prevActiveRef.current;
+    prevActiveRef.current = activeNow;
+
+    // simple autoplay
+    if (timer.current) window.clearInterval(timer.current);
+    if (immediateTimer.current) window.clearTimeout(immediateTimer.current);
+    if (
+      autoPlay &&
+      (isEngaged || forceEngaged) &&
+      !prefersReducedMotion &&
+      inView &&
+      displaySlides.length > 1
+    ) {
+      if (justActivated) {
+        immediateTimer.current = window.setTimeout(() => {
+          setIndex((i) => (i + 1) % displaySlides.length);
+        }, 120);
+      }
+      timer.current = window.setInterval(() => {
+        setIndex((i) => (i + 1) % displaySlides.length);
+      }, intervalMs);
+    }
+    return () => {
+      if (timer.current) window.clearInterval(timer.current);
+      if (immediateTimer.current) window.clearTimeout(immediateTimer.current);
+    };
+  }, [
+    displaySlides.length,
+    autoPlay,
+    isEngaged,
+    forceEngaged,
+    prefersReducedMotion,
+    intervalMs,
+    inView,
+  ]);
+
+  // Scroll to active index when it changes — use cached width to avoid forced reflow
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    const width = cachedWidthRef.current || el.offsetWidth;
+    el.scrollTo({ left: index * width, behavior: "smooth" });
+  }, [index]);
+
+  return (
+    <div
+      ref={rootRef}
+      className={`relative overflow-hidden ${className}`}
+      tabIndex={0}
+      {...engagementProps}
+    >
+      <div
+        className={`w-full ${heightClass ? heightClass : aspectClass(aspect)}`}
+      >
+        <div
+          ref={scrollerRef}
+          // Force LTR scrolling behavior regardless of page language
+          dir="ltr"
+          className={
+            "h-full flex overflow-x-auto scroll-smooth snap-x snap-mandatory no-scrollbar"
+          }
+        >
+          {displaySlides.map((s, i) => (
+            <SlideImage
+              key={i}
+              slide={s}
+              index={i}
+              sizes={sizes}
+              isActive={i === index}
+              firstSlideIsPriority={firstSlideIsPriority}
+              fallbackSrc={fallbackSrc}
+            />
+          ))}
+        </div>
+      </div>
+
+      {/* controls */}
+      {displaySlides.length > 1 && (
+        <>
+          <Tooltip content="Previous image" side="right">
+            <button
+              type="button"
+              aria-label="Previous image"
+              data-slider-control="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex(
+                  (i) =>
+                    (i - 1 + displaySlides.length) % displaySlides.length,
+                );
+              }}
+              className={`absolute left-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-border hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+            >
+              <ChevronLeft className="size-5 text-[var(--foreground)]" />
+            </button>
+          </Tooltip>
+          <Tooltip content="Next image" side="left">
+            <button
+              type="button"
+              aria-label="Next image"
+              data-slider-control="true"
+              onClick={(event) => {
+                event.stopPropagation();
+                setIndex((i) => (i + 1) % displaySlides.length);
+              }}
+              className={`absolute right-3 top-1/2 -translate-y-1/2 bg-[var(--background)]/60 backdrop-blur-md hover:bg-[var(--background)]/90 border border-border hover:scale-110 active:scale-95 transition-all duration-300 ease-[cubic-bezier(0.34,1.56,0.64,1)] size-9 grid place-items-center rounded-full z-20 shadow-lg`}
+            >
+              <ChevronRight className="size-5 text-[var(--foreground)]" />
+            </button>
+          </Tooltip>
+          <div className="absolute left-1/2 -translate-x-1/2 bottom-3 flex items-center gap-2 z-30 px-3 py-1.5 rounded-full bg-foreground/20 backdrop-blur-md">
+            {displaySlides.map((_, i) => (
+              <button
+                type="button"
+                key={i}
+                aria-label={`Go to slide ${i + 1}`}
+                data-slider-control="true"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setIndex(i);
+                }}
+                className={`transition-all duration-300 rounded-full go-to-slide ${i === index
+                  ? "w-4 h-1.5 bg-background scale-1"
+                  : "w-1.5 h-1.5 bg-background/50 hover:bg-background/80 hover:scale-125"
+                  }`}
+              />
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── Sub-component: individual slide with loading spinner ────────────────────
+function SlideImage({
+  slide,
+  index,
+  sizes,
+  isActive,
+  firstSlideIsPriority,
+  fallbackSrc,
+}: {
+  slide: { url?: string | null; alt?: string | null };
+  index: number;
+  sizes: string;
+  isActive: boolean;
+  firstSlideIsPriority: boolean;
+  fallbackSrc: string;
+}) {
+  const [loaded, setLoaded] = useState(false);
+  const [failed, setFailed] = useState(false);
+  const resolvedUrl = asset(slide?.url);
+  const src = failed || !resolvedUrl ? fallbackSrc : resolvedUrl;
+
+  useEffect(() => {
+    setLoaded(false);
+    setFailed(false);
+  }, [resolvedUrl]);
+
+  return (
+    <div className="relative min-w-full h-full snap-start">
+      {!loaded && (
+        <span
+          aria-hidden="true"
+          className="absolute inset-0 flex items-center justify-center bg-[var(--muted)]/50 z-10"
+        >
+          <LoaderIcon className="animate-spin size-6 text-[var(--muted-foreground)]" />
+        </span>
+      )}
+      <Image
+        src={src}
+        alt={slide?.alt || `Slide ${index + 1}`}
+        fill
+        className="object-cover will-change-transform"
+        placeholder="blur"
+        blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPScxMDAlJyBoZWlnaHQ9JzEwMCUnIGZpbGw9JyNlZWUnIC8+PC9zdmc+"
+        sizes={sizes}
+        loading={firstSlideIsPriority && index === 0 ? "eager" : "lazy"}
+        priority={firstSlideIsPriority && index === 0}
+        fetchPriority={firstSlideIsPriority && index === 0 ? "high" : "auto"}
+        draggable={false}
+        onLoad={() => setLoaded(true)}
+        onError={() => {
+          if (!failed && src !== fallbackSrc) {
+            setFailed(true);
+            setLoaded(false);
+            return;
+          }
+          setLoaded(true);
+        }}
+        unoptimized={src.endsWith(".svg")}
+      />
+    </div>
+  );
+}

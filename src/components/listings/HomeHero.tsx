@@ -1,14 +1,14 @@
 "use client";
 import { motion } from "framer-motion";
 import Image from "next/image";
-import { SearchBox } from "@/components/ui/search-box";
-import { Button } from "@/components/ui/button";
+import { SearchBox } from "@/components/ui/molecules/search-box";
+import { Button } from "@/components/ui/molecules/button";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { homeHeroImages } from "@/lib/public-images";
 import { useAuth } from "@/lib/use-auth";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 export function HomeHero() {
   const { t, isRtl } = useLanguage();

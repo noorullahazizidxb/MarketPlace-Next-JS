@@ -5,7 +5,7 @@ import { ChevronRight, Edit2, Trash2, Eye, EyeOff } from "lucide-react";
 import type { CategoryTreeNode, CategoryEntity } from "./types";
 import { cn } from "@/lib/cn";
 import { useUpdateCategory, useDeleteCategory } from "./useCategoryData";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { Switch } from "@/components/ui/atoms/shadcn/switch";
 import { Badge } from "@/components/ui/atoms/shadcn/badge";
 import Image from "next/image";

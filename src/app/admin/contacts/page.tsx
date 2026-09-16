@@ -14,7 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/atoms/shadcn/table";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/molecules/card";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
 import { Mail, Phone, Search, User2 } from "lucide-react";

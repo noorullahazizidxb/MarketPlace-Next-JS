@@ -34,8 +34,8 @@ import { CreateUserFormValues, RoleOption, emptyRepProvince } from "./types";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
 import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
-import { Button } from "@/components/ui/button";
-import { ObjectUrlImage } from "@/components/ui/object-url-image";
+import { Button } from "@/components/ui/molecules/button";
+import { ObjectUrlImage } from "@/components/ui/atoms/object-url-image";
 
 const useFormContextSafe = () => useFormContext();
 

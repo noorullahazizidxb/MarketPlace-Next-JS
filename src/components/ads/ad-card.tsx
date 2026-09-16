@@ -1,12 +1,12 @@
 "use client";
 import React from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/molecules/card";
+import { Button } from "@/components/ui/molecules/button";
 import { Switch } from "@/components/ads/switch";
 import { PlacementSelect } from "@/components/ads/placement-select";
 import { useApiMutation } from "@/lib/api-hooks";
-import { ImageSpinner } from "@/components/ui/spinner";
-import { Tooltip } from "@/components/ui/tooltip";
+import { ImageSpinner } from "@/components/ui/atoms/spinner";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import {
   Pencil,
   Trash2,
@@ -15,7 +15,7 @@ import {
   MapPin,
   Activity,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogClose, DialogTitle } from "@/components/ui/molecules/dialog";
 import { cn } from "@/lib/cn";
 import Image from "next/image";
 

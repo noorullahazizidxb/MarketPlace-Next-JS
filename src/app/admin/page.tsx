@@ -15,7 +15,7 @@ import {
   type TooltipPayload,
 } from "recharts";
 import { useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/molecules/card";
 import { ChartCard } from "@/components/admin/chart-card";
 import { SkeletonBlock } from "@/components/admin/skeleton-block";
 import {

@@ -24,7 +24,7 @@ import type {
 } from "@repo/types";
 import { defaultSidebarSettings, defaultThemeSettings } from "@repo/constants";
 import { ThemeCustomizer } from "@repo/ui";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import {
   Form,
   FormControl,

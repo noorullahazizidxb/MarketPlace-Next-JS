@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useEffect, useMemo, useState, useId } from "react";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent } from "@/components/ui/molecules/dialog";
+import { Button } from "@/components/ui/molecules/button";
 import { Search } from "lucide-react";
 import { useApiGet, useApiMutation } from "@/lib/api-hooks";
 import { useForm } from "react-hook-form";

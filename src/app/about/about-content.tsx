@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import {
   Box,
   MessageCircle,
@@ -20,9 +20,9 @@ import {
 import { useLanguage } from "@/components/providers/language-provider";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import AboutCtaBanner from "@/components/ui/about-cta-banner";
+import AboutCtaBanner from "@/components/ui/organisms/about-cta-banner";
 import { aboutImages } from "@/lib/public-images";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { AUTHOR, BRAND, ORGANIZATION_NAME } from "@/lib/site-config";
 
 export function AboutContent({

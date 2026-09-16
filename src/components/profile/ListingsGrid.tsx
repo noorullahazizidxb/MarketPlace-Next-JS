@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import type { Listing } from "../../types/user";
-import { ImageSlider } from "../ui/image-slider";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
 import { MapPin, Tag } from "lucide-react";
 
 export default function ListingsGrid({ listings }: { listings: Listing[] }) {

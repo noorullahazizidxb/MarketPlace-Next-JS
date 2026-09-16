@@ -15,18 +15,18 @@ import {
   LogIn,
   Newspaper,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { useLocalMutation } from "@/lib/api-hooks";
-import { SearchBox } from "@/components/ui/search-box";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { SearchBox } from "@/components/ui/molecules/search-box";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { useNotificationsStore } from "@/store/notifications.store";
-import { NotificationsPanel } from "@/components/ui/notifications-panel";
+import { NotificationsPanel } from "@/components/ui/organisms/notifications-panel";
 import { asset } from "@/lib/assets";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
 
 export function Topbar() {
@@ -45,15 +45,14 @@ export function Topbar() {
 
   return (
     <>
-      <motion.header
-        initial={{ y: -32, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="modern-navbar"
-        dir={locale === "fa" ? "rtl" : "ltr"}
-      >
-        <div className="relative overflow-visible">
-          <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
+      <header className="modern-navbar" dir={locale === "fa" ? "rtl" : "ltr"}>
+        <motion.div
+          initial={{ y: -32, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="relative overflow-visible"
+        >
+          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
             <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
           </div>
           <div className="relative w-full rounded-2xl liquid-glass glass-hover">
@@ -313,8 +312,8 @@ export function Topbar() {
               </div>
             </div>
           </div>
-        </div>
-      </motion.header>
+        </motion.div>
+      </header>
     </>
   );
 }

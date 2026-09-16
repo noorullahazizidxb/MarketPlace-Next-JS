@@ -2,7 +2,7 @@
 import React from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/lib/use-auth";
-import StoryCreateModal from "@/components/ui/StoryCreateModal";
+import StoryCreateModal from "@/components/ui/organisms/StoryCreateModal";
 
 export default function AdminCreateStoryPage() {
   const router = useRouter();

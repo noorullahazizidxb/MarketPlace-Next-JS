@@ -2,6 +2,7 @@
 import React, { useMemo } from "react";
 import { useApiGet } from "@/lib/api-hooks";
 import Image from "next/image";
+import { cn } from "@/lib/cn";
 
 // Reuse subset of AdEntity fields we care about
 export type HomePageAdPlacement =
@@ -29,7 +30,13 @@ const ORDER: HomePageAdPlacement[] = [
  * If that placement has no active ad, nothing (not even an empty container) is rendered.
  * Any index outside the known range returns null.
  */
-export function AdPlaceholder({ index }: { index: number }) {
+export function AdPlaceholder({
+  index,
+  className,
+}: {
+  index: number;
+  className?: string;
+}) {
   const { data } = useApiGet<AdEntity[] | undefined>(["ads", "home"], "/ads");
 
   const ad = useMemo(() => {
@@ -46,12 +53,17 @@ export function AdPlaceholder({ index }: { index: number }) {
       .sort((a, b) => a.id - b.id)[0];
   }, [data, index]);
 
-  if (!ad) return null; // do not render a container when no active ad for this slot
+  if (!ad) return null; // no wrapper — empty col-span-full would break multi-column grids
 
   const url = ad.imageUrl || undefined;
 
   return (
-    <div className="relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]">
+    <div
+      className={cn(
+        "relative w-full overflow-hidden rounded-2xl border border-[var(--border)] bg-[var(--card)]",
+        className,
+      )}
+    >
       <div className="h-[150px] w-full">
         {url ? (
           <div className="relative h-full w-full">
