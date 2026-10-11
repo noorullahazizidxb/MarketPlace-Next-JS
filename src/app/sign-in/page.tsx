@@ -21,6 +21,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
 import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 import { ShieldCheck } from "lucide-react";
 
 type FormData = { email: string; password: string };
