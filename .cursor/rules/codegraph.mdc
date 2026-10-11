@@ -1,0 +1,19 @@
+---
+description: Use Codegraph on every frontend code question or edit
+alwaysApply: true
+---
+
+# CodeGraph
+
+This repo is indexed in `.codegraph/`. Never open, read, grep, or edit that folder.
+
+On every prompt about code, or any edit, the first tool call is `codegraph_explore`.
+
+- Pass `projectPath` `D:\MarketPlace\MarketPlace-Next-JS`.
+- Name symbols from `docs/feature-graph.md` in the query.
+- Read a file only when the graph names it, or when Codegraph returns nothing.
+- Before changing a shared symbol, run `codegraph impact <symbol>` in this repo and list the callers.
+- If `codegraph_explore` is missing, run `codegraph explore "<symbols>"` here.
+- If Codegraph errors or returns nothing, say so, then use normal search.
+- Diagrams are Mermaid from graph results. Mark anything unconfirmed.
+- Do not guess how modules connect.
