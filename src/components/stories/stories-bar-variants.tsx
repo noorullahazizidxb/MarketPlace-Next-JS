@@ -12,17 +12,15 @@ import { useApiGet } from "@/lib/api-hooks";
 import { StoryViewer } from "@/components/stories/StoryViewer";
 import { useLanguage } from "@/components/providers/language-provider";
 import { cn } from "@/lib/cn";
-import {
-  resolveStoryCoverSrc,
-  type StoryLike,
-} from "@/components/stories/story-media";
+import { resolveStoryCoverSrc } from "@/components/stories/story-media";
+import type { Story } from "@/types/social";
 
 // ── V2: Wide Cards ────────────────────────────────────────────────────────────
 // Each story is a vertical card with a preview image, title and a "Watch" CTA.
 
 export function StoriesBarCards({ className }: { className?: string }) {
   const { t } = useLanguage();
-  const { data: stories, isLoading } = useApiGet<StoryLike[]>(
+  const { data: stories, isLoading } = useApiGet<Story[]>(
     ["stories"],
     "/stories",
   );
@@ -98,7 +96,7 @@ export function StoriesBarCards({ className }: { className?: string }) {
 
 export function StoriesBarStrip({ className }: { className?: string }) {
   const { t } = useLanguage();
-  const { data: stories, isLoading } = useApiGet<StoryLike[]>(
+  const { data: stories, isLoading } = useApiGet<Story[]>(
     ["stories"],
     "/stories",
   );

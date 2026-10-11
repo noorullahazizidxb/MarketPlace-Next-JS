@@ -365,6 +365,9 @@ export type NavbarVariant = "standard" | "glass" | "minimal" | "fullwidth";
 export type FooterVariant = "standard" | "compact" | "editorial" | "minimal";
 export type SidebarVariantStyle = "default" | "glass" | "minimal" | "brand";
 export type BlogCardVariant = "card" | "horizontal" | "editorial" | "compact";
+export type StoriesBarVariant = "bubble" | "cards" | "strip";
+export type SkeletonTheme = "shimmer" | "pulse" | "wave";
+export type CaptchaVariant = "classic" | "tiles" | "slider";
 
 // Switchable per-component style variants persisted in ui-context.json.
 export interface ComponentVariantSettings {
@@ -373,6 +376,9 @@ export interface ComponentVariantSettings {
   footer: FooterVariant;
   sidebar: SidebarVariantStyle;
   blogCard: BlogCardVariant;
+  storiesBar?: StoriesBarVariant;
+  skeletonTheme?: SkeletonTheme;
+  captchaVariant?: CaptchaVariant;
 }
 
 // Root UI context shape.
@@ -381,5 +387,6 @@ export interface UiContextState {
   theme: ThemeSettings;
   sidebar: SidebarSettings;
   componentVariants?: Partial<ComponentVariantSettings>;
+  customPresets?: CustomThemePreset[];
   updatedAt?: string;
 }

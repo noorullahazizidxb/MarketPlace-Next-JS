@@ -40,6 +40,9 @@
       "@/store/*": [
         "./src/store/*"
       ],
+      "@/types/*": [
+        "./src/types/*"
+      ],
       "@repo/hooks": [
         "./src/lib/repo/hooks.tsx"
       ],
@@ -81,6 +84,7 @@
   ],
   "exclude": [
     "node_modules",
+    "tests",
     "src/components/ui/molecules/Navbar"
   ]
 }
