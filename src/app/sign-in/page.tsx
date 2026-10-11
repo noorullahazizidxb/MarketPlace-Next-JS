@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
+import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/molecules/button";
 import { useForm, useWatch } from "react-hook-form";
@@ -20,7 +20,6 @@ import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
 import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
-import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
 import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 import { ShieldCheck } from "lucide-react";
 
@@ -31,7 +30,6 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [captchaValid, setCaptchaValid] = useState(false);
   const { executeRecaptcha } = useRecaptchaV3();
   const { control, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { email: "", password: "" },
@@ -50,7 +48,9 @@ export default function SignInPage() {
     "/auth/login",
   );
   const setServerSession = useLocalMutation("post", "/api/login-session");
-  const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
+  const googleUrl = config.googleClientId ? config.googleAuthUrl : undefined;
+  const facebookUrl = config.facebookAppId ? config.facebookAuthUrl : undefined;
+  const hasSocialAuth = Boolean(googleUrl || facebookUrl);
 
   // If already signed in, redirect to /listings
   useEffect(() => {
@@ -163,8 +163,9 @@ export default function SignInPage() {
               transition={{ delay: 0.14, duration: 0.4 }}
             >
               <SocialAuthButtons
-                googleUrl={config.googleAuthUrl}
-                facebookUrl={config.facebookAuthUrl}
+                stacked
+                googleUrl={googleUrl}
+                facebookUrl={facebookUrl}
               />
               <div className="relative text-center app-text-caption text-[var(--muted-foreground)]">
                 <span className="relative z-10 bg-[var(--card)]/90 px-3">
@@ -276,32 +277,20 @@ export default function SignInPage() {
               </Tooltip>
             </div>
 
-            {/* CAPTCHA */}
-            <CaptchaWidget onVerified={setCaptchaValid} className="my-1" />
-
-            {/* Action buttons */}
-            <div className="flex gap-3 pt-1">
-              <Tooltip content={t("tooltipSignInBtn")} side="top">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="flex-1 flex items-center justify-center gap-2"
-                  loading={loginMutation.isPending}
-                  disabled={!captchaValid}
-                >
-                  <LogIn className="size-4" />
-                  {t("signIn")}
-                </Button>
-              </Tooltip>
-              <Tooltip content={t("tooltipGoToSignUp")} side="top">
-                <Button asChild variant="ghost">
-                  <Link href="/sign-up" className="flex items-center gap-2">
-                    <UserPlus className="size-4" />
-                    <span>{t("createAccount")}</span>
-                  </Link>
-                </Button>
-              </Tooltip>
-            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              className="flex h-12 w-full items-center justify-center gap-2"
+              loading={loginMutation.isPending}
+            >
+              <LogIn className="size-4" />
+              {t("signIn")}
+            </Button>
+            <p className="text-center app-text-body text-[var(--muted-foreground)]">
+              <Link href="/sign-up" className="font-semibold text-[var(--accent)] hover:underline underline-offset-2">
+                {t("createAccount")}
+              </Link>
+            </p>
 
             {/* reCAPTCHA v3 badge */}
             <p className="flex items-center justify-center gap-1.5 app-text-caption text-[var(--muted-foreground)] opacity-70 pt-1">

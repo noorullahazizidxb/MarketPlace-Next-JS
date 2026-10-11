@@ -660,8 +660,8 @@ export default function CreateListingPage() {
   ];
 
   return (
-    <div className="min-h-screen justify-center app-shell-page" data-app-page="listings-create">
-      <div className="w-full max-w-3xl">
+    <div className="min-h-screen items-center justify-center app-shell-page" data-app-page="listings-create">
+      <div className="mx-auto w-full max-w-3xl">
         <Card className="relative overflow-hidden p-[var(--space-card)] rounded-[2rem] border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-2xl shadow-token-lg">
           {/* shimmer top line */}
           <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/15 to-transparent" />
