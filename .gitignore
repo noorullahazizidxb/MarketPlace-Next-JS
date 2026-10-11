@@ -27,3 +27,6 @@ client_secret_*.apps.googleusercontent.com.json
 docker-configuration/secrets/*
 tmp/*.heapsnapshot
 /.next/*
+
+.vercel
+.env*

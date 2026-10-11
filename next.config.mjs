@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: "standalone",
+  // Docker copies .next/standalone. Vercel builds its own output.
+  output: process.env.VERCEL ? undefined : "standalone",
   experimental: {
     // Always tree-shake heavy barrel exports — prevents slow dev compilations
     // when navigating between pages that import from lucide-react or framer-motion.

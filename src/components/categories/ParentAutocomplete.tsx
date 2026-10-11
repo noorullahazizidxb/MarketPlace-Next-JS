@@ -7,7 +7,7 @@ import {
   CommandList,
   CommandEmpty,
   CommandItem,
-} from "../ui/command";
+} from "../ui/molecules/command";
 import { Check, X } from "lucide-react";
 import { cn } from "@/lib/cn";
 
