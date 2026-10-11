@@ -1,62 +1,38 @@
-# Premium Next.js Starter
+# AF Marketplace
 
-Modern, futuristic UI with Next.js App Router, TailwindCSS, shadcn-style primitives, framer-motion, lucide icons, and dark/light theming.
+Next.js app for the Afghanistan marketplace. People browse and post listings, blogs, and profiles. Admins moderate users, categories, ads, stories, contacts, and content status.
 
-## Quick start
+The API is the sibling backend. This app talks to it through `src/lib/axiosClient.ts`.
 
-1. Copy `.env.example` to `.env` and set `DATABASE_URL` if using Prisma.
-2. Install deps and run dev server.
+## Stack
 
-Set `NEXT_PUBLIC_ENABLE-ELASTIC-SEARCH=true` to use backend Elasticsearch-powered search.
-Set it to `false` to switch the UI to local filter/autocomplete fallbacks.
+- Next.js 16.2 (App Router) and React 19
+- TanStack Query and Zustand
+- Axios, react-hook-form, Zod
+- Tailwind CSS and Framer Motion
 
-Try it:
+## Features
 
-```
+Page routes and the symbols to open first are in [docs/feature-graph.md](docs/feature-graph.md).
+
+- Home redirect, listings, listing create and detail, my listings, pendings
+- Blogs, about, contact, sign-in, sign-up, profile
+- Settings, appearance, and themes
+- Admin users, categories, ads, stories, notifications, contacts, and content status
+
+## Run
+
+```bash
 npm install
 npm run dev
 ```
 
-Open <http://localhost:3000>
+`npm run dev` loads `.env`, then starts `next dev`. `PORT` in the environment is passed through when it is set. `npm run build` and `npm start` build and serve the production app.
 
-If a build gets stuck on old assets, clear the cache and rebuild:
+Hosting for Vercel, Docker, and Ubuntu is in [docs/README.md](docs/README.md).
 
-```
-npx kill-port 3000 3010 || true
-rimraf .next
-npm run build && npm start
-```
+## Agents
 
-## REST Client
+This repo has a local Codegraph index. Build or refresh it with `codegraph init` in this directory. Do not open `.codegraph/`.
 
-Use the VS Code REST Client extension with `rest-client/marketplace.http` to test your backend.
-
-## Tech
-
-- Next.js 14 (App Router)
-- TailwindCSS, custom tokens and glassmorphism/neumorphism touches
-- shadcn-style UI primitives (Button, Card)
-- framer-motion animations
-- lucide-react icons
-- next-themes for dark/light
-
-## Role-based UI and API
-
-- Admin sees the Sidebar + admin Navbar. Users and Representatives see a premium animated Topbar with avatar menu (Profile, My listings, Notifications, Logout).
-- Axios client unwraps the API envelope `{ message, statusCode, success, entity, data }` and returns `data` directly.
-- Listings are rendered with premium `ListingCard` components showing image, price, type, and contact logic (seller contact vs. protected).
-- If seller contact is hidden, the “Choose representative” action routes to `/representative/[listingId]` where available reps are listed for selection.
-
-## Accessibility
-
-- Skip link provided to jump to main content from the top of the page.
-- Focus rings and high-contrast tokens in both themes.
-- Buttons and toggles have accessible labels.
-
-## Upgrading Next.js
-
-This template runs on Next 14. You can upgrade to Next 15 when desired:
-
-```
-npm i next@latest react@latest react-dom@latest eslint-config-next@latest
-```
+On any code question, read [docs/feature-graph.md](docs/feature-graph.md) and call `codegraph_explore` with `projectPath` set to this repo before searching files. Cursor loads `.cursor/rules/codegraph.mdc`. Copilot loads the CodeGraph block in `.github/copilot-instructions.md` and `.github/skills/codegraph/SKILL.md`.
