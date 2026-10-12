@@ -50,13 +50,12 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
   // Sync dynamic height to CSS variable to avoid inline styles
   useEffect(() => {
     const node = sheetRef.current;
-    if (!node) return;
+    if (!open || !node) return;
     const height = `calc(${(activeHeight * 100).toFixed(
       2
     )}dvh - env(safe-area-inset-bottom, 0px))`;
-    // set as CSS var on element
-    (node as HTMLElement).style.setProperty("--sheet-height", height);
-  }, [activeHeight]);
+    node.style.setProperty("--sheet-height", height);
+  }, [activeHeight, open]);
 
   useEffect(() => {
     if (!open) return;
