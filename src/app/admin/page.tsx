@@ -12,6 +12,7 @@ import {
   Bar,
   PieChart,
   Pie,
+  Cell,
   type TooltipPayload,
 } from "recharts";
 import { useMemo, useState } from "react";
@@ -86,6 +87,22 @@ interface AdminStatsResponse {
 const chartCardBg =
   "bg-gradient-to-br from-[var(--card)] to-[color-mix(in oklab, var(--card) 70%, transparent)]";
 
+const CHART_SERIES_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+] as const;
+
+function chartSeriesColor(index: number) {
+  const token = CHART_SERIES_COLORS[index % CHART_SERIES_COLORS.length];
+  const cycle = Math.floor(index / CHART_SERIES_COLORS.length);
+  if (cycle === 0) return token;
+  const mix = cycle === 1 ? 62 : 40;
+  return `color-mix(in oklab, ${token} ${mix}%, var(--foreground))`;
+}
+
 type ChartTooltipProps = {
   active?: boolean;
   payload?: TooltipPayload;
@@ -115,18 +132,9 @@ function ChartTooltip({
       <div className="space-y-0.5">
         {payload.map((p) => {
           const dataKey = String(p.dataKey ?? "");
-          const colorMap: Record<string, string> = {
-            "var(--chart-1)": "bg-[var(--chart-1)]",
-            "var(--chart-2)": "bg-[var(--chart-2)]",
-            "var(--chart-3)": "bg-[var(--chart-3)]",
-            "var(--chart-4)": "bg-[var(--chart-4)]",
-            "var(--success)": "bg-[var(--success)]",
-            "var(--destructive)": "bg-[var(--destructive)]",
-            "var(--warning)": "bg-[var(--warning)]",
-            "var(--info)": "bg-[var(--info)]",
-          };
-          const swatch =
-            colorMap[String(p.color ?? "")] || "bg-[var(--primary)]";
+          const seriesColor = String(
+            p.color ?? (p as { fill?: string }).fill ?? "var(--chart-1)",
+          );
           const rawName = String(p.name ?? dataKey);
           const displayName = formatName
             ? formatName(rawName, dataKey)
@@ -142,12 +150,13 @@ function ChartTooltip({
 
           return (
             <div
-              key={dataKey}
+              key={`${dataKey}-${rawName}`}
               className="flex items-center justify-between gap-[var(--space-gap)] app-text-micro"
             >
               <span className="flex items-center gap-1.5">
                 <span
-                  className={`inline-block size-2.5 rounded-sm ${swatch}`}
+                  className="inline-block size-2.5 rounded-sm"
+                  style={{ background: seriesColor }}
                 />
                 <span className="text-[var(--foreground)]/70">
                   {displayName}
@@ -319,7 +328,17 @@ export default function AdminDashboardPage() {
           </div>
           <div className="min-w-[620px] space-y-[var(--space-gap)]">
             {queueStats &&
-              Object.entries(queueStats).map(([q, stats]) => (
+              Object.entries(queueStats).map(([q, stats]) => {
+                const countOf = (value: unknown) =>
+                  typeof value === "number" && Number.isFinite(value) ? value : 0;
+                const hasCounts = [
+                  "active",
+                  "waiting",
+                  "completed",
+                  "failed",
+                  "delayed",
+                ].some((key) => typeof (stats as Record<string, unknown>)[key] === "number");
+                return (
                 <div
                   key={q}
                   className="rounded-2xl border border-[var(--border)]/60 p-[var(--space-card)] bg-gradient-to-br from-[color-mix(in oklab, var(--muted) 8%, transparent)] to-transparent hover:from-[color-mix(in oklab, var(--muted) 15%, transparent)] transition-colors"
@@ -329,19 +348,24 @@ export default function AdminDashboardPage() {
                       {q}
                     </span>
                     <span className="text-[var(--foreground)]/60 flex items-center gap-1">
-                      <span className="inline-block size-1.5 rounded-full bg-success" />
-                      {t("completed")}: {stats.completed}
+                      <span className={`inline-block size-1.5 rounded-full ${hasCounts ? "bg-success" : "bg-[var(--muted-foreground)]"}`} />
+                      {hasCounts
+                        ? `${t("completed")}: ${countOf(stats.completed)}`
+                        : (t("unavailable") && t("unavailable") !== "unavailable"
+                            ? t("unavailable")
+                            : "Unavailable")}
                     </span>
                   </div>
+                  {hasCounts ? (
                   <div className="grid grid-cols-4 md:grid-cols-7 gap-2 app-text-micro">
                     {[
-                      ["active", stats.active],
-                      ["waiting", stats.waiting],
-                      ["delayed", stats.delayed],
-                      ["failed", stats.failed],
-                      ["paused", stats.paused],
-                      ["prioritized", stats.prioritized],
-                      ["waiting-children", stats["waiting-children"]],
+                      ["active", countOf(stats.active)],
+                      ["waiting", countOf(stats.waiting)],
+                      ["delayed", countOf(stats.delayed)],
+                      ["failed", countOf(stats.failed)],
+                      ["paused", countOf(stats.paused)],
+                      ["prioritized", countOf(stats.prioritized)],
+                      ["waiting-children", countOf(stats["waiting-children"])],
                     ].map(([label, v]) => (
                       <div
                         key={label as string}
@@ -356,8 +380,10 @@ export default function AdminDashboardPage() {
                       </div>
                     ))}
                   </div>
+                  ) : null}
                 </div>
-              ))}
+                );
+              })}
             {!queueStats && <p className="app-text-caption subtle">—</p>}
           </div>
         </Card>
@@ -371,6 +397,7 @@ export default function AdminDashboardPage() {
           description={(t as any)("listingsTypeStatus")}
           isLoading={isLoading}
           className="xl:col-span-3"
+          plotClassName="h-[360px]"
         >
           <ListingsTypeStatusCharts
             charts={charts}
@@ -747,11 +774,18 @@ export default function AdminDashboardPage() {
                     data={charts.representativesByRegion}
                     dataKey="count"
                     nameKey="region"
-                    outerRadius={110}
-                    fill="var(--info)"
+                    outerRadius={88}
                     stroke="var(--background)"
                     strokeWidth={2}
-                  />
+                  >
+                    {charts.representativesByRegion.map((entry, index) => (
+                      <Cell
+                        key={entry.region || index}
+                        fill={chartSeriesColor(index)}
+                      />
+                    ))}
+                  </Pie>
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
@@ -816,19 +850,19 @@ function ListingsTypeStatusCharts({
     "HIDDEN",
   ];
 
-  const colorPalette = {
+  const colorPalette: Record<string, string> = {
     PENDING: "var(--warning)",
-    APPROVED: "var(--chart-2)",
+    APPROVED: "var(--success)",
     REJECTED: "var(--destructive)",
-    SOLD: "var(--chart-3)",
+    SOLD: "var(--chart-1)",
     RENTED: "var(--info)",
-    EXPIRED: "var(--muted-foreground)",
-    DRAFT: "var(--success)",
-    HIDDEN: "var(--muted-foreground)",
-  } as Record<string, string>;
+    EXPIRED: "var(--chart-5)",
+    DRAFT: "var(--chart-4)",
+    HIDDEN: "var(--chart-3)",
+  };
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full min-h-0 flex-col">
       {/* Mode Toggle */}
       <div className="mb-4 flex flex-wrap items-center gap-2 app-text-caption">
         {(["daily", "weekly", "monthly", "yearly"] as const).map((m) => (
@@ -846,7 +880,7 @@ function ListingsTypeStatusCharts({
           </button>
         ))}
       </div>
-      <div className="flex-1 min-h-[280px]">
+      <div className="relative min-h-0 flex-1">
         {!isLoading && dataset.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -892,25 +926,15 @@ function ListingsTypeStatusCharts({
         ) : null}
       </div>
       <div className="mt-2 app-text-micro text-[var(--foreground)]/50 flex flex-wrap gap-3">
-        {statusKeys.map((k) => {
-          const swatch =
-            {
-              PENDING: "bg-warning",
-              APPROVED: "bg-success",
-              REJECTED: "bg-destructive",
-              SOLD: "bg-primary",
-              RENTED: "bg-info",
-              EXPIRED: "bg-muted",
-              DRAFT: "bg-success",
-              HIDDEN: "bg-muted",
-            }[k] || "bg-[var(--primary)]";
-          return (
+        {statusKeys.map((k) => (
             <span key={k} className="flex items-center gap-1">
-              <span className={`inline-block size-2 rounded-sm ${swatch}`} />
+              <span
+                className="inline-block size-2 rounded-sm"
+                style={{ background: colorPalette[k] }}
+              />
               {(t as any)(k.toLowerCase()) || k}
             </span>
-          );
-        })}
+          ))}
       </div>
     </div>
   );

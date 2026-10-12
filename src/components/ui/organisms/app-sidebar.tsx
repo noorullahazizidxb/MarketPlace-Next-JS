@@ -280,24 +280,7 @@ export function AppSidebar({
               <Link href={homeUrl}>
                 {/* Use explicit sizing classes so the image always has layout space */}
                 <div className="flex min-h-[var(--ctrl-h)] min-w-[var(--ctrl-h)] items-center justify-center rounded-lg">
-                  {/*
-                    Compute a base-aware logo path at runtime so the image resolves when the
-                    app is mounted under a base path (for example: /admin/ota-tickets.png).
-                  */}
-                  <BrandLogo
-                    size={100}
-                    className="text-current"
-                    src={(() => {
-                      try {
-                        if (typeof window === "undefined") return "/ota-tickets.png";
-                        const firstSegment = window.location.pathname.split("/").filter(Boolean)[0];
-                        // If there's a top-level path (e.g. 'admin'), prefer that prefix
-                        return firstSegment ? `/${firstSegment}/ota-tickets.png` : "/ota-tickets.png";
-                      } catch {
-                        return "/ota-tickets.png";
-                      }
-                    })()}
-                  />
+                  <BrandLogo size={32} alt="DevMinds" className="text-current" />
                 </div>
                 <div className="grid flex-1 text-start app-text-body leading-tight">
                   <span className="truncate app-text-label">{user.name}</span>

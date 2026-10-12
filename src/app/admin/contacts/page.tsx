@@ -22,6 +22,10 @@ import { useMemo, useState } from "react";
 import React from "react";
 
 type ContactSubject =
+  | "generalQuestion"
+  | "listingSupport"
+  | "accountIssue"
+  | "partnershipInquiry"
   | "General Question"
   | "Listing Support"
   | "Account Issue"
@@ -59,26 +63,35 @@ export default function AdminContactsPage() {
     "/contacts",
   );
 
-  const subjectLabel = (s?: string) => {
+  const subjectKey = (s?: string) => {
     switch (s) {
+      case "generalQuestion":
       case "General Question":
-        return t("generalQuestion");
+        return "generalQuestion";
+      case "listingSupport":
       case "Listing Support":
-        return t("listingSupport");
+        return "listingSupport";
+      case "accountIssue":
       case "Account Issue":
-        return t("accountIssue");
+        return "accountIssue";
+      case "partnershipInquiry":
       case "Partnership Inquiry":
-        return t("partnershipInquiry");
+        return "partnershipInquiry";
       default:
-        return s || "";
+        return "";
     }
   };
 
+  const subjectLabel = (s?: string) => {
+    const key = subjectKey(s);
+    return key ? t(key) : s || "";
+  };
+
   const subjectOptions = [
-    { value: "General Question", label: t("generalQuestion") },
-    { value: "Listing Support", label: t("listingSupport") },
-    { value: "Account Issue", label: t("accountIssue") },
-    { value: "Partnership Inquiry", label: t("partnershipInquiry") },
+    { value: "generalQuestion", label: t("generalQuestion") },
+    { value: "listingSupport", label: t("listingSupport") },
+    { value: "accountIssue", label: t("accountIssue") },
+    { value: "partnershipInquiry", label: t("partnershipInquiry") },
   ];
 
   const items = useMemo(() => {
@@ -90,7 +103,8 @@ export default function AdminContactsPage() {
         [c.name, c.email, c.subject, c.message]
           .map((v) => String(v ?? "").toLowerCase())
           .some((s) => s.includes(term));
-      const matchesSubject = !subjectFilter || c.subject === subjectFilter;
+      const matchesSubject =
+        !subjectFilter || subjectKey(c.subject) === subjectFilter;
       return matchesQ && matchesSubject;
     });
   }, [data, q, subjectFilter]);

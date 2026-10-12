@@ -11,6 +11,7 @@ interface ChartCardProps {
   isLoading?: boolean;
   children?: React.ReactNode;
   className?: string;
+  plotClassName?: string;
 }
 
 export function ChartCard({
@@ -20,6 +21,7 @@ export function ChartCard({
   isLoading,
   children,
   className,
+  plotClassName,
 }: ChartCardProps) {
   return (
     <Card className={cn("p-5 flex flex-col gap-3", className)}>
@@ -36,7 +38,7 @@ export function ChartCard({
         </div>
         {action}
       </div>
-      <div className="relative min-h-[180px] flex-1">
+      <div className={cn("relative h-[280px] w-full", plotClassName)}>
         {isLoading && (
           <div className="absolute inset-0 grid place-items-center bg-[var(--card)]/40 backdrop-blur-sm rounded-xl">
             <Loader2 className="size-5 animate-spin text-[var(--primary)]" />
