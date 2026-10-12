@@ -179,13 +179,13 @@ export default function SignInPage() {
           {/* Form */}
           <motion.form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-[var(--space-section)]"
+            className="flex w-full flex-col gap-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <Tooltip content={t("tooltipSignInEmail")} side="right">
-              <div>
+            <Tooltip content={t("tooltipSignInEmail")} side="right" className="flex w-full">
+              <div className="w-full min-w-0">
                 <TextInputField
                   id="sign-in-email"
                   label={t("email")}
@@ -198,8 +198,8 @@ export default function SignInPage() {
               </div>
             </Tooltip>
 
-            <Tooltip content={t("tooltipSignInPassword")} side="right">
-              <div>
+            <Tooltip content={t("tooltipSignInPassword")} side="right" className="flex w-full">
+              <div className="w-full min-w-0">
                 <TextInputField
                   id="sign-in-password"
                   label={t("password")}
