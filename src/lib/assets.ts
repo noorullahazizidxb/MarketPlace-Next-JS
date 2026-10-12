@@ -31,13 +31,17 @@ function sameOriginUploadPath(value: string) {
   try {
     if (/^https?:\/\//i.test(normalized)) {
       const parsed = new URL(normalized);
+      // Blob objects live at /uploads/... on *.blob.vercel-storage.com.
+      // Rewriting those to the site proxy drops the file and cards show the SVG fallback.
+      if (/\.blob\.vercel-storage\.com$/i.test(parsed.hostname)) {
+        return "";
+      }
       if (/^\/uploads\//i.test(parsed.pathname)) {
         return `${parsed.pathname}${parsed.search}`;
       }
       if (/^\/api\/uploads\//i.test(parsed.pathname)) {
         return `${parsed.pathname.replace(/^\/api/i, "")}${parsed.search}`;
       }
-      // Foreign absolute URLs (Blob/CDN) are not rewritten here.
       return "";
     }
   } catch {
