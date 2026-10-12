@@ -2078,6 +2078,11 @@ button[aria-label^="Go to slide"],
   outline-offset: 3px;
 }
 
+[data-control-shell] :is(input, textarea):focus-visible {
+  outline: none;
+  outline-offset: 0;
+}
+
 .app-premium-surface {
   border: 1px solid color-mix(in oklch, var(--border) 82%, transparent);
   border-radius: calc(var(--radius) + 0.75rem);

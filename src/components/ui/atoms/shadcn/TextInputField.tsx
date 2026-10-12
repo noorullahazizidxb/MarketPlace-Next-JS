@@ -135,7 +135,7 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
         <div
           data-control-shell
           className={cn(
-            "relative flex w-full flex-row items-center gap-1.5 overflow-hidden rounded-squircle border bg-background",
+            "relative flex w-full flex-row items-center gap-1.5 rounded-squircle border bg-background",
             "px-[var(--ctrl-px)]",
             "transition-[border-color,box-shadow] duration-200",
             hasError
