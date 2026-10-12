@@ -139,8 +139,8 @@ export const TextInputField = forwardRef<HTMLInputElement, TextInputFieldProps>(
             "px-[var(--ctrl-px)]",
             "transition-[border-color,box-shadow] duration-200",
             hasError
-              ? "border-destructive/40 group-focus-within:border-destructive group-focus-within:ring-1 group-focus-within:ring-destructive/30"
-              : "border-border/60 group-focus-within:border-ring group-focus-within:ring-1 group-focus-within:ring-ring/30",
+              ? "border-destructive/40"
+              : "border-border/60",
             disabled && "cursor-not-allowed opacity-50",
             className,
           )}
