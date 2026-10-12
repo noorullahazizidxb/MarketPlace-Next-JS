@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setSession, setUserInfo } from "@/lib/session";
+import { buildSessionCookies } from "@/lib/session";
+import { applySessionCookies } from "@/lib/session-cookies";
 
 function getBaseUrl(req: NextRequest) {
   const forwardedProto = req.headers.get("x-forwarded-proto");
@@ -58,9 +59,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(fallbackTarget);
   }
 
-  await setSession({ token: payload.token, user: payload.user });
-  await setUserInfo(payload.user).catch(() => null);
-
   let next = "/listings";
   if (rawState) {
     try {
@@ -71,5 +69,7 @@ export async function GET(req: NextRequest) {
     } catch { }
   }
 
-  return NextResponse.redirect(new URL(next, getBaseUrl(req)));
+  const response = NextResponse.redirect(new URL(next, getBaseUrl(req)));
+  const cookies = await buildSessionCookies({ token: payload.token, user: payload.user });
+  return applySessionCookies(response, cookies);
 }

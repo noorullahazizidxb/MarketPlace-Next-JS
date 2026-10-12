@@ -53,7 +53,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
     if (!node) return;
     const height = `calc(${(activeHeight * 100).toFixed(
       2
-    )}vh - var(--safe-bottom))`;
+    )}dvh - env(safe-area-inset-bottom, 0px))`;
     // set as CSS var on element
     (node as HTMLElement).style.setProperty("--sheet-height", height);
   }, [activeHeight]);
@@ -185,7 +185,7 @@ export const BottomSheet: React.FC<BottomSheetProps> = ({
           <motion.div
             ref={sheetRef}
             className={
-              "fixed left-0 right-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[var(--background)]/90 backdrop-blur-xl border border-[var(--border)] shadow-token-lg " +
+              "fixed inset-x-0 bottom-0 z-[100000] mx-auto flex flex-col rounded-t-[32px] bg-[var(--background)]/90 backdrop-blur-xl border border-[var(--border)] shadow-token-lg " +
               className +
               " sheet-dynamic-height"
             }

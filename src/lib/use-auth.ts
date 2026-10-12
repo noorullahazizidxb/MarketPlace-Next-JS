@@ -7,46 +7,54 @@ import { setCachedToken } from "./axiosClient";
 export function useAuth() {
   const session = useAuthStore((s) => s.session);
   const setSession = useAuthStore((s) => s.setSession);
-  const setToken = useAuthStore((s) => s.setToken);
   const setUser = useAuthStore((s) => s.setUser);
+  const hasUser = Boolean(session?.user);
 
-  // SWR-based hydration for session token and info
-  const { data: tokenData, error: tokenErr } = useLocalGetImmutable<{ token?: string }>(
-    session ? null : ["session-token"],
-    "/api/session-token"
+  const { data: tokenData, error: tokenErr, isFetched: tokenFetched } = useLocalGetImmutable<{ token?: string | null }>(
+    session?.token ? null : ["session-token"],
+    "/api/session-token",
   );
 
-  // Keep token as `undefined` while SWR has not returned so we can distinguish
-  // between "still fetching" (undefined) and "no token" (null).
-  const token = session?.token ?? (typeof tokenData === "undefined" ? undefined : tokenData?.token ?? null);
-
-  const { data: infoData } = useLocalGetImmutable<{ user: any }>(
-    !session && token ? ["session-info"] : null,
-    "/api/session-info"
+  const token = session?.token || (tokenFetched ? tokenData?.token ?? null : undefined);
+  const waitingForUser = Boolean(token) && !hasUser;
+  const { data: infoData, isFetched: infoFetched } = useLocalGetImmutable<{ user?: any }>(
+    waitingForUser ? ["session-info"] : null,
+    "/api/session-info",
   );
 
   useEffect(() => {
-    if (!session && token) {
-      setCachedToken(token);
-      if (infoData?.user) setSession({ token, user: infoData.user });
-      else setSession({ token, user: null });
-    }
-  }, [session, token, infoData, setSession]);
+    if (!waitingForUser || !token || !infoFetched || !infoData?.user) return;
+    setCachedToken(token);
+    if (session?.token) setUser(infoData.user);
+    else setSession({ token, user: infoData.user });
+  }, [waitingForUser, token, infoFetched, infoData, session?.token, setSession, setUser]);
 
-  const roles: string[] = useMemo(() => session?.user?.roles?.map((r: any) => r.role) ?? [], [session]);
+  const roles: string[] = useMemo(
+    () => session?.user?.roles?.map((role: any) => role.role) ?? [],
+    [session],
+  );
   const isAdmin = roles.includes("ADMIN");
+  const counts = useMemo(() => countSessionActivity(session?.user), [session]);
+  const loading = !hasUser && !tokenErr && (token === undefined || (Boolean(token) && !infoFetched));
 
-  const counts = useMemo(() => {
-    const u = session?.user || {};
-    return {
-      notifications: (u.notifications || []).length || 0,
-      listings: (u.listings || []).length || 0,
-      approvedListings: (u.approvedListings || []).length || 0,
-      auditLogs: (u.auditLogs || []).length || 0,
-      feedback: (u.feedbacks || []).length || 0,
-    };
-  }, [session]);
+  return {
+    session,
+    token: session?.token ?? null,
+    user: session?.user ?? null,
+    roles,
+    isAdmin,
+    counts,
+    loading,
+  } as const;
+}
 
-  const loading = !session && typeof token === "undefined" && !tokenErr;
-  return { session, token: session?.token ?? null, user: session?.user ?? null, roles, isAdmin, counts, loading } as const;
+function countSessionActivity(user: any) {
+  const profile = user || {};
+  return {
+    notifications: (profile.notifications || []).length || 0,
+    listings: (profile.listings || []).length || 0,
+    approvedListings: (profile.approvedListings || []).length || 0,
+    auditLogs: (profile.auditLogs || []).length || 0,
+    feedback: (profile.feedbacks || []).length || 0,
+  };
 }

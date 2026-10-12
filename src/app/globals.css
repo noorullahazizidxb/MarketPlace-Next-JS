@@ -1956,6 +1956,12 @@ button[aria-label^="Go to slide"],
 .safe-pb {
   padding-bottom: calc(var(--safe-bottom, 0px) + 0.25rem);
 }
+
+.sheet-dynamic-height {
+  bottom: 0;
+  height: var(--sheet-height, 70dvh);
+  max-height: 100dvh;
+}
 .safe-pt {
   padding-top: calc(var(--safe-top, 0px) + 0.25rem);
 }
