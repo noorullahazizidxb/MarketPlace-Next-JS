@@ -1,52 +1,22 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
-import {
-  fetchUiContextState,
-  patchUiContextState,
-} from "@/lib/theme/ui-context/context-store";
+import { useEffect } from "react";
+import { useComponentVariantsStore } from "@/store/component-variants.store";
 import type { ComponentVariantSettings } from "@/lib/theme/types";
 
-const DEFAULT_VARIANTS: ComponentVariantSettings = {
-  listingCard: "grid",
-  navbar: "standard",
-  footer: "standard",
-  sidebar: "default",
-  blogCard: "card",
-};
-
 /**
- * Lightweight hook to read and update per-component visual variants.
- * Syncs with the persistent ui-context store via /api/ui-context.
+ * Shares component variant state across mounted components and browser tabs.
  */
 export function useComponentVariants() {
-  const [variants, setVariants] =
-    useState<ComponentVariantSettings>(DEFAULT_VARIANTS);
-
-  useEffect(() => {
-    fetchUiContextState().then((ctx) => {
-      if (ctx.componentVariants) {
-        setVariants({ ...DEFAULT_VARIANTS, ...ctx.componentVariants });
-      }
-    });
-  }, []);
-
-  const updateVariant = useCallback(
-    async <K extends keyof ComponentVariantSettings>(
-      key: K,
-      value: ComponentVariantSettings[K],
-    ) => {
-      const next = { ...variants, [key]: value };
-      setVariants(next);
-      await patchUiContextState({ componentVariants: next });
-    },
-    [variants],
+  const variants = useComponentVariantsStore(
+    (state) => state.previewVariants ?? state.variants,
   );
+  const error = useComponentVariantsStore((state) => state.error);
+  const initialize = useComponentVariantsStore((state) => state.initialize);
+  const updateVariant = useComponentVariantsStore((state) => state.updateVariant);
+  const resetVariants = useComponentVariantsStore((state) => state.resetVariants);
 
-  const resetVariants = useCallback(async () => {
-    setVariants(DEFAULT_VARIANTS);
-    await patchUiContextState({ componentVariants: DEFAULT_VARIANTS });
-  }, []);
+  useEffect(initialize, [initialize]);
 
-  return { variants, updateVariant, resetVariants };
+  return { variants, error, updateVariant, resetVariants };
 }

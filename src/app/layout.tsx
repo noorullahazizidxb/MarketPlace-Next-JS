@@ -22,6 +22,7 @@ import {
   getUiContextState,
 } from "@/lib/theme/server-theme";
 import { NavigationProgress } from "@/components/providers/navigation-progress";
+import { AppearancePreviewBridge } from "@/components/settings/appearance-preview-bridge";
 
 export const metadata: Metadata = rootMetadata();
 
@@ -62,6 +63,7 @@ export default async function RootLayout({
                 <UiContextGate fallback={<ThemeBootFallback />}>
                   <SkipLink />
                   <SocialRealtimeClient />
+                  <AppearancePreviewBridge />
                   <AppShell>{children}</AppShell>
                   <AppToaster />
                 </UiContextGate>

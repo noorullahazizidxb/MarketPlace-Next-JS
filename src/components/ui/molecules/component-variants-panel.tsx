@@ -181,7 +181,7 @@ const captchaOptions: VariantOption<CaptchaVariant>[] = [
  * Used in the Appearance settings to switch the visual style of major UI components.
  */
 export function ComponentVariantsPanel() {
-  const { variants, updateVariant, resetVariants } = useComponentVariants();
+  const { variants, error, updateVariant, resetVariants } = useComponentVariants();
 
   return (
     <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
@@ -209,6 +209,11 @@ export function ComponentVariantsPanel() {
       </div>
 
       <div className="space-y-6 p-4 md:p-6">
+        {error && (
+          <p role="alert" className="app-text-caption text-destructive">
+            {error}
+          </p>
+        )}
         <VariantPicker
           label="Listing Card Style"
           options={listingCardOptions}
@@ -247,22 +252,22 @@ export function ComponentVariantsPanel() {
         <VariantPicker
           label="Stories Bar Style"
           options={storiesOptions}
-          value={(variants as any).storiesBar ?? "bubble"}
-          onChange={(v) => updateVariant("storiesBar" as any, v)}
+          value={variants.storiesBar ?? "bubble"}
+          onChange={(v) => updateVariant("storiesBar", v)}
         />
 
         <VariantPicker
           label="Skeleton Animation"
           options={skeletonOptions}
-          value={(variants as any).skeletonTheme ?? "shimmer"}
-          onChange={(v) => updateVariant("skeletonTheme" as any, v)}
+          value={variants.skeletonTheme ?? "shimmer"}
+          onChange={(v) => updateVariant("skeletonTheme", v)}
         />
 
         <VariantPicker
           label="CAPTCHA Style"
           options={captchaOptions}
-          value={(variants as any).captchaVariant ?? "classic"}
-          onChange={(v) => updateVariant("captchaVariant" as any, v)}
+          value={variants.captchaVariant ?? "classic"}
+          onChange={(v) => updateVariant("captchaVariant", v)}
         />
       </div>
     </div>
