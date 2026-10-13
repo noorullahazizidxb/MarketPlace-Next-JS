@@ -11,7 +11,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import { useApiGet } from "@/lib/api-hooks";
-import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
+import { ListingCardSelector } from "@/components/ui/organisms/listing-card-selector";
 import { FiltersBar } from "@/components/ui/organisms/filters-bar";
 import { HomeHero } from "@/components/listings/HomeHero";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
@@ -391,7 +391,7 @@ function ListingsContent() {
                           : null;
                       return (
                         <Fragment key={item.id}>
-                          <ListingCard
+                          <ListingCardSelector
                             listing={item}
                             cleanImageOverlayOnEngage
                             priority={

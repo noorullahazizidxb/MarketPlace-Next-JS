@@ -14,6 +14,8 @@ interface ListingCardSelectorProps {
   /** Override the variant stored in ui-context (e.g. for previews) */
   variantOverride?: ListingCardVariant;
   className?: string;
+  cleanImageOverlayOnEngage?: boolean;
+  priority?: boolean;
 }
 
 /**
@@ -24,6 +26,8 @@ export function ListingCardSelector({
   listing,
   variantOverride,
   className,
+  cleanImageOverlayOnEngage,
+  priority,
 }: ListingCardSelectorProps) {
   const { variants } = useComponentVariants();
   const variant: ListingCardVariant =
@@ -37,6 +41,13 @@ export function ListingCardSelector({
     case "minimal":
       return <ListingCardMinimal listing={listing} />;
     default:
-      return <ListingCard listing={listing} className={className} />;
+      return (
+        <ListingCard
+          listing={listing}
+          className={className}
+          cleanImageOverlayOnEngage={cleanImageOverlayOnEngage}
+          priority={priority}
+        />
+      );
   }
 }

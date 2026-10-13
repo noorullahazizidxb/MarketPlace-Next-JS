@@ -15,6 +15,8 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/molecules/button";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { FooterVariant } from "@/lib/theme/types";
 
 const exploreLinks = [
   { href: "/listings", key: "listings", Icon: LayoutList },
@@ -28,8 +30,108 @@ const accountLinks = [
   { href: "/contact", key: "contact", Icon: MessageSquareText },
 ] as const;
 
-export default function Footer() {
+export default function Footer({
+  variantOverride,
+}: {
+  variantOverride?: FooterVariant;
+}) {
   const { locale, t } = useLanguage();
+  const { variants } = useComponentVariants();
+  const variant = variantOverride ?? variants.footer;
+  const year = new Date().getFullYear();
+
+  if (variant === "minimal") {
+    return (
+      <footer
+        className="mt-[var(--space-section)] border-t border-border/70 bg-background/80"
+        dir={locale === "fa" ? "rtl" : "ltr"}
+      >
+        <div className="container-padded flex flex-wrap items-center justify-between gap-3 py-4 app-text-caption text-muted-foreground">
+          <p>© {year} {t("marketplace")}. {t("allRightsReserved")}</p>
+          <nav aria-label={t("explore")} className="flex flex-wrap gap-4">
+            {exploreLinks.map(({ href, key }) => (
+              <Link key={href} href={href} className="hover:text-foreground">
+                {t(key)}
+              </Link>
+            ))}
+          </nav>
+        </div>
+      </footer>
+    );
+  }
+
+  if (variant === "compact") {
+    return (
+      <footer
+        className="mt-[var(--space-section)] border-t border-border/70 bg-background/80"
+        dir={locale === "fa" ? "rtl" : "ltr"}
+      >
+        <div className="container-padded flex flex-wrap items-center justify-between gap-4 py-5">
+          <Link
+            href="/listings"
+            className="inline-flex items-center gap-2 app-text-label font-semibold"
+            aria-label={t("marketplace")}
+          >
+            <span className="modern-navbar-logo size-8">
+              <Image
+                src="/brand/devminds-logo.png"
+                alt=""
+                width={32}
+                height={32}
+                className="h-full w-full object-contain"
+              />
+            </span>
+            {t("marketplace")}
+          </Link>
+          <nav aria-label={t("explore")} className="flex flex-wrap gap-4 app-text-caption">
+            {exploreLinks.map(({ href, key }) => (
+              <Link key={href} href={href} className="app-footer-link">
+                {t(key)}
+              </Link>
+            ))}
+          </nav>
+          <p className="app-text-caption text-muted-foreground">
+            © {year} {t("allRightsReserved")}
+          </p>
+        </div>
+      </footer>
+    );
+  }
+
+  if (variant === "editorial") {
+    return (
+      <footer
+        className="relative mt-[var(--space-section)] overflow-hidden border-t border-border/70 bg-background/80"
+        dir={locale === "fa" ? "rtl" : "ltr"}
+      >
+        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top,color-mix(in_oklch,var(--primary)_16%,transparent),transparent_65%)]" />
+        <div className="container-padded relative py-10 sm:py-14">
+          <div className="mx-auto max-w-3xl text-center">
+            <span className="app-text-caption uppercase app-tracking-caps text-primary">
+              {t("explore")}
+            </span>
+            <h2 className="mt-2 app-text-heading font-semibold">
+              {t("marketplace")}
+            </h2>
+            <p className="mx-auto mt-3 max-w-xl app-text-body text-muted-foreground">
+              {t("platformMissionShort")}
+            </p>
+            <nav aria-label={t("explore")} className="mt-6 flex flex-wrap justify-center gap-3">
+              {exploreLinks.map(({ href, key, Icon }) => (
+                <Link key={href} href={href} className="app-footer-link rounded-full border border-border bg-background/70 px-4 py-2">
+                  <Icon className="app-icon-xs" />
+                  {t(key)}
+                </Link>
+              ))}
+            </nav>
+          </div>
+          <p className="mt-8 border-t border-border/70 pt-4 text-center app-text-caption text-muted-foreground">
+            © {year} {t("marketplace")}. {t("allRightsReserved")}
+          </p>
+        </div>
+      </footer>
+    );
+  }
 
   return (
     <footer
@@ -120,7 +222,7 @@ export default function Footer() {
 
           <div className="flex flex-col gap-[var(--space-gap)] border-t border-border/70 px-[var(--space-card)] py-[var(--space-filter)] app-text-caption text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
             <p>
-              © {new Date().getFullYear()} {t("marketplace")}.{" "}
+              © {year} {t("marketplace")}.{" "}
               {t("allRightsReserved")}
             </p>
             <a

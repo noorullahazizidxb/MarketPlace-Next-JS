@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo } from "../atoms/shadcn/brand-logo";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { SidebarVariantStyle } from "@/lib/theme/types";
+import { cn } from "../lib/cn";
 
 import { NavMain } from "../molecules/nav-main";
 import { NavUser } from "../molecules/nav-user";
@@ -259,6 +262,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   brandSubtitle?: string;
   userMenuLabels?: React.ComponentProps<typeof NavUser>["labels"];
   direction?: "ltr" | "rtl";
+  appearanceVariantOverride?: SidebarVariantStyle;
 }
 
 export function AppSidebar({
@@ -269,10 +273,27 @@ export function AppSidebar({
   brandSubtitle = "Admin Dashboard",
   userMenuLabels,
   direction = "ltr",
+  appearanceVariantOverride,
+  className,
   ...props
 }: AppSidebarProps) {
+  const { variants } = useComponentVariants();
+  const appearanceVariant = appearanceVariantOverride ?? variants.sidebar;
+
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      {...props}
+      data-appearance-variant={appearanceVariant}
+      className={cn(
+        className,
+        appearanceVariant === "glass" &&
+          "border-border/60 bg-background/65 shadow-lg backdrop-blur-xl",
+        appearanceVariant === "minimal" &&
+          "text-muted-foreground [&_[data-sidebar=menu-button]]:px-2",
+        appearanceVariant === "brand" &&
+          "border-primary/20 bg-primary/5 text-foreground",
+      )}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>

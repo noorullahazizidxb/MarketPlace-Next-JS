@@ -28,13 +28,23 @@ import { NotificationsPanel } from "@/components/ui/organisms/notifications-pane
 import { asset } from "@/lib/assets";
 import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { NavbarVariant } from "@/lib/theme/types";
 
-export function Topbar() {
+export function Topbar({
+  variantOverride,
+  preview = false,
+}: {
+  variantOverride?: NavbarVariant;
+  preview?: boolean;
+}) {
   const { user, counts } = useAuth();
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
   const { t, locale, isRtl } = useLanguage();
+  const { variants } = useComponentVariants();
+  const navbarVariant = variantOverride ?? variants.navbar;
   const [notifOpen, setNotifOpen] = useState(false);
-  useNotificationsRealtime(!!user);
+  useNotificationsRealtime(!!user && !preview);
   const [open, setOpen] = useState(false);
   const avatar =
     (user as any)?.photo || (user as any)?.avatarUrl || "/favicon.svg";
@@ -45,7 +55,11 @@ export function Topbar() {
 
   return (
     <>
-      <header className="modern-navbar" dir={locale === "fa" ? "rtl" : "ltr"}>
+      <header
+        className={`modern-navbar ${navbarVariant === "minimal" ? "py-1" : ""}`}
+        data-navbar-variant={navbarVariant}
+        dir={locale === "fa" ? "rtl" : "ltr"}
+      >
         <motion.div
           initial={{ y: -32, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -55,7 +69,15 @@ export function Topbar() {
           <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
             <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
           </div>
-          <div className="relative w-full rounded-2xl liquid-glass glass-hover">
+          <div
+            className={`relative w-full liquid-glass glass-hover ${
+              navbarVariant === "glass"
+                ? "rounded-full border border-border/50 bg-background/70 shadow-glass backdrop-blur-xl"
+                : navbarVariant === "minimal"
+                  ? "rounded-xl border border-border/40 bg-background/90"
+                  : "rounded-2xl"
+            }`}
+          >
             <div className="modern-navbar-grid">
               <motion.div
                 whileHover={{ y: -2 }}
@@ -81,7 +103,7 @@ export function Topbar() {
                   {t("marketplace")}
                 </span>
               </motion.div>
-              <nav className="hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
+              <nav className={`hidden items-center justify-center gap-[var(--space-gap)] lg:flex ${navbarVariant === "minimal" ? "lg:hidden" : ""}`}>
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
