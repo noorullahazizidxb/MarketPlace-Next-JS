@@ -10,6 +10,9 @@ async function request<T>(path: string, init?: RequestInit & { token?: string })
     typeof window !== "undefined" &&
     new URLSearchParams(window.location.search).get("appearance-preview") === "1";
   const apiBase = isAppearancePreview ? "/backend" : API_BASE;
+  if (isAppearancePreview) {
+    delete headers.Authorization;
+  }
   const res = await fetch(`${apiBase}${path}`, { ...init, headers });
   const text = await res.text();
   let json: any = undefined;

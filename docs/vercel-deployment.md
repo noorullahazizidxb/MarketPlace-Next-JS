@@ -14,6 +14,8 @@ Copy [`.env.vercel.example`](../.env.vercel.example):
 - `NEXT_PUBLIC_SOCKET_IO_ENABLED=false`
 - `NEXT_PUBLIC_ENABLE_ELASTIC_SEARCH=false`
 
+The preview origin must resolve to this same frontend project on a different hostname so the iframe has no admin cookies or local storage. UI-context reads and writes are proxied to the API project; the API's `BLOB_READ_WRITE_TOKEN` is required for durable Vercel storage.
+
 ## Deploy
 
 ```bash
