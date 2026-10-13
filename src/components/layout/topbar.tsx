@@ -189,7 +189,7 @@ export function Topbar({
 
               <div className="flex items-center justify-end gap-[var(--space-gap)]">
                 {/* Notifications */}
-                {user && (
+                {user && !preview && (
                   <>
                     <Tooltip
                       content={
@@ -227,12 +227,19 @@ export function Topbar({
                     />
                   </>
                 )}
-                <div className="hidden md:flex items-center gap-[var(--space-gap)]">
+                <div className={`hidden md:flex items-center gap-[var(--space-gap)] ${navbarVariant === "minimal" ? "md:hidden" : ""}`}>
                   <Tooltip content={t("search")} side="bottom">
                     <SearchBox placeholder={t("search")} />
                   </Tooltip>
                 </div>
-                {user ? (
+                {preview ? (
+                  <Link
+                    href="/sign-in"
+                    className="rounded-xl border border-border/60 bg-background/70 px-3 py-2 app-text-caption font-medium"
+                  >
+                    Sign In
+                  </Link>
+                ) : user ? (
                   <div className="relative">
                     <button
                       onClick={() => setOpen((v) => !v)}
