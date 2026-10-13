@@ -34,6 +34,15 @@ export function setCachedToken(token: string | null) {
 axiosClient.interceptors.request.use(async (config: InternalAxiosRequestConfig) => {
   try {
     if (typeof window !== "undefined") {
+      if (
+        new URLSearchParams(window.location.search).get("appearance-preview") ===
+        "1"
+      ) {
+        config.baseURL = "/backend/api";
+        delete (config.headers as any)?.Authorization;
+        return config;
+      }
+
       // prefer explicit cachedToken, otherwise try to read from auth store (persisted zustand)
       let token = cachedToken;
       try {

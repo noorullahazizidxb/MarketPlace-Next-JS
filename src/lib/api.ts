@@ -6,7 +6,11 @@ const API_BASE = process.env.NEXT_PUBLIC_API_BASE || process.env.NEXT_PUBLIC_API
 async function request<T>(path: string, init?: RequestInit & { token?: string }) {
   const headers: Record<string, string> = { "Content-Type": "application/json", ...(init?.headers as any) };
   if (init?.token) headers["Authorization"] = init.token.startsWith("Bearer ") ? init.token : `Bearer ${init.token}`;
-  const res = await fetch(`${API_BASE}${path}`, { ...init, headers });
+  const isAppearancePreview =
+    typeof window !== "undefined" &&
+    new URLSearchParams(window.location.search).get("appearance-preview") === "1";
+  const apiBase = isAppearancePreview ? "/backend" : API_BASE;
+  const res = await fetch(`${apiBase}${path}`, { ...init, headers });
   const text = await res.text();
   let json: any = undefined;
   try { json = text ? JSON.parse(text) : undefined; } catch {}

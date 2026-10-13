@@ -43,6 +43,20 @@ async function ensureUiContextFile() {
 }
 
 export async function getUiContextState(): Promise<UiContextState> {
+  if (process.env.VERCEL && process.env.BACKEND_VERCEL_URL) {
+    try {
+      const backendUrl = `${process.env.BACKEND_VERCEL_URL.replace(/\/+$/, "")}/api/ui-context`;
+      const response = await fetch(backendUrl, { cache: "no-store" });
+      if (response.ok) {
+        const body = await response.json();
+        return normalize((body?.data ?? body) as Partial<UiContextState>);
+      }
+    } catch {
+      return normalize({ updatedAt: new Date().toISOString() });
+    }
+    return normalize({ updatedAt: new Date().toISOString() });
+  }
+
   try {
     await ensureUiContextFile();
     const raw = await readFile(UI_CONTEXT_FILE, "utf-8");
