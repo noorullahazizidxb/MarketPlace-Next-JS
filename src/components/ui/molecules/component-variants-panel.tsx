@@ -6,7 +6,9 @@ import {
   BookOpen,
   List,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useComponentVariants } from "@/hooks/use-component-variants";
+import { ComponentVariantPreview } from "@/components/ui/molecules/component-variant-preview";
 import type {
   ListingCardVariant,
   NavbarVariant,
@@ -30,33 +32,47 @@ function VariantPicker<T extends string>({
   options,
   value,
   onChange,
+  renderPreview,
 }: {
   label: string;
   options: VariantOption<T>[];
   value: T;
   onChange: (v: T) => void;
+  renderPreview: (variant: T) => ReactNode;
 }) {
   return (
     <div className="space-y-2">
       <p className="app-text-label font-medium">{label}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {options.map((opt) => (
-          <button
+          <article
             key={opt.value}
-            type="button"
-            onClick={() => onChange(opt.value)}
             className={cn(
-              "rounded-xl border p-3 text-left transition-all duration-150 space-y-1",
+              "overflow-hidden rounded-xl border transition-all duration-150",
               value === opt.value
                 ? "border-primary bg-primary/8 ring-1 ring-primary/40"
                 : "border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60",
             )}
           >
-            <p className="app-text-label font-semibold truncate">{opt.label}</p>
-            <p className="app-text-caption text-muted-foreground line-clamp-2">
-              {opt.description}
-            </p>
-          </button>
+            <button
+              type="button"
+              onClick={() => onChange(opt.value)}
+              aria-pressed={value === opt.value}
+              className="w-full p-3 text-left"
+            >
+              <p className="app-text-label font-semibold truncate">{opt.label}</p>
+              <p className="app-text-caption text-muted-foreground line-clamp-2">
+                {opt.description}
+              </p>
+            </button>
+            <div
+              aria-hidden="true"
+              inert
+              className="h-28 overflow-hidden border-t border-border/60 bg-background/50"
+            >
+              {renderPreview(opt.value)}
+            </div>
+          </article>
         ))}
       </div>
     </div>
@@ -219,6 +235,9 @@ export function ComponentVariantsPanel() {
           options={listingCardOptions}
           value={variants.listingCard}
           onChange={(v) => updateVariant("listingCard", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="listingCard" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -226,6 +245,9 @@ export function ComponentVariantsPanel() {
           options={navbarOptions}
           value={variants.navbar}
           onChange={(v) => updateVariant("navbar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="navbar" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -233,6 +255,9 @@ export function ComponentVariantsPanel() {
           options={footerOptions}
           value={variants.footer}
           onChange={(v) => updateVariant("footer", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="footer" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -240,6 +265,9 @@ export function ComponentVariantsPanel() {
           options={sidebarOptions}
           value={variants.sidebar}
           onChange={(v) => updateVariant("sidebar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="sidebar" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -247,6 +275,9 @@ export function ComponentVariantsPanel() {
           options={blogCardOptions}
           value={variants.blogCard}
           onChange={(v) => updateVariant("blogCard", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="blogCard" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -254,6 +285,9 @@ export function ComponentVariantsPanel() {
           options={storiesOptions}
           value={variants.storiesBar ?? "bubble"}
           onChange={(v) => updateVariant("storiesBar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="storiesBar" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -261,6 +295,9 @@ export function ComponentVariantsPanel() {
           options={skeletonOptions}
           value={variants.skeletonTheme ?? "shimmer"}
           onChange={(v) => updateVariant("skeletonTheme", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="skeletonTheme" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -268,6 +305,9 @@ export function ComponentVariantsPanel() {
           options={captchaOptions}
           value={variants.captchaVariant ?? "classic"}
           onChange={(v) => updateVariant("captchaVariant", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="captchaVariant" variant={variant} />
+          )}
         />
       </div>
     </div>

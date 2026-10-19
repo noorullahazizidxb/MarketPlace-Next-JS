@@ -11,6 +11,7 @@ import {
 } from "react";
 import dynamic from "next/dynamic";
 import { useApiGet } from "@/lib/api-hooks";
+import type { Listing } from "@/components/ui/organisms/listing-card";
 import { ListingCardSelector } from "@/components/ui/organisms/listing-card-selector";
 import { FiltersBar } from "@/components/ui/organisms/filters-bar";
 import { HomeHero } from "@/components/listings/HomeHero";

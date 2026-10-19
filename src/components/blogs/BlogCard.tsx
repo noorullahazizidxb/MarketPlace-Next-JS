@@ -71,6 +71,8 @@ type Props = {
   isPriority?: boolean;
   countOverride?: Partial<Counts>;
   onCountsChange?: (blogId: string, patch: Partial<Counts>) => void;
+  appearanceVariant?: BlogCardVariant;
+  preview?: boolean;
 };
 
 function getCounts(blog: Blog): Counts {
@@ -176,16 +178,22 @@ export default function BlogCard({
   isPriority = false,
   countOverride,
   onCountsChange,
+  appearanceVariant,
+  preview = false,
 }: Props) {
   const router = useRouter();
   const { t } = useLanguage();
   const { user } = useAuth();
+  const { variants } = useComponentVariants();
+  const appearance = appearanceVariant ?? (
+    variant === "overlay" ? "editorial" : variants.blogCard
+  );
   const likeMutation = useApiMutation("post", `/blogs/${blog.id}/likes`);
   const shareMutation = useApiMutation("post", `/blogs/${blog.id}/shares`);
   const [shareOpen, setShareOpen] = React.useState(false);
   const [isMediaEngaged, setIsMediaEngaged] = React.useState(false);
   const [localCounts, setLocalCounts] = React.useState<Counts>(() => getCounts(blog));
-  const canInteract = Boolean(user);
+  const canInteract = Boolean(user) && !preview;
 
   React.useEffect(() => {
     setLocalCounts({ ...getCounts(blog), ...(countOverride || {}) });
@@ -193,7 +201,7 @@ export default function BlogCard({
 
   React.useEffect(() => {
     const socket = getSocket();
-    if (!socket || !blog.id) return;
+    if (preview || !socket || !blog.id) return;
 
     const update = (field: keyof Counts, payload: { blogId: string; [key: string]: unknown }) => {
       if (String(payload.blogId) !== String(blog.id)) return;
@@ -221,7 +229,7 @@ export default function BlogCard({
       socket.off("newShare", handleShare);
       socket.off("newComment", handleComment);
     };
-  }, [blog.id, onCountsChange]);
+  }, [blog.id, onCountsChange, preview]);
 
   const syncCount = (field: keyof Counts, value: number) => {
     setLocalCounts((previous) => ({ ...previous, [field]: value }));
@@ -285,18 +293,22 @@ export default function BlogCard({
   );
   const sliderHeight =
     imageHeightClass ||
-    (variant === "overlay" ? "h-[22rem] sm:h-[26rem]" : "h-52 sm:h-56 lg:h-60");
+    (appearance === "editorial" ? "h-[22rem] sm:h-[26rem]" : "h-52 sm:h-56 lg:h-60");
   const category = getCategory(blog);
 
   const activateMedia = (
     event: React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>,
   ) => {
+    if (preview) {
+      event.preventDefault();
+      return;
+    }
     const target = event.target as HTMLElement | null;
     if (target?.closest('[data-slider-control="true"]')) return;
     router.push(`/blogs/${blog.id}`);
   };
 
-  const actionClass = variant === "overlay"
+  const actionClass = appearance === "editorial"
     ? "border-overlay-light/20 bg-overlay-dark/45 text-overlay-light hover:bg-overlay-dark/65"
     : "border-border bg-background/70 text-muted-foreground hover:border-primary/25 hover:bg-primary/5 hover:text-primary";
 
@@ -382,7 +394,79 @@ export default function BlogCard({
     </div>
   );
 
-  if (variant === "overlay") {
+  if (appearance === "horizontal") {
+    return (
+      <article className="group flex min-w-0 overflow-hidden rounded-2xl border border-border/70 bg-card shadow-sm">
+        <div
+          role="button"
+          tabIndex={preview ? -1 : 0}
+          aria-label={t("openBlog")}
+          onClick={activateMedia}
+          onKeyDown={(event) => {
+            if (!preview && (event.key === "Enter" || event.key === " ")) {
+              event.preventDefault();
+              activateMedia(event);
+            }
+          }}
+          className="relative w-28 shrink-0 overflow-hidden bg-muted sm:w-36"
+        >
+          <ImageSlider
+            images={images}
+            heightClass="h-full min-h-36"
+            autoPlay={!preview}
+            forceEngaged={isMediaEngaged}
+            firstSlideIsPriority={isPriority}
+            sizes="144px"
+          />
+          <span className="absolute left-2 top-2 rounded-full bg-overlay-dark/65 px-2 py-0.5 app-text-micro font-semibold text-overlay-light">
+            {category}
+          </span>
+        </div>
+        <div className="flex min-w-0 flex-1 flex-col gap-2 p-3">
+          <AuthorMeta blog={blog} />
+          <Link href={`/blogs/${blog.id}`} tabIndex={preview ? -1 : undefined}>
+            <h3 className="line-clamp-2 app-text-heading-sm font-semibold">
+              {blog.title}
+            </h3>
+          </Link>
+          {blog.excerpt && (
+            <p className="line-clamp-2 app-text-caption text-muted-foreground">
+              {blog.excerpt}
+            </p>
+          )}
+          <div className="mt-auto flex justify-end">{actions}</div>
+        </div>
+      </article>
+    );
+  }
+
+  if (appearance === "compact") {
+    return (
+      <article className="group flex min-w-0 flex-col gap-2 rounded-xl border border-border/70 bg-card p-3 shadow-sm">
+        <div className="flex items-center justify-between gap-2 app-text-caption text-muted-foreground">
+          <span className="truncate font-medium uppercase app-tracking-caps text-primary">
+            {category}
+          </span>
+          <span className="shrink-0 inline-flex items-center gap-1">
+            <Clock3 className="size-3" /> {getReadingTime(blog)} min
+          </span>
+        </div>
+        <Link href={`/blogs/${blog.id}`} tabIndex={preview ? -1 : undefined}>
+          <h3 className="line-clamp-2 app-text-label font-semibold group-hover:text-primary">
+            {blog.title}
+          </h3>
+        </Link>
+        {blog.excerpt && (
+          <p className="line-clamp-1 app-text-caption text-muted-foreground">
+            {blog.excerpt}
+          </p>
+        )}
+        <div className="mt-1 flex justify-end">{actions}</div>
+      </article>
+    );
+  }
+
+  if (appearance === "editorial") {
     return (
       <article className="group relative h-full min-h-[22rem] overflow-hidden rounded-[1.5rem] border border-border/70 bg-card shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-primary/25 hover:shadow-token-lg">
         <div
@@ -405,7 +489,7 @@ export default function BlogCard({
           <ImageSlider
             images={images}
             heightClass={sliderHeight}
-            autoPlay
+            autoPlay={!preview}
             forceEngaged={isMediaEngaged}
             intervalMs={3600}
             firstSlideIsPriority={isPriority}
@@ -466,7 +550,7 @@ export default function BlogCard({
         <ImageSlider
           images={images}
           heightClass={sliderHeight}
-          autoPlay
+          autoPlay={!preview}
           forceEngaged={isMediaEngaged}
           intervalMs={4200}
           firstSlideIsPriority={isPriority}
