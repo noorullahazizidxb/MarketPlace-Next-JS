@@ -22,6 +22,8 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { asset, normalizeAssetImages, type AssetImage } from "@/lib/assets";
 import { getSocket } from "@/lib/socket";
 import { useAuth } from "@/lib/use-auth";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { BlogCardVariant } from "@/lib/theme/types";
 
 export type Blog = {
   id: string | number;

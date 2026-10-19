@@ -341,6 +341,22 @@ export function Topbar({
               </div>
             </div>
           </div>
+          {navbarVariant === "fullwidth" && (
+            <nav
+              aria-label="Marketplace categories"
+              className="mt-1 hidden items-center gap-1 overflow-x-auto border-t border-border/50 px-[var(--space-page-x)] py-1 md:flex"
+            >
+              {["Electronics", "Automotive", "Real Estate", "Services", "Jobs", "Fashion"].map((category) => (
+                <Link
+                  key={category}
+                  href={`/listings?category=${category.toLowerCase()}`}
+                  className="shrink-0 rounded-md px-3 py-1 app-text-caption text-muted-foreground hover:bg-muted hover:text-foreground"
+                >
+                  {category}
+                </Link>
+              ))}
+            </nav>
+          )}
         </motion.div>
       </header>
     </>
