@@ -5,8 +5,9 @@ import {
   Mail,
   MessageSquareText,
   PhoneCall,
-  UserRound,
   Phone,
+  ShieldCheck,
+  UserRound,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useLocalMutation } from "@/lib/api-hooks";
@@ -15,6 +16,7 @@ import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { TextareaField } from "@/components/ui/atoms/shadcn/textarea";
 import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
 import { Button } from "@/components/ui/molecules/button";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 
 export default function ContactForm() {
   const { t, isRtl } = useLanguage();
@@ -29,18 +31,21 @@ export default function ContactForm() {
   const [body, setBody] = useState("");
 
   const createContact = useLocalMutation<any>("post", "/api/contacts");
+  const { executeRecaptcha } = useRecaptchaV3();
 
   async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setStatus("loading");
     setMessage("");
     try {
+      const recaptchaToken = await executeRecaptcha("contact");
       await createContact.mutateAsync({
         name,
         email,
         subject,
         phone: phone || undefined,
         message: body,
+        recaptchaToken,
       });
       setStatus("success");
       setMessage(t("sendMessageSuccess"));
@@ -49,9 +54,10 @@ export default function ContactForm() {
       setSubject("");
       setPhone("");
       setBody("");
-    } catch {
+    } catch (error) {
       setStatus("error");
-      setMessage(t("sendMessageError"));
+      const detail = error instanceof Error ? error.message : "";
+      setMessage(detail.includes("reCAPTCHA") ? detail : t("sendMessageError"));
     }
   }
 
@@ -159,6 +165,10 @@ export default function ContactForm() {
             </Button>
           </Tooltip>
         </div>
+        <p className="flex items-center gap-1.5 app-text-caption text-[var(--muted-foreground)] opacity-70">
+          <ShieldCheck className="size-3.5 text-success" aria-hidden />
+          Protected by reCAPTCHA
+        </p>
       </form>
     </section>
   );
