@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
 import { Button } from "@/components/ui/molecules/button";
@@ -136,15 +136,7 @@ export default function SignInPage() {
             transition={{ delay: 0.08, duration: 0.4 }}
           >
             <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt="DevMinds"
-                width={156}
-                height={108}
-                priority
-                className="h-14 w-auto object-contain"
-                draggable={false}
-              />
+              <ThemeLogo priority alt="DevMinds Marketplace" className="h-14 w-auto" />
             </div>
             <h1 className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]">
               {t("signInTitle")}
