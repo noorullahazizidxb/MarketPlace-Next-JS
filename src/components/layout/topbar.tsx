@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -89,16 +90,7 @@ export function Topbar({
                 >
                   <ThemeToggle iconOnly className="hidden sm:grid" />
                 </Tooltip>
-                <div className="modern-navbar-logo">
-                  <Image
-                    src="/brand/devminds-logo.png"
-                    alt="DevMinds"
-                    width={48}
-                    height={48}
-                    sizes="48px"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                <ThemeLogo alt="DevMinds Marketplace" className="h-10 w-auto shrink-0" />
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
                 </span>

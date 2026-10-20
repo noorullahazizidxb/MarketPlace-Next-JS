@@ -1,8 +1,8 @@
 "use client";
 
 import type { CSSProperties } from "react";
-import Image from "next/image";
 import Link from "next/link";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { SearchBox } from "@/components/ui/molecules/search-box";
 import { Menu } from "lucide-react";
@@ -46,17 +46,11 @@ export function Navbar({ className = "" }: { className?: string }) {
             className="flex items-center gap-3 min-w-0 group"
             aria-label="DevMinds home"
           >
-            <div className="size-14 sm:size-16 rounded-squircle overflow-hidden bg-background/95 shadow-sm ring-1 ring-border/40 flex shrink-0 transition-transform duration-200 group-hover:scale-[1.03]">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt="DevMinds"
-                width={64}
-                height={64}
-                sizes="64px"
-                priority
-                className="w-full h-full object-contain p-1"
-              />
-            </div>
+            <ThemeLogo
+              priority
+              alt="DevMinds Marketplace"
+              className="h-12 sm:h-14 w-auto shrink-0 transition-transform duration-200 group-hover:scale-[1.03]"
+            />
             <div className="min-w-0 hidden xs:block sm:block">
               <span className="block font-semibold app-text-body sm:app-text-heading-sm tracking-tight truncate leading-tight">
                 {t("marketplace")}

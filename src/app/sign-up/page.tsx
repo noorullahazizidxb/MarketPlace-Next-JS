@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
@@ -194,15 +194,7 @@ export default function SignUpPage() {
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 40%, transparent)] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
             <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt="DevMinds"
-                width={156}
-                height={108}
-                priority
-                className="h-14 w-auto object-contain"
-                draggable={false}
-              />
+              <ThemeLogo priority alt="DevMinds Marketplace" className="h-14 w-auto" />
             </div>
             <motion.h1
               className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]"

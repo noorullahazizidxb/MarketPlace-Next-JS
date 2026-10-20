@@ -2060,6 +2060,47 @@ button[aria-label^="Go to slide"],
   background: color-mix(in oklch, var(--card) 92%, var(--background));
 }
 
+/* Blue C lockup on light; orange D lockup on dark. Explicit theme wins. */
+.theme-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  max-width: 100%;
+}
+
+.theme-logo-img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.theme-logo-dark {
+  display: none;
+}
+
+html.dark .theme-logo-light,
+html[data-theme="dark"] .theme-logo-light {
+  display: none;
+}
+
+html.dark .theme-logo-dark,
+html[data-theme="dark"] .theme-logo-dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not([data-theme="light"]) .theme-logo-light {
+    display: none;
+  }
+
+  html:not(.light):not([data-theme="light"]) .theme-logo-dark {
+    display: block;
+  }
+}
+
 ::selection {
   color: var(--primary-foreground);
   background: color-mix(in oklch, var(--primary) 78%, transparent);

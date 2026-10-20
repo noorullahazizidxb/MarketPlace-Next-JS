@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import {
   ArrowUpRight,
   BookOpen,
@@ -72,15 +72,7 @@ export default function Footer({
             className="inline-flex items-center gap-2 app-text-label font-semibold"
             aria-label={t("marketplace")}
           >
-            <span className="modern-navbar-logo size-8">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt=""
-                width={32}
-                height={32}
-                className="h-full w-full object-contain"
-              />
-            </span>
+            <ThemeLogo alt="" className="h-8 w-auto shrink-0" />
             {t("marketplace")}
           </Link>
           <nav aria-label={t("explore")} className="flex flex-wrap gap-4 app-text-caption">
@@ -148,15 +140,7 @@ export default function Footer({
                 className="inline-flex items-center gap-[var(--space-gap)]"
                 aria-label={t("marketplace")}
               >
-                <span className="modern-navbar-logo">
-                  <Image
-                    src="/brand/devminds-logo.png"
-                    alt=""
-                    width={48}
-                    height={48}
-                    className="h-full w-full object-contain"
-                  />
-                </span>
+                <ThemeLogo alt="" className="h-12 w-auto shrink-0" />
                 <span>
                   <strong className="block app-text-heading-sm">
                     {t("marketplace")}

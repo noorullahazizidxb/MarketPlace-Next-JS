@@ -23,7 +23,8 @@ import { motion } from "framer-motion";
 import AboutCtaBanner from "@/components/ui/organisms/about-cta-banner";
 import { aboutImages } from "@/lib/public-images";
 import { Tooltip } from "@/components/ui/molecules/tooltip";
-import { AUTHOR, BRAND, ORGANIZATION_NAME } from "@/lib/site-config";
+import { AUTHOR, ORGANIZATION_NAME } from "@/lib/site-config";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 
 export function AboutContent({
   marketplaceName,
@@ -36,21 +37,16 @@ export function AboutContent({
       {/* Brand strip */}
       <section className="pt-8 pb-2">
         <div className="flex flex-wrap items-center justify-center gap-[var(--space-section)] sm:gap-10">
-          <Image
-            src={BRAND.logo}
+          <ThemeLogo
+            priority
             alt={`${ORGANIZATION_NAME} logo`}
-            width={240}
-            height={72}
-            className="h-14 sm:h-16 w-auto object-contain"
-            priority
+            className="h-14 w-auto sm:h-16"
           />
-          <Image
-            src={BRAND.mark}
-            alt={`${ORGANIZATION_NAME} brand mark`}
-            width={120}
-            height={120}
-            className="h-16 sm:h-20 w-auto object-contain"
+          <ThemeLogo
+            variant="mark"
             priority
+            alt={`${ORGANIZATION_NAME} brand mark`}
+            className="h-16 w-auto sm:h-20"
           />
         </div>
       </section>

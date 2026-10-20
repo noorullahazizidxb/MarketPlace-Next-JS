@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { Menu, Search, Sun, Moon, Globe } from "lucide-react";
 import { useUIStore } from "@/store/ui.store";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -33,16 +33,11 @@ export function NavbarGlass({ className = "" }: { className?: string }) {
           className="flex items-center gap-2 shrink-0 group"
           aria-label="Home"
         >
-          <div className="size-8 overflow-hidden rounded-full ring-1 ring-border/40">
-            <Image
-              src="/brand/devminds-logo.png"
-              alt="DevMinds"
-              width={32}
-              height={32}
-              className="object-contain"
-              priority
-            />
-          </div>
+          <ThemeLogo
+            priority
+            alt="DevMinds Marketplace"
+            className="h-8 w-auto shrink-0"
+          />
           <span className="hidden sm:block font-semibold app-text-label tracking-tight">
             DevMinds
           </span>
@@ -116,12 +111,9 @@ export function NavbarMinimal({ className = "" }: { className?: string }) {
         aria-label="Home"
         className="flex items-center gap-2 group"
       >
-        <Image
-          src="/brand/devminds-logo.png"
+        <ThemeLogo
           alt=""
-          width={24}
-          height={24}
-          className="opacity-90 group-hover:opacity-100 transition-opacity"
+          className="h-6 w-auto opacity-90 transition-opacity group-hover:opacity-100"
         />
         <span className="hidden sm:block app-text-label font-semibold tracking-tight">
           DevMinds
@@ -201,16 +193,11 @@ export function NavbarFullwidth({ className = "" }: { className?: string }) {
           className="flex items-center gap-3 shrink-0 group"
           aria-label="Home"
         >
-          <div className="size-9 overflow-hidden rounded-xl ring-1 ring-border/40">
-            <Image
-              src="/brand/devminds-logo.png"
-              alt="DevMinds"
-              width={36}
-              height={36}
-              className="object-contain p-0.5"
-              priority
-            />
-          </div>
+          <ThemeLogo
+            priority
+            alt="DevMinds Marketplace"
+            className="h-9 w-auto shrink-0"
+          />
           <span className="hidden sm:block font-bold app-text-heading-sm tracking-tight">
             DevMinds
           </span>
