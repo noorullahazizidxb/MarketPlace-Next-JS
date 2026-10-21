@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
-import { useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
+import { NavbarCategories } from "@/components/layout/navbar-categories";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import {
@@ -54,16 +55,34 @@ export function Topbar({
   const pathname = usePathname();
   const isActive = (href: string) => (pathname || "").startsWith(href);
 
+  // Keep the page offset equal to the real bar height (it differs per variant / wraps / density),
+  // so content never sits under the bar or leaves a blank strip above it.
+  const headerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || preview || typeof ResizeObserver === "undefined") return;
+    const root = document.documentElement;
+    const sync = () => root.style.setProperty("--modern-navbar-offset", `${Math.ceil(el.getBoundingClientRect().height)}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      root.style.removeProperty("--modern-navbar-offset");
+    };
+  }, [preview, navbarVariant]);
+
   return (
     <>
       <header
+        ref={headerRef}
         className={`modern-navbar ${navbarVariant === "minimal" ? "py-1" : ""}`}
         data-navbar-variant={navbarVariant}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <motion.div
-          initial={{ y: -32, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
           className="relative overflow-visible"
         >
@@ -322,20 +341,9 @@ export function Topbar({
             </div>
           </div>
           {navbarVariant === "fullwidth" && (
-            <nav
-              aria-label="Marketplace categories"
-              className="mt-1 hidden items-center gap-1 overflow-x-auto border-t border-border/50 px-[var(--space-page-x)] py-1 md:flex"
-            >
-              {["Electronics", "Automotive", "Real Estate", "Services", "Jobs", "Fashion"].map((category) => (
-                <Link
-                  key={category}
-                  href={`/listings?category=${category.toLowerCase()}`}
-                  className="shrink-0 rounded-md px-3 py-1 app-text-caption text-muted-foreground hover:bg-muted hover:text-foreground"
-                >
-                  {category}
-                </Link>
-              ))}
-            </nav>
+            <Suspense fallback={null}>
+              <NavbarCategories />
+            </Suspense>
           )}
         </motion.div>
       </header>
