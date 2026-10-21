@@ -28,9 +28,10 @@ import {
   MessageCircle,
 } from "lucide-react";
 import { useApiMutation } from "@/lib/api-hooks";
-import { toastError, toastSuccess } from "@/lib/toast";
+import { toastError } from "@/lib/toast";
 import { cn } from "@/lib/cn";
 import { CreateUserFormValues, RoleOption, emptyRepProvince } from "./types";
+import { ROLE_OPTIONS } from "./roles";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
 import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
@@ -38,6 +39,16 @@ import { Button } from "@/components/ui/molecules/button";
 import { ObjectUrlImage } from "@/components/ui/atoms/object-url-image";
 
 const useFormContextSafe = () => useFormContext();
+
+/** Drop empty strings / empty arrays so optional fields aren't rejected by API validation. */
+function compact<T extends Record<string, any>>(obj: T | undefined): Partial<T> {
+  const out: Record<string, any> = {};
+  for (const [k, v] of Object.entries(obj || {})) {
+    if (typeof v === "string" ? v.trim() === "" : Array.isArray(v) ? v.length === 0 : v == null) continue;
+    out[k] = typeof v === "string" ? v.trim() : v;
+  }
+  return out as Partial<T>;
+}
 
 function getFieldError(errors: any, name: string): string | undefined {
   const parts = name.split(".");
@@ -158,7 +169,7 @@ const PasswordPair: React.FC = () => {
               : "w-full";
 
   return (
-    <div className="md:col-span-2 grid md:grid-cols-2 gap-5">
+    <div className="md:col-span-2 grid md:grid-cols-2 gap-x-6 gap-y-6">
       <div className="flex flex-col gap-2">
         <Controller
           name="password"
@@ -286,11 +297,7 @@ const PasswordPair: React.FC = () => {
   );
 };
 
-const ROLE_OPTIONS = [
-  { value: "USER", label: "USER" },
-  { value: "ADMIN", label: "ADMIN" },
-  { value: "REPRESENTATIVE", label: "REPRESENTATIVE" },
-] as const;
+const ROLE_SELECT_OPTIONS = ROLE_OPTIONS.map((o) => ({ value: o.value, label: o.label }));
 
 const RoleSelect: React.FC = () => {
   const {
@@ -308,7 +315,7 @@ const RoleSelect: React.FC = () => {
           value={field.value ?? ""}
           onChange={field.onChange}
           onBlur={field.onBlur}
-          options={ROLE_OPTIONS}
+          options={ROLE_SELECT_OPTIONS}
           placeholder="Select role"
           error={(errors as any)?.role?.message}
           required
@@ -453,12 +460,8 @@ const UserCreateWizard: React.FC<{
   const [step, setStep] = useState(0);
   const isRepresentative = role === "REPRESENTATIVE";
 
-  const registerUser = useApiMutation<any>("post", "/auth/user/register");
-  const registerAdmin = useApiMutation<any>("post", "/auth/admin/register");
-  const registerRep = useApiMutation<any>(
-    "post",
-    "/auth/representative/register"
-  );
+  // Admin-only endpoint: creates any role without reCAPTCHA; the server message is toasted centrally.
+  const createUser = useApiMutation<any>("post", "/auth/admin/register");
 
   // Steps: 0 Account, 1 Details (contacts/address/metadata), 2 Role, 3 Provinces (if representative)
   const stepsBase = ["Account", "Details", "Role"] as string[];
@@ -472,7 +475,6 @@ const UserCreateWizard: React.FC<{
   const pw = useWatch({ control, name: "password" }) || "";
   const cpw = useWatch({ control, name: "confirmPassword" }) || "";
   const contactsPhone = useWatch({ control, name: "contacts.phone" }) || "";
-  const contactsEmail = useWatch({ control, name: "contacts.email" }) || "";
   const contactsWhatsapp =
     useWatch({ control, name: "contacts.whatsapp" }) || "";
   const addressCity = useWatch({ control, name: "address.city" }) || "";
@@ -485,7 +487,6 @@ const UserCreateWizard: React.FC<{
       case 1:
         return (
           !!contactsPhone &&
-          !!contactsEmail &&
           !!contactsWhatsapp &&
           !!addressCity &&
           !!addressCountry
@@ -516,7 +517,6 @@ const UserCreateWizard: React.FC<{
     if (step === 1) {
       const out: string[] = [];
       if (!contactsPhone) out.push("Contact phone");
-      if (!contactsEmail) out.push("Contact email");
       if (!contactsWhatsapp) out.push("WhatsApp");
       if (!addressCity) out.push("City");
       if (!addressCountry) out.push("Country");
@@ -544,7 +544,6 @@ const UserCreateWizard: React.FC<{
         : step === 1
           ? await trigger([
               "contacts.phone",
-              "contacts.email",
               "contacts.whatsapp",
               "address.city",
               "address.region",
@@ -561,53 +560,45 @@ const UserCreateWizard: React.FC<{
   const prev = () => setStep((s) => Math.max(0, s - 1));
 
   const onSubmit = async (values: CreateUserFormValues) => {
-    try {
-      const formData = new FormData();
-      formData.append("email", values.email);
-      formData.append("password", values.password);
-      formData.append("phone", values.phone);
-      formData.append("firstName", values.firstName);
-      formData.append("lastName", values.lastName);
-      formData.append(
-        "fullName",
-        `${values.firstName} ${values.lastName}`.trim()
-      );
-      if (values.photoFile) formData.append("photo", values.photoFile);
-      // contacts, address, metadata
-      formData.append("contacts", JSON.stringify(values.contacts));
-      formData.append("address", JSON.stringify(values.address));
-      formData.append("metadata", JSON.stringify(values.metadata));
+    if (!values.role) {
+      toastError("Select a role");
+      return;
+    }
+    const formData = new FormData();
+    const append = (key: string, value: string | undefined | null) => {
+      const v = (value ?? "").trim();
+      if (v) formData.append(key, v);
+    };
+    append("email", values.email);
+    formData.append("password", values.password);
+    append("phone", values.phone);
+    append("firstName", values.firstName);
+    append("lastName", values.lastName);
+    append("fullName", `${values.firstName} ${values.lastName}`);
+    append("role", values.role);
+    if (values.photoFile) formData.append("photo", values.photoFile);
+    // The account email is entered once (step 1) and reused as the contact email.
+    formData.append("contacts", JSON.stringify(compact({ ...values.contacts, email: values.email })));
+    formData.append("address", JSON.stringify(compact(values.address)));
+    formData.append("metadata", JSON.stringify(compact(values.metadata)));
 
-      if (values.role === "REPRESENTATIVE") {
-        const repArray = values.representativeInfo
-          .filter((p) => p.region && p.whatsappNumber) // keep only complete rows
-          .map((p) => ({
-            region: p.region,
-            whatsappNumber: p.whatsappNumber,
-            active: p.active,
-          }));
-        if (repArray.length === 0) {
-          toastError("Add at least one representative province");
-          return;
-        }
-        formData.append("representativeInfo", JSON.stringify(repArray));
-        await registerRep.mutateAsync(formData as any);
-      } else if (values.role === "ADMIN") {
-        await registerAdmin.mutateAsync(formData as any);
-      } else if (values.role === "USER") {
-        await registerUser.mutateAsync(formData as any);
-      } else {
-        toastError("Select a role");
+    if (values.role === "REPRESENTATIVE") {
+      const repArray = values.representativeInfo
+        .filter((p) => p.region && p.whatsappNumber)
+        .map((p) => ({ region: p.region, whatsappNumber: p.whatsappNumber, active: p.active }));
+      if (repArray.length === 0) {
+        toastError("Add at least one representative province");
         return;
       }
+      formData.append("representativeInfo", JSON.stringify(repArray));
+    }
 
-      toastSuccess("User created successfully");
-      try {
-        onCreated?.();
-      } catch { }
+    try {
+      await createUser.mutateAsync(formData as any);
+      onCreated?.();
       onClose();
-    } catch (e: any) {
-      toastError(e?.message || "Creation failed");
+    } catch {
+      /* server message already shown by the HTTP message middleware */
     }
   };
 
@@ -617,11 +608,11 @@ const UserCreateWizard: React.FC<{
   return (
     <FormProvider {...methods}>
       <form
-        className="flex flex-col h-full min-h-0 max-h-[calc(100vh-96px)] sm:max-h-none bg-[var(--card)]"
+        className="flex flex-col flex-1 min-h-0 bg-[var(--card)]"
         onSubmit={handleSubmit(onSubmit)}
         noValidate
       >
-        <div className="px-6 pt-5 pb-4 border-b border-[var(--border)]/30 relative">
+        <div className="px-6 sm:px-8 pt-6 pb-5 border-b border-[var(--border)]/30 relative">
           <div className="flex items-start justify-between mb-4">
             <div className="flex items-center gap-2.5">
               <div className="size-9 rounded-xl bg-[var(--primary)]/10 flex items-center justify-center">
@@ -718,14 +709,10 @@ const UserCreateWizard: React.FC<{
               size="sm"
               disabled={
                 !canNext ||
-                registerUser.isPending ||
-                registerAdmin.isPending ||
-                registerRep.isPending
+                createUser.isPending
               }
               loading={
-                registerUser.isPending ||
-                registerAdmin.isPending ||
-                registerRep.isPending
+                createUser.isPending
               }
               className="ml-auto"
             >
@@ -733,9 +720,9 @@ const UserCreateWizard: React.FC<{
             </Button>
           )}
         </div>
-        <div className="flex-1 overflow-y-auto sm:overflow-visible p-6 min-h-0 pb-28 sm:pb-8 scroll-smooth overscroll-contain max-h-[calc(100vh-220px)] sm:max-h-none [@supports(height:100dvh)]:max-h-[calc(100dvh-220px)] sm:[@supports(height:100dvh)]:max-h-none">
-          <div className="flex flex-col xl:flex-row gap-8">
-            <div className="flex-1 space-y-8">
+        <div className="flex-1 min-h-0 overflow-y-auto px-6 py-6 sm:px-8 sm:py-8 pb-28 sm:pb-8 scroll-smooth overscroll-contain">
+          <div className="flex flex-col lg:flex-row gap-10">
+            <div className="flex-1 min-w-0 space-y-8">
               <AnimatePresence mode="wait">
                 {step === 0 && (
                   <motion.div
@@ -744,7 +731,7 @@ const UserCreateWizard: React.FC<{
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-                    className="grid md:grid-cols-2 gap-5"
+                    className="grid md:grid-cols-2 gap-x-6 gap-y-6"
                   >
                     <TextField name="firstName" label="First Name" required />
                     <TextField name="lastName" label="Last Name" required />
@@ -781,10 +768,15 @@ const UserCreateWizard: React.FC<{
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -12 }}
                     transition={{ duration: 0.25 }}
-                    className="space-y-6"
+                    className="space-y-8"
                   >
-                    <h3 className="app-text-body font-semibold">Details</h3>
-                    <div className="grid md:grid-cols-3 gap-5">
+                    <div className="space-y-1">
+                      <h3 className="app-text-body font-semibold">Contact details</h3>
+                      <p className="app-text-caption subtle">
+                        The account email from step 1 is used as the contact email.
+                      </p>
+                    </div>
+                    <div className="grid md:grid-cols-2 gap-x-6 gap-y-6">
                       <TextField
                         name={"contacts.phone" as any}
                         label="Contact Phone"
@@ -793,18 +785,6 @@ const UserCreateWizard: React.FC<{
                           pattern: {
                             value: /^\+?[0-9]{7,15}$/,
                             message: "Invalid phone",
-                          },
-                        }}
-                      />
-                      <TextField
-                        name={"contacts.email" as any}
-                        label="Contact Email"
-                        required
-                        type="email"
-                        rules={{
-                          pattern: {
-                            value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                            message: "Invalid email",
                           },
                         }}
                       />
@@ -820,11 +800,11 @@ const UserCreateWizard: React.FC<{
                         }}
                       />
                     </div>
-                    <div className="rounded-xl border p-4 space-y-4 bg-[color-mix(in oklab, var(--muted) 30%, transparent)]">
+                    <div className="rounded-2xl border p-5 sm:p-6 space-y-6 bg-[color-mix(in oklab, var(--muted) 30%, transparent)]">
                       <h4 className="app-text-caption font-semibold tracking-wide uppercase text-foreground/70">
                         Address
                       </h4>
-                      <div className="grid md:grid-cols-3 gap-4">
+                      <div className="grid md:grid-cols-2 gap-x-6 gap-y-6">
                         <TextField
                           name={"address.street" as any}
                           label="Street"
@@ -849,7 +829,7 @@ const UserCreateWizard: React.FC<{
                           required
                         />
                       </div>
-                      <div className="grid md:grid-cols-3 gap-4">
+                      <div className="grid md:grid-cols-2 gap-x-6 gap-y-6">
                         <TextField
                           name={"metadata.company" as any}
                           label="Company"
@@ -872,18 +852,11 @@ const UserCreateWizard: React.FC<{
                     <div className="rounded-xl border p-4 app-text-caption subtle space-y-2">
                       <p>Select a role for the user:</p>
                       <ul className="list-disc pl-5 space-y-1">
-                        <li>
-                          <strong>USER:</strong> Standard account with listing
-                          access.
-                        </li>
-                        <li>
-                          <strong>ADMIN:</strong> Full administrative
-                          privileges.
-                        </li>
-                        <li>
-                          <strong>REPRESENTATIVE:</strong> Manages regional
-                          listings & WhatsApp regions.
-                        </li>
+                        {ROLE_OPTIONS.map((o) => (
+                          <li key={o.value}>
+                            <strong>{o.label}:</strong> {o.description}
+                          </li>
+                        ))}
                       </ul>
                     </div>
                   </motion.div>
@@ -965,7 +938,7 @@ const UserCreateWizard: React.FC<{
               </AnimatePresence>
             </div>
             {/* Live Summary Sidebar */}
-            <aside className="hidden xl:block w-72 shrink-0 space-y-4 sticky top-4 self-start">
+            <aside className="hidden lg:block w-72 shrink-0 space-y-4 sticky top-0 self-start">
               <div className="rounded-2xl border border-[var(--border)]/40 p-4 space-y-3 bg-[var(--muted)]/10">
                 <h4 className="app-text-caption font-semibold tracking-wide uppercase">
                   Summary
@@ -999,12 +972,6 @@ const UserCreateWizard: React.FC<{
                         WhatsApp:{" "}
                         <span className="subtle">
                           {contactsWhatsapp || "—"}
-                        </span>
-                      </li>
-                      <li>
-                        Email:{" "}
-                        <span className="subtle break-all">
-                          {contactsEmail || "—"}
                         </span>
                       </li>
                     </ul>
@@ -1059,7 +1026,7 @@ const UserCreateWizard: React.FC<{
             </aside>
           </div>
         </div>
-        <div className="hidden sm:flex sticky bottom-0 z-30 px-6 py-4 border-t border-[var(--border)]/30 bg-[var(--card)]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
+        <div className="hidden sm:flex shrink-0 z-30 px-8 py-4 border-t border-[var(--border)]/30 bg-[var(--card)]/90 backdrop-blur-xl flex-col gap-3 sm:flex-row sm:items-center sm:justify-between pb-[env(safe-area-inset-bottom)]">
           <Button type="button" variant="ghost" size="sm" onClick={onClose}>
             Cancel
           </Button>
@@ -1089,15 +1056,11 @@ const UserCreateWizard: React.FC<{
                 type="submit"
                 variant="primary"
                 disabled={
-                  registerUser.isPending ||
-                  registerAdmin.isPending ||
-                  registerRep.isPending ||
+                  createUser.isPending ||
                   !canNext
                 }
                 loading={
-                  registerUser.isPending ||
-                  registerAdmin.isPending ||
-                  registerRep.isPending
+                  createUser.isPending
                 }
                 LeftIcon={UserPlus}
               >

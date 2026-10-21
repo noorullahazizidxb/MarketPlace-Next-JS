@@ -8,6 +8,7 @@ import {
   CircleUser,
 } from "lucide-react"
 import Link from "next/link"
+import { signOut } from "@/lib/auth/session-client"
 
 import { Logo } from "../atoms/logo"
 import {
@@ -118,26 +119,17 @@ export function NavUser({
               </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            {onLogout ? (
-              <DropdownMenuItem
-                className="cursor-pointer"
-                variant="destructive"
-                onSelect={(event) => {
-                  event.preventDefault()
-                  void onLogout()
-                }}
-              >
-                <LogOut />
-                {resolvedLabels.signOutSecurely}
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem asChild className="cursor-pointer">
-                <Link href="/sign-in">
-                  <LogOut />
-                  {resolvedLabels.logOut}
-                </Link>
-              </DropdownMenuItem>
-            )}
+            <DropdownMenuItem
+              className="cursor-pointer"
+              variant="destructive"
+              onSelect={(event) => {
+                event.preventDefault()
+                void (onLogout ?? signOut)()
+              }}
+            >
+              <LogOut />
+              {resolvedLabels.signOutSecurely}
+            </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>

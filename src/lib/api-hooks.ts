@@ -3,28 +3,14 @@
 import { useQuery, useMutation, useQueryClient, UseQueryOptions, UseMutationOptions } from "@tanstack/react-query";
 import type { AxiosError, AxiosRequestConfig } from "axios";
 import { api, HttpMethod } from "./axiosClient";
-import { toastSuccess, toastError } from "./toast";
+import { notifyError, notifySuccess, extractServerMessage, ApiError } from "./http/http-messages";
 import { config as appConfig } from "./config";
 import { resolveMockMutation, resolveMockRequest } from "../mock/api-mocks";
 
 type ErrorType = AxiosError<{ message?: string } | string> | Error;
-const SUCCESS_VERBS: Record<Exclude<HttpMethod, "get">, string> = {
-  post: "created",
-  put: "updated",
-  patch: "updated",
-  delete: "deleted",
-};
-
-function toEntityName(payload: any) {
-  return payload?.entity || payload?.data?.entity || "Resource";
-}
-
-function notifyMutationSuccess(method: HttpMethod, payload: any) {
-  if (method === "get") return;
-  const verb = SUCCESS_VERBS[method as Exclude<HttpMethod, "get">];
-  if (!verb) return;
-  toastSuccess(`${String(toEntityName(payload))} ${verb} successfully`);
-}
+// User feedback (success / error toasts) is handled centrally by the HTTP message middleware:
+// - external API calls: axios interceptors in ./axiosClient show the server's entity-specific message
+// - internal Next routes: localFetch below shows the route's `message` when it provides one
 
 async function runExternalRequest<TData>(
   method: HttpMethod,
@@ -39,46 +25,48 @@ async function runExternalRequest<TData>(
     return (await resolveMockMutation(method, url, body, config?.params)) as TData;
   }
 
+  const opts = { messages: config?.messages };
   switch (method) {
     case "post":
-      return (await api.post<TData>(url, body, config?.headers)) as TData;
+      return (await api.post<TData>(url, body, config?.headers, opts)) as TData;
     case "put":
-      return (await api.put<TData>(url, body, config?.headers)) as TData;
+      return (await api.put<TData>(url, body, config?.headers, opts)) as TData;
     case "patch":
-      return (await api.patch<TData>(url, body, config?.headers)) as TData;
+      return (await api.patch<TData>(url, body, config?.headers, opts)) as TData;
     case "delete":
-      return (await api.delete<TData>(url, config?.headers)) as TData;
+      return (await api.delete<TData>(url, config?.headers, opts)) as TData;
     case "get":
     default:
-      return (await api.get<TData>(url, config?.params, config?.headers)) as TData;
+      return (await api.get<TData>(url, config?.params, config?.headers, opts)) as TData;
   }
 }
 
-// Axios-backed SWR fetcher for external API routes
+// Axios-backed fetcher for external API routes (errors are toasted by the axios interceptor)
 async function axiosGet<T>(url: string, params?: Record<string, any>): Promise<T> {
-  try {
-    return await runExternalRequest<T>("get", url, undefined, { params });
-  } catch (err: any) {
-    toastError(err?.message || "Request failed");
-    throw err;
-  }
+  return runExternalRequest<T>("get", url, undefined, { params });
 }
 
 // Same-origin fetcher for internal Next API routes (/api/*)
 async function localFetch<T>(url: string, init?: RequestInit): Promise<T> {
+  const method = (init?.method || "get").toLowerCase();
+  let res: Response;
   try {
-    const res = await fetch(url, { cache: "no-store", ...init });
-    if (!res.ok) {
-      const txt = await res.text();
-      const err = new Error(txt || `Request failed: ${res.status}`);
-      toastError(err.message || "Request failed");
-      throw err;
-    }
-    return (await res.json()) as T;
-  } catch (err: any) {
-    toastError(err?.message || "Request failed");
-    throw err;
+    res = await fetch(url, { cache: "no-store", ...init });
+  } catch {
+    const message = "Network error, please check your connection";
+    notifyError(message);
+    throw new ApiError(message, 0, undefined, true);
   }
+  const text = await res.text();
+  let body: any = null;
+  try { body = text ? JSON.parse(text) : null; } catch { body = text; }
+  if (!res.ok) {
+    const message = extractServerMessage(body) || `Request failed (${res.status})`;
+    notifyError(message);
+    throw new ApiError(message, res.status, body, true);
+  }
+  notifySuccess(method, body);
+  return body as T;
 }
 
 // React Query GET for external API with axios interceptor (Authorization etc.)
@@ -173,14 +161,7 @@ export function useApiMutation<TData = any>(
 ) {
   return useMutation<TData, ErrorType, MutationBody>({
     mutationFn: async (body: MutationBody) => {
-      try {
-        const response = await runExternalRequest<TData>(method, url, body, config);
-        notifyMutationSuccess(method, response);
-        return response;
-      } catch (err: any) {
-        toastError(err?.message || "Request failed");
-        throw err;
-      }
+      return runExternalRequest<TData>(method, url, body, config);
     },
     ...options,
   });
@@ -194,14 +175,7 @@ export function useApiMutationDynamic<TData = any>(
   return useMutation<TData, ErrorType, { url: string; body?: any; config?: AxiosRequestConfig }>(
     {
       mutationFn: async ({ url, body, config }) => {
-        try {
-          const response = await runExternalRequest<TData>(method, url, body, config);
-          notifyMutationSuccess(method, response);
-          return response;
-        } catch (err: any) {
-          toastError(err?.message || "Request failed");
-          throw err;
-        }
+        return runExternalRequest<TData>(method, url, body, config);
       },
       ...options,
     }
@@ -221,20 +195,7 @@ export function useLocalMutation<TData = any>(
         headers: { "Content-Type": "application/json" },
         body: body ? JSON.stringify(body) : undefined,
       };
-      try {
-        const res = await localFetch<TData>(url, init);
-        try {
-          const entity = (res as any)?.entity || (res as any)?.data?.entity || "Resource";
-          if (method === "post") toastSuccess(`${String(entity)} created successfully`);
-          else if (method === "put") toastSuccess(`${String(entity)} updated successfully`);
-          else if (method === "patch") toastSuccess(`${String(entity)} updated successfully`);
-          else if (method === "delete") toastSuccess(`${String(entity)} deleted successfully`);
-        } catch { }
-        return res;
-      } catch (err: any) {
-        toastError(err?.message || "Request failed");
-        throw err;
-      }
+      return localFetch<TData>(url, init);
     },
     ...options,
   });

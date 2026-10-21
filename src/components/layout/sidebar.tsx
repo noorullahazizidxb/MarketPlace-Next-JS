@@ -22,7 +22,7 @@ import {
   Mail,
 } from "lucide-react";
 import { useAuth } from "@/lib/use-auth";
-import { useLocalMutation } from "@/lib/api-hooks";
+import { useSignOut } from "@/lib/auth/use-sign-out";
 import { asset } from "@/lib/assets";
 import { useLanguage } from "@/components/providers/language-provider";
 import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
@@ -37,7 +37,7 @@ export function Sidebar({
 }) {
   const pathname = usePathname();
   const { user } = useAuth();
-  const logout = useLocalMutation("post", "/api/logout");
+  const { signOut } = useSignOut();
   const avatar = user?.avatarUrl || user?.photo || "/favicon.svg";
   const name = user?.fullName || user?.name || user?.email || "You";
 
@@ -156,30 +156,8 @@ export function Sidebar({
                     <span className="app-text-body">{t("feedbacks")}</span>
                   </Link>
                   <button
-                    onClick={async () => {
-                      try {
-                        await logout.mutateAsync({});
-                      } catch { }
-                      try {
-                        const { setCachedToken } = await import(
-                          "@/lib/axiosClient"
-                        );
-                        const { useAuthStore } = await import(
-                          "@/store/auth.store"
-                        );
-                        const { useListingsStore } = await import(
-                          "@/store/listings.store"
-                        );
-                        const { useNotificationsStore } = await import(
-                          "@/store/notifications.store"
-                        );
-                        setCachedToken(null);
-                        useAuthStore.getState().clear();
-                        useListingsStore.getState().clear();
-                        useNotificationsStore.getState().clear();
-                      } catch { }
-                      window.location.href = "/sign-in";
-                    }}
+                    type="button"
+                    onClick={signOut}
                     className="flex w-full items-center rounded-2xl gap-[var(--space-gap)] px-3 h-[var(--ctrl-h)] hover:bg-background/5 text-left"
                   >
                     <LogOut className="app-icon-sm" />

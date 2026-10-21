@@ -18,7 +18,6 @@ import { Portal } from "@/components/ui/atoms/portal";
 import Image from "next/image";
 import { asset } from "@/lib/assets";
 import { useApiMutation } from "@/lib/api-hooks";
-import { toastError, toastSuccess } from "@/lib/toast";
 
 interface BindModalProps {
   user: BaseUser;
@@ -49,10 +48,9 @@ const BindRepresentativeModal: React.FC<BindModalProps> = ({
     const representativeInfo = rows.filter((r) => r.region && r.whatsappNumber);
     try {
       await bindMutation.mutateAsync({ userId: user.id, representativeInfo });
-      toastSuccess("Representative bound successfully");
       onClose();
-    } catch (e: any) {
-      toastError(e?.message || "Bind failed");
+    } catch {
+      /* server message already shown by the HTTP message middleware */
     }
   };
 

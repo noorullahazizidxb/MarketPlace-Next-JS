@@ -1,16 +1,25 @@
 import { NextResponse } from "next/server";
-import { clearSession } from "@/lib/session";
+import { clearSession, getSession, type SessionData } from "@/lib/session";
+import { postBackend } from "@/lib/server/backend-api";
 
-// Ensure this route is always treated as dynamic (no prerender attempt during build collection)
 export const dynamic = "force-dynamic";
 
-// Support POST (actual logout)
+/**
+ * Sign-out: revoke the refresh-token family on the API (best effort, short timeout) and
+ * always clear the HttpOnly session cookies, even when the API is unreachable.
+ */
 export async function POST() {
+  const session = await getSession<SessionData>().catch(() => null);
+  if (session?.refreshToken) {
+    await postBackend("/auth/logout", { refreshToken: session.refreshToken }, { timeoutMs: 4000, token: session.token });
+  }
   await clearSession();
-  return NextResponse.json({ ok: true });
+  return NextResponse.json(
+    { ok: true, success: true, message: "Signed out successfully" },
+    { headers: { "Cache-Control": "no-store", "Clear-Site-Data": '"cache"' } },
+  );
 }
 
-// Graceful GET handler (some code or crawlers might hit it with GET). Returns method hint.
 export async function GET() {
   return NextResponse.json({ ok: true, note: "Use POST to logout" });
 }

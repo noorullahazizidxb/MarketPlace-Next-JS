@@ -2,7 +2,7 @@
 
 import { PropsWithChildren, useMemo } from "react";
 import { useAuth } from "@/lib/use-auth";
-import { useLocalMutation } from "@/lib/api-hooks";
+import { useSignOut } from "@/lib/auth/use-sign-out";
 import { useLanguage } from "@/components/providers/language-provider";
 import { AdminBaseLayout } from "@/components/ui/templates/admin-base-layout";
 import { buildAdminNavGroups } from "@/components/layout/admin-nav";
@@ -19,7 +19,8 @@ import { AnimatedBg } from "@/components/ui/atoms/animated-bg";
  */
 export function AdminShell({ children }: PropsWithChildren) {
   const { user } = useAuth();
-  const logout = useLocalMutation("post", "/api/logout");
+  // Shared sign-out flow: clears client stores + query cache, revokes the refresh token, redirects.
+  const { signOut } = useSignOut();
   const { t, locale } = useLanguage();
   const direction = locale === "fa" ? "rtl" : "ltr";
 
@@ -41,7 +42,7 @@ export function AdminShell({ children }: PropsWithChildren) {
         <AdminBaseLayout
           navGroups={navGroups}
           user={sidebarUser}
-          onLogout={() => logout.mutate(undefined as any)}
+          onLogout={signOut}
           homeUrl="/admin"
           direction={direction}
           showThemeCustomizer={true}

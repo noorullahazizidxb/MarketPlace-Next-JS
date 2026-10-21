@@ -43,7 +43,7 @@ export default function SignInPage() {
   const setSession = useAuthStore((s) => s.setSession);
   const setNotifications = useNotificationsStore((s) => s.set);
   const setListings = useListingsStore((s) => s.set);
-  const loginMutation = useApiMutation<{ token: string; user: any }>(
+  const loginMutation = useApiMutation<{ token: string; refreshToken?: string | null; user: any }>(
     "post",
     "/auth/login",
   );
@@ -99,8 +99,9 @@ export default function SignInPage() {
       } catch {}
 
       // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
+      // The rotating refresh token is only ever stored in the HttpOnly cookie, never in localStorage.
       await setServerSession
-        .mutateAsync({ token, user: userObj })
+        .mutateAsync({ token, refreshToken: res.refreshToken ?? null, user: userObj })
         .catch(() => null);
 
       // 5) Go to the listings dashboard

@@ -9,7 +9,7 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { Button } from "@/components/ui/molecules/button";
 import { RefreshCw, PencilLine, Trash2, Loader2 } from "lucide-react";
 import { ConfirmDialog } from "@/components/ui/organisms/confirm-dialog";
-import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
+import { toastError, toastInfo } from "@/lib/toast";
 import { LISTING_GRID_CLASS } from "@/lib/listing-grid";
 // minimal classnames merger
 function cn(...classes: (string | false | null | undefined)[]) {
@@ -102,10 +102,8 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       } catch {}
       await renewMutation.mutateAsync({ token: tokenValue });
       await refreshProfile();
-      toastSuccess("Listing renewed successfully");
     } catch (e) {
       console.warn("Renew failed", e);
-      toastError("Renew failed: " + String((e as any)?.message || e));
     }
   };
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -114,9 +112,8 @@ function ListingWithActions({ listing }: { listing: Listing }) {
     try {
       await deleteMutation.mutateAsync(undefined as any);
       await refreshProfile();
-      toastSuccess("Listing deleted");
-    } catch (e) {
-      toastError("Failed to delete listing");
+    } catch {
+      /* server message already shown by the HTTP message middleware */
     }
   };
 

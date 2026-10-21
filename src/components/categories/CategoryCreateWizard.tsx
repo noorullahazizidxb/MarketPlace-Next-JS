@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/molecules/button";
 import { ParentAutocomplete } from "./ParentAutocomplete";
 import { useCreateCategory } from "./useCategoryData";
 import type { CreateCategoryInput } from "./types";
-import { toastSuccess } from "@/lib/toast";
 import { cn } from "@/lib/cn";
 import {
   Type,
@@ -127,7 +126,6 @@ export const CategoryCreateWizard: React.FC<WizardProps> = ({
     };
     await create.submit(payload);
     fireConfetti();
-    toastSuccess("Category created");
     onCreated();
     onClose?.();
   };

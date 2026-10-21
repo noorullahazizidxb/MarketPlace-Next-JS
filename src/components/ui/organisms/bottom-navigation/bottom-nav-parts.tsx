@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { LogOut } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
-import { useLocalMutation } from "@/lib/api-hooks";
+import { useSignOut } from "@/lib/auth/use-sign-out";
 import { Button } from "@/components/ui/molecules/button";
 import { asset } from "@/lib/assets";
 
@@ -51,34 +51,13 @@ export const ActionTile: React.FC<{
   </motion.button>
 );
 
-async function clearClientSession() {
-  const { setCachedToken } = await import("@/lib/axiosClient");
-  const { useAuthStore } = await import("@/store/auth.store");
-  const { useListingsStore } = await import("@/store/listings.store");
-  const { useNotificationsStore } = await import("@/store/notifications.store");
-  setCachedToken(null);
-  useAuthStore.getState().clear();
-  useListingsStore.getState().clear();
-  useNotificationsStore.getState().clear();
-}
-
 export const LogoutRow: React.FC<{ onDone?: () => void }> = ({ onDone }) => {
   const { t } = useLanguage();
-  const { mutateAsync, isPending } = useLocalMutation("post", "/api/logout");
+  const { signOut, isPending } = useSignOut();
 
   const handleLogout = async () => {
-    try {
-      await mutateAsync({} as any);
-    } catch {
-      /* network logout is best-effort */
-    }
-    try {
-      await clearClientSession();
-    } catch {
-      /* ignore store clear failures */
-    }
     onDone?.();
-    window.location.href = "/sign-in";
+    await signOut();
   };
 
   return (

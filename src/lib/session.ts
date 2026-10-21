@@ -45,9 +45,9 @@ async function decrypt(token: string): Promise<any | null> {
   }
 }
 
-export async function buildSessionCookies(data: { token: string; user: any }) {
+export async function buildSessionCookies(data: { token: string; user: any; refreshToken?: string | null }) {
   const user = slimSessionUser(data.user);
-  const session = await encrypt({ token: data.token, user });
+  const session = await encrypt({ token: data.token, refreshToken: data.refreshToken ?? null, user });
   const userInfo = await encrypt(user);
   return { session, userInfo };
 }
@@ -55,6 +55,8 @@ export async function buildSessionCookies(data: { token: string; user: any }) {
 export async function setSession(data: any) {
   const value = await encrypt({
     token: data?.token,
+    // Rotating refresh token lives only in this HttpOnly, encrypted cookie (never in JS-readable storage).
+    refreshToken: data?.refreshToken ?? null,
     user: slimSessionUser(data?.user),
   });
   const cookieStore = await cookies();
@@ -87,12 +89,16 @@ export async function getSession<T = any>(): Promise<T | null> {
 
 export async function clearSession() {
   const cookieStore = await cookies();
-  cookieStore.delete(SESSION_COOKIE);
-  cookieStore.delete(USER_INFO_COOKIE);
+  // Overwrite with the exact same attributes (path/secure/sameSite) and an immediate expiry so the
+  // browser reliably drops the cookie.
+  const expired = { ...sessionCookieOptions, maxAge: 0, expires: new Date(0) };
+  cookieStore.set(SESSION_COOKIE, "", expired);
+  cookieStore.set(USER_INFO_COOKIE, "", expired);
 }
 
 export type SessionData = {
   token: string;
+  refreshToken?: string | null;
   user: any;
 };
 

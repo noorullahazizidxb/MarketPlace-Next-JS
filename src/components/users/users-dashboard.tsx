@@ -17,6 +17,7 @@ import { Dialog, DialogContent, DialogTitle } from "@/components/ui/molecules/di
 import { Tooltip } from "@/components/ui/molecules/tooltip";
 import ExpandedUserRow from "./expanded-user-row";
 import UserCreateWizard from "./user-create-wizard";
+import { UserRoleSelect } from "./user-role-select";
 import { asset } from "@/lib/assets";
 import { Loader2 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
@@ -267,34 +268,7 @@ const UsersDashboard: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-4 py-3 align-middle">
-                        <div className="flex flex-wrap gap-1 max-w-[180px]">
-                          {(u.roles || []).map((r: any, idx: number) => {
-                            const label =
-                              typeof r === "string"
-                                ? r
-                                : r?.role || r?.name || String(r?.id) || "ROLE";
-                            const key =
-                              typeof r === "string"
-                                ? `${label}-${idx}`
-                                : `${r?.id || label}-${idx}`;
-                            const colorMap: Record<string, string> = {
-                              ADMIN: "bg-destructive/10 text-destructive border-destructive/40 dark:text-destructive",
-                              USER: "bg-info/10 text-info border-info/35 dark:text-info",
-                              REPRESENTATIVE: "bg-warning/10 text-warning border-warning/40 dark:text-warning",
-                            };
-                            return (
-                              <span
-                                key={key}
-                                className={cn(
-                                  "px-2 py-0.5 rounded-full border app-text-micro font-semibold uppercase tracking-wide",
-                                  colorMap[label] ?? "bg-[var(--muted)]/40 border-[var(--border)] text-[var(--muted-foreground)]"
-                                )}
-                              >
-                                {label}
-                              </span>
-                            );
-                          })}
-                        </div>
+                        <UserRoleSelect user={u} onChanged={() => mutate()} />
                       </td>
                       <td className="px-4 py-3 align-middle">
                         <div className="flex items-center justify-center gap-3 app-text-caption text-[var(--muted-foreground)]">
@@ -382,7 +356,7 @@ const UsersDashboard: React.FC = () => {
         </div>
       </div>
       <Dialog open={openCreate} onOpenChange={setOpenCreate}>
-        <DialogContent className="w-full max-w-3xl p-0 overflow-hidden">
+        <DialogContent className="w-[min(96vw,1120px)] max-w-none p-0 overflow-hidden max-h-[92dvh] flex flex-col">
           <DialogTitle className="sr-only">Create New User</DialogTitle>
           <UserCreateWizard
             onClose={() => setOpenCreate(false)}
