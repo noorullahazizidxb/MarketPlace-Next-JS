@@ -71,7 +71,7 @@ export function Topbar({
             <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
           </div>
           <div
-            className={`relative w-full liquid-glass glass-hover ${
+            className={`relative w-full liquid-glass liquid-glass--borderless glass-hover ${
               navbarVariant === "glass"
                 ? "rounded-full border border-border/50 bg-background/70 shadow-glass backdrop-blur-xl"
                 : navbarVariant === "minimal"
