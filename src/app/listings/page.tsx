@@ -10,6 +10,7 @@ import {
   useTransition,
 } from "react";
 import dynamic from "next/dynamic";
+import { categoryWithDescendants } from "@/lib/category-tree";
 import { useApiGet } from "@/lib/api-hooks";
 import type { Listing } from "@/components/ui/organisms/listing-card";
 import { ListingCardSelector } from "@/components/ui/organisms/listing-card-selector";
@@ -143,6 +144,13 @@ function ListingsContent() {
     "/listings",
     undefined,
   );
+  // Categories (shared cache with FiltersBar / navbar) so a parent category also matches its sub-categories.
+  const { data: categoriesData } = useApiGet<any>(["categories"], "/categories");
+  const categoryIds = useMemo(() => {
+    if (!categoryId) return null;
+    const list = Array.isArray(categoriesData) ? categoriesData : [];
+    return categoryWithDescendants(list, categoryId);
+  }, [categoriesData, categoryId]);
   const allItems: Listing[] = useMemo(
     () => (Array.isArray(data) ? data : data ? [data] : []),
     [data],
@@ -158,7 +166,7 @@ function ListingsContent() {
       if (categoryId && categoryId.length > 0) {
         const itemCat =
           (it as any).categoryId ?? (it as any).category?.id ?? undefined;
-        if (!itemCat || String(itemCat) !== String(categoryId)) return false;
+        if (!itemCat || !categoryIds?.has(String(itemCat))) return false;
       }
       if (searchText && searchText.length > 0) {
         const hay = `${it.title ?? ""} ${it.description ?? ""}`.toLowerCase();
@@ -166,7 +174,7 @@ function ListingsContent() {
       }
       return true;
     });
-  }, [allItems, id, type, categoryId, searchText]);
+  }, [allItems, id, type, categoryId, categoryIds, searchText]);
   const total = items.length; // backend not paginated; client-side paginate available items
   const pageCount = Math.max(1, Math.ceil(total / pageSize));
   const current = Math.min(Math.max(1, page), pageCount);

@@ -1997,16 +1997,15 @@ button[aria-label^="Go to slide"],
 }
 
 .modern-navbar {
-  --modern-navbar-height: 5.5rem;
   position: fixed;
   top: 0;
   inset-inline: 0;
   z-index: 500;
   width: 100%;
   padding: calc(var(--space-gap) * 0.5) var(--space-page-x);
-  background: color-mix(in oklch, var(--background) 22%, transparent);
-  backdrop-filter: saturate(160%) blur(18px);
-  -webkit-backdrop-filter: saturate(160%) blur(18px);
+  /* Opaque shell: the strip around the floating bar must never show page content scrolling
+     underneath (that read as a "gap" above/around the navbar while scrolling). */
+  background: var(--background);
   border-bottom: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
   box-shadow: 0 0.75rem 2rem -1.25rem
     color-mix(in oklch, var(--foreground) 22%, transparent);
@@ -2016,8 +2015,8 @@ button[aria-label^="Go to slide"],
 /* Offset page content under the fixed bar (desktop Topbar only). */
 @media (min-width: 768px) {
   body:has(.modern-navbar) {
-    --modern-navbar-height: 5.5rem;
-    padding-top: var(--modern-navbar-height);
+    /* Measured bar height (set by Topbar via ResizeObserver); 5.5rem only before hydration. */
+    padding-top: var(--modern-navbar-offset, 5.5rem);
   }
 }
 
