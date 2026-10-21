@@ -2003,9 +2003,12 @@ button[aria-label^="Go to slide"],
   z-index: 500;
   width: 100%;
   padding: calc(var(--space-gap) * 0.5) var(--space-page-x);
-  /* Opaque shell: the strip around the floating bar must never show page content scrolling
-     underneath (that read as a "gap" above/around the navbar while scrolling). */
-  background: var(--background);
+  /* The whole fixed shell (edge to edge, from top:0) is ONE glass surface: translucent tint +
+     backdrop blur. Previously the shell was a near-clear 22% tint without matching blur while the
+     inner pill had its own tint/blur, so the strip above/around the pill read as a white gap. */
+  background: color-mix(in oklch, var(--background) 62%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
   border-bottom: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
   box-shadow: 0 0.75rem 2rem -1.25rem
     color-mix(in oklch, var(--foreground) 22%, transparent);
@@ -2020,17 +2023,11 @@ button[aria-label^="Go to slide"],
   }
 }
 
-.modern-navbar::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklch, var(--overlay-light, #fff) 8%, transparent),
-    transparent 55%
-  );
-  opacity: 0.7;
+/* Inner bar sits on the shell's glass: no second tint/blur layer (that produced a lighter band). */
+.modern-navbar .liquid-glass {
+  background: color-mix(in oklch, var(--background) 14%, transparent);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .modern-navbar-grid {

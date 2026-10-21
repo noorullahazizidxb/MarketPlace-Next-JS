@@ -92,9 +92,9 @@ export function Topbar({
           <div
             className={`relative w-full liquid-glass liquid-glass--borderless glass-hover ${
               navbarVariant === "glass"
-                ? "rounded-full border border-border/50 bg-background/70 shadow-glass backdrop-blur-xl"
+                ? "rounded-full border border-border/50 shadow-glass"
                 : navbarVariant === "minimal"
-                  ? "rounded-xl border border-border/40 bg-background/90"
+                  ? "rounded-xl border border-border/40"
                   : "rounded-2xl"
             }`}
           >
