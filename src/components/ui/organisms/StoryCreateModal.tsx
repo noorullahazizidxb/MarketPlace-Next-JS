@@ -180,11 +180,9 @@ export default function StoryCreateModal({
         await createMut.mutateAsync(fd as any);
       }
       onClose();
-      try {
-        const { toastSuccess } = await import("@/lib/toast");
-        toastSuccess(isEdit ? "Story updated" : "Story created");
-      } catch { }
-    } catch { }
+    } catch {
+      /* server message already shown by the HTTP message middleware */
+    }
   };
 
   const inputCls = "min-h-[var(--ctrl-h)] w-full rounded-2xl border border-[var(--border)]/60 bg-[var(--card)]/60 backdrop-blur-sm px-4 app-text-body focus:outline-none focus:ring-2 focus:ring-[var(--primary)]/30 focus:border-[var(--primary)]/50 transition-all placeholder:text-[var(--foreground)]/30";

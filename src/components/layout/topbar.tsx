@@ -17,7 +17,7 @@ import {
   Newspaper,
 } from "lucide-react";
 import { Button } from "@/components/ui/molecules/button";
-import { useLocalMutation } from "@/lib/api-hooks";
+import { useSignOut } from "@/lib/auth/use-sign-out";
 import { SearchBox } from "@/components/ui/molecules/search-box";
 import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
@@ -357,26 +357,12 @@ export function Topbar({
 
 function LogoutButton() {
   const { t } = useLanguage();
-  const { mutateAsync, isPending } = useLocalMutation("post", "/api/logout");
+  const { signOut, isPending } = useSignOut();
   return (
     <button
-      onClick={async () => {
-        try {
-          await mutateAsync({} as any);
-        } catch {}
-        try {
-          const { setCachedToken } = await import("@/lib/axiosClient");
-          const { useAuthStore } = await import("@/store/auth.store");
-          const { useListingsStore } = await import("@/store/listings.store");
-          const { useNotificationsStore } =
-            await import("@/store/notifications.store");
-          setCachedToken(null);
-          useAuthStore.getState().clear();
-          useListingsStore.getState().clear();
-          useNotificationsStore.getState().clear();
-        } catch {}
-        window.location.href = "/sign-in";
-      }}
+      type="button"
+      onClick={signOut}
+      disabled={isPending}
       className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-background/10 text-left"
     >
       {isPending ? (
