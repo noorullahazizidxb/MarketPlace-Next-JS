@@ -108,10 +108,7 @@ export function Topbar({
                       <Home className="size-4" />
                       <span>{t("home")}</span>
                       {isActive("/listings") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -128,10 +125,7 @@ export function Topbar({
                       <Newspaper className="size-4" />
                       <span>{t("blogs")}</span>
                       {isActive("/blogs") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -148,10 +142,7 @@ export function Topbar({
                       <Info className="size-4" />
                       <span>{t("about")}</span>
                       {isActive("/about") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -168,10 +159,7 @@ export function Topbar({
                       <Phone className="size-4" />
                       <span>{t("contact")}</span>
                       {isActive("/contact") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -352,6 +340,17 @@ export function Topbar({
         </motion.div>
       </header>
     </>
+  );
+}
+
+/** Animated underline for the active top-nav item; uses the primary design token in light & dark themes. */
+function ActiveNavUnderline() {
+  return (
+    <motion.span
+      layoutId="top-underline"
+      aria-hidden
+      className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-primary"
+    />
   );
 }
 
