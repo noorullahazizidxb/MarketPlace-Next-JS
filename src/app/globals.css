@@ -2393,3 +2393,105 @@ html[data-appearance-preview="true"] {
     border: 1px solid CanvasText;
   }
 }
+
+/* ───────────────────────── Navbar reference variants ─────────────────────────
+   standard → ourworks.devminds.net (flat bar, text links, primary underline, pill CTA)
+   glass    → devminds.net portfolio v1 (links grouped in a glass pill tray, chip actions)
+   minimal  → devminds.net/v2 (squircle tray, filled primary active link)
+   All stay flush at top:0 (the shell is the single glass surface — no gap band). */
+.modern-navbar.nav-v-standard {
+  background: color-mix(in oklch, var(--background) 80%, transparent);
+  -webkit-backdrop-filter: blur(24px);
+  backdrop-filter: blur(24px);
+  box-shadow: none;
+}
+.nav-v-standard .modern-navbar-grid { min-height: 4rem; }
+.nav-v-standard .app-nav-tray { gap: 2rem; }
+.nav-v-standard .app-nav-link {
+  min-height: 2rem;
+  padding-inline: 0;
+  border-radius: 0;
+  background: transparent !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: none !important;
+}
+.nav-v-standard .app-nav-link svg { display: none; }
+.nav-v-standard .app-nav-link > span.absolute { left: 0; right: 0; bottom: -0.1rem; }
+.nav-v-standard .app-nav-link:hover { color: var(--foreground); }
+.nav-v-standard .app-nav-theme,
+.nav-v-glass .app-nav-theme,
+.nav-v-minimal .app-nav-theme { border-radius: 999px; }
+.nav-v-standard a[href="/sign-in"] { border-radius: 999px; }
+
+/* Glass pill (portfolio v1) */
+.nav-v-glass .modern-navbar-grid { min-height: 4.5rem; }
+.nav-v-glass .app-nav-tray {
+  gap: 0.125rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--card) 88%, transparent);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent),
+    0 18px 40px -28px color-mix(in oklch, var(--foreground) 40%, transparent);
+}
+.nav-v-glass .app-nav-link {
+  border-radius: 999px;
+  padding-inline: 1rem;
+  background: transparent !important;
+  font-weight: 600;
+}
+.nav-v-glass .app-nav-link svg { display: none; }
+.nav-v-glass .app-nav-link.is-active { color: var(--foreground); }
+.nav-v-glass .app-nav-link > span.absolute { left: 1rem; right: 1rem; bottom: 0.3rem; }
+.nav-v-glass .modern-navbar-grid > div:last-child > * :is(button, a).glass,
+.nav-v-glass .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) {
+  border-radius: 999px;
+}
+
+/* Minimal (portfolio v2) */
+.nav-v-minimal .app-nav-tray {
+  gap: 0.125rem;
+  padding: 0.25rem;
+  border-radius: 1.125rem;
+  border: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
+  background: color-mix(in oklch, var(--muted) 55%, transparent);
+}
+.nav-v-minimal .app-nav-link {
+  border-radius: 0.875rem;
+  padding-inline: 0.9rem;
+  font-weight: 500;
+  transform: none !important;
+}
+.nav-v-minimal .app-nav-link svg { display: none; }
+.nav-v-minimal .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
+.nav-v-minimal .app-nav-link.is-active {
+  background: var(--primary);
+  color: var(--primary-foreground);
+  box-shadow: 0 8px 20px -10px color-mix(in oklch, var(--primary) 70%, transparent);
+}
+.nav-v-minimal .app-nav-link > span.absolute { display: none; }
+.nav-v-minimal .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 0.875rem; }
+
+/* ───────────────────────── Card / table border-radius variants ─────────────────────────
+   Set on <html data-card-radius / data-table-radius> by ComponentRadiusSync; "default" = untouched. */
+html[data-card-radius="none"] { --cv-card-radius: 0px; }
+html[data-card-radius="sm"] { --cv-card-radius: 0.375rem; }
+html[data-card-radius="md"] { --cv-card-radius: 0.75rem; }
+html[data-card-radius="lg"] { --cv-card-radius: 1.25rem; }
+html[data-card-radius="xl"] { --cv-card-radius: 2rem; }
+html[data-card-radius]:not([data-card-radius="default"])
+  :is(.app-card, [data-slot="card"], main .bg-card, main article.rounded-xl, main article.rounded-2xl, main article.rounded-3xl) {
+  border-radius: var(--cv-card-radius) !important;
+}
+html[data-table-radius="none"] { --cv-table-radius: 0px; }
+html[data-table-radius="sm"] { --cv-table-radius: 0.375rem; }
+html[data-table-radius="md"] { --cv-table-radius: 0.75rem; }
+html[data-table-radius="lg"] { --cv-table-radius: 1.25rem; }
+html[data-table-radius="xl"] { --cv-table-radius: 2rem; }
+html[data-table-radius]:not([data-table-radius="default"])
+  :is([data-slot="table-container"], [role="region"]:has(> table), .app-table) {
+  border-radius: var(--cv-table-radius) !important;
+  overflow: auto;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+}

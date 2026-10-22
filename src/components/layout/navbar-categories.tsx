@@ -10,7 +10,7 @@ import { cn } from "@/lib/cn";
 type Category = CategoryNode & { id: number; name: string; slug: string };
 
 /**
- * Category quick-links for the "Full width" navbar variant: centered row along the bottom edge,
+ * Category quick-links shown under every navbar variant: centered row along the bottom edge,
  * primary-token styling, one lucide icon per category. Links filter /listings by categoryId
  * (parent categories include their sub-categories).
  */

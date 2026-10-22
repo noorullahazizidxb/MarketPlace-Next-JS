@@ -368,6 +368,7 @@ export type BlogCardVariant = "card" | "horizontal" | "editorial" | "compact";
 export type StoriesBarVariant = "bubble" | "cards" | "strip";
 export type SkeletonTheme = "shimmer" | "pulse" | "wave";
 export type CaptchaVariant = "classic" | "tiles" | "slider";
+export type RadiusVariant = "default" | "none" | "sm" | "md" | "lg" | "xl";
 
 // Switchable per-component style variants persisted in ui-context.json.
 export interface ComponentVariantSettings {
@@ -379,6 +380,8 @@ export interface ComponentVariantSettings {
   storiesBar?: StoriesBarVariant;
   skeletonTheme?: SkeletonTheme;
   captchaVariant?: CaptchaVariant;
+  cardRadius?: RadiusVariant;
+  tableRadius?: RadiusVariant;
 }
 
 // Root UI context shape.

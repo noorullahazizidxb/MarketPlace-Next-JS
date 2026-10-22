@@ -10,7 +10,7 @@ export const Card = React.forwardRef<
     ref={ref}
     className={cn(
       // base glass surface
-      "relative overflow-hidden rounded-[1.5rem]",
+      "app-card relative overflow-hidden rounded-[1.5rem]",
       "bg-[var(--card)]/80 backdrop-blur-xl",
       "border border-border/[0.08]",
       "shadow-token-lg",

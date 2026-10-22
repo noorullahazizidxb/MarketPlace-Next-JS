@@ -525,5 +525,7 @@ export const defaultUiContextState: UiContextState = {
     storiesBar: "bubble",
     skeletonTheme: "shimmer",
     captchaVariant: "classic",
+    cardRadius: "default",
+    tableRadius: "default",
   },
 };

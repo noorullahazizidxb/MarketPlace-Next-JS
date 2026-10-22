@@ -16,6 +16,8 @@ const DEFAULT_VARIANTS: ComponentVariantSettings = {
   storiesBar: "bubble",
   skeletonTheme: "shimmer",
   captchaVariant: "classic",
+  cardRadius: "default",
+  tableRadius: "default",
 };
 
 const VARIANT_OPTIONS = {
@@ -27,6 +29,8 @@ const VARIANT_OPTIONS = {
   storiesBar: ["bubble", "cards", "strip"],
   skeletonTheme: ["shimmer", "pulse", "wave"],
   captchaVariant: ["classic", "tiles", "slider"],
+  cardRadius: ["default", "none", "sm", "md", "lg", "xl"],
+  tableRadius: ["default", "none", "sm", "md", "lg", "xl"],
 } satisfies {
   [K in keyof ComponentVariantSettings]: readonly string[];
 };
