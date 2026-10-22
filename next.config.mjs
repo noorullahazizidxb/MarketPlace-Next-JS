@@ -27,6 +27,15 @@ const nextConfig = {
       { protocol: "https", hostname: "**", pathname: "/**" },
     ],
   },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        has: [{ type: "host", value: ".*\\.vercel\\.app" }],
+        headers: [{ key: "X-Robots-Tag", value: "noindex, nofollow" }],
+      },
+    ];
+  },
   async rewrites() {
     // Prefer BACKEND_VERCEL_URL so /uploads never targets …/backend (self-loop).
     // App Router src/app/uploads/[...path] usually handles /uploads; this is fallback.

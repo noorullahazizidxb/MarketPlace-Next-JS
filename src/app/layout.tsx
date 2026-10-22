@@ -12,6 +12,7 @@ import { LanguageProvider } from "@/components/providers/language-provider";
 import { AppToaster } from "@/components/ui/molecules/toaster";
 import SocialRealtimeClient from "@/components/providers/SocialRealtimeClient";
 import { SeoJsonLd } from "@/components/seo/seo-json-ld";
+import { IdleGoogleAnalytics } from "@/components/seo/idle-ga";
 import { rootMetadata } from "@/lib/site-config";
 import { UiContextGate } from "@/lib/theme/ui-context/ui-context-gate";
 import { ThemeBootFallback } from "@/components/ui/atoms/theme-boot-fallback";
@@ -57,6 +58,7 @@ export default async function RootLayout({
       >
         <NavigationProgress>
           <SeoJsonLd />
+          <IdleGoogleAnalytics />
           <ThemeProvider initialThemeSettings={initialThemeSettings}>
             <QueryProvider>
               <LanguageProvider>
