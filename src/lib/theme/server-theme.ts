@@ -42,19 +42,30 @@ async function ensureUiContextFile() {
   }
 }
 
+let lastGoodServerState: UiContextState | null = null;
+
 export async function getUiContextState(): Promise<UiContextState> {
   if (process.env.VERCEL && process.env.BACKEND_VERCEL_URL) {
-    try {
-      const backendUrl = `${process.env.BACKEND_VERCEL_URL.replace(/\/+$/, "")}/api/ui-context`;
-      const response = await fetch(backendUrl, { cache: "no-store" });
-      if (response.ok) {
-        const body = await response.json();
-        return normalize((body?.data ?? body) as Partial<UiContextState>);
+    const backendUrl = `${process.env.BACKEND_VERCEL_URL.replace(/\/+$/, "")}/api/ui-context`;
+    for (const delay of [0, 200, 600]) {
+      if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
+      try {
+        const response = await fetch(backendUrl, {
+          cache: "no-store",
+          signal: AbortSignal.timeout(6000),
+        });
+        if (response.ok) {
+          const body = await response.json();
+          lastGoodServerState = normalize(
+            (body?.data ?? body) as Partial<UiContextState>,
+          );
+          return lastGoodServerState;
+        }
+      } catch {
+        // retry
       }
-    } catch {
-      return normalize({ updatedAt: new Date().toISOString() });
     }
-    return normalize({ updatedAt: new Date().toISOString() });
+    return lastGoodServerState ?? normalize({ updatedAt: new Date().toISOString() });
   }
 
   try {

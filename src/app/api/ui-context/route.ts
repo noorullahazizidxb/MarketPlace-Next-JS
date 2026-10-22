@@ -24,9 +24,18 @@ const mergeUiContextState = (
   updatedAt: incoming?.updatedAt ?? base.updatedAt ?? new Date().toISOString(),
 });
 
-async function readStoredState(): Promise<UiContextState> {
-  const response = await fetch(BACKEND_URL, { cache: "no-store" });
-  const body = await response.json();
+let lastGoodState: UiContextState | null = null;
+const RETRY_DELAYS_MS = [0, 200, 600];
+const FETCH_TIMEOUT_MS = 6000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+async function fetchStoredStateOnce(): Promise<UiContextState> {
+  const response = await fetch(BACKEND_URL, {
+    cache: "no-store",
+    signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+  });
+  const body = await response.json().catch(() => null);
   if (!response.ok) {
     throw new Error(body?.message || "Could not load UI context");
   }
@@ -34,6 +43,24 @@ async function readStoredState(): Promise<UiContextState> {
     cloneDefaultUiContextState(),
     (body?.data ?? body) as Partial<UiContextState>,
   );
+}
+
+/** Reads the saved state with retries. Never substitutes defaults. */
+async function readStoredState(): Promise<UiContextState> {
+  let lastError: unknown;
+  for (const delay of RETRY_DELAYS_MS) {
+    if (delay) await sleep(delay);
+    try {
+      const state = await fetchStoredStateOnce();
+      lastGoodState = state;
+      return state;
+    } catch (error) {
+      lastError = error;
+    }
+  }
+  throw lastError instanceof Error
+    ? lastError
+    : new Error("Could not load UI context");
 }
 
 async function writeStoredState(
@@ -49,14 +76,16 @@ async function writeStoredState(
     body: JSON.stringify(state),
     cache: "no-store",
   });
-  const body = await response.json();
+  const body = await response.json().catch(() => null);
   if (!response.ok) {
     throw new Error(body?.message || "Could not save UI context");
   }
-  return mergeUiContextState(
+  const persisted = mergeUiContextState(
     cloneDefaultUiContextState(),
     (body?.data ?? body) as Partial<UiContextState>,
   );
+  lastGoodState = persisted;
+  return persisted;
 }
 
 async function requireAdminSession() {
@@ -78,6 +107,15 @@ export async function GET() {
       headers: { "Cache-Control": "no-store, no-cache, must-revalidate" },
     });
   } catch (error) {
+    if (lastGoodState) {
+      // Serve the last saved settings rather than failing to defaults.
+      return NextResponse.json(lastGoodState, {
+        headers: {
+          "Cache-Control": "no-store, no-cache, must-revalidate",
+          "X-UI-Context-Stale": "1",
+        },
+      });
+    }
     const message =
       error instanceof Error ? error.message : "Could not load UI context";
     return NextResponse.json({ message }, { status: 502 });
