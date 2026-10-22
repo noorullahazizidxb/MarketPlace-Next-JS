@@ -1,5 +1,6 @@
 "use client";
 
+import { ComponentRadiusSync } from "@/components/layout/component-radius-sync";
 import { PropsWithChildren, useEffect, useMemo } from "react";
 import dynamic from "next/dynamic";
 import { useAuth } from "@/lib/use-auth";
@@ -142,6 +143,7 @@ export function AppShell({ children }: PropsWithChildren) {
   if (isAdmin) {
     return (
       <AdminShell>
+        <ComponentRadiusSync />
         <PageTransition>{children}</PageTransition>
       </AdminShell>
     );
@@ -151,6 +153,7 @@ export function AppShell({ children }: PropsWithChildren) {
   return (
     <div className="relative isolate flex min-h-screen flex-col">
       <AnimatedBg />
+      <ComponentRadiusSync />
       <div className="relative z-[500] hidden md:block">
         <Topbar />
       </div>

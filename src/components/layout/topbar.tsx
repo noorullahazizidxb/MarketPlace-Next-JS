@@ -76,7 +76,7 @@ export function Topbar({
     <>
       <header
         ref={headerRef}
-        className={`modern-navbar ${navbarVariant === "minimal" ? "py-1" : ""}`}
+        className={`modern-navbar nav-v-${navbarVariant}`}
         data-navbar-variant={navbarVariant}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
@@ -97,18 +97,20 @@ export function Topbar({
                 whileHover={{ y: -2 }}
                 className="flex items-center gap-[var(--space-gap)]"
               >
-                <Tooltip
-                  content={t("toggleTheme" as any) || "Toggle theme"}
-                  side="bottom"
-                >
-                  <ThemeToggle iconOnly className="hidden sm:grid" />
-                </Tooltip>
+                {navbarVariant === "fullwidth" && (
+                  <Tooltip
+                    content={t("toggleTheme" as any) || "Toggle theme"}
+                    side="bottom"
+                  >
+                    <ThemeToggle iconOnly className="hidden sm:grid" />
+                  </Tooltip>
+                )}
                 <ThemeLogo alt="DevMinds Marketplace" className="h-10 w-auto shrink-0" />
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
                 </span>
               </motion.div>
-              <nav className={`hidden items-center justify-center gap-[var(--space-gap)] lg:flex ${navbarVariant === "minimal" ? "lg:hidden" : ""}`}>
+              <nav className="app-nav-tray hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -220,7 +222,7 @@ export function Topbar({
                     />
                   </>
                 )}
-                <div className={`hidden md:flex items-center gap-[var(--space-gap)] ${navbarVariant === "minimal" ? "md:hidden" : ""}`}>
+                <div className="hidden md:flex items-center gap-[var(--space-gap)]">
                   <Tooltip content={t("search")} side="bottom">
                     <SearchBox placeholder={t("search")} />
                   </Tooltip>
@@ -331,14 +333,18 @@ export function Topbar({
                 <Tooltip content={t("language")} side="bottom">
                   <LanguageDropdown className="hidden sm:inline-flex" />
                 </Tooltip>
+                {navbarVariant !== "fullwidth" && (
+                  <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
+                    <ThemeToggle iconOnly className="app-nav-theme hidden sm:grid" />
+                  </Tooltip>
+                )}
               </div>
             </div>
           </div>
-          {navbarVariant === "fullwidth" && (
-            <Suspense fallback={null}>
-              <NavbarCategories />
-            </Suspense>
-          )}
+          {/* Every navbar variant carries the marketplace category strip. */}
+          <Suspense fallback={null}>
+            <NavbarCategories />
+          </Suspense>
         </motion.div>
       </header>
     </>

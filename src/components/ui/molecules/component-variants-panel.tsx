@@ -18,6 +18,7 @@ import type {
   StoriesBarVariant,
   SkeletonTheme,
   CaptchaVariant,
+  RadiusVariant,
 } from "@/lib/theme/types";
 import { cn } from "@/lib/cn";
 
@@ -106,17 +107,17 @@ const navbarOptions: VariantOption<NavbarVariant>[] = [
   {
     value: "standard",
     label: "Standard",
-    description: "Logo + search + actions",
+    description: "Flat bar, text links + underline (OurWorks)",
   },
   {
     value: "glass",
     label: "Glass Pill",
-    description: "Floating glassmorphic nav",
+    description: "Links in a glass pill tray (DevMinds portfolio)",
   },
   {
     value: "minimal",
     label: "Minimal",
-    description: "Slim bar with icons only",
+    description: "Squircle tray, filled active link (Portfolio v2)",
   },
   {
     value: "fullwidth",
@@ -191,6 +192,53 @@ const captchaOptions: VariantOption<CaptchaVariant>[] = [
   { value: "tiles", label: "Tiles", description: "Tap the correct tile" },
   { value: "slider", label: "Slider", description: "Drag to the answer" },
 ];
+
+const radiusOptions: VariantOption<RadiusVariant>[] = [
+  { value: "default", label: "Default", description: "Each component's own radius" },
+  { value: "none", label: "Square", description: "0px — sharp corners" },
+  { value: "sm", label: "Small", description: "6px" },
+  { value: "md", label: "Medium", description: "12px" },
+  { value: "lg", label: "Large", description: "20px" },
+  { value: "xl", label: "Extra large", description: "32px" },
+];
+
+const radiusPx: Record<RadiusVariant, string> = {
+  default: "1rem",
+  none: "0px",
+  sm: "0.375rem",
+  md: "0.75rem",
+  lg: "1.25rem",
+  xl: "2rem",
+};
+
+function RadiusPreview({ kind, variant }: { kind: "card" | "table"; variant: RadiusVariant }) {
+  const radius = radiusPx[variant];
+  if (kind === "card") {
+    return (
+      <div className="grid h-full place-items-center p-3">
+        <div
+          className="flex h-20 w-36 flex-col justify-end gap-1 border border-border bg-card p-2 shadow-sm"
+          style={{ borderRadius: radius }}
+        >
+          <span className="h-2 w-20 rounded-full bg-primary/50" />
+          <span className="h-2 w-14 rounded-full bg-muted-foreground/30" />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="grid h-full place-items-center p-3">
+      <div className="w-40 overflow-hidden border border-border bg-card" style={{ borderRadius: radius }}>
+        {[0, 1, 2].map((row) => (
+          <div key={row} className={cn("flex gap-2 px-2 py-1.5", row === 0 ? "bg-primary/15" : "border-t border-border/60")}>
+            <span className="h-1.5 w-10 rounded-full bg-foreground/30" />
+            <span className="h-1.5 w-14 rounded-full bg-foreground/20" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 /**
  * Molecule: Component variant picker panel.
@@ -308,6 +356,22 @@ export function ComponentVariantsPanel() {
           renderPreview={(variant) => (
             <ComponentVariantPreview kind="captchaVariant" variant={variant} />
           )}
+        />
+
+        <VariantPicker
+          label="Card Border Radius"
+          options={radiusOptions}
+          value={variants.cardRadius ?? "default"}
+          onChange={(v) => updateVariant("cardRadius", v)}
+          renderPreview={(variant) => <RadiusPreview kind="card" variant={variant} />}
+        />
+
+        <VariantPicker
+          label="Table Border Radius"
+          options={radiusOptions}
+          value={variants.tableRadius ?? "default"}
+          onChange={(v) => updateVariant("tableRadius", v)}
+          renderPreview={(variant) => <RadiusPreview kind="table" variant={variant} />}
         />
       </div>
     </div>
