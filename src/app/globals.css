@@ -2002,7 +2002,9 @@ button[aria-label^="Go to slide"],
   inset-inline: 0;
   z-index: 500;
   width: 100%;
-  padding: calc(var(--space-gap) * 0.5) var(--space-page-x);
+  /* Flush: no padding around the bar, so no transparent frame/band shows page content. */
+  margin: 0;
+  padding: 0;
   /* The whole fixed shell (edge to edge, from top:0) is ONE glass surface: translucent tint +
      backdrop blur. Previously the shell was a near-clear 22% tint without matching blur while the
      inner pill had its own tint/blur, so the strip above/around the pill read as a white gap. */
@@ -2025,7 +2027,10 @@ button[aria-label^="Go to slide"],
 
 /* Inner bar sits on the shell's glass: no second tint/blur layer (that produced a lighter band). */
 .modern-navbar .liquid-glass {
-  background: color-mix(in oklch, var(--background) 14%, transparent);
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
   -webkit-backdrop-filter: none;
   backdrop-filter: none;
 }
