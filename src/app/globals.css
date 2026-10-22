@@ -2481,7 +2481,7 @@ html[data-card-radius="md"] { --cv-card-radius: 0.75rem; }
 html[data-card-radius="lg"] { --cv-card-radius: 1.25rem; }
 html[data-card-radius="xl"] { --cv-card-radius: 2rem; }
 html[data-card-radius]:not([data-card-radius="default"])
-  :is(.app-card, [data-slot="card"], main .bg-card, main article.rounded-xl, main article.rounded-2xl, main article.rounded-3xl) {
+  :is(.app-card, [data-slot="card"], main [class*="bg-card"][class*="rounded"]:not([class*="rounded-full"]), main article.rounded-xl, main article.rounded-2xl, main article.rounded-3xl) {
   border-radius: var(--cv-card-radius) !important;
 }
 html[data-table-radius="none"] { --cv-table-radius: 0px; }
