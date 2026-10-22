@@ -12,7 +12,7 @@ export const AUTHOR = {
   role: "CEO of DevMinds · Senior Software Engineer || DevOps Engineer",
   email: "Noorullah.azizi2040@gmail.com",
   phone: "+93778807272",
-  url: "https://noorullah-azizi.my.canva.site",
+  url: "https://noorullah-azizi.devminds.net",
   image: "/brand/noorullah-azizi.jpg",
 } as const;
 
@@ -28,11 +28,19 @@ export const BRAND = {
   faviconDark: "/favicon-dark.svg",
 } as const;
 
+export const DEVMINDS_SAME_AS = [
+  "https://devminds.net",
+  "https://noorullah-azizi.devminds.net",
+  "https://github.com/noorullahazizidxb",
+] as const;
+
 export const DEFAULT_DESCRIPTION =
-  "DevMinds Marketplace — buy, sell, and rent across Afghanistan. Built by Noorullah Azizi, CEO of DevMinds.";
+  "DevMinds Marketplace — the online marketplace to buy, sell, and rent across Afghanistan. Part of DevMinds, built by Noorullah Azizi.";
 
 export const DEFAULT_KEYWORDS = [
   "DevMinds Marketplace",
+  "marketplace",
+  "online marketplace",
   "DevMinds",
   "marketplace Afghanistan",
   "buy sell rent",
@@ -55,6 +63,8 @@ type PageMetaInput = {
   keywords?: string[];
   noIndex?: boolean;
   image?: string;
+  /** Skip the "%s | DevMinds Marketplace" template. */
+  absoluteTitle?: boolean;
 };
 
 export function pageMetadata({
@@ -64,12 +74,13 @@ export function pageMetadata({
   keywords = [...DEFAULT_KEYWORDS],
   noIndex = false,
   image = BRAND.ogImage,
+  absoluteTitle = false,
 }: PageMetaInput): Metadata {
   const url = absoluteUrl(path);
   const imageUrl = image.startsWith("http") ? image : absoluteUrl(image);
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     keywords: [...keywords],
     authors: [{ name: AUTHOR.name, url: AUTHOR.url }],
@@ -110,7 +121,7 @@ export function rootMetadata(): Metadata {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: `${SITE_NAME} — Buy, Sell & Rent`,
+      default: `${SITE_NAME} — Buy, Sell & Rent | Online Marketplace`,
       template: `%s | ${SITE_NAME}`,
     },
     description: DEFAULT_DESCRIPTION,
@@ -211,8 +222,9 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "https://devminds.net/#organization",
     name: ORGANIZATION_NAME,
-    url: SITE_URL,
+    url: "https://devminds.net",
     logo: absoluteUrl(BRAND.logo),
     email: AUTHOR.email,
     telephone: AUTHOR.phone,
@@ -225,7 +237,7 @@ export function organizationJsonLd() {
       url: AUTHOR.url,
       image: absoluteUrl(AUTHOR.image),
     },
-    sameAs: [AUTHOR.url],
+    sameAs: [...DEVMINDS_SAME_AS],
   };
 }
 
@@ -244,7 +256,7 @@ export function personJsonLd() {
       name: ORGANIZATION_NAME,
       url: SITE_URL,
     },
-    sameAs: [AUTHOR.url],
+    sameAs: [...DEVMINDS_SAME_AS],
   };
 }
 
