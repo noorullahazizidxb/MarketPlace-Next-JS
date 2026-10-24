@@ -5,11 +5,49 @@ import {
   fetchUiContextState,
   resolveUiContextUrl,
 } from "@/lib/theme/ui-context/context-store";
-import type { ComponentVariantSettings } from "@/lib/theme/types";
+import type {
+  ComponentVariantSettings,
+  NavbarOpacitySettings,
+  NavbarVariant,
+} from "@/lib/theme/types";
+
+export const NAVBAR_VARIANTS: readonly NavbarVariant[] = [
+  "devminds",
+  "v1",
+  "v2",
+  "standard",
+  "fullwidth",
+];
+
+/** Default glass tint (0–100) for each navbar type. */
+export const DEFAULT_NAVBAR_OPACITY: Record<NavbarVariant, number> = {
+  devminds: 72,
+  v1: 82,
+  v2: 85,
+  standard: 80,
+  fullwidth: 90,
+};
+
+/** Old stored navbar values → their glass-pill successor. Unknown values fall back to the default. */
+const LEGACY_NAVBAR: Record<string, NavbarVariant> = {
+  glass: "v1",
+  minimal: "v2",
+};
+
+function normalizeNavbarOpacity(incoming: unknown): Record<NavbarVariant, number> {
+  const out = { ...DEFAULT_NAVBAR_OPACITY };
+  if (!incoming || typeof incoming !== "object") return out;
+  for (const key of NAVBAR_VARIANTS) {
+    const raw = Number((incoming as NavbarOpacitySettings)[key]);
+    if (Number.isFinite(raw)) out[key] = Math.min(100, Math.max(0, Math.round(raw)));
+  }
+  return out;
+}
 
 const DEFAULT_VARIANTS: ComponentVariantSettings = {
   listingCard: "grid",
-  navbar: "standard",
+  navbar: "devminds",
+  navbarOpacity: DEFAULT_NAVBAR_OPACITY,
   footer: "standard",
   sidebar: "default",
   blogCard: "card",
@@ -22,7 +60,7 @@ const DEFAULT_VARIANTS: ComponentVariantSettings = {
 
 const VARIANT_OPTIONS = {
   listingCard: ["grid", "horizontal", "editorial", "minimal"],
-  navbar: ["standard", "glass", "minimal", "fullwidth"],
+  navbar: NAVBAR_VARIANTS,
   footer: ["standard", "compact", "editorial", "minimal"],
   sidebar: ["default", "glass", "minimal", "brand"],
   blogCard: ["card", "horizontal", "editorial", "compact"],
@@ -32,7 +70,7 @@ const VARIANT_OPTIONS = {
   cardRadius: ["default", "none", "sm", "md", "lg", "xl"],
   tableRadius: ["default", "none", "sm", "md", "lg", "xl"],
 } satisfies {
-  [K in keyof ComponentVariantSettings]: readonly string[];
+  [K in Exclude<keyof ComponentVariantSettings, "navbarOpacity">]: readonly string[];
 };
 
 type ComponentVariantsStore = {
@@ -44,6 +82,7 @@ type ComponentVariantsStore = {
     key: K,
     value: ComponentVariantSettings[K],
   ) => Promise<void>;
+  setNavbarOpacity: (variant: NavbarVariant, value: number) => void;
   resetVariants: () => Promise<void>;
   applyPreviewVariants: (variants: Partial<ComponentVariantSettings>) => void;
 };
@@ -52,6 +91,7 @@ let initialization: Promise<void> | null = null;
 let persistenceQueue: Promise<void> = Promise.resolve();
 let channel: BroadcastChannel | null = null;
 let revision = 0;
+let opacityTimer: ReturnType<typeof setTimeout> | null = null;
 
 function normalizeVariants(
   incoming?: Partial<ComponentVariantSettings> | null,
@@ -59,9 +99,12 @@ function normalizeVariants(
   const normalized = { ...DEFAULT_VARIANTS };
 
   for (const key of Object.keys(VARIANT_OPTIONS) as Array<
-    keyof ComponentVariantSettings
+    keyof typeof VARIANT_OPTIONS
   >) {
-    const value = incoming?.[key];
+    let value: unknown = incoming?.[key];
+    if (key === "navbar" && typeof value === "string" && LEGACY_NAVBAR[value]) {
+      value = LEGACY_NAVBAR[value];
+    }
     if (
       typeof value === "string" &&
       (VARIANT_OPTIONS[key] as readonly string[]).includes(value)
@@ -70,6 +113,7 @@ function normalizeVariants(
     }
   }
 
+  normalized.navbarOpacity = normalizeNavbarOpacity(incoming?.navbarOpacity);
   return normalized;
 }
 
@@ -140,6 +184,30 @@ export const useComponentVariantsStore = create<ComponentVariantsStore>(
               : "Could not save component appearance settings.",
         });
       }
+    },
+    setNavbarOpacity: (variant, value) => {
+      const navbarOpacity = normalizeNavbarOpacity({
+        ...get().variants.navbarOpacity,
+        [variant]: value,
+      });
+      const variants = { ...get().variants, navbarOpacity };
+      revision += 1;
+      set({ variants, error: null });
+      publishVariants(variants);
+      // Debounce the backend write while the slider is being dragged.
+      if (opacityTimer) clearTimeout(opacityTimer);
+      opacityTimer = setTimeout(() => {
+        persistVariants(get().variants)
+          .then(() => set({ error: null }))
+          .catch((error) =>
+            set({
+              error:
+                error instanceof Error
+                  ? error.message
+                  : "Could not save component appearance settings.",
+            }),
+          );
+      }, 400);
     },
     resetVariants: async () => {
       revision += 1;

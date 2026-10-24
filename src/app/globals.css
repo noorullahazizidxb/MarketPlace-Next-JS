@@ -2394,17 +2394,107 @@ html[data-appearance-preview="true"] {
   }
 }
 
-/* ───────────────────────── Navbar reference variants ─────────────────────────
-   standard → ourworks.devminds.net (flat bar, text links, primary underline, pill CTA)
-   glass    → devminds.net portfolio v1 (links grouped in a glass pill tray, chip actions)
-   minimal  → devminds.net/v2 (squircle tray, filled primary active link)
-   All stay flush at top:0 (the shell is the single glass surface — no gap band). */
-.modern-navbar.nav-v-standard {
-  background: color-mix(in oklch, var(--background) 80%, transparent);
-  -webkit-backdrop-filter: blur(24px);
-  backdrop-filter: blur(24px);
+/* ───────────────────────── Glass-pill navbar variants ─────────────────────────
+   Every variant is a glass pill that hangs flush from top:0 (no padding ring, no spacer band:
+   the fixed shell itself is fully transparent and click-through, only the pill paints).
+   --nav-glass-alpha (0–100) is the per-variant tint set by the admin slider.
+     devminds → devminds.net      (soft tray, primary underline, round chips)
+     v1       → devminds.net/v1   (inverted active chip in a round tray, spinning chips)
+     v2       → devminds.net/v2   (squircle pill + tray, primary-tinted active)
+     standard → flat text links + underline, in pill form
+     fullwidth→ wide pill, theme toggle at the logo */
+.modern-navbar {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
   box-shadow: none;
+  pointer-events: none;
 }
+.modern-navbar-pill {
+  --nav-pill-radius: 1.75rem;
+  pointer-events: auto;
+  width: min(calc(100% - 1.5rem), 82rem);
+  margin-inline: auto;
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  border-top: 0;
+  border-radius: 0 0 var(--nav-pill-radius) var(--nav-pill-radius);
+  background: color-mix(
+    in oklch,
+    var(--background) calc(var(--nav-glass-alpha, 80) * 1%),
+    transparent
+  );
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 14px 40px -24px color-mix(in oklch, var(--foreground) 35%, transparent);
+}
+.modern-navbar-pill .modern-navbar-grid { width: 100%; padding-inline: 1rem 0.75rem; }
+.modern-navbar-pill > nav[aria-label="Marketplace categories"] { padding-bottom: 0.6rem; }
+.modern-navbar :is(.app-nav-theme, a[href="/sign-in"]) { border-radius: 999px; }
+.modern-navbar .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 999px; }
+/* Active link underline: primary token, every variant. */
+.modern-navbar .app-nav-link > span.absolute { background: var(--primary); }
+
+/* DevMinds (devminds.net) */
+.nav-v-devminds .modern-navbar-grid { min-height: 4.4rem; }
+.nav-v-devminds .app-nav-tray {
+  gap: 0.25rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--card) calc(var(--nav-glass-alpha, 80) * 1% + 10%), transparent);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent);
+}
+.nav-v-devminds .app-nav-link { padding-inline: 1rem; font-weight: 600; background: transparent !important; }
+.nav-v-devminds .app-nav-link svg { display: none; }
+.nav-v-devminds .app-nav-link.is-active { color: var(--foreground); }
+.nav-v-devminds .app-nav-link > span.absolute { left: 1rem; right: 1rem; bottom: 0.3rem; }
+
+/* V1 (devminds.net/v1) */
+.nav-v-v1 .modern-navbar-pill { --nav-pill-radius: 2.25rem; box-shadow: 0 12px 45px rgb(0 0 0 / 0.16); }
+.nav-v-v1 .modern-navbar-grid { min-height: 4.6rem; }
+.nav-v-v1 .app-nav-tray {
+  gap: 0.3rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--muted) 60%, transparent);
+}
+.nav-v-v1 .app-nav-link { padding-inline: 0.95rem; font-weight: 600; transform: none !important; }
+.nav-v-v1 .app-nav-link svg { display: none; }
+.nav-v-v1 .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
+.nav-v-v1 .app-nav-link.is-active {
+  color: var(--background);
+  background: var(--foreground) !important;
+}
+.nav-v-v1 .app-nav-link > span.absolute { left: 0.95rem; right: 0.95rem; bottom: 0.25rem; }
+.nav-v-v1 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme) { transition: transform 0.3s ease; }
+.nav-v-v1 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme):hover { transform: rotate(8deg) scale(1.04); }
+
+/* V2 (devminds.net/v2): squircle */
+.nav-v-v2 .modern-navbar-pill { --nav-pill-radius: 1.25rem; box-shadow: 0 18px 50px -34px #000; }
+.nav-v-v2 .modern-navbar-grid { min-height: 4.6rem; }
+.nav-v-v2 .app-nav-tray {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+}
+.nav-v-v2 .app-nav-link { border-radius: 0.75rem; padding-inline: 0.9rem; font-weight: 600; transform: none !important; }
+.nav-v-v2 .app-nav-link svg { display: none; }
+.nav-v-v2 .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
+.nav-v-v2 .app-nav-link.is-active {
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 14%, transparent) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+.nav-v-v2 .app-nav-link > span.absolute { left: 0.9rem; right: 0.9rem; bottom: 0.2rem; }
+.nav-v-v2 :is(.app-nav-theme, a[href="/sign-in"]),
+.nav-v-v2 .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 0.875rem; }
+.nav-v-v2 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme):hover { transform: translateY(-2px); }
+
+/* Standard: flat text links + underline, pill form */
 .nav-v-standard .modern-navbar-grid { min-height: 4rem; }
 .nav-v-standard .app-nav-tray { gap: 2rem; }
 .nav-v-standard .app-nav-link {
@@ -2418,60 +2508,9 @@ html[data-appearance-preview="true"] {
 }
 .nav-v-standard .app-nav-link svg { display: none; }
 .nav-v-standard .app-nav-link > span.absolute { left: 0; right: 0; bottom: -0.1rem; }
-.nav-v-standard .app-nav-link:hover { color: var(--foreground); }
-.nav-v-standard .app-nav-theme,
-.nav-v-glass .app-nav-theme,
-.nav-v-minimal .app-nav-theme { border-radius: 999px; }
-.nav-v-standard a[href="/sign-in"] { border-radius: 999px; }
 
-/* Glass pill (portfolio v1) */
-.nav-v-glass .modern-navbar-grid { min-height: 4.5rem; }
-.nav-v-glass .app-nav-tray {
-  gap: 0.125rem;
-  padding: 0.3rem;
-  border-radius: 999px;
-  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
-  background: color-mix(in oklch, var(--card) 88%, transparent);
-  box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent),
-    0 18px 40px -28px color-mix(in oklch, var(--foreground) 40%, transparent);
-}
-.nav-v-glass .app-nav-link {
-  border-radius: 999px;
-  padding-inline: 1rem;
-  background: transparent !important;
-  font-weight: 600;
-}
-.nav-v-glass .app-nav-link svg { display: none; }
-.nav-v-glass .app-nav-link.is-active { color: var(--foreground); }
-.nav-v-glass .app-nav-link > span.absolute { left: 1rem; right: 1rem; bottom: 0.3rem; }
-.nav-v-glass .modern-navbar-grid > div:last-child > * :is(button, a).glass,
-.nav-v-glass .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) {
-  border-radius: 999px;
-}
-
-/* Minimal (portfolio v2) */
-.nav-v-minimal .app-nav-tray {
-  gap: 0.125rem;
-  padding: 0.25rem;
-  border-radius: 1.125rem;
-  border: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
-  background: color-mix(in oklch, var(--muted) 55%, transparent);
-}
-.nav-v-minimal .app-nav-link {
-  border-radius: 0.875rem;
-  padding-inline: 0.9rem;
-  font-weight: 500;
-  transform: none !important;
-}
-.nav-v-minimal .app-nav-link svg { display: none; }
-.nav-v-minimal .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
-.nav-v-minimal .app-nav-link.is-active {
-  background: var(--primary);
-  color: var(--primary-foreground);
-  box-shadow: 0 8px 20px -10px color-mix(in oklch, var(--primary) 70%, transparent);
-}
-.nav-v-minimal .app-nav-link > span.absolute { display: none; }
-.nav-v-minimal .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 0.875rem; }
+/* Full width: widest pill */
+.nav-v-fullwidth .modern-navbar-pill { width: calc(100% - 0.75rem); --nav-pill-radius: 1.5rem; }
 
 /* ───────────────────────── Card / table border-radius variants ─────────────────────────
    Set on <html data-card-radius / data-table-radius> by ComponentRadiusSync; "default" = untouched. */
