@@ -28,7 +28,7 @@ import type {
 
 type ComponentVariantPreviewProps =
   | { kind: "listingCard"; variant: ListingCardVariant }
-  | { kind: "navbar"; variant: NavbarVariant }
+  | { kind: "navbar"; variant: NavbarVariant; opacity?: number }
   | { kind: "footer"; variant: FooterVariant }
   | { kind: "sidebar"; variant: SidebarVariantStyle }
   | { kind: "blogCard"; variant: BlogCardVariant }
@@ -100,10 +100,8 @@ function ScaledPreview({
   );
 }
 
-export function ComponentVariantPreview({
-  kind,
-  variant,
-}: ComponentVariantPreviewProps) {
+export function ComponentVariantPreview(props: ComponentVariantPreviewProps) {
+  const { kind, variant } = props;
   switch (kind) {
     case "listingCard":
       return (
@@ -115,7 +113,11 @@ export function ComponentVariantPreview({
     case "navbar":
       return (
         <ScaledPreview width={900} height={96} scale={0.28}>
-          <Topbar variantOverride={variant} preview />
+          <Topbar
+            variantOverride={variant}
+            opacityOverride={props.kind === "navbar" ? props.opacity : undefined}
+            preview
+          />
         </ScaledPreview>
       );
     case "footer":

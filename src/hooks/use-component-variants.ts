@@ -15,8 +15,9 @@ export function useComponentVariants() {
   const initialize = useComponentVariantsStore((state) => state.initialize);
   const updateVariant = useComponentVariantsStore((state) => state.updateVariant);
   const resetVariants = useComponentVariantsStore((state) => state.resetVariants);
+  const setNavbarOpacity = useComponentVariantsStore((state) => state.setNavbarOpacity);
 
   useEffect(initialize, [initialize]);
 
-  return { variants, error, updateVariant, resetVariants };
+  return { variants, error, updateVariant, resetVariants, setNavbarOpacity };
 }

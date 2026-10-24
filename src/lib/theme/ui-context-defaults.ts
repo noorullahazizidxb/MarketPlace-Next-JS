@@ -518,7 +518,8 @@ export const defaultUiContextState: UiContextState = {
   sidebar: defaultSidebarSettings,
   componentVariants: {
     listingCard: "grid",
-    navbar: "standard",
+    navbar: "devminds",
+    navbarOpacity: { devminds: 72, v1: 82, v2: 85, standard: 80, fullwidth: 90 },
     footer: "standard",
     sidebar: "default",
     blogCard: "card",

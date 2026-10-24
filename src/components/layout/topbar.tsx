@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
 import { NavbarCategories } from "@/components/layout/navbar-categories";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
@@ -16,6 +16,7 @@ import {
   Phone,
   LogIn,
   Newspaper,
+  ShieldCheck,
 } from "lucide-react";
 import { Button } from "@/components/ui/molecules/button";
 import { useSignOut } from "@/lib/auth/use-sign-out";
@@ -32,19 +33,28 @@ import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useComponentVariants } from "@/hooks/use-component-variants";
 import type { NavbarVariant } from "@/lib/theme/types";
+import { DEFAULT_NAVBAR_OPACITY } from "@/store/component-variants.store";
 
 export function Topbar({
   variantOverride,
+  opacityOverride,
   preview = false,
 }: {
   variantOverride?: NavbarVariant;
+  /** Glass tint 0–100 used instead of the saved value (settings previews). */
+  opacityOverride?: number;
   preview?: boolean;
 }) {
-  const { user, counts } = useAuth();
+  const { user, counts, isAdmin } = useAuth();
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
   const { t, locale, isRtl } = useLanguage();
   const { variants } = useComponentVariants();
   const navbarVariant = variantOverride ?? variants.navbar;
+  const glassAlpha =
+    opacityOverride ??
+    variants.navbarOpacity?.[navbarVariant] ??
+    DEFAULT_NAVBAR_OPACITY[navbarVariant] ??
+    80;
   const [notifOpen, setNotifOpen] = useState(false);
   useNotificationsRealtime(!!user && !preview);
   const [open, setOpen] = useState(false);
@@ -78,17 +88,15 @@ export function Topbar({
         ref={headerRef}
         className={`modern-navbar nav-v-${navbarVariant}`}
         data-navbar-variant={navbarVariant}
+        style={{ "--nav-glass-alpha": glassAlpha } as CSSProperties}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="relative overflow-visible"
+          className="modern-navbar-pill relative overflow-visible"
         >
-          <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
-            <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
-          </div>
           <div
             className="relative w-full liquid-glass liquid-glass--borderless"
           >
@@ -307,6 +315,17 @@ export function Topbar({
                               </span>
                             )}
                           </Link>
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
+                            >
+                              <ShieldCheck className="size-4" />
+                              <span className="app-text-body">
+                                Admin
+                              </span>
+                            </Link>
+                          )}
                           <LogoutButton />
                         </div>
                       </motion.div>

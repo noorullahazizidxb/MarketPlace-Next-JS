@@ -21,6 +21,7 @@ import type {
   RadiusVariant,
 } from "@/lib/theme/types";
 import { cn } from "@/lib/cn";
+import { DEFAULT_NAVBAR_OPACITY } from "@/store/component-variants.store";
 
 type VariantOption<T extends string> = {
   value: T;
@@ -34,12 +35,14 @@ function VariantPicker<T extends string>({
   value,
   onChange,
   renderPreview,
+  renderFooter,
 }: {
   label: string;
   options: VariantOption<T>[];
   value: T;
   onChange: (v: T) => void;
   renderPreview: (variant: T) => ReactNode;
+  renderFooter?: (variant: T) => ReactNode;
 }) {
   return (
     <div className="space-y-2">
@@ -73,6 +76,7 @@ function VariantPicker<T extends string>({
             >
               {renderPreview(opt.value)}
             </div>
+            {renderFooter?.(opt.value)}
           </article>
         ))}
       </div>
@@ -105,24 +109,29 @@ const listingCardOptions: VariantOption<ListingCardVariant>[] = [
 
 const navbarOptions: VariantOption<NavbarVariant>[] = [
   {
+    value: "devminds",
+    label: "DevMinds",
+    description: "Glass pill, soft link tray + primary underline (devminds.net)",
+  },
+  {
+    value: "v1",
+    label: "V1",
+    description: "Glass pill, round tray with inverted active chip (devminds.net/v1)",
+  },
+  {
+    value: "v2",
+    label: "V2",
+    description: "Squircle glass pill, primary-tinted active link (devminds.net/v2)",
+  },
+  {
     value: "standard",
     label: "Standard",
-    description: "Flat bar, text links + underline (OurWorks)",
-  },
-  {
-    value: "glass",
-    label: "Glass Pill",
-    description: "Links in a glass pill tray (DevMinds portfolio)",
-  },
-  {
-    value: "minimal",
-    label: "Minimal",
-    description: "Squircle tray, filled active link (Portfolio v2)",
+    description: "Glass pill with flat text links + underline",
   },
   {
     value: "fullwidth",
     label: "Full Width",
-    description: "Wide with category strip",
+    description: "Widest glass pill, theme toggle by the logo",
   },
 ];
 
@@ -245,7 +254,10 @@ function RadiusPreview({ kind, variant }: { kind: "card" | "table"; variant: Rad
  * Used in the Appearance settings to switch the visual style of major UI components.
  */
 export function ComponentVariantsPanel() {
-  const { variants, error, updateVariant, resetVariants } = useComponentVariants();
+  const { variants, error, updateVariant, resetVariants, setNavbarOpacity } =
+    useComponentVariants();
+  const opacityOf = (v: NavbarVariant) =>
+    variants.navbarOpacity?.[v] ?? DEFAULT_NAVBAR_OPACITY[v];
 
   return (
     <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
@@ -294,7 +306,32 @@ export function ComponentVariantsPanel() {
           value={variants.navbar}
           onChange={(v) => updateVariant("navbar", v)}
           renderPreview={(variant) => (
-            <ComponentVariantPreview kind="navbar" variant={variant} />
+            <ComponentVariantPreview
+              kind="navbar"
+              variant={variant}
+              opacity={opacityOf(variant)}
+            />
+          )}
+          renderFooter={(variant) => (
+            <label className="flex flex-col gap-1 border-t border-border/60 px-3 py-2">
+              <span className="flex items-center justify-between app-text-caption">
+                <span className="font-medium">Glass opacity</span>
+                <span className="tabular-nums text-muted-foreground">
+                  {opacityOf(variant)}%
+                </span>
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={opacityOf(variant)}
+                onChange={(e) => setNavbarOpacity(variant, Number(e.target.value))}
+                aria-label={`${variant} navbar glass opacity`}
+                data-navbar-opacity={variant}
+                className="w-full accent-[var(--primary)]"
+              />
+            </label>
           )}
         />
 

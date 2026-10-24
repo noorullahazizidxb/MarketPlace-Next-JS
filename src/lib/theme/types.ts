@@ -361,7 +361,10 @@ export type ListingCardVariant =
   | "horizontal"
   | "editorial"
   | "minimal";
-export type NavbarVariant = "standard" | "glass" | "minimal" | "fullwidth";
+/** Glass-pill navbar styles. devminds / v1 / v2 recreate devminds.net, /v1 and /v2. */
+export type NavbarVariant = "devminds" | "v1" | "v2" | "standard" | "fullwidth";
+/** Per-navbar-type glass tint opacity, 0–100 (percent of the background colour). */
+export type NavbarOpacitySettings = Partial<Record<NavbarVariant, number>>;
 export type FooterVariant = "standard" | "compact" | "editorial" | "minimal";
 export type SidebarVariantStyle = "default" | "glass" | "minimal" | "brand";
 export type BlogCardVariant = "card" | "horizontal" | "editorial" | "compact";
@@ -374,6 +377,7 @@ export type RadiusVariant = "default" | "none" | "sm" | "md" | "lg" | "xl";
 export interface ComponentVariantSettings {
   listingCard: ListingCardVariant;
   navbar: NavbarVariant;
+  navbarOpacity?: NavbarOpacitySettings;
   footer: FooterVariant;
   sidebar: SidebarVariantStyle;
   blogCard: BlogCardVariant;
