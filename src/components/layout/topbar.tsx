@@ -370,13 +370,13 @@ export function Topbar({
   );
 }
 
-/** Animated underline for the active top-nav item; uses the primary design token in light & dark themes. */
+/** Animated underline for the active top-nav item; uses the accent design token in light & dark themes. */
 function ActiveNavUnderline() {
   return (
     <motion.span
       layoutId="top-underline"
       aria-hidden
-      className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-primary"
+      className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
     />
   );
 }

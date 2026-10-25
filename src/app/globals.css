@@ -2398,7 +2398,7 @@ html[data-appearance-preview="true"] {
    Every variant is a glass pill that hangs flush from top:0 (no padding ring, no spacer band:
    the fixed shell itself is fully transparent and click-through, only the pill paints).
    --nav-glass-alpha (0–100) is the per-variant tint set by the admin slider.
-     devminds → devminds.net      (soft tray, primary underline, round chips)
+     devminds → devminds.net      (soft tray, accent underline, round chips)
      v1       → devminds.net/v1   (inverted active chip in a round tray, spinning chips)
      v2       → devminds.net/v2   (squircle pill + tray, primary-tinted active)
      standard → flat text links + underline, in pill form
@@ -2432,8 +2432,8 @@ html[data-appearance-preview="true"] {
 .modern-navbar-pill > nav[aria-label="Marketplace categories"] { padding-bottom: 0.6rem; }
 .modern-navbar :is(.app-nav-theme, a[href="/sign-in"]) { border-radius: 999px; }
 .modern-navbar .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 999px; }
-/* Active link underline: primary token, every variant. */
-.modern-navbar .app-nav-link > span.absolute { background: var(--primary); }
+/* Active link underline (incl. its layout animation): accent token, every variant. */
+.modern-navbar .app-nav-link > span.absolute { background: var(--accent); }
 
 /* DevMinds (devminds.net) */
 .nav-v-devminds .modern-navbar-grid { min-height: 4.4rem; }
