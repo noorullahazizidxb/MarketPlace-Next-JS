@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/molecules/button";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useComponentVariants } from "@/hooks/use-component-variants";
 import type { FooterVariant } from "@/lib/theme/types";
+import { DevmindsProducts } from "./devminds-products";
 
 const exploreLinks = [
   { href: "/listings", key: "listings", Icon: LayoutList },
@@ -39,6 +40,11 @@ export default function Footer({
   const { variants } = useComponentVariants();
   const variant = variantOverride ?? variants.footer;
   const year = new Date().getFullYear();
+  const products = (
+    <div className="container-padded relative">
+      <DevmindsProducts current="marketplace" />
+    </div>
+  );
 
   if (variant === "minimal") {
     return (
@@ -56,6 +62,7 @@ export default function Footer({
             ))}
           </nav>
         </div>
+        {products}
       </footer>
     );
   }
@@ -86,6 +93,7 @@ export default function Footer({
             © {year} {t("allRightsReserved")}
           </p>
         </div>
+        {products}
       </footer>
     );
   }
@@ -121,6 +129,7 @@ export default function Footer({
             © {year} {t("marketplace")}. {t("allRightsReserved")}
           </p>
         </div>
+        {products}
       </footer>
     );
   }
@@ -219,6 +228,7 @@ export default function Footer({
           </div>
         </div>
       </div>
+      {products}
     </footer>
   );
 }
