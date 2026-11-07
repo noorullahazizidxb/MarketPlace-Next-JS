@@ -1,3 +1,4 @@
+import { withSentryConfig } from '@sentry/nextjs/config';
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
@@ -67,4 +68,17 @@ const nextConfig = {
   },
 };
 
-export default nextConfig;
+const sentryBuildOptions = {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+  silent: !process.env.CI,
+  widenClientFileUpload: true,
+  tunnelRoute: '/monitoring',
+  sourcemaps: { disable: !process.env.SENTRY_AUTH_TOKEN },
+  disableLogger: true,
+  release: process.env.VERCEL_GIT_COMMIT_SHA
+    ? { name: process.env.VERCEL_GIT_COMMIT_SHA }
+    : undefined,
+};
+
+export default withSentryConfig(nextConfig, sentryBuildOptions);
