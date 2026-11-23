@@ -1,10 +1,12 @@
 "use client";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { useAuth } from "./use-auth";
 import { useApiGet } from "./api-hooks";
 import { useNotificationsStore, NotificationItem } from "@/store/notifications.store";
 import { setCachedToken } from "./axiosClient";
+import { isSocketIoEnabled, SOCKET_POLL_INTERVAL_MS } from "./realtime";
+import { initSocket } from "./socket";
 
 export function useNotificationsRealtime(enabled: boolean = true) {
   const { token, user } = useAuth();
@@ -15,9 +17,14 @@ export function useNotificationsRealtime(enabled: boolean = true) {
 
   const userId = useMemo(() => (user?.id ?? user?._id ?? null), [user]);
 
+  const socketsOn = isSocketIoEnabled();
   const { data, error, isFetching: isValidating, mutate } = useApiGet<any[]>(
     userId ? ["notifications", userId] : (undefined as unknown as readonly unknown[]),
-    "/notifications"
+    "/notifications",
+    undefined,
+    {
+      refetchInterval: enabled && userId && !socketsOn ? SOCKET_POLL_INTERVAL_MS : false,
+    }
   );
 
   const normalize = (items: any[], uid: string | null | undefined): NotificationItem[] => {
@@ -62,22 +69,10 @@ export function useNotificationsRealtime(enabled: boolean = true) {
   useEffect(() => {
     if (!enabled) return;
     if (!token || !userId) return;
-    // ensure axios client sends Authorization header for API requests
+    if (!socketsOn) return;
     setCachedToken(token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token);
-    // clear cached token on cleanup
-    const bearer = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-    const socket = io(
-      process.env.NEXT_PUBLIC_WS_URL || process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000",
-      {
-        auth: { token: bearer },
-        query: { token: bearer },
-        transports: ["websocket"],
-        autoConnect: true,
-        reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
-      }
-    );
+    const socket = initSocket(token);
+    if (!socket) return;
     socketRef.current = socket;
 
     socket.on("connect", () => {
@@ -98,11 +93,13 @@ export function useNotificationsRealtime(enabled: boolean = true) {
     });
 
     return () => {
-      setCachedToken(null);
-      socket.disconnect();
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("notifications:list");
+      socket.off("notification:new");
       socketRef.current = null;
     };
-  }, [enabled, token, userId, setList, addItem, mutate]);
+  }, [enabled, token, userId, setList, addItem, mutate, socketsOn]);
 
   return { connected, loading: !!isValidating, error } as const;
 }

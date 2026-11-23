@@ -5,13 +5,14 @@ import type { ReactNode } from "react";
 
 import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/providers/theme-provider";
-import { SkipLink } from "@/components/ui/skip-link";
+import { SkipLink } from "@/components/ui/atoms/skip-link";
 import { QueryProvider } from "@/components/providers/query-provider";
 import { AppShell } from "@/components/layout/app-shell";
 import { LanguageProvider } from "@/components/providers/language-provider";
-import { AppToaster } from "@/components/ui/toaster";
+import { AppToaster } from "@/components/ui/molecules/toaster";
 import SocialRealtimeClient from "@/components/providers/SocialRealtimeClient";
 import { SeoJsonLd } from "@/components/seo/seo-json-ld";
+import { IdleGoogleAnalytics } from "@/components/seo/idle-ga";
 import { rootMetadata } from "@/lib/site-config";
 import { UiContextGate } from "@/lib/theme/ui-context/ui-context-gate";
 import { ThemeBootFallback } from "@/components/ui/atoms/theme-boot-fallback";
@@ -22,6 +23,7 @@ import {
   getUiContextState,
 } from "@/lib/theme/server-theme";
 import { NavigationProgress } from "@/components/providers/navigation-progress";
+import { AppearancePreviewBridge } from "@/components/settings/appearance-preview-bridge";
 
 export const metadata: Metadata = rootMetadata();
 
@@ -56,12 +58,14 @@ export default async function RootLayout({
       >
         <NavigationProgress>
           <SeoJsonLd />
+          <IdleGoogleAnalytics />
           <ThemeProvider initialThemeSettings={initialThemeSettings}>
             <QueryProvider>
               <LanguageProvider>
                 <UiContextGate fallback={<ThemeBootFallback />}>
                   <SkipLink />
                   <SocialRealtimeClient />
+                  <AppearancePreviewBridge />
                   <AppShell>{children}</AppShell>
                   <AppToaster />
                 </UiContextGate>

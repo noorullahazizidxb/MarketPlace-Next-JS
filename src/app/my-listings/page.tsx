@@ -1,15 +1,16 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
 import { useLanguage } from "@/components/providers/language-provider";
 import { useAuthStore } from "@/store/auth.store";
 import { useListingsStore } from "@/store/listings.store";
 import { useApiMutation } from "@/lib/api-hooks";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { RefreshCw, PencilLine, Trash2, Loader2 } from "lucide-react";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
-import { toastError, toastInfo, toastSuccess } from "@/lib/toast";
+import { ConfirmDialog } from "@/components/ui/organisms/confirm-dialog";
+import { toastError, toastInfo } from "@/lib/toast";
+import { LISTING_GRID_CLASS } from "@/lib/listing-grid";
 // minimal classnames merger
 function cn(...classes: (string | false | null | undefined)[]) {
   return classes.filter(Boolean).join(" ");
@@ -34,7 +35,7 @@ export default function MyListingsPage() {
         {items.length === 0 ? (
           <p className="subtle">{t("myListingsEmpty")}</p>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-[var(--space-gap)]">
+          <div className={LISTING_GRID_CLASS}>
             {items.map((item) => (
               <ListingWithActions key={item.id} listing={item} />
             ))}
@@ -101,10 +102,8 @@ function ListingWithActions({ listing }: { listing: Listing }) {
       } catch {}
       await renewMutation.mutateAsync({ token: tokenValue });
       await refreshProfile();
-      toastSuccess("Listing renewed successfully");
     } catch (e) {
       console.warn("Renew failed", e);
-      toastError("Renew failed: " + String((e as any)?.message || e));
     }
   };
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -113,9 +112,8 @@ function ListingWithActions({ listing }: { listing: Listing }) {
     try {
       await deleteMutation.mutateAsync(undefined as any);
       await refreshProfile();
-      toastSuccess("Listing deleted");
-    } catch (e) {
-      toastError("Failed to delete listing");
+    } catch {
+      /* server message already shown by the HTTP message middleware */
     }
   };
 

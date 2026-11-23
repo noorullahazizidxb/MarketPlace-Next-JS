@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Skeleton } from "./SkeletonPrimitives";
+import { LISTING_GRID_CLASS } from "@/lib/listing-grid";
 
 export function ListingsSkeleton() {
   return (
@@ -26,31 +27,28 @@ export function ListingsSkeleton() {
           <Skeleton className="ml-auto h-9 w-9 shrink-0 rounded-xl" />
         </div>
 
-        <div className="grid grid-cols-1 gap-[var(--space-gap)] sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 app-density-grid-gap">
-        {Array.from({ length: 12 }).map((_, i) => (
-          <div
-            key={i}
-            className="overflow-hidden rounded-[1.35rem] border border-border/60 bg-card shadow-sm"
-          >
-            <div className="relative aspect-[3/2]">
-              <Skeleton className="absolute inset-0 rounded-none" />
-              <Skeleton className="absolute left-3 top-3 h-6 w-16 rounded-full" />
-              <Skeleton className="absolute bottom-3 right-3 h-7 w-20 rounded-xl" />
-            </div>
-            <div className="space-y-3 p-[var(--space-card)]">
-              <Skeleton className="h-5 w-4/5 rounded-xl" />
-              <div className="space-y-2">
-                <Skeleton className="h-3.5 w-full rounded-xl" />
-                <Skeleton className="h-3.5 w-2/3 rounded-xl" />
+        <div className={LISTING_GRID_CLASS}>
+          {Array.from({ length: 12 }).map((_, i) => (
+            <div
+              key={i}
+              className="overflow-hidden rounded-xl border border-border/60 bg-card shadow-sm"
+            >
+              <div className="relative aspect-[3/2]">
+                <Skeleton className="absolute inset-0 rounded-none" />
+                <Skeleton className="absolute left-1.5 top-1.5 h-5 w-14 rounded-full" />
+                <Skeleton className="absolute bottom-1.5 right-1.5 h-5 w-14 rounded-md" />
               </div>
-              <Skeleton className="h-4 w-2/5 rounded-xl" />
-              <div className="flex items-center gap-2 border-t border-border/50 pt-3">
-                <Skeleton className="h-10 flex-1 rounded-xl" />
-                <Skeleton className="size-10 rounded-xl" />
+              <div className="space-y-1.5 p-2 sm:p-2.5">
+                <Skeleton className="h-4 w-4/5 rounded-lg" />
+                <Skeleton className="h-3 w-full rounded-lg" />
+                <Skeleton className="h-3 w-2/5 rounded-lg" />
+                <div className="flex items-center gap-1 border-t border-border/50 pt-2">
+                  <Skeleton className="h-7 flex-1 rounded-md" />
+                  <Skeleton className="size-7 rounded-md" />
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))}
         </div>
       </div>
     </div>

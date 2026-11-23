@@ -19,6 +19,9 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { BrandLogo } from "../atoms/shadcn/brand-logo";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { SidebarVariantStyle } from "@/lib/theme/types";
+import { cn } from "../lib/cn";
 
 import { NavMain } from "../molecules/nav-main";
 import { NavUser } from "../molecules/nav-user";
@@ -259,6 +262,7 @@ interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
   brandSubtitle?: string;
   userMenuLabels?: React.ComponentProps<typeof NavUser>["labels"];
   direction?: "ltr" | "rtl";
+  appearanceVariantOverride?: SidebarVariantStyle;
 }
 
 export function AppSidebar({
@@ -269,10 +273,27 @@ export function AppSidebar({
   brandSubtitle = "Admin Dashboard",
   userMenuLabels,
   direction = "ltr",
+  appearanceVariantOverride,
+  className,
   ...props
 }: AppSidebarProps) {
+  const { variants } = useComponentVariants();
+  const appearanceVariant = appearanceVariantOverride ?? variants.sidebar;
+
   return (
-    <Sidebar {...props}>
+    <Sidebar
+      {...props}
+      data-appearance-variant={appearanceVariant}
+      className={cn(
+        className,
+        appearanceVariant === "glass" &&
+          "border-border/60 bg-background/65 shadow-lg backdrop-blur-xl",
+        appearanceVariant === "minimal" &&
+          "text-muted-foreground [&_[data-sidebar=menu-button]]:px-2",
+        appearanceVariant === "brand" &&
+          "border-primary/20 bg-primary/5 text-foreground",
+      )}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
@@ -280,24 +301,7 @@ export function AppSidebar({
               <Link href={homeUrl}>
                 {/* Use explicit sizing classes so the image always has layout space */}
                 <div className="flex min-h-[var(--ctrl-h)] min-w-[var(--ctrl-h)] items-center justify-center rounded-lg">
-                  {/*
-                    Compute a base-aware logo path at runtime so the image resolves when the
-                    app is mounted under a base path (for example: /admin/ota-tickets.png).
-                  */}
-                  <BrandLogo
-                    size={100}
-                    className="text-current"
-                    src={(() => {
-                      try {
-                        if (typeof window === "undefined") return "/ota-tickets.png";
-                        const firstSegment = window.location.pathname.split("/").filter(Boolean)[0];
-                        // If there's a top-level path (e.g. 'admin'), prefer that prefix
-                        return firstSegment ? `/${firstSegment}/ota-tickets.png` : "/ota-tickets.png";
-                      } catch {
-                        return "/ota-tickets.png";
-                      }
-                    })()}
-                  />
+                  <BrandLogo size={32} alt="DevMinds" className="text-current" />
                 </div>
                 <div className="grid flex-1 text-start app-text-body leading-tight">
                   <span className="truncate app-text-label">{user.name}</span>

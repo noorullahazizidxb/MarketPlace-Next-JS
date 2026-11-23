@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { useLanguage } from "@/components/providers/language-provider";
 
 type Props = {
   googleUrl?: string;
   facebookUrl?: string;
   compact?: boolean;
+  stacked?: boolean;
 };
 
 function GoogleIcon() {
@@ -29,10 +30,35 @@ function FacebookIcon() {
   );
 }
 
-export function SocialAuthButtons({ googleUrl, facebookUrl, compact = false }: Props) {
+export function SocialAuthButtons({ googleUrl, facebookUrl, stacked = false }: Props) {
   const { t } = useLanguage();
 
   if (!googleUrl && !facebookUrl) return null;
+
+  if (stacked) {
+    return (
+      <div className="space-y-3">
+        {googleUrl ? (
+          <Button asChild variant="ghost" className="h-12 w-full justify-center gap-3 rounded-xl border border-border">
+            <Link href={googleUrl}>
+              <GoogleIcon />
+              {t("continueWithGoogle")}
+            </Link>
+          </Button>
+        ) : null}
+        {facebookUrl ? (
+          <Button asChild variant="ghost" className="h-12 w-full justify-center gap-3 rounded-xl border border-border">
+            <Link href={facebookUrl}>
+              <span className="text-info">
+                <FacebookIcon />
+              </span>
+              {t("continueWithFacebook")}
+            </Link>
+          </Button>
+        ) : null}
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-4">

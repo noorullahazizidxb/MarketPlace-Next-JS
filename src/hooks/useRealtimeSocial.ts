@@ -2,6 +2,7 @@
 import { useEffect } from "react";
 import { initSocket, getSocket } from "@/lib/socket";
 import { mutate as swrMutate } from "@/lib/query-client";
+import { isSocketIoEnabled } from "@/lib/realtime";
 
 type BlogUpdatedPayload = { id: string; blog: any };
 type NewCommentPayload = { blogId: string; comment: any };
@@ -9,7 +10,9 @@ type CountPayload = { blogId: string; likes?: number; shares?: number };
 
 export function useRealtimeSocial(token?: string) {
   useEffect(() => {
+    if (!isSocketIoEnabled()) return;
     const sock = initSocket(token);
+    if (!sock) return;
 
     const mutateBlogLists = (updater: (prev: any[] | undefined) => any[]) => {
       swrMutate(

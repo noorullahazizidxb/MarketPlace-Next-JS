@@ -12,8 +12,8 @@ import {
   CheckCircle2,
 } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
-import ContactForm from "@/components/ui/contact-form";
-import { Tooltip } from "@/components/ui/tooltip";
+import ContactForm from "@/components/ui/organisms/contact-form";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 function ContactHero() {
   const { t, isRtl } = useLanguage();

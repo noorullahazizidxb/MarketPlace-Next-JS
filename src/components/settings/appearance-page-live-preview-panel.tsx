@@ -6,6 +6,10 @@ import { ExternalLink, RefreshCw, ZoomIn, ZoomOut } from "lucide-react";
 import type { AdminPageId } from "@repo/types";
 import { Badge, Button } from "@repo/ui";
 import { resolvePreviewPage } from "./appearance-preview-registry";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+
+const PREVIEW_UPDATE = "marketplace:appearance-preview:update";
+const PREVIEW_READY = "marketplace:appearance-preview:ready";
 
 type AppearancePageLivePreviewPanelProps = {
   pageScope: "global" | AdminPageId;
@@ -33,26 +37,35 @@ export function AppearancePageLivePreviewPanel({
   const [reloadKey, setReloadKey] = React.useState(0);
   const [autoScale, setAutoScale] = React.useState(0.7);
   const [zoom, setZoom] = React.useState(1);
-  const [loaded, setLoaded] = React.useState(false);
+  const [readyFrameKey, setReadyFrameKey] = React.useState("");
+  const { variants } = useComponentVariants();
 
   const scale = Math.max(0.25, Math.min(1.35, autoScale * zoom));
-  const applyPreviewTokens = React.useCallback(() => {
-    const frameDocument = iframeRef.current?.contentWindow?.document;
-    if (!frameDocument) return;
-
+  const frameKey = page ? `${page.id}:${reloadKey}` : "";
+  const applyPreviewState = React.useCallback(() => {
+    if (!iframeRef.current?.contentWindow) return;
     const sourceRoot = document.documentElement;
-    const targetRoot = frameDocument.documentElement;
-    targetRoot.dataset.appearancePreview = "true";
-    targetRoot.dataset.theme = sourceRoot.dataset.theme ?? "light";
-    targetRoot.classList.toggle("dark", sourceRoot.classList.contains("dark"));
-    targetRoot.classList.toggle("light", !sourceRoot.classList.contains("dark"));
+    const styles = Object.fromEntries(
+      Object.entries(previewStyle)
+        .filter(([property, value]) => property.startsWith("--") && value != null)
+        .map(([property, value]) => [property, String(value)]),
+    );
+    const previewOrigin =
+      process.env.NEXT_PUBLIC_APPEARANCE_PREVIEW_ORIGIN
+        ? new URL(process.env.NEXT_PUBLIC_APPEARANCE_PREVIEW_ORIGIN).origin
+        : window.location.origin;
 
-    Object.entries(previewStyle).forEach(([property, value]) => {
-      if (property.startsWith("--") && value != null) {
-        targetRoot.style.setProperty(property, String(value));
-      }
-    });
-  }, [previewStyle]);
+    iframeRef.current.contentWindow.postMessage(
+      {
+        type: PREVIEW_UPDATE,
+        theme: sourceRoot.dataset.theme ?? "light",
+        dark: sourceRoot.classList.contains("dark"),
+        styles,
+        variants,
+      },
+      previewOrigin,
+    );
+  }, [previewStyle, variants]);
 
   React.useLayoutEffect(() => {
     const frame = frameRef.current;
@@ -72,13 +85,36 @@ export function AppearancePageLivePreviewPanel({
   }, [logicalHeight, logicalWidth]);
 
   React.useEffect(() => {
-    if (loaded) applyPreviewTokens();
-  }, [applyPreviewTokens, loaded]);
+    setZoom(1);
+  }, [pageScope, logicalWidth]);
 
   React.useEffect(() => {
-    setZoom(1);
-    setLoaded(false);
-  }, [pageScope, logicalWidth]);
+    if (!page) return;
+
+    const expectedOrigin =
+      process.env.NEXT_PUBLIC_APPEARANCE_PREVIEW_ORIGIN
+        ? new URL(process.env.NEXT_PUBLIC_APPEARANCE_PREVIEW_ORIGIN).origin
+        : window.location.origin;
+    const onMessage = (event: MessageEvent) => {
+      if (
+        event.source !== iframeRef.current?.contentWindow ||
+        event.origin !== expectedOrigin ||
+        event.data?.type !== PREVIEW_READY
+      ) {
+        return;
+      }
+
+      setReadyFrameKey(frameKey);
+      applyPreviewState();
+    };
+
+    window.addEventListener("message", onMessage);
+    return () => window.removeEventListener("message", onMessage);
+  }, [applyPreviewState, frameKey, page]);
+
+  React.useEffect(() => {
+    if (readyFrameKey === frameKey && frameKey) applyPreviewState();
+  }, [applyPreviewState, frameKey, readyFrameKey]);
 
   if (!page) {
     return (
@@ -93,7 +129,15 @@ export function AppearancePageLivePreviewPanel({
     );
   }
 
-  const src = `${page.path}${page.path.includes("?") ? "&" : "?"}appearance-preview=1`;
+  const previewOrigin = process.env.NEXT_PUBLIC_APPEARANCE_PREVIEW_ORIGIN;
+  const previewUrl = new URL(
+    page.path,
+    previewOrigin ||
+      (typeof window !== "undefined" ? window.location.origin : "http://localhost"),
+  );
+  previewUrl.searchParams.set("appearance-preview", "1");
+  const src =
+    previewOrigin ? previewUrl.toString() : `${page.path}${page.path.includes("?") ? "&" : "?"}appearance-preview=1`;
 
   return (
     <section className="appearance-preview-panel">
@@ -124,10 +168,7 @@ export function AppearancePageLivePreviewPanel({
             type="button"
             size="icon"
             variant="ghost"
-            onClick={() => {
-              setLoaded(false);
-              setReloadKey((value) => value + 1);
-            }}
+            onClick={() => setReloadKey((value) => value + 1)}
             aria-label="Reload preview"
           >
             <RefreshCw className="app-icon-sm" />
@@ -146,13 +187,10 @@ export function AppearancePageLivePreviewPanel({
             key={`${page.id}:${reloadKey}`}
             ref={iframeRef}
             src={src}
-            title={`${page.label} responsive theme preview`}
+            title={`${page.label} anonymous responsive theme preview`}
             className="appearance-preview-iframe"
+            referrerPolicy="origin"
             style={{ width: logicalWidth, height: logicalHeight, transform: `scale(${scale})` }}
-            onLoad={() => {
-              setLoaded(true);
-              applyPreviewTokens();
-            }}
           />
         </div>
       </div>

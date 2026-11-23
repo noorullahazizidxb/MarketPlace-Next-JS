@@ -1,32 +1,43 @@
-import * as React from "react";
+import type { CSSProperties } from "react";
 import Image, { type ImageProps } from "next/image";
-
-const DEFAULT_LOGO_SRC = "/brand/devminds-logo.png";
+import { ThemeLogo } from "./theme-logo";
 
 interface LogoProps extends Omit<ImageProps, "src" | "width" | "height" | "alt"> {
   size?: number;
   src?: ImageProps["src"];
   alt?: string;
+  style?: CSSProperties;
 }
 
 export function Logo({
   size = 24,
-  src = DEFAULT_LOGO_SRC,
+  src,
   className,
-  alt = "DevMinds",
+  alt = "DevMinds Marketplace",
   style,
-  ...props
+  priority,
 }: LogoProps) {
+  if (src) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={size}
+        height={size}
+        sizes={`${size}px`}
+        priority={priority}
+        className={`w-auto object-contain ${className ?? ""}`}
+        style={{ height: size, width: "auto", ...style }}
+      />
+    );
+  }
+
   return (
-    <Image
-      src={src}
+    <ThemeLogo
       alt={alt}
-      width={size}
-      height={size}
-      sizes={`${size}px`}
-      className={`w-auto object-contain ${className ?? ""}`}
+      priority={Boolean(priority)}
+      className={className}
       style={{ height: size, width: "auto", ...style }}
-      {...props}
     />
   );
 }

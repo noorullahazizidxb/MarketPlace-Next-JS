@@ -2,16 +2,16 @@
 
 import { PropsWithChildren, useMemo } from "react";
 import { useAuth } from "@/lib/use-auth";
-import { useLocalMutation } from "@/lib/api-hooks";
+import { useSignOut } from "@/lib/auth/use-sign-out";
 import { useLanguage } from "@/components/providers/language-provider";
 import { AdminBaseLayout } from "@/components/ui/templates/admin-base-layout";
 import { buildAdminNavGroups } from "@/components/layout/admin-nav";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
-import { ThemeToggle } from "@/theme/theme-toggle";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { asset } from "@/lib/assets";
-import BottomNavigation from "@/components/ui/BottomNavigation";
-import { MobileQuickBar } from "@/components/ui/MobileQuickBar";
-import { AnimatedBg } from "@/components/ui/animated-bg";
+import BottomNavigation from "@/components/ui/organisms/BottomNavigation";
+import { MobileQuickBar } from "@/components/ui/organisms/MobileQuickBar";
+import { AnimatedBg } from "@/components/ui/atoms/animated-bg";
 
 /**
  * Admin chrome via AdminBaseLayout + AppSidebar.
@@ -19,7 +19,8 @@ import { AnimatedBg } from "@/components/ui/animated-bg";
  */
 export function AdminShell({ children }: PropsWithChildren) {
   const { user } = useAuth();
-  const logout = useLocalMutation("post", "/api/logout");
+  // Shared sign-out flow: clears client stores + query cache, revokes the refresh token, redirects.
+  const { signOut } = useSignOut();
   const { t, locale } = useLanguage();
   const direction = locale === "fa" ? "rtl" : "ltr";
 
@@ -35,13 +36,13 @@ export function AdminShell({ children }: PropsWithChildren) {
   );
 
   return (
-    <div className="relative isolate min-h-screen flex flex-col">
+    <div className="relative isolate min-h-screen flex flex-col overflow-x-clip">
       <AnimatedBg />
       <div className="relative z-10 flex-1 min-h-0">
         <AdminBaseLayout
           navGroups={navGroups}
           user={sidebarUser}
-          onLogout={() => logout.mutate(undefined as any)}
+          onLogout={signOut}
           homeUrl="/admin"
           direction={direction}
           showThemeCustomizer={true}

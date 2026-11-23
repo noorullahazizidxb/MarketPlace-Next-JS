@@ -2,11 +2,11 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { UserRound, Mail, LockKeyhole, ShieldCheck, Phone } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { cn } from "@/lib/cn";
 import { useForm, useWatch } from "react-hook-form";
@@ -16,10 +16,9 @@ import { useApiMutation } from "@/lib/api-hooks";
 import { useLanguage } from "@/components/providers/language-provider";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
 import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
-import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
 
 const gradientBgClass = "gradient-bg";
 
@@ -66,7 +65,9 @@ export default function SignUpPage() {
   const router = useRouter();
   const { t } = useLanguage();
   const { isRtl } = useLanguage();
-  const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
+  const googleUrl = config.googleClientId ? config.googleAuthUrl : undefined;
+  const facebookUrl = config.facebookAppId ? config.facebookAuthUrl : undefined;
+  const hasSocialAuth = Boolean(googleUrl || facebookUrl);
   const [globalError, setGlobalError] = useState<string | null>(null);
   const { executeRecaptcha } = useRecaptchaV3();
 
@@ -147,7 +148,6 @@ export default function SignUpPage() {
   };
 
   const submitting = isSubmitting || registerMutation.isPending;
-  const [captchaValid, setCaptchaValid] = React.useState(false);
 
   const fieldError = (
     name: keyof SignUpValues,
@@ -164,7 +164,7 @@ export default function SignUpPage() {
       data-app-page="sign-up"
       className={cn(
         gradientBgClass,
-        "relative flex items-center justify-center p-[var(--space-card)] sm:p-[var(--space-card)] lg:p-[var(--space-card)]",
+        "relative flex min-h-screen items-center justify-center p-[var(--space-card)]",
       )}
     >
       <AmbientCanvas
@@ -194,15 +194,7 @@ export default function SignUpPage() {
           <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-[color-mix(in oklab, var(--accent) 40%, transparent)] to-transparent" />
           <div className="mb-8 space-y-3 text-center">
             <div className="mx-auto w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt="DevMinds"
-                width={156}
-                height={108}
-                priority
-                className="h-14 w-auto object-contain"
-                draggable={false}
-              />
+              <ThemeLogo priority alt="DevMinds Marketplace" className="h-14 w-auto" />
             </div>
             <motion.h1
               className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]"
@@ -225,8 +217,9 @@ export default function SignUpPage() {
           {hasSocialAuth && (
             <div className="mb-6 space-y-3">
               <SocialAuthButtons
-                googleUrl={config.googleAuthUrl}
-                facebookUrl={config.facebookAuthUrl}
+                stacked
+                googleUrl={googleUrl}
+                facebookUrl={facebookUrl}
               />
               <div className="relative text-center app-text-caption text-[color-mix(in oklab, var(--foreground) 60%, transparent)]">
                 <span className="relative z-10 bg-[var(--card-bg,var(--card))/0.95] px-3">
@@ -320,7 +313,7 @@ export default function SignUpPage() {
               </div>
             </Tooltip>
 
-            <div className="grid gap-[var(--space-section)] sm:grid-cols-2">
+            <div className="grid gap-[var(--space-section)]">
               <div className="space-y-2">
                 <Tooltip content={t("tooltipSignUpPassword")} side="right">
                   <div>
@@ -389,12 +382,9 @@ export default function SignUpPage() {
               )}
             </AnimatePresence>
 
-            <CaptchaWidget onVerified={setCaptchaValid} className="my-1" />
-
-            <Tooltip content={t("tooltipCreateAccountBtn")} side="top">
-              <Button
+            <Button
                 type="submit"
-                disabled={submitting || !isValid || !captchaValid}
+                disabled={submitting || !isValid}
                 className="relative flex h-12 w-full items-center justify-center rounded-2xl border-0 bg-[linear-gradient(135deg,_var(--btn-primary-bg,var(--primary))_0%,_var(--accent)_55%,_var(--secondary)_100%)] app-text-body font-semibold text-[var(--btn-primary-fg,var(--primary-foreground))] shadow-[0_18px_48px_-20px_color-mix(in oklab, var(--primary) 60%, transparent)] transition-all hover:shadow-[0_22px_60px_-18px_color-mix(in oklab, var(--secondary) 55%, transparent)] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--card-bg,var(--card))] disabled:cursor-not-allowed disabled:opacity-70"
               >
                 <motion.span
@@ -411,7 +401,6 @@ export default function SignUpPage() {
                   aria-hidden
                 />
               </Button>
-            </Tooltip>
           </motion.form>
 
           <motion.div

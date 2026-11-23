@@ -12,10 +12,11 @@ import {
   Bar,
   PieChart,
   Pie,
+  Cell,
   type TooltipPayload,
 } from "recharts";
 import { useMemo, useState } from "react";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/molecules/card";
 import { ChartCard } from "@/components/admin/chart-card";
 import { SkeletonBlock } from "@/components/admin/skeleton-block";
 import {
@@ -58,23 +59,25 @@ interface AdminStatsResponse {
     avgRating?: number;
   };
   charts?: {
-    listingsDaily?: { date: string; created: number; approved: number }[];
-    listingsMonthly?: { month: string; created: number }[];
-    usersDaily?: { date: string; registered: number }[];
-    feedbackDaily?: {
-      date: string;
+    listings?: PeriodMap<{ period: string; created: number; approved: number }>;
+    users?: PeriodMap<{ period: string; registered: number }>;
+    feedback?: PeriodMap<{
+      period: string;
       feedbackCount: number;
       avgRating: number;
-    }[];
-    notificationsDaily?: {
-      date: string;
+    }>;
+    notifications?: PeriodMap<{
+      period: string;
       total: number;
       email: number;
       whatsapp: number;
       system: number;
-    }[];
-    approvalTimeDaily?: { date: string; avgHours: number }[];
-    representativesByRegion?: { region: string; count: number }[];
+    }>;
+    approvalTime?: PeriodMap<{ period: string; avgHours: number }>;
+    representativesByRegion?: PeriodMap<{ region: string; count: number }>;
+    listingsTypeStatus?: PeriodMap<any>;
+    listingsDaily?: { date: string; created: number; approved: number }[];
+    listingsMonthly?: { month: string; created: number }[];
     listingsTypeStatusDaily?: any[];
     listingsTypeStatusWeekly?: any[];
     listingsTypeStatusMonthly?: any[];
@@ -82,9 +85,64 @@ interface AdminStatsResponse {
   };
 }
 
+const CHART_RANGES = ["daily", "weekly", "monthly", "yearly"] as const;
+type ChartRange = (typeof CHART_RANGES)[number];
+type PeriodMap<T> = Partial<Record<ChartRange, T[]>>;
+
+function periodRows<T>(map: PeriodMap<T> | undefined, range: ChartRange): T[] {
+  const rows = map?.[range];
+  return Array.isArray(rows) ? rows : [];
+}
+
 // Shared premium chart enhancements
 const chartCardBg =
   "bg-gradient-to-br from-[var(--card)] to-[color-mix(in oklab, var(--card) 70%, transparent)]";
+
+const CHART_SERIES_COLORS = [
+  "var(--chart-1)",
+  "var(--chart-2)",
+  "var(--chart-3)",
+  "var(--chart-4)",
+  "var(--chart-5)",
+] as const;
+
+function chartSeriesColor(index: number) {
+  const token = CHART_SERIES_COLORS[index % CHART_SERIES_COLORS.length];
+  const cycle = Math.floor(index / CHART_SERIES_COLORS.length);
+  if (cycle === 0) return token;
+  const mix = cycle === 1 ? 62 : 40;
+  return `color-mix(in oklab, ${token} ${mix}%, var(--foreground))`;
+}
+
+function ChartRangeToggle({
+  value,
+  onChange,
+  t,
+}: {
+  value: ChartRange;
+  onChange: (range: ChartRange) => void;
+  t: (key: string) => string;
+}) {
+  return (
+    <div className="flex flex-wrap items-center justify-end gap-1">
+      {CHART_RANGES.map((range) => (
+        <button
+          key={range}
+          type="button"
+          onClick={() => onChange(range)}
+          className={
+            "px-2.5 py-1 rounded-full border app-text-micro font-medium transition-colors " +
+            (value === range
+              ? "bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--border)]"
+              : "bg-[var(--muted)]/20 hover:bg-[var(--muted)]/30 border-[var(--border)]")
+          }
+        >
+          {(t as (key: string) => string)(range) || range}
+        </button>
+      ))}
+    </div>
+  );
+}
 
 type ChartTooltipProps = {
   active?: boolean;
@@ -115,18 +173,9 @@ function ChartTooltip({
       <div className="space-y-0.5">
         {payload.map((p) => {
           const dataKey = String(p.dataKey ?? "");
-          const colorMap: Record<string, string> = {
-            "var(--chart-1)": "bg-[var(--chart-1)]",
-            "var(--chart-2)": "bg-[var(--chart-2)]",
-            "var(--chart-3)": "bg-[var(--chart-3)]",
-            "var(--chart-4)": "bg-[var(--chart-4)]",
-            "var(--success)": "bg-[var(--success)]",
-            "var(--destructive)": "bg-[var(--destructive)]",
-            "var(--warning)": "bg-[var(--warning)]",
-            "var(--info)": "bg-[var(--info)]",
-          };
-          const swatch =
-            colorMap[String(p.color ?? "")] || "bg-[var(--primary)]";
+          const seriesColor = String(
+            p.color ?? (p as { fill?: string }).fill ?? "var(--chart-1)",
+          );
           const rawName = String(p.name ?? dataKey);
           const displayName = formatName
             ? formatName(rawName, dataKey)
@@ -142,12 +191,13 @@ function ChartTooltip({
 
           return (
             <div
-              key={dataKey}
+              key={`${dataKey}-${rawName}`}
               className="flex items-center justify-between gap-[var(--space-gap)] app-text-micro"
             >
               <span className="flex items-center gap-1.5">
                 <span
-                  className={`inline-block size-2.5 rounded-sm ${swatch}`}
+                  className="inline-block size-2.5 rounded-sm"
+                  style={{ background: seriesColor }}
                 />
                 <span className="text-[var(--foreground)]/70">
                   {displayName}
@@ -174,6 +224,39 @@ export default function AdminDashboardPage() {
 
   const summary = data?.summary || {};
   const charts = data?.charts || {};
+  const [typeStatusRange, setTypeStatusRange] = useState<ChartRange>("daily");
+  const [listingsRange, setListingsRange] = useState<ChartRange>("daily");
+  const [monthlyListingsRange, setMonthlyListingsRange] =
+    useState<ChartRange>("monthly");
+  const [usersRange, setUsersRange] = useState<ChartRange>("daily");
+  const [approvalRange, setApprovalRange] = useState<ChartRange>("daily");
+  const [feedbackRange, setFeedbackRange] = useState<ChartRange>("daily");
+  const [notificationsRange, setNotificationsRange] =
+    useState<ChartRange>("daily");
+  const [approvedPercentRange, setApprovedPercentRange] =
+    useState<ChartRange>("daily");
+  const [ratingRange, setRatingRange] = useState<ChartRange>("daily");
+  const [representativesRange, setRepresentativesRange] =
+    useState<ChartRange>("daily");
+  const listingsSeries = periodRows(charts.listings, listingsRange);
+  const monthlyListingsSeries = periodRows(charts.listings, monthlyListingsRange);
+  const usersSeries = periodRows(charts.users, usersRange);
+  const approvalSeries = periodRows(charts.approvalTime, approvalRange);
+  const feedbackSeries = periodRows(charts.feedback, feedbackRange);
+  const notificationsSeries = periodRows(charts.notifications, notificationsRange);
+  const approvedPercentSeries = periodRows(charts.listings, approvedPercentRange).map(
+    (point) => ({
+      period: point.period,
+      approvedPct: point.created
+        ? Math.round((point.approved / point.created) * 100)
+        : 0,
+    })
+  );
+  const ratingSeries = periodRows(charts.feedback, ratingRange);
+  const representativeSeries = periodRows(
+    charts.representativesByRegion,
+    representativesRange
+  );
   const retention = data?.retention;
   const schedules = data?.schedules;
   const queueStats = data?.queueStats;
@@ -319,7 +402,17 @@ export default function AdminDashboardPage() {
           </div>
           <div className="min-w-[620px] space-y-[var(--space-gap)]">
             {queueStats &&
-              Object.entries(queueStats).map(([q, stats]) => (
+              Object.entries(queueStats).map(([q, stats]) => {
+                const countOf = (value: unknown) =>
+                  typeof value === "number" && Number.isFinite(value) ? value : 0;
+                const hasCounts = [
+                  "active",
+                  "waiting",
+                  "completed",
+                  "failed",
+                  "delayed",
+                ].some((key) => typeof (stats as Record<string, unknown>)[key] === "number");
+                return (
                 <div
                   key={q}
                   className="rounded-2xl border border-[var(--border)]/60 p-[var(--space-card)] bg-gradient-to-br from-[color-mix(in oklab, var(--muted) 8%, transparent)] to-transparent hover:from-[color-mix(in oklab, var(--muted) 15%, transparent)] transition-colors"
@@ -329,19 +422,24 @@ export default function AdminDashboardPage() {
                       {q}
                     </span>
                     <span className="text-[var(--foreground)]/60 flex items-center gap-1">
-                      <span className="inline-block size-1.5 rounded-full bg-success" />
-                      {t("completed")}: {stats.completed}
+                      <span className={`inline-block size-1.5 rounded-full ${hasCounts ? "bg-success" : "bg-[var(--muted-foreground)]"}`} />
+                      {hasCounts
+                        ? `${t("completed")}: ${countOf(stats.completed)}`
+                        : (t("unavailable") && t("unavailable") !== "unavailable"
+                            ? t("unavailable")
+                            : "Unavailable")}
                     </span>
                   </div>
+                  {hasCounts ? (
                   <div className="grid grid-cols-4 md:grid-cols-7 gap-2 app-text-micro">
                     {[
-                      ["active", stats.active],
-                      ["waiting", stats.waiting],
-                      ["delayed", stats.delayed],
-                      ["failed", stats.failed],
-                      ["paused", stats.paused],
-                      ["prioritized", stats.prioritized],
-                      ["waiting-children", stats["waiting-children"]],
+                      ["active", countOf(stats.active)],
+                      ["waiting", countOf(stats.waiting)],
+                      ["delayed", countOf(stats.delayed)],
+                      ["failed", countOf(stats.failed)],
+                      ["paused", countOf(stats.paused)],
+                      ["prioritized", countOf(stats.prioritized)],
+                      ["waiting-children", countOf(stats["waiting-children"])],
                     ].map(([label, v]) => (
                       <div
                         key={label as string}
@@ -356,8 +454,10 @@ export default function AdminDashboardPage() {
                       </div>
                     ))}
                   </div>
+                  ) : null}
                 </div>
-              ))}
+                );
+              })}
             {!queueStats && <p className="app-text-caption subtle">—</p>}
           </div>
         </Card>
@@ -365,35 +465,48 @@ export default function AdminDashboardPage() {
 
       {/* Charts Grid */}
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-[var(--space-section)] auto-rows-[minmax(320px,_1fr)]">
-        {/* Listings Type / Status Composite Chart */}
         <ChartCard
           title={(t as any)("listingsTypeStatus")}
           description={(t as any)("listingsTypeStatus")}
+          action={
+            <ChartRangeToggle
+              value={typeStatusRange}
+              onChange={setTypeStatusRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
           className="xl:col-span-3"
+          plotClassName="h-[360px]"
         >
           <ListingsTypeStatusCharts
             charts={charts}
+            mode={typeStatusRange}
             t={t}
             isLoading={isLoading}
           />
         </ChartCard>
         <ChartCard
-          title={t("listings") + " (30d)"}
+          title={t("listings")}
           description={t("listings")}
+          action={
+            <ChartRangeToggle
+              value={listingsRange}
+              onChange={setListingsRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
           className="xl:col-span-2"
         >
-          {!isLoading &&
-            charts.listingsDaily &&
-            charts.listingsDaily.length > 0 && (
+          {!isLoading && listingsSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.listingsDaily}>
+                <LineChart data={listingsSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide tick={{ fontSize: 12 }} />
+                  <XAxis dataKey="period" hide={listingsRange === "daily"} tick={{ fontSize: 12 }} />
                   <YAxis tick={{ fontSize: 12 }} />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -419,8 +532,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.listingsDaily || charts.listingsDaily.length === 0) && (
+          {!isLoading && listingsSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -430,18 +542,23 @@ export default function AdminDashboardPage() {
         <ChartCard
           title={t("monthlyListings")}
           description={t("monthlyListings")}
+          action={
+            <ChartRangeToggle
+              value={monthlyListingsRange}
+              onChange={setMonthlyListingsRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.listingsMonthly &&
-            charts.listingsMonthly.length > 0 && (
+          {!isLoading && monthlyListingsSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={charts.listingsMonthly}>
+                <BarChart data={monthlyListingsSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="month" />
+                  <XAxis dataKey="period" hide={monthlyListingsRange === "daily"} />
                   <YAxis />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -451,9 +568,7 @@ export default function AdminDashboardPage() {
                 </BarChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.listingsMonthly ||
-              charts.listingsMonthly.length === 0) && (
+          {!isLoading && monthlyListingsSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -461,18 +576,25 @@ export default function AdminDashboardPage() {
         </ChartCard>
 
         <ChartCard
-          title={t("users") + " (30d)"}
+          title={t("users")}
           description={t("users")}
+          action={
+            <ChartRangeToggle
+              value={usersRange}
+              onChange={setUsersRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading && charts.usersDaily && charts.usersDaily.length > 0 && (
+          {!isLoading && usersSeries.length > 0 && (
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={charts.usersDaily}>
+              <BarChart data={usersSeries}>
                 <CartesianGrid
                   strokeDasharray="3 3"
                   stroke="var(--border)"
                 />
-                <XAxis dataKey="date" hide />
+                <XAxis dataKey="period" hide={usersRange === "daily"} />
                 <YAxis />
                 <Tooltip
                   content={(props) => <ChartTooltip {...props} />}
@@ -486,8 +608,7 @@ export default function AdminDashboardPage() {
               </BarChart>
             </ResponsiveContainer>
           )}
-          {!isLoading &&
-            (!charts.usersDaily || charts.usersDaily.length === 0) && (
+          {!isLoading && usersSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -497,18 +618,23 @@ export default function AdminDashboardPage() {
         <ChartCard
           title={t("approvalTime")}
           description={t("approvalTime")}
+          action={
+            <ChartRangeToggle
+              value={approvalRange}
+              onChange={setApprovalRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.approvalTimeDaily &&
-            charts.approvalTimeDaily.length > 0 && (
+          {!isLoading && approvalSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.approvalTimeDaily}>
+                <LineChart data={approvalSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="period" hide={approvalRange === "daily"} />
                   <YAxis />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -525,9 +651,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.approvalTimeDaily ||
-              charts.approvalTimeDaily.length === 0) && (
+          {!isLoading && approvalSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -535,20 +659,25 @@ export default function AdminDashboardPage() {
         </ChartCard>
 
         <ChartCard
-          title={t("feedbacks") + " (30d)"}
+          title={t("feedbacks")}
           description={t("feedbacks")}
+          action={
+            <ChartRangeToggle
+              value={feedbackRange}
+              onChange={setFeedbackRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.feedbackDaily &&
-            charts.feedbackDaily.length > 0 && (
+          {!isLoading && feedbackSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.feedbackDaily}>
+                <LineChart data={feedbackSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="period" hide={feedbackRange === "daily"} />
                   <YAxis />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -573,8 +702,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.feedbackDaily || charts.feedbackDaily.length === 0) && (
+          {!isLoading && feedbackSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -582,21 +710,26 @@ export default function AdminDashboardPage() {
         </ChartCard>
 
         <ChartCard
-          title={t("notifications") + " (30d)"}
+          title={t("notifications")}
           description={t("notifications")}
+          action={
+            <ChartRangeToggle
+              value={notificationsRange}
+              onChange={setNotificationsRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
           className="xl:col-span-2"
         >
-          {!isLoading &&
-            charts.notificationsDaily &&
-            charts.notificationsDaily.length > 0 && (
+          {!isLoading && notificationsSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.notificationsDaily}>
+                <LineChart data={notificationsSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="period" hide={notificationsRange === "daily"} />
                   <YAxis />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -637,9 +770,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.notificationsDaily ||
-              charts.notificationsDaily.length === 0) && (
+          {!isLoading && notificationsSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -649,23 +780,23 @@ export default function AdminDashboardPage() {
         <ChartCard
           title={t("approvedShort") + " %"}
           description={t("approvedShort")}
+          action={
+            <ChartRangeToggle
+              value={approvedPercentRange}
+              onChange={setApprovedPercentRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.listingsDaily &&
-            charts.listingsDaily.length > 0 && (
+          {!isLoading && approvedPercentSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart
-                  data={charts.listingsDaily.map((d) => ({
-                    date: d.date,
-                    pct: d.created ? (d.approved / d.created) * 100 : 0,
-                  }))}
-                >
+                <LineChart data={approvedPercentSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="period" hide={approvedPercentRange === "daily"} />
                   <YAxis />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -673,7 +804,7 @@ export default function AdminDashboardPage() {
                   />
                   <Line
                     type="monotone"
-                    dataKey="pct"
+                    dataKey="approvedPct"
                     stroke="var(--chart-2)"
                     strokeWidth={2}
                     dot={false}
@@ -682,8 +813,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.listingsDaily || charts.listingsDaily.length === 0) && (
+          {!isLoading && approvedPercentSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -693,18 +823,23 @@ export default function AdminDashboardPage() {
         <ChartCard
           title={t("feedbacks") + " ★"}
           description={t("avgRating") || "Avg Rating"}
+          action={
+            <ChartRangeToggle
+              value={ratingRange}
+              onChange={setRatingRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.feedbackDaily &&
-            charts.feedbackDaily.length > 0 && (
+          {!isLoading && ratingSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={charts.feedbackDaily}>
+                <LineChart data={ratingSeries}>
                   <CartesianGrid
                     strokeDasharray="3 3"
                     stroke="var(--border)"
                   />
-                  <XAxis dataKey="date" hide />
+                  <XAxis dataKey="period" hide={ratingRange === "daily"} />
                   <YAxis domain={[0, 5]} />
                   <Tooltip
                     content={(props) => <ChartTooltip {...props} />}
@@ -721,8 +856,7 @@ export default function AdminDashboardPage() {
                 </LineChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.feedbackDaily || charts.feedbackDaily.length === 0) && (
+          {!isLoading && ratingSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -732,11 +866,16 @@ export default function AdminDashboardPage() {
         <ChartCard
           title={t("representatives") || "Representatives"}
           description={t("representatives")}
+          action={
+            <ChartRangeToggle
+              value={representativesRange}
+              onChange={setRepresentativesRange}
+              t={t}
+            />
+          }
           isLoading={isLoading}
         >
-          {!isLoading &&
-            charts.representativesByRegion &&
-            charts.representativesByRegion.length > 0 && (
+          {!isLoading && representativeSeries.length > 0 && (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
                   <Tooltip
@@ -744,20 +883,25 @@ export default function AdminDashboardPage() {
                     wrapperClassName="chart-tooltip"
                   />
                   <Pie
-                    data={charts.representativesByRegion}
+                    data={representativeSeries}
                     dataKey="count"
                     nameKey="region"
-                    outerRadius={110}
-                    fill="var(--info)"
+                    outerRadius={88}
                     stroke="var(--background)"
                     strokeWidth={2}
-                  />
+                  >
+                    {representativeSeries.map((entry, index) => (
+                      <Cell
+                        key={entry.region || index}
+                        fill={chartSeriesColor(index)}
+                      />
+                    ))}
+                  </Pie>
+                  <Legend wrapperStyle={{ fontSize: 12 }} />
                 </PieChart>
               </ResponsiveContainer>
             )}
-          {!isLoading &&
-            (!charts.representativesByRegion ||
-              charts.representativesByRegion.length === 0) && (
+          {!isLoading && representativeSeries.length === 0 && (
               <p className="app-text-caption text-center mt-4 text-[var(--foreground)]/60">
                 {t("noData")}
               </p>
@@ -771,28 +915,25 @@ export default function AdminDashboardPage() {
 // Sub-component: ListingsTypeStatusCharts
 function ListingsTypeStatusCharts({
   charts,
+  mode,
   t,
   isLoading,
 }: {
-  charts: any;
+  charts: AdminStatsResponse["charts"];
+  mode: ChartRange;
   t: (k: any) => string;
   isLoading: boolean;
 }) {
-  const [mode, setMode] = useState<"daily" | "weekly" | "monthly" | "yearly">(
-    "daily"
-  );
-
   const dataset = useMemo(() => {
-    switch (mode) {
-      case "weekly":
-        return charts.listingsTypeStatusWeekly || [];
-      case "monthly":
-        return charts.listingsTypeStatusMonthly || [];
-      case "yearly":
-        return charts.listingsTypeStatusYearly || [];
-      default:
-        return charts.listingsTypeStatusDaily || [];
-    }
+    const grouped = charts?.listingsTypeStatus?.[mode];
+    if (Array.isArray(grouped)) return grouped;
+    const legacy = {
+      daily: charts?.listingsTypeStatusDaily,
+      weekly: charts?.listingsTypeStatusWeekly,
+      monthly: charts?.listingsTypeStatusMonthly,
+      yearly: charts?.listingsTypeStatusYearly,
+    }[mode];
+    return Array.isArray(legacy) ? legacy : [];
   }, [charts, mode]);
 
   // Derive category key based on mode
@@ -816,37 +957,20 @@ function ListingsTypeStatusCharts({
     "HIDDEN",
   ];
 
-  const colorPalette = {
+  const colorPalette: Record<string, string> = {
     PENDING: "var(--warning)",
-    APPROVED: "var(--chart-2)",
+    APPROVED: "var(--success)",
     REJECTED: "var(--destructive)",
-    SOLD: "var(--chart-3)",
+    SOLD: "var(--chart-1)",
     RENTED: "var(--info)",
-    EXPIRED: "var(--muted-foreground)",
-    DRAFT: "var(--success)",
-    HIDDEN: "var(--muted-foreground)",
-  } as Record<string, string>;
+    EXPIRED: "var(--chart-5)",
+    DRAFT: "var(--chart-4)",
+    HIDDEN: "var(--chart-3)",
+  };
 
   return (
-    <div className="flex flex-col h-full">
-      {/* Mode Toggle */}
-      <div className="mb-4 flex flex-wrap items-center gap-2 app-text-caption">
-        {(["daily", "weekly", "monthly", "yearly"] as const).map((m) => (
-          <button
-            key={m}
-            onClick={() => setMode(m)}
-            className={
-              "px-3 py-1.5 rounded-full border app-text-micro font-medium transition-colors " +
-              (mode === m
-                ? "bg-[var(--accent)] text-[var(--accent-foreground)] border-[var(--border)] hover:[background-color:var(--btn-accent-hover-bg,var(--primary))] hover:[color:var(--btn-accent-hover-fg,var(--accent-foreground))]"
-                : "bg-[var(--muted)]/20 hover:bg-[var(--muted)]/30 border-[var(--border)]")
-            }
-          >
-            {(t as any)(m)}
-          </button>
-        ))}
-      </div>
-      <div className="flex-1 min-h-[280px]">
+    <div className="flex h-full min-h-0 flex-col">
+      <div className="relative min-h-0 flex-1">
         {!isLoading && dataset.length > 0 ? (
           <ResponsiveContainer width="100%" height="100%">
             <BarChart
@@ -892,25 +1016,15 @@ function ListingsTypeStatusCharts({
         ) : null}
       </div>
       <div className="mt-2 app-text-micro text-[var(--foreground)]/50 flex flex-wrap gap-3">
-        {statusKeys.map((k) => {
-          const swatch =
-            {
-              PENDING: "bg-warning",
-              APPROVED: "bg-success",
-              REJECTED: "bg-destructive",
-              SOLD: "bg-primary",
-              RENTED: "bg-info",
-              EXPIRED: "bg-muted",
-              DRAFT: "bg-success",
-              HIDDEN: "bg-muted",
-            }[k] || "bg-[var(--primary)]";
-          return (
+        {statusKeys.map((k) => (
             <span key={k} className="flex items-center gap-1">
-              <span className={`inline-block size-2 rounded-sm ${swatch}`} />
+              <span
+                className="inline-block size-2 rounded-sm"
+                style={{ background: colorPalette[k] }}
+              />
               {(t as any)(k.toLowerCase()) || k}
             </span>
-          );
-        })}
+          ))}
       </div>
     </div>
   );

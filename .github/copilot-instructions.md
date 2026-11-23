@@ -1,3 +1,15 @@
+# CodeGraph rules (mandatory)
+
+This repo is indexed in `.codegraph/`. Never open, read, grep, or edit that folder. On every code question or edit, call `codegraph_explore` before any other search. Read `docs/feature-graph.md` and `.github/skills/codegraph/SKILL.md` for the symbol names to put in the query.
+
+- Pass `projectPath` `D:\MarketPlace\MarketPlace-Next-JS`.
+- Read a file only when the graph names it, or when Codegraph returns nothing.
+- Before changing a shared symbol, run `codegraph impact <symbol>` in this repo and list the callers.
+- If `codegraph_explore` is missing, run `codegraph explore "<symbols>"` here.
+- If Codegraph errors or returns nothing, say so, then use normal search.
+- Diagrams are Mermaid from graph results. Mark anything unconfirmed.
+- Do not guess how modules connect.
+
 # GitHub Copilot Instructions — Marketplace Frontend
 
 > This file is the authoritative reference for how this codebase is built.

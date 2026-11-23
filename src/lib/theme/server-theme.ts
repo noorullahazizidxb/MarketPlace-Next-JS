@@ -42,7 +42,32 @@ async function ensureUiContextFile() {
   }
 }
 
+let lastGoodServerState: UiContextState | null = null;
+
 export async function getUiContextState(): Promise<UiContextState> {
+  if (process.env.VERCEL && process.env.BACKEND_VERCEL_URL) {
+    const backendUrl = `${process.env.BACKEND_VERCEL_URL.replace(/\/+$/, "")}/api/ui-context`;
+    for (const delay of [0, 200, 600]) {
+      if (delay) await new Promise((resolve) => setTimeout(resolve, delay));
+      try {
+        const response = await fetch(backendUrl, {
+          cache: "no-store",
+          signal: AbortSignal.timeout(6000),
+        });
+        if (response.ok) {
+          const body = await response.json();
+          lastGoodServerState = normalize(
+            (body?.data ?? body) as Partial<UiContextState>,
+          );
+          return lastGoodServerState;
+        }
+      } catch {
+        // retry
+      }
+    }
+    return lastGoodServerState ?? normalize({ updatedAt: new Date().toISOString() });
+  }
+
   try {
     await ensureUiContextFile();
     const raw = await readFile(UI_CONTEXT_FILE, "utf-8");

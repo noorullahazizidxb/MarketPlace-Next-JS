@@ -361,18 +361,31 @@ export type ListingCardVariant =
   | "horizontal"
   | "editorial"
   | "minimal";
-export type NavbarVariant = "standard" | "glass" | "minimal" | "fullwidth";
+/** Glass-pill navbar styles. devminds / v1 / v2 recreate devminds.net, /v1 and /v2. */
+export type NavbarVariant = "devminds" | "v1" | "v2" | "standard" | "fullwidth";
+/** Per-navbar-type glass tint opacity, 0–100 (percent of the background colour). */
+export type NavbarOpacitySettings = Partial<Record<NavbarVariant, number>>;
 export type FooterVariant = "standard" | "compact" | "editorial" | "minimal";
 export type SidebarVariantStyle = "default" | "glass" | "minimal" | "brand";
 export type BlogCardVariant = "card" | "horizontal" | "editorial" | "compact";
+export type StoriesBarVariant = "bubble" | "cards" | "strip";
+export type SkeletonTheme = "shimmer" | "pulse" | "wave";
+export type CaptchaVariant = "classic" | "tiles" | "slider";
+export type RadiusVariant = "default" | "none" | "sm" | "md" | "lg" | "xl";
 
 // Switchable per-component style variants persisted in ui-context.json.
 export interface ComponentVariantSettings {
   listingCard: ListingCardVariant;
   navbar: NavbarVariant;
+  navbarOpacity?: NavbarOpacitySettings;
   footer: FooterVariant;
   sidebar: SidebarVariantStyle;
   blogCard: BlogCardVariant;
+  storiesBar?: StoriesBarVariant;
+  skeletonTheme?: SkeletonTheme;
+  captchaVariant?: CaptchaVariant;
+  cardRadius?: RadiusVariant;
+  tableRadius?: RadiusVariant;
 }
 
 // Root UI context shape.
@@ -381,5 +394,6 @@ export interface UiContextState {
   theme: ThemeSettings;
   sidebar: SidebarSettings;
   componentVariants?: Partial<ComponentVariantSettings>;
+  customPresets?: CustomThemePreset[];
   updatedAt?: string;
 }

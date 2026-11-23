@@ -1,7 +1,9 @@
 "use client";
 
 import Image from "next/image";
-import { useState } from "react";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
+import { Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
+import { NavbarCategories } from "@/components/layout/navbar-categories";
 import { motion } from "framer-motion";
 import { usePathname } from "next/navigation";
 import {
@@ -14,27 +16,47 @@ import {
   Phone,
   LogIn,
   Newspaper,
+  ShieldCheck,
 } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { useLocalMutation } from "@/lib/api-hooks";
-import { SearchBox } from "@/components/ui/search-box";
-import { ThemeToggle } from "@/components/ui/theme-toggle";
+import { Button } from "@/components/ui/molecules/button";
+import { useSignOut } from "@/lib/auth/use-sign-out";
+import { SearchBox } from "@/components/ui/molecules/search-box";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { useAuth } from "@/lib/use-auth";
 import Link from "next/link";
 import { useNotificationsRealtime } from "@/lib/use-notifications-realtime";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { useNotificationsStore } from "@/store/notifications.store";
-import { NotificationsPanel } from "@/components/ui/notifications-panel";
+import { NotificationsPanel } from "@/components/ui/organisms/notifications-panel";
 import { asset } from "@/lib/assets";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
 import { useLanguage } from "@/components/providers/language-provider";
+import { useComponentVariants } from "@/hooks/use-component-variants";
+import type { NavbarVariant } from "@/lib/theme/types";
+import { DEFAULT_NAVBAR_OPACITY } from "@/store/component-variants.store";
 
-export function Topbar() {
-  const { user, counts } = useAuth();
+export function Topbar({
+  variantOverride,
+  opacityOverride,
+  preview = false,
+}: {
+  variantOverride?: NavbarVariant;
+  /** Glass tint 0–100 used instead of the saved value (settings previews). */
+  opacityOverride?: number;
+  preview?: boolean;
+}) {
+  const { user, counts, isAdmin } = useAuth();
   const unreadCount = useNotificationsStore((s) => s.unreadCount);
   const { t, locale, isRtl } = useLanguage();
+  const { variants } = useComponentVariants();
+  const navbarVariant = variantOverride ?? variants.navbar;
+  const glassAlpha =
+    opacityOverride ??
+    variants.navbarOpacity?.[navbarVariant] ??
+    DEFAULT_NAVBAR_OPACITY[navbarVariant] ??
+    80;
   const [notifOpen, setNotifOpen] = useState(false);
-  useNotificationsRealtime(!!user);
+  useNotificationsRealtime(!!user && !preview);
   const [open, setOpen] = useState(false);
   const avatar =
     (user as any)?.photo || (user as any)?.avatarUrl || "/favicon.svg";
@@ -43,46 +65,60 @@ export function Topbar() {
   const pathname = usePathname();
   const isActive = (href: string) => (pathname || "").startsWith(href);
 
+  // Keep the page offset equal to the real bar height (it differs per variant / wraps / density),
+  // so content never sits under the bar or leaves a blank strip above it.
+  const headerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    const el = headerRef.current;
+    if (!el || preview || typeof ResizeObserver === "undefined") return;
+    const root = document.documentElement;
+    const sync = () => root.style.setProperty("--modern-navbar-offset", `${Math.ceil(el.getBoundingClientRect().height)}px`);
+    sync();
+    const ro = new ResizeObserver(sync);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      root.style.removeProperty("--modern-navbar-offset");
+    };
+  }, [preview, navbarVariant]);
+
   return (
     <>
-      <motion.header
-        initial={{ y: -32, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-        className="modern-navbar"
+      <header
+        ref={headerRef}
+        className={`modern-navbar nav-v-${navbarVariant}`}
+        data-navbar-variant={navbarVariant}
+        style={{ "--nav-glass-alpha": glassAlpha } as CSSProperties}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
-        <div className="relative overflow-visible">
-          <div className="absolute inset-0 -z-10 opacity-60 [mask-image:radial-gradient(60%_60%_at_50%_0%,#000_30%,transparent_80%)]">
-            <div className="absolute -inset-x-20 -top-32 h-56 bg-linear-to-r from-primary/30 via-accent/20 to-secondary/30 blur-3xl" />
-          </div>
-          <div className="relative w-full rounded-2xl liquid-glass glass-hover">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
+          className="modern-navbar-pill relative overflow-visible"
+        >
+          <div
+            className="relative w-full liquid-glass liquid-glass--borderless"
+          >
             <div className="modern-navbar-grid">
               <motion.div
                 whileHover={{ y: -2 }}
                 className="flex items-center gap-[var(--space-gap)]"
               >
-                <Tooltip
-                  content={t("toggleTheme" as any) || "Toggle theme"}
-                  side="bottom"
-                >
-                  <ThemeToggle iconOnly className="hidden sm:grid" />
-                </Tooltip>
-                <div className="modern-navbar-logo">
-                  <Image
-                    src="/brand/devminds-logo.png"
-                    alt="DevMinds"
-                    width={48}
-                    height={48}
-                    sizes="48px"
-                    className="w-full h-full object-contain"
-                  />
-                </div>
+                {navbarVariant === "fullwidth" && (
+                  <Tooltip
+                    content={t("toggleTheme" as any) || "Toggle theme"}
+                    side="bottom"
+                  >
+                    <ThemeToggle iconOnly className="hidden sm:grid" />
+                  </Tooltip>
+                )}
+                <ThemeLogo alt="DevMinds Marketplace" className="h-10 w-auto shrink-0" />
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
                 </span>
               </motion.div>
-              <nav className="hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
+              <nav className="app-nav-tray hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
                 <motion.div
                   whileHover={{ y: -2, scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
@@ -95,10 +131,7 @@ export function Topbar() {
                       <Home className="size-4" />
                       <span>{t("home")}</span>
                       {isActive("/listings") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -115,10 +148,7 @@ export function Topbar() {
                       <Newspaper className="size-4" />
                       <span>{t("blogs")}</span>
                       {isActive("/blogs") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -135,10 +165,7 @@ export function Topbar() {
                       <Info className="size-4" />
                       <span>{t("about")}</span>
                       {isActive("/about") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -155,10 +182,7 @@ export function Topbar() {
                       <Phone className="size-4" />
                       <span>{t("contact")}</span>
                       {isActive("/contact") && (
-                        <motion.span
-                          layoutId="top-underline"
-                          className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
-                        />
+                        <ActiveNavUnderline />
                       )}
                     </Link>
                   </Tooltip>
@@ -168,7 +192,7 @@ export function Topbar() {
 
               <div className="flex items-center justify-end gap-[var(--space-gap)]">
                 {/* Notifications */}
-                {user && (
+                {user && !preview && (
                   <>
                     <Tooltip
                       content={
@@ -211,7 +235,14 @@ export function Topbar() {
                     <SearchBox placeholder={t("search")} />
                   </Tooltip>
                 </div>
-                {user ? (
+                {preview ? (
+                  <Link
+                    href="/sign-in"
+                    className="rounded-xl border border-border/60 bg-background/70 px-3 py-2 app-text-caption font-medium"
+                  >
+                    Sign In
+                  </Link>
+                ) : user ? (
                   <div className="relative">
                     <button
                       onClick={() => setOpen((v) => !v)}
@@ -284,6 +315,17 @@ export function Topbar() {
                               </span>
                             )}
                           </Link>
+                          {isAdmin && (
+                            <Link
+                              href="/admin"
+                              className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
+                            >
+                              <ShieldCheck className="size-4" />
+                              <span className="app-text-body">
+                                Admin
+                              </span>
+                            </Link>
+                          )}
                           <LogoutButton />
                         </div>
                       </motion.div>
@@ -310,37 +352,43 @@ export function Topbar() {
                 <Tooltip content={t("language")} side="bottom">
                   <LanguageDropdown className="hidden sm:inline-flex" />
                 </Tooltip>
+                {navbarVariant !== "fullwidth" && (
+                  <Tooltip content={t("toggleTheme" as any) || "Toggle theme"} side="bottom">
+                    <ThemeToggle iconOnly className="app-nav-theme hidden sm:grid" />
+                  </Tooltip>
+                )}
               </div>
             </div>
           </div>
-        </div>
-      </motion.header>
+          {/* Every navbar variant carries the marketplace category strip. */}
+          <Suspense fallback={null}>
+            <NavbarCategories />
+          </Suspense>
+        </motion.div>
+      </header>
     </>
+  );
+}
+
+/** Animated underline for the active top-nav item; uses the accent design token in light & dark themes. */
+function ActiveNavUnderline() {
+  return (
+    <motion.span
+      layoutId="top-underline"
+      aria-hidden
+      className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
+    />
   );
 }
 
 function LogoutButton() {
   const { t } = useLanguage();
-  const { mutateAsync, isPending } = useLocalMutation("post", "/api/logout");
+  const { signOut, isPending } = useSignOut();
   return (
     <button
-      onClick={async () => {
-        try {
-          await mutateAsync({} as any);
-        } catch {}
-        try {
-          const { setCachedToken } = await import("@/lib/axiosClient");
-          const { useAuthStore } = await import("@/store/auth.store");
-          const { useListingsStore } = await import("@/store/listings.store");
-          const { useNotificationsStore } =
-            await import("@/store/notifications.store");
-          setCachedToken(null);
-          useAuthStore.getState().clear();
-          useListingsStore.getState().clear();
-          useNotificationsStore.getState().clear();
-        } catch {}
-        window.location.href = "/sign-in";
-      }}
+      type="button"
+      onClick={signOut}
+      disabled={isPending}
       className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-background/10 text-left"
     >
       {isPending ? (

@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { setSession, setUserInfo } from "@/lib/session";
+import { buildSessionCookies } from "@/lib/session";
+import { getApiBase } from "@/lib/server/backend-api";
+import { applySessionCookies } from "@/lib/session-cookies";
 
 function getBaseUrl(req: NextRequest) {
   const forwardedProto = req.headers.get("x-forwarded-proto");
@@ -9,14 +11,6 @@ function getBaseUrl(req: NextRequest) {
   return `${protocol}://${host}`;
 }
 
-function getApiBase() {
-  return (
-    process.env.NEXT_PUBLIC_API_BASE_URL ||
-    process.env.NEXT_PUBLIC_API_BASE ||
-    process.env.API_BASE ||
-    "http://localhost:3002/api"
-  ).replace(/\/$/, "");
-}
 
 export async function GET(req: NextRequest) {
   const code = req.nextUrl.searchParams.get("code");
@@ -58,9 +52,6 @@ export async function GET(req: NextRequest) {
     return NextResponse.redirect(fallbackTarget);
   }
 
-  await setSession({ token: payload.token, user: payload.user });
-  await setUserInfo(payload.user).catch(() => null);
-
   let next = "/listings";
   if (rawState) {
     try {
@@ -71,5 +62,7 @@ export async function GET(req: NextRequest) {
     } catch { }
   }
 
-  return NextResponse.redirect(new URL(next, getBaseUrl(req)));
+  const response = NextResponse.redirect(new URL(next, getBaseUrl(req)));
+  const cookies = await buildSessionCookies({ token: payload.token, refreshToken: payload.refreshToken ?? null, user: payload.user });
+  return applySessionCookies(response, cookies);
 }

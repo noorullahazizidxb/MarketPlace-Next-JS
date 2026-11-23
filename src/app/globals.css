@@ -961,8 +961,6 @@
 @utility app-shell-page {
   width: 100%;
   min-width: 0;
-  padding-inline: var(--space-page-x);
-  padding-block: var(--space-page-y);
   display: flex;
   flex-direction: column;
   gap: var(--space-section);
@@ -1012,6 +1010,29 @@
 
 @utility app-density-grid-gap {
   gap: var(--space-gap);
+}
+
+/* Marketplace listings: 1 / sm:2 / md:5 / lg:5 / xl:6 — locked in CSS so columns cannot be purged. */
+@utility listing-marketplace-grid {
+  display: grid;
+  grid-template-columns: repeat(1, minmax(0, 1fr));
+  align-items: stretch;
+
+  @media (width >= 40rem) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  @media (width >= 48rem) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  @media (width >= 64rem) {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+
+  @media (width >= 80rem) {
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+  }
 }
 
 @utility app-density-stat-tile-pad {
@@ -1587,6 +1608,13 @@ textarea[data-slot="textarea"],
   background: transparent;
 }
 
+/* Prevent page-level horizontal scroll from decorative blur / wide tracks */
+html,
+body {
+  overflow-x: clip;
+  max-width: 100%;
+}
+
 /* ── Marketplace locale fonts ── */
 html[lang="en"] body {
   font-family: var(
@@ -1793,6 +1821,10 @@ html[lang="fa"] h6 {
   mask-composite: exclude;
   opacity: 0.9;
 }
+/* Opt-out of the primary/secondary gradient outline (used by the top navbar). */
+.liquid-glass--borderless::before {
+  content: none;
+}
 
 .app-navbar {
   position: sticky;
@@ -1928,6 +1960,12 @@ button[aria-label^="Go to slide"],
 .safe-pb {
   padding-bottom: calc(var(--safe-bottom, 0px) + 0.25rem);
 }
+
+.sheet-dynamic-height {
+  bottom: 0;
+  height: var(--sheet-height, 70dvh);
+  max-height: 100dvh;
+}
 .safe-pt {
   padding-top: calc(var(--safe-top, 0px) + 0.25rem);
 }
@@ -1959,17 +1997,42 @@ button[aria-label^="Go to slide"],
 }
 
 .modern-navbar {
-  position: sticky;
-  inset-block-start: 0;
+  position: fixed;
+  top: 0;
+  inset-inline: 0;
   z-index: 500;
   width: 100%;
-  padding: calc(var(--space-gap) * 0.5) var(--space-page-x);
-  background: linear-gradient(
-    to bottom,
-    color-mix(in oklch, var(--background) 92%, transparent),
-    color-mix(in oklch, var(--background) 68%, transparent)
-  );
-  backdrop-filter: blur(1rem) saturate(140%);
+  /* Flush: no padding around the bar, so no transparent frame/band shows page content. */
+  margin: 0;
+  padding: 0;
+  /* The whole fixed shell (edge to edge, from top:0) is ONE glass surface: translucent tint +
+     backdrop blur. Previously the shell was a near-clear 22% tint without matching blur while the
+     inner pill had its own tint/blur, so the strip above/around the pill read as a white gap. */
+  background: color-mix(in oklch, var(--background) 62%, transparent);
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  border-bottom: 1px solid color-mix(in oklch, var(--border) 45%, transparent);
+  box-shadow: 0 0.75rem 2rem -1.25rem
+    color-mix(in oklch, var(--foreground) 22%, transparent);
+  isolation: isolate;
+}
+
+/* Offset page content under the fixed bar (desktop Topbar only). */
+@media (min-width: 768px) {
+  body:has(.modern-navbar) {
+    /* Measured bar height (set by Topbar via ResizeObserver); 5.5rem only before hydration. */
+    padding-top: var(--modern-navbar-offset, 5.5rem);
+  }
+}
+
+/* Inner bar sits on the shell's glass: no second tint/blur layer (that produced a lighter band). */
+.modern-navbar .liquid-glass {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 
 .modern-navbar-grid {
@@ -2002,6 +2065,47 @@ button[aria-label^="Go to slide"],
   background: color-mix(in oklch, var(--card) 92%, var(--background));
 }
 
+/* Blue C lockup on light; orange D lockup on dark. Explicit theme wins. */
+.theme-logo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 0;
+  max-width: 100%;
+}
+
+.theme-logo-img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+}
+
+.theme-logo-dark {
+  display: none;
+}
+
+html.dark .theme-logo-light,
+html[data-theme="dark"] .theme-logo-light {
+  display: none;
+}
+
+html.dark .theme-logo-dark,
+html[data-theme="dark"] .theme-logo-dark {
+  display: block;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.light):not([data-theme="light"]) .theme-logo-light {
+    display: none;
+  }
+
+  html:not(.light):not([data-theme="light"]) .theme-logo-dark {
+    display: block;
+  }
+}
+
 ::selection {
   color: var(--primary-foreground);
   background: color-mix(in oklch, var(--primary) 78%, transparent);
@@ -2024,6 +2128,11 @@ button[aria-label^="Go to slide"],
 :where(a, button, input, select, textarea, [tabindex]):focus-visible {
   outline: 2px solid color-mix(in oklch, var(--ring) 88%, transparent);
   outline-offset: 3px;
+}
+
+[data-control-shell] :is(input, textarea):focus-visible {
+  outline: none;
+  outline-offset: 0;
 }
 
 .app-premium-surface {
@@ -2283,4 +2392,145 @@ html[data-appearance-preview="true"] {
   .appearance-preview-canvas {
     border: 1px solid CanvasText;
   }
+}
+
+/* ───────────────────────── Glass-pill navbar variants ─────────────────────────
+   Every variant is a glass pill that hangs flush from top:0 (no padding ring, no spacer band:
+   the fixed shell itself is fully transparent and click-through, only the pill paints).
+   --nav-glass-alpha (0–100) is the per-variant tint set by the admin slider.
+     devminds → devminds.net      (soft tray, accent underline, round chips)
+     v1       → devminds.net/v1   (inverted active chip in a round tray, spinning chips)
+     v2       → devminds.net/v2   (squircle pill + tray, primary-tinted active)
+     standard → flat text links + underline, in pill form
+     fullwidth→ wide pill, theme toggle at the logo */
+.modern-navbar {
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  border: 0;
+  box-shadow: none;
+  pointer-events: none;
+}
+.modern-navbar-pill {
+  --nav-pill-radius: 1.75rem;
+  pointer-events: auto;
+  width: min(calc(100% - 1.5rem), 82rem);
+  margin-inline: auto;
+  border: 1px solid color-mix(in oklch, var(--border) 70%, transparent);
+  border-top: 0;
+  border-radius: 0 0 var(--nav-pill-radius) var(--nav-pill-radius);
+  background: color-mix(
+    in oklch,
+    var(--background) calc(var(--nav-glass-alpha, 80) * 1%),
+    transparent
+  );
+  -webkit-backdrop-filter: saturate(180%) blur(20px);
+  backdrop-filter: saturate(180%) blur(20px);
+  box-shadow: 0 14px 40px -24px color-mix(in oklch, var(--foreground) 35%, transparent);
+}
+.modern-navbar-pill .modern-navbar-grid { width: 100%; padding-inline: 1rem 0.75rem; }
+.modern-navbar-pill > nav[aria-label="Marketplace categories"] { padding-bottom: 0.6rem; }
+.modern-navbar :is(.app-nav-theme, a[href="/sign-in"]) { border-radius: 999px; }
+.modern-navbar .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 999px; }
+/* Active link underline (incl. its layout animation): accent token, every variant. */
+.modern-navbar .app-nav-link > span.absolute { background: var(--accent); }
+
+/* DevMinds (devminds.net) */
+.nav-v-devminds .modern-navbar-grid { min-height: 4.4rem; }
+.nav-v-devminds .app-nav-tray {
+  gap: 0.25rem;
+  padding: 0.3rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--card) calc(var(--nav-glass-alpha, 80) * 1% + 10%), transparent);
+  box-shadow: 0 1px 0 color-mix(in oklch, var(--foreground) 4%, transparent);
+}
+.nav-v-devminds .app-nav-link { padding-inline: 1rem; font-weight: 600; background: transparent !important; }
+.nav-v-devminds .app-nav-link svg { display: none; }
+.nav-v-devminds .app-nav-link.is-active { color: var(--foreground); }
+.nav-v-devminds .app-nav-link > span.absolute { left: 1rem; right: 1rem; bottom: 0.3rem; }
+
+/* V1 (devminds.net/v1) */
+.nav-v-v1 .modern-navbar-pill { --nav-pill-radius: 2.25rem; box-shadow: 0 12px 45px rgb(0 0 0 / 0.16); }
+.nav-v-v1 .modern-navbar-grid { min-height: 4.6rem; }
+.nav-v-v1 .app-nav-tray {
+  gap: 0.3rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
+  background: color-mix(in oklch, var(--muted) 60%, transparent);
+}
+.nav-v-v1 .app-nav-link { padding-inline: 0.95rem; font-weight: 600; transform: none !important; }
+.nav-v-v1 .app-nav-link svg { display: none; }
+.nav-v-v1 .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
+.nav-v-v1 .app-nav-link.is-active {
+  color: var(--background);
+  background: var(--foreground) !important;
+}
+.nav-v-v1 .app-nav-link > span.absolute { left: 0.95rem; right: 0.95rem; bottom: 0.25rem; }
+.nav-v-v1 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme) { transition: transform 0.3s ease; }
+.nav-v-v1 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme):hover { transform: rotate(8deg) scale(1.04); }
+
+/* V2 (devminds.net/v2): squircle */
+.nav-v-v2 .modern-navbar-pill { --nav-pill-radius: 1.25rem; box-shadow: 0 18px 50px -34px #000; }
+.nav-v-v2 .modern-navbar-grid { min-height: 4.6rem; }
+.nav-v-v2 .app-nav-tray {
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 1rem;
+  border: 1px solid color-mix(in oklch, var(--border) 75%, transparent);
+  background: color-mix(in oklch, var(--card) 70%, transparent);
+}
+.nav-v-v2 .app-nav-link { border-radius: 0.75rem; padding-inline: 0.9rem; font-weight: 600; transform: none !important; }
+.nav-v-v2 .app-nav-link svg { display: none; }
+.nav-v-v2 .app-nav-link:hover { background: color-mix(in oklch, var(--foreground) 6%, transparent); }
+.nav-v-v2 .app-nav-link.is-active {
+  color: var(--primary);
+  background: color-mix(in oklch, var(--primary) 14%, transparent) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.18);
+}
+.nav-v-v2 .app-nav-link > span.absolute { left: 0.9rem; right: 0.9rem; bottom: 0.2rem; }
+.nav-v-v2 :is(.app-nav-theme, a[href="/sign-in"]),
+.nav-v-v2 .modern-navbar-grid > div:last-child :is(.glass, a[href="/sign-in"]) { border-radius: 0.875rem; }
+.nav-v-v2 .modern-navbar-grid > div:last-child :is(.glass, .app-nav-theme):hover { transform: translateY(-2px); }
+
+/* Standard: flat text links + underline, pill form */
+.nav-v-standard .modern-navbar-grid { min-height: 4rem; }
+.nav-v-standard .app-nav-tray { gap: 2rem; }
+.nav-v-standard .app-nav-link {
+  min-height: 2rem;
+  padding-inline: 0;
+  border-radius: 0;
+  background: transparent !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transform: none !important;
+}
+.nav-v-standard .app-nav-link svg { display: none; }
+.nav-v-standard .app-nav-link > span.absolute { left: 0; right: 0; bottom: -0.1rem; }
+
+/* Full width: widest pill */
+.nav-v-fullwidth .modern-navbar-pill { width: calc(100% - 0.75rem); --nav-pill-radius: 1.5rem; }
+
+/* ───────────────────────── Card / table border-radius variants ─────────────────────────
+   Set on <html data-card-radius / data-table-radius> by ComponentRadiusSync; "default" = untouched. */
+html[data-card-radius="none"] { --cv-card-radius: 0px; }
+html[data-card-radius="sm"] { --cv-card-radius: 0.375rem; }
+html[data-card-radius="md"] { --cv-card-radius: 0.75rem; }
+html[data-card-radius="lg"] { --cv-card-radius: 1.25rem; }
+html[data-card-radius="xl"] { --cv-card-radius: 2rem; }
+html[data-card-radius]:not([data-card-radius="default"])
+  :is(.app-card, [data-slot="card"], main [class*="bg-card"][class*="rounded"]:not([class*="rounded-full"]), main article.rounded-xl, main article.rounded-2xl, main article.rounded-3xl) {
+  border-radius: var(--cv-card-radius) !important;
+}
+html[data-table-radius="none"] { --cv-table-radius: 0px; }
+html[data-table-radius="sm"] { --cv-table-radius: 0.375rem; }
+html[data-table-radius="md"] { --cv-table-radius: 0.75rem; }
+html[data-table-radius="lg"] { --cv-table-radius: 1.25rem; }
+html[data-table-radius="xl"] { --cv-table-radius: 2rem; }
+html[data-table-radius]:not([data-table-radius="default"])
+  :is([data-slot="table-container"], [role="region"]:has(> table), .app-table) {
+  border-radius: var(--cv-table-radius) !important;
+  overflow: auto;
+  border: 1px solid color-mix(in oklch, var(--border) 80%, transparent);
 }

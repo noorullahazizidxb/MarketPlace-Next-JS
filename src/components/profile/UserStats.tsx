@@ -1,8 +1,8 @@
 "use client";
 import { motion } from "framer-motion";
-import { Card } from "@/components/ui/card";
+import { Card } from "@/components/ui/molecules/card";
 import { Users, Grid3X3, BadgeCheck } from "lucide-react";
-import AnimatedNumber from "@/components/ui/animated-number";
+import AnimatedNumber from "@/components/ui/atoms/animated-number";
 
 const accent: Record<string, { icon: string; bg: string; glow: string }> = {
   "Total Listings": {

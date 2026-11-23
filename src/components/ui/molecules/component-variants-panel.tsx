@@ -6,7 +6,9 @@ import {
   BookOpen,
   List,
 } from "lucide-react";
+import type { ReactNode } from "react";
 import { useComponentVariants } from "@/hooks/use-component-variants";
+import { ComponentVariantPreview } from "@/components/ui/molecules/component-variant-preview";
 import type {
   ListingCardVariant,
   NavbarVariant,
@@ -16,8 +18,10 @@ import type {
   StoriesBarVariant,
   SkeletonTheme,
   CaptchaVariant,
+  RadiusVariant,
 } from "@/lib/theme/types";
 import { cn } from "@/lib/cn";
+import { DEFAULT_NAVBAR_OPACITY } from "@/store/component-variants.store";
 
 type VariantOption<T extends string> = {
   value: T;
@@ -30,33 +34,50 @@ function VariantPicker<T extends string>({
   options,
   value,
   onChange,
+  renderPreview,
+  renderFooter,
 }: {
   label: string;
   options: VariantOption<T>[];
   value: T;
   onChange: (v: T) => void;
+  renderPreview: (variant: T) => ReactNode;
+  renderFooter?: (variant: T) => ReactNode;
 }) {
   return (
     <div className="space-y-2">
       <p className="app-text-label font-medium">{label}</p>
-      <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-4">
         {options.map((opt) => (
-          <button
+          <article
             key={opt.value}
-            type="button"
-            onClick={() => onChange(opt.value)}
             className={cn(
-              "rounded-xl border p-3 text-left transition-all duration-150 space-y-1",
+              "overflow-hidden rounded-xl border transition-all duration-150",
               value === opt.value
                 ? "border-primary bg-primary/8 ring-1 ring-primary/40"
                 : "border-border bg-muted/30 hover:border-primary/40 hover:bg-muted/60",
             )}
           >
-            <p className="app-text-label font-semibold truncate">{opt.label}</p>
-            <p className="app-text-caption text-muted-foreground line-clamp-2">
-              {opt.description}
-            </p>
-          </button>
+            <button
+              type="button"
+              onClick={() => onChange(opt.value)}
+              aria-pressed={value === opt.value}
+              className="w-full p-3 text-left"
+            >
+              <p className="app-text-label font-semibold truncate">{opt.label}</p>
+              <p className="app-text-caption text-muted-foreground line-clamp-2">
+                {opt.description}
+              </p>
+            </button>
+            <div
+              aria-hidden="true"
+              inert
+              className="h-28 overflow-hidden border-t border-border/60 bg-background/50"
+            >
+              {renderPreview(opt.value)}
+            </div>
+            {renderFooter?.(opt.value)}
+          </article>
         ))}
       </div>
     </div>
@@ -88,24 +109,29 @@ const listingCardOptions: VariantOption<ListingCardVariant>[] = [
 
 const navbarOptions: VariantOption<NavbarVariant>[] = [
   {
+    value: "devminds",
+    label: "DevMinds",
+    description: "Glass pill, soft link tray + primary underline (devminds.net)",
+  },
+  {
+    value: "v1",
+    label: "V1",
+    description: "Glass pill, round tray with inverted active chip (devminds.net/v1)",
+  },
+  {
+    value: "v2",
+    label: "V2",
+    description: "Squircle glass pill, primary-tinted active link (devminds.net/v2)",
+  },
+  {
     value: "standard",
     label: "Standard",
-    description: "Logo + search + actions",
-  },
-  {
-    value: "glass",
-    label: "Glass Pill",
-    description: "Floating glassmorphic nav",
-  },
-  {
-    value: "minimal",
-    label: "Minimal",
-    description: "Slim bar with icons only",
+    description: "Glass pill with flat text links + underline",
   },
   {
     value: "fullwidth",
     label: "Full Width",
-    description: "Wide with category strip",
+    description: "Widest glass pill, theme toggle by the logo",
   },
 ];
 
@@ -176,12 +202,62 @@ const captchaOptions: VariantOption<CaptchaVariant>[] = [
   { value: "slider", label: "Slider", description: "Drag to the answer" },
 ];
 
+const radiusOptions: VariantOption<RadiusVariant>[] = [
+  { value: "default", label: "Default", description: "Each component's own radius" },
+  { value: "none", label: "Square", description: "0px — sharp corners" },
+  { value: "sm", label: "Small", description: "6px" },
+  { value: "md", label: "Medium", description: "12px" },
+  { value: "lg", label: "Large", description: "20px" },
+  { value: "xl", label: "Extra large", description: "32px" },
+];
+
+const radiusPx: Record<RadiusVariant, string> = {
+  default: "1rem",
+  none: "0px",
+  sm: "0.375rem",
+  md: "0.75rem",
+  lg: "1.25rem",
+  xl: "2rem",
+};
+
+function RadiusPreview({ kind, variant }: { kind: "card" | "table"; variant: RadiusVariant }) {
+  const radius = radiusPx[variant];
+  if (kind === "card") {
+    return (
+      <div className="grid h-full place-items-center p-3">
+        <div
+          className="flex h-20 w-36 flex-col justify-end gap-1 border border-border bg-card p-2 shadow-sm"
+          style={{ borderRadius: radius }}
+        >
+          <span className="h-2 w-20 rounded-full bg-primary/50" />
+          <span className="h-2 w-14 rounded-full bg-muted-foreground/30" />
+        </div>
+      </div>
+    );
+  }
+  return (
+    <div className="grid h-full place-items-center p-3">
+      <div className="w-40 overflow-hidden border border-border bg-card" style={{ borderRadius: radius }}>
+        {[0, 1, 2].map((row) => (
+          <div key={row} className={cn("flex gap-2 px-2 py-1.5", row === 0 ? "bg-primary/15" : "border-t border-border/60")}>
+            <span className="h-1.5 w-10 rounded-full bg-foreground/30" />
+            <span className="h-1.5 w-14 rounded-full bg-foreground/20" />
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 /**
  * Molecule: Component variant picker panel.
  * Used in the Appearance settings to switch the visual style of major UI components.
  */
 export function ComponentVariantsPanel() {
-  const { variants, updateVariant, resetVariants } = useComponentVariants();
+  const { variants, error, updateVariant, resetVariants, setNavbarOpacity } =
+    useComponentVariants();
+  const opacityOf = (v: NavbarVariant) =>
+    variants.navbarOpacity?.[v] ?? DEFAULT_NAVBAR_OPACITY[v];
 
   return (
     <div className="rounded-xl border bg-card text-card-foreground shadow-sm">
@@ -209,11 +285,19 @@ export function ComponentVariantsPanel() {
       </div>
 
       <div className="space-y-6 p-4 md:p-6">
+        {error && (
+          <p role="alert" className="app-text-caption text-destructive">
+            {error}
+          </p>
+        )}
         <VariantPicker
           label="Listing Card Style"
           options={listingCardOptions}
           value={variants.listingCard}
           onChange={(v) => updateVariant("listingCard", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="listingCard" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -221,6 +305,34 @@ export function ComponentVariantsPanel() {
           options={navbarOptions}
           value={variants.navbar}
           onChange={(v) => updateVariant("navbar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview
+              kind="navbar"
+              variant={variant}
+              opacity={opacityOf(variant)}
+            />
+          )}
+          renderFooter={(variant) => (
+            <label className="flex flex-col gap-1 border-t border-border/60 px-3 py-2">
+              <span className="flex items-center justify-between app-text-caption">
+                <span className="font-medium">Glass opacity</span>
+                <span className="tabular-nums text-muted-foreground">
+                  {opacityOf(variant)}%
+                </span>
+              </span>
+              <input
+                type="range"
+                min={0}
+                max={100}
+                step={1}
+                value={opacityOf(variant)}
+                onChange={(e) => setNavbarOpacity(variant, Number(e.target.value))}
+                aria-label={`${variant} navbar glass opacity`}
+                data-navbar-opacity={variant}
+                className="w-full accent-[var(--primary)]"
+              />
+            </label>
+          )}
         />
 
         <VariantPicker
@@ -228,6 +340,9 @@ export function ComponentVariantsPanel() {
           options={footerOptions}
           value={variants.footer}
           onChange={(v) => updateVariant("footer", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="footer" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -235,6 +350,9 @@ export function ComponentVariantsPanel() {
           options={sidebarOptions}
           value={variants.sidebar}
           onChange={(v) => updateVariant("sidebar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="sidebar" variant={variant} />
+          )}
         />
 
         <VariantPicker
@@ -242,27 +360,55 @@ export function ComponentVariantsPanel() {
           options={blogCardOptions}
           value={variants.blogCard}
           onChange={(v) => updateVariant("blogCard", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="blogCard" variant={variant} />
+          )}
         />
 
         <VariantPicker
           label="Stories Bar Style"
           options={storiesOptions}
-          value={(variants as any).storiesBar ?? "bubble"}
-          onChange={(v) => updateVariant("storiesBar" as any, v)}
+          value={variants.storiesBar ?? "bubble"}
+          onChange={(v) => updateVariant("storiesBar", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="storiesBar" variant={variant} />
+          )}
         />
 
         <VariantPicker
           label="Skeleton Animation"
           options={skeletonOptions}
-          value={(variants as any).skeletonTheme ?? "shimmer"}
-          onChange={(v) => updateVariant("skeletonTheme" as any, v)}
+          value={variants.skeletonTheme ?? "shimmer"}
+          onChange={(v) => updateVariant("skeletonTheme", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="skeletonTheme" variant={variant} />
+          )}
         />
 
         <VariantPicker
           label="CAPTCHA Style"
           options={captchaOptions}
-          value={(variants as any).captchaVariant ?? "classic"}
-          onChange={(v) => updateVariant("captchaVariant" as any, v)}
+          value={variants.captchaVariant ?? "classic"}
+          onChange={(v) => updateVariant("captchaVariant", v)}
+          renderPreview={(variant) => (
+            <ComponentVariantPreview kind="captchaVariant" variant={variant} />
+          )}
+        />
+
+        <VariantPicker
+          label="Card Border Radius"
+          options={radiusOptions}
+          value={variants.cardRadius ?? "default"}
+          onChange={(v) => updateVariant("cardRadius", v)}
+          renderPreview={(variant) => <RadiusPreview kind="card" variant={variant} />}
+        />
+
+        <VariantPicker
+          label="Table Border Radius"
+          options={radiusOptions}
+          value={variants.tableRadius ?? "default"}
+          onChange={(v) => updateVariant("tableRadius", v)}
+          renderPreview={(variant) => <RadiusPreview kind="table" variant={variant} />}
         />
       </div>
     </div>

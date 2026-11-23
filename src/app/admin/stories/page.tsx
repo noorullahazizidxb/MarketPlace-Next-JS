@@ -9,13 +9,13 @@ import {
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { Badge } from "@/components/ui/atoms/shadcn/badge";
 import { Search } from "lucide-react";
 import { asset } from "@/lib/assets";
-import { ImageSlider } from "@/components/ui/image-slider";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
+import { ConfirmDialog } from "@/components/ui/organisms/confirm-dialog";
 import Image from "next/image";
 
 type Story = {

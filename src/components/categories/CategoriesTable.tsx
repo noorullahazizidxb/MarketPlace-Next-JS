@@ -3,7 +3,7 @@ import React, { useState, useMemo } from "react";
 import { useCategories } from "./useCategoryData";
 import { CategoryRow } from "./CategoryRow";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import {
   Table,
   TableBody,

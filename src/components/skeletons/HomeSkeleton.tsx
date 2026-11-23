@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { Skeleton } from "./SkeletonPrimitives";
+import { LISTING_GRID_CLASS } from "@/lib/listing-grid";
 
 export function HomeSkeleton() {
   return (
@@ -37,23 +38,22 @@ export function HomeSkeleton() {
       </div>
 
       {/* Cards grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-        {Array.from({ length: 8 }).map((_, i) => (
+      <div className={LISTING_GRID_CLASS}>
+        {Array.from({ length: 10 }).map((_, i) => (
           <div
             key={i}
-            className="rounded-[1.5rem] border border-[var(--border)]/40 overflow-hidden bg-[var(--card)]/80 backdrop-blur-xl"
+            className="overflow-hidden rounded-2xl border border-[var(--border)]/40 bg-[var(--card)]/80 backdrop-blur-xl"
           >
-            <Skeleton className="h-44 w-full rounded-none" />
-            <div className="p-4 space-y-3">
+            <Skeleton className="aspect-[3/2] w-full rounded-none" />
+            <div className="space-y-2 p-3">
               <div className="flex items-start justify-between gap-2">
-                <Skeleton className="h-5 w-2/3 rounded-xl" />
-                <Skeleton className="h-5 w-12 rounded-xl" />
+                <Skeleton className="h-4 w-2/3 rounded-lg" />
+                <Skeleton className="h-4 w-10 rounded-lg" />
               </div>
-              <Skeleton className="h-3.5 w-1/2 rounded-xl" />
-              <Skeleton className="h-3.5 w-3/4 rounded-xl" />
-              <div className="flex items-center gap-2 pt-1">
-                <Skeleton className="h-7 w-20 rounded-full" />
-                <Skeleton className="h-7 w-16 rounded-full" />
+              <Skeleton className="h-3 w-full rounded-lg" />
+              <div className="flex items-center gap-1.5 pt-1">
+                <Skeleton className="h-8 flex-1 rounded-lg" />
+                <Skeleton className="size-8 rounded-lg" />
               </div>
             </div>
           </div>

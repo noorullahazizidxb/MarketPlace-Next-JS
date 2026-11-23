@@ -116,9 +116,9 @@ function AdminBaseLayoutInner({
         <div className="flex flex-1 flex-col">
             <div className="app-shell @container/main flex flex-1 flex-col gap-[var(--space-gap)]">
               {/* Add space so content isn't hidden behind the persistent mobile drawer toolbar. */}
-            <div className="flex flex-col gap-[var(--space-section)] py-[var(--space-page-y)] pb-[calc(var(--space-section)+4rem)] md:pb-[var(--space-page-y)]">
+            <div className="flex flex-col gap-[var(--space-section)] px-[var(--space-page-x)] py-[var(--space-page-y)] pb-[calc(var(--space-section)+4rem)] md:pb-[var(--space-page-y)]">
               {title && (
-                <div className="px-[var(--space-page-x)]">
+                <div>
                   <div className="flex flex-col gap-[var(--space-gap)]">
                     <h1 className="app-text-heading tracking-tight">{title}</h1>
                     {description && (

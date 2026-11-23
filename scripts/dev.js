@@ -13,7 +13,7 @@ if (fs.existsSync(envFile)) {
       const k = m[1];
       let v = m[2];
       if (v.startsWith('"') && v.endsWith('"')) v = v.slice(1, -1);
-      process.env[k] = v;
+      if (process.env[k] === undefined) process.env[k] = v;
     }
   }
 }

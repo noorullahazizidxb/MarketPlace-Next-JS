@@ -1,5 +1,7 @@
 "use client";
 
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
+
 /**
  * Branded FOUC gate fallback — uses SSR-injected theme tokens (never unstyled default).
  */
@@ -16,6 +18,7 @@ export function ThemeBootFallback() {
         <div className="bg-aurora-two absolute -right-16 bottom-8 size-[16rem] rounded-full blur-3xl animate-drift-b" />
       </div>
       <div className="relative flex flex-col items-center gap-[var(--space-gap)] app-shell-page">
+        <ThemeLogo alt="DevMinds Marketplace" className="h-12 w-auto" />
         <div
           className="size-[var(--ctrl-h)] rounded-full border-2 border-border border-t-primary animate-spin"
           style={{ animationDuration: "0.9s" }}

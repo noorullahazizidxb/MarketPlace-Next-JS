@@ -1,8 +1,8 @@
 "use client";
-import { ThemeToggle } from "../../theme/theme-toggle";
+import { ThemeToggle } from "@/components/ui/molecules/theme-toggle";
 import { useLanguage } from "@/components/providers/language-provider";
-import { LanguageDropdown } from "@/components/ui/language-dropdown";
-import { Button } from "@/components/ui/button";
+import { LanguageDropdown } from "@/components/ui/molecules/language-dropdown";
+import { Button } from "@/components/ui/molecules/button";
 import { useUIStore } from "@/store/ui.store";
 import { Rows3, Monitor, Globe } from "lucide-react";
 import { motion } from "framer-motion";

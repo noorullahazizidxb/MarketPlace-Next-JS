@@ -12,23 +12,35 @@ export const AUTHOR = {
   role: "CEO of DevMinds · Senior Software Engineer || DevOps Engineer",
   email: "Noorullah.azizi2040@gmail.com",
   phone: "+93778807272",
-  url: "https://noorullah-azizi.my.canva.site",
+  url: "https://noorullah-azizi.devminds.net",
   image: "/brand/noorullah-azizi.jpg",
 } as const;
 
 export const BRAND = {
-  logo: "/brand/devminds-logo.png",
-  mark: "/brand/devminds-mark.png",
+  logo: "/brand/marketplace-logo-on-light.png",
+  logoDark: "/brand/marketplace-logo-on-dark.png",
+  mark: "/brand/marketplace-niche-icon-on-light.svg",
+  markDark: "/brand/marketplace-niche-icon-on-dark.svg",
   ogImage: "/og-image.png",
   appleIcon: "/apple-touch-icon.png",
+  appleIconDark: "/apple-touch-icon-dark.png",
   favicon: "/favicon.svg",
+  faviconDark: "/favicon-dark.svg",
 } as const;
 
+export const DEVMINDS_SAME_AS = [
+  "https://devminds.net",
+  "https://noorullah-azizi.devminds.net",
+  "https://github.com/noorullahazizidxb",
+] as const;
+
 export const DEFAULT_DESCRIPTION =
-  "DevMinds Marketplace — buy, sell, and rent across Afghanistan. Built by Noorullah Azizi, CEO of DevMinds.";
+  "DevMinds Marketplace — the online marketplace to buy, sell, and rent across Afghanistan. Part of DevMinds, built by Noorullah Azizi.";
 
 export const DEFAULT_KEYWORDS = [
   "DevMinds Marketplace",
+  "marketplace",
+  "online marketplace",
   "DevMinds",
   "marketplace Afghanistan",
   "buy sell rent",
@@ -51,6 +63,8 @@ type PageMetaInput = {
   keywords?: string[];
   noIndex?: boolean;
   image?: string;
+  /** Skip the "%s | DevMinds Marketplace" template. */
+  absoluteTitle?: boolean;
 };
 
 export function pageMetadata({
@@ -60,12 +74,13 @@ export function pageMetadata({
   keywords = [...DEFAULT_KEYWORDS],
   noIndex = false,
   image = BRAND.ogImage,
+  absoluteTitle = false,
 }: PageMetaInput): Metadata {
   const url = absoluteUrl(path);
   const imageUrl = image.startsWith("http") ? image : absoluteUrl(image);
 
   return {
-    title,
+    title: absoluteTitle ? { absolute: title } : title,
     description,
     keywords: [...keywords],
     authors: [{ name: AUTHOR.name, url: AUTHOR.url }],
@@ -106,7 +121,7 @@ export function rootMetadata(): Metadata {
   return {
     metadataBase: new URL(SITE_URL),
     title: {
-      default: `${SITE_NAME} — Buy, Sell & Rent`,
+      default: `${SITE_NAME} — Buy, Sell & Rent | Online Marketplace`,
       template: `%s | ${SITE_NAME}`,
     },
     description: DEFAULT_DESCRIPTION,
@@ -139,10 +154,59 @@ export function rootMetadata(): Metadata {
       creator: AUTHOR.name,
     },
     robots: { index: true, follow: true },
+    manifest: "/site.webmanifest",
     icons: {
-      icon: BRAND.favicon,
-      shortcut: BRAND.favicon,
-      apple: BRAND.appleIcon,
+      icon: [
+        { url: "/favicon.ico", sizes: "48x48" },
+        { url: "/favicon.svg", type: "image/svg+xml" },
+        { url: "/favicon-16.png", sizes: "16x16", type: "image/png" },
+        { url: "/favicon-32.png", sizes: "32x32", type: "image/png" },
+        { url: "/icon-192.png", sizes: "192x192", type: "image/png" },
+        { url: "/icon-512.png", sizes: "512x512", type: "image/png" },
+        {
+          url: "/favicon-dark.ico",
+          sizes: "48x48",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: "/favicon-dark.svg",
+          type: "image/svg+xml",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: "/favicon-dark-16.png",
+          sizes: "16x16",
+          type: "image/png",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: "/favicon-dark-32.png",
+          sizes: "32x32",
+          type: "image/png",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: "/icon-dark-192.png",
+          sizes: "192x192",
+          type: "image/png",
+          media: "(prefers-color-scheme: dark)",
+        },
+        {
+          url: "/icon-dark-512.png",
+          sizes: "512x512",
+          type: "image/png",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
+      shortcut: ["/favicon.ico"],
+      apple: [
+        { url: BRAND.appleIcon, sizes: "180x180" },
+        {
+          url: BRAND.appleIconDark,
+          sizes: "180x180",
+          media: "(prefers-color-scheme: dark)",
+        },
+      ],
     },
     other: {
       author: AUTHOR.name,
@@ -158,8 +222,9 @@ export function organizationJsonLd() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": "https://devminds.net/#organization",
     name: ORGANIZATION_NAME,
-    url: SITE_URL,
+    url: "https://devminds.net",
     logo: absoluteUrl(BRAND.logo),
     email: AUTHOR.email,
     telephone: AUTHOR.phone,
@@ -172,7 +237,7 @@ export function organizationJsonLd() {
       url: AUTHOR.url,
       image: absoluteUrl(AUTHOR.image),
     },
-    sameAs: [AUTHOR.url],
+    sameAs: [...DEVMINDS_SAME_AS],
   };
 }
 
@@ -191,7 +256,7 @@ export function personJsonLd() {
       name: ORGANIZATION_NAME,
       url: SITE_URL,
     },
-    sameAs: [AUTHOR.url],
+    sameAs: [...DEVMINDS_SAME_AS],
   };
 }
 

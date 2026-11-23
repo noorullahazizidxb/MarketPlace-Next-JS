@@ -3,8 +3,8 @@ import { useState, useMemo } from "react";
 import { usePendingListings } from "@/lib/use-pending-listings";
 import { usePendingBlogs } from "@/lib/use-pending-blogs";
 import { useApiMutation } from "@/lib/api-hooks";
-import { ApprovalCard } from "@/components/ui/approval-card";
-import { Button } from "@/components/ui/button";
+import { ApprovalCard } from "@/components/ui/molecules/approval-card";
+import { Button } from "@/components/ui/molecules/button";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { SelectField } from "@/components/ui/atoms/shadcn/SelectField";
 import { Badge } from "@/components/ui/atoms/shadcn/badge";
@@ -17,7 +17,7 @@ import {
 import { useLanguage } from "@/components/providers/language-provider";
 import { asset } from "@/lib/assets";
 import Image from "next/image";
-import { ImageSpinner } from "@/components/ui/spinner";
+import { ImageSpinner } from "@/components/ui/atoms/spinner";
 import Link from "next/link";
 import { Search } from "lucide-react";
 

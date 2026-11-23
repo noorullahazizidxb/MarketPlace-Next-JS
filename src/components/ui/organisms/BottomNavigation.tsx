@@ -1,3 +1,6 @@
-// Canonical organism location
-export { BottomNavigation } from "../BottomNavigation";
-export { default } from "../BottomNavigation";
+export {
+  BottomNavigation,
+  type BottomNavDescriptor,
+  type BottomNavigationProps,
+} from "./bottom-navigation";
+export { default } from "./bottom-navigation";

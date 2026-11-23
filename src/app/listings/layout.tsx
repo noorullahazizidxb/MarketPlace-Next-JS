@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { pageMetadata } from "@/lib/site-config";
 
 export const metadata: Metadata = pageMetadata({
-  title: "Browse Listings",
+  title: "DevMinds Marketplace — Buy, Sell & Rent Listings | Online Marketplace",
+  absoluteTitle: true,
   description:
     "Browse buy, sell, and rent listings on DevMinds Marketplace across Afghanistan. Built by Noorullah Azizi, CEO of DevMinds.",
   path: "/listings",

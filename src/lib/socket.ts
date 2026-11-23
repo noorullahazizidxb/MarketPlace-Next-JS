@@ -1,18 +1,23 @@
 "use client";
 import { io, Socket } from "socket.io-client";
+import { isSocketIoEnabled } from "./realtime";
 
 let socket: Socket | undefined;
 
-export function initSocket(token?: string): Socket {
-  const url =
+function socketOrigin(): string {
+  return (
     (process.env.NEXT_PUBLIC_WS_URL as string) ||
     (process.env.NEXT_PUBLIC_SOCKET_URL as string) ||
     (process.env.NEXT_PUBLIC_API_BASE as string)?.replace(/\/api$/, "") ||
     (process.env.NEXT_PUBLIC_API_BASE_URL as string)?.replace(/\/api$/, "") ||
-    "http://localhost:4000";
-  if (!url) {
-    console.warn("[socket] NEXT_PUBLIC_WS_URL not set");
-  }
+    "http://localhost:4000"
+  );
+}
+
+export function initSocket(token?: string): Socket | undefined {
+  if (!isSocketIoEnabled()) return undefined;
+
+  const url = socketOrigin();
   if (!socket) {
     socket = io(url, {
       path: "/socket.io",
@@ -27,15 +32,18 @@ export function initSocket(token?: string): Socket {
         ? { token: token.startsWith("Bearer ") ? token : `Bearer ${token}` }
         : undefined,
     });
-    socket.on("connect_error", (err) => {
-      console.error("[socket] Connection error:", err.message);
+    socket.on("connect_error", () => {
+      // Expected when the API has sockets off; do not spam the console.
     });
   } else {
-    // Update token on existing socket and reconnect
     (socket as any).auth = token
       ? { token: token.startsWith("Bearer ") ? token : `Bearer ${token}` }
       : undefined;
-    try { socket.connect(); } catch {}
+    try {
+      socket.connect();
+    } catch {
+      /* ignore */
+    }
   }
   return socket;
 }

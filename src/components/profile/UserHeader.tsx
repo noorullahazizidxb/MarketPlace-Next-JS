@@ -6,7 +6,7 @@ import type { PublicUser, Follower } from "../../types/user";
 import { asset } from "@/lib/assets";
 import { useAuth } from "@/lib/use-auth";
 import { BadgeCheck, Mail, MapPin, Phone, Users } from "lucide-react";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 
 export default function UserHeader({ user }: { user: PublicUser }) {
   const { user: me } = useAuth();

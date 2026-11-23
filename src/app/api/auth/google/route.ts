@@ -1,10 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 
 function getBaseUrl(req: NextRequest) {
-  const forwardedProto = req.headers.get("x-forwarded-proto");
-  const forwardedHost = req.headers.get("x-forwarded-host");
+  const forwardedProto = req.headers.get("x-forwarded-proto")?.split(",")[0]?.trim();
+  const forwardedHost = req.headers.get("x-forwarded-host")?.split(",")[0]?.trim();
   const host = forwardedHost || req.headers.get("host") || "localhost:3000";
   const protocol = forwardedProto || (host.includes("localhost") ? "http" : "https");
+  const configured = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "");
+  if (configured && !host.includes("localhost")) return configured;
   return `${protocol}://${host}`;
 }
 

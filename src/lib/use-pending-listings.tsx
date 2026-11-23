@@ -1,9 +1,11 @@
 "use client";
 import { useEffect, useState, useRef, useCallback, useMemo } from "react";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { useAuth } from "./use-auth";
 import { useApiGet } from "./api-hooks";
 import { setCachedToken } from "./axiosClient";
+import { isSocketIoEnabled } from "./realtime";
+import { initSocket } from "./socket";
 
 type Listing = any;
 
@@ -31,27 +33,12 @@ export function usePendingListings() {
     if (loading) return;
     if (!isAdmin) return;
     if (!token) return;
-    // ensure axios client sends Authorization header for API requests
-    if (token) {
-      setCachedToken(
-        token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token
-      );
-    }
-
-    // connect socket with Bearer token per server guidance (also accepted raw)
-    const bearer = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
-    const socket = io(
-      process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000",
-      {
-        auth: { token: bearer },
-        query: { token: bearer },
-        transports: ["websocket"],
-        autoConnect: true,
-        reconnection: true,
-        reconnectionAttempts: 10,
-        reconnectionDelay: 1000,
-      }
+    if (!isSocketIoEnabled()) return;
+    setCachedToken(
+      token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token
     );
+    const socket = initSocket(token);
+    if (!socket) return;
     socketRef.current = socket;
 
     socket.on("connect", () => {
@@ -80,8 +67,10 @@ export function usePendingListings() {
     });
 
     return () => {
-      setCachedToken(null);
-      socket.disconnect();
+      socket.off("connect");
+      socket.off("disconnect");
+      socket.off("pending-listings");
+      socket.off("pending-listing:new");
       socketRef.current = null;
     };
   }, [token, isAdmin, loading, mutate]);

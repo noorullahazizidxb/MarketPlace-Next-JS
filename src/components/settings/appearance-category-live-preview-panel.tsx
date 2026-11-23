@@ -19,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/atoms/shadcn/table";
-import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
 import type { AppearanceDensityTab } from "./appearance-preview-registry";
 
 type Props = {

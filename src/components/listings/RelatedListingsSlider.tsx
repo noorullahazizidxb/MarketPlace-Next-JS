@@ -10,9 +10,9 @@ import {
   Star,
   Tag,
 } from "lucide-react";
-import { ListingCard, type Listing } from "@/components/ui/listing-card";
+import { ListingCard, type Listing } from "@/components/ui/organisms/listing-card";
 import { Skeleton } from "@/components/skeletons/SkeletonPrimitives";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { useApiGet } from "@/lib/api-hooks";
 import { useEngagedAutoplay } from "@/hooks/use-engaged-autoplay";
 

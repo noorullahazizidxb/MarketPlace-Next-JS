@@ -1,11 +1,13 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { io, Socket } from "socket.io-client";
+import type { Socket } from "socket.io-client";
 import { setCachedToken } from "./axiosClient";
 import { useAuth } from "./use-auth";
 import { mutate as mutateSWR } from "@/lib/query-client";
 import { Story, BlogSummary, CommentItem } from "../types/social";
+import { isSocketIoEnabled } from "./realtime";
+import { initSocket } from "./socket";
 
 /**
  * Subscribe to story/blog realtime events and reconcile SWR caches.
@@ -20,10 +22,10 @@ export function useSocialRealtime(enabled = true) {
   useEffect(() => {
     if (!enabled) return;
     if (!token) return;
-    const bearer = token.startsWith("Bearer ") ? token : `Bearer ${token}`;
+    if (!isSocketIoEnabled()) return;
     setCachedToken(token.startsWith("Bearer ") ? token.replace(/^Bearer /i, "") : token);
-    const socketUrl = process.env.NEXT_PUBLIC_WS_URL || process.env.NEXT_PUBLIC_SOCKET_URL || "http://localhost:4000";
-    const socket = io(socketUrl, { auth: { token: bearer }, transports: ["websocket"] });
+    const socket = initSocket(token);
+    if (!socket) return;
     sockRef.current = socket;
 
     socket.on("connect", () => {
@@ -115,11 +117,13 @@ export function useSocialRealtime(enabled = true) {
     });
 
     return () => {
-      try {
-        socket.disconnect();
-      } catch { }
+      socket.off("connect");
+      socket.off("storyCreated");
+      socket.off("blogUpdated");
+      socket.off("newComment");
+      socket.off("newLike");
+      socket.off("newShare");
       sockRef.current = null;
-      setCachedToken(null);
     };
   }, [enabled, token, user]);
 }

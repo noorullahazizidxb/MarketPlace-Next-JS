@@ -2,12 +2,12 @@
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
-import { ImageSlider } from "@/components/ui/image-slider";
+import { ImageSlider } from "@/components/ui/organisms/image-slider";
 import CommentsInline from "./CommentsInline";
-import { Portal } from "@/components/ui/portal";
+import { Portal } from "@/components/ui/atoms/portal";
 import { useApiGet } from "@/lib/api-hooks";
-import { Button } from "@/components/ui/button";
-import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { Button } from "@/components/ui/molecules/button";
+import { ConfirmDialog } from "@/components/ui/organisms/confirm-dialog";
 import { useApiMutation } from "@/lib/api-hooks";
 import { useAuth } from "@/lib/use-auth";
 import { useRouter } from "next/navigation";

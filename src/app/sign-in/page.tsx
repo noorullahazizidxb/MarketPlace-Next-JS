@@ -1,10 +1,10 @@
 "use client";
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import Image from "next/image";
-import { Mail, Lock, LogIn, UserPlus, Eye, EyeOff } from "lucide-react";
+import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
+import { Mail, Lock, LogIn, Eye, EyeOff } from "lucide-react";
 import { useLanguage } from "@/components/providers/language-provider";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/components/ui/molecules/button";
 import { useForm, useWatch } from "react-hook-form";
 import { TextInputField } from "@/components/ui/atoms/shadcn/TextInputField";
 import { Checkbox } from "@/components/ui/atoms/shadcn/checkbox";
@@ -18,9 +18,9 @@ import { useListingsStore } from "@/store/listings.store";
 import { config } from "@/lib/config";
 import { SocialAuthButtons } from "@/components/auth/SocialAuthButtons";
 import { motion, AnimatePresence } from "framer-motion";
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { AmbientCanvas } from "@/components/ui/atoms/ambient-canvas";
-import { CaptchaWidget } from "@/components/ui/atoms/captcha-widget";
+import { useRecaptchaV3 } from "@/hooks/use-recaptcha-v3";
 import { ShieldCheck } from "lucide-react";
 
 type FormData = { email: string; password: string };
@@ -30,7 +30,6 @@ export default function SignInPage() {
   const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
-  const [captchaValid, setCaptchaValid] = useState(false);
   const { executeRecaptcha } = useRecaptchaV3();
   const { control, handleSubmit, setValue } = useForm<FormData>({
     defaultValues: { email: "", password: "" },
@@ -44,12 +43,14 @@ export default function SignInPage() {
   const setSession = useAuthStore((s) => s.setSession);
   const setNotifications = useNotificationsStore((s) => s.set);
   const setListings = useListingsStore((s) => s.set);
-  const loginMutation = useApiMutation<{ token: string; user: any }>(
+  const loginMutation = useApiMutation<{ token: string; refreshToken?: string | null; user: any }>(
     "post",
     "/auth/login",
   );
   const setServerSession = useLocalMutation("post", "/api/login-session");
-  const hasSocialAuth = Boolean(config.googleAuthUrl || config.facebookAuthUrl);
+  const googleUrl = config.googleClientId ? config.googleAuthUrl : undefined;
+  const facebookUrl = config.facebookAppId ? config.facebookAuthUrl : undefined;
+  const hasSocialAuth = Boolean(googleUrl || facebookUrl);
 
   // If already signed in, redirect to /listings
   useEffect(() => {
@@ -98,8 +99,9 @@ export default function SignInPage() {
       } catch {}
 
       // 4) Inform Next.js server to set HttpOnly session cookies (so SSR/api routes work)
+      // The rotating refresh token is only ever stored in the HttpOnly cookie, never in localStorage.
       await setServerSession
-        .mutateAsync({ token, user: userObj })
+        .mutateAsync({ token, refreshToken: res.refreshToken ?? null, user: userObj })
         .catch(() => null);
 
       // 5) Go to the listings dashboard
@@ -135,15 +137,7 @@ export default function SignInPage() {
             transition={{ delay: 0.08, duration: 0.4 }}
           >
             <div className="mx-auto mb-4 w-fit overflow-hidden rounded-2xl bg-background/90 px-5 py-3 shadow-[0_4px_24px_color-mix(in oklab, var(--primary) 25%, transparent)] ring-1 ring-[var(--primary)]/20 dark:bg-background/95">
-              <Image
-                src="/brand/devminds-logo.png"
-                alt="DevMinds"
-                width={156}
-                height={108}
-                priority
-                className="h-14 w-auto object-contain"
-                draggable={false}
-              />
+              <ThemeLogo priority alt="DevMinds Marketplace" className="h-14 w-auto" />
             </div>
             <h1 className="app-text-h2 font-semibold tracking-tight text-[var(--foreground)]">
               {t("signInTitle")}
@@ -162,8 +156,9 @@ export default function SignInPage() {
               transition={{ delay: 0.14, duration: 0.4 }}
             >
               <SocialAuthButtons
-                googleUrl={config.googleAuthUrl}
-                facebookUrl={config.facebookAuthUrl}
+                stacked
+                googleUrl={googleUrl}
+                facebookUrl={facebookUrl}
               />
               <div className="relative text-center app-text-caption text-[var(--muted-foreground)]">
                 <span className="relative z-10 bg-[var(--card)]/90 px-3">
@@ -177,13 +172,13 @@ export default function SignInPage() {
           {/* Form */}
           <motion.form
             onSubmit={handleSubmit(onSubmit)}
-            className="space-y-[var(--space-section)]"
+            className="flex w-full flex-col gap-4"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.2, duration: 0.4 }}
           >
-            <Tooltip content={t("tooltipSignInEmail")} side="right">
-              <div>
+            <Tooltip content={t("tooltipSignInEmail")} side="right" className="flex w-full">
+              <div className="w-full min-w-0">
                 <TextInputField
                   id="sign-in-email"
                   label={t("email")}
@@ -196,8 +191,8 @@ export default function SignInPage() {
               </div>
             </Tooltip>
 
-            <Tooltip content={t("tooltipSignInPassword")} side="right">
-              <div>
+            <Tooltip content={t("tooltipSignInPassword")} side="right" className="flex w-full">
+              <div className="w-full min-w-0">
                 <TextInputField
                   id="sign-in-password"
                   label={t("password")}
@@ -275,32 +270,20 @@ export default function SignInPage() {
               </Tooltip>
             </div>
 
-            {/* CAPTCHA */}
-            <CaptchaWidget onVerified={setCaptchaValid} className="my-1" />
-
-            {/* Action buttons */}
-            <div className="flex gap-3 pt-1">
-              <Tooltip content={t("tooltipSignInBtn")} side="top">
-                <Button
-                  type="submit"
-                  variant="primary"
-                  className="flex-1 flex items-center justify-center gap-2"
-                  loading={loginMutation.isPending}
-                  disabled={!captchaValid}
-                >
-                  <LogIn className="size-4" />
-                  {t("signIn")}
-                </Button>
-              </Tooltip>
-              <Tooltip content={t("tooltipGoToSignUp")} side="top">
-                <Button asChild variant="ghost">
-                  <Link href="/sign-up" className="flex items-center gap-2">
-                    <UserPlus className="size-4" />
-                    <span>{t("createAccount")}</span>
-                  </Link>
-                </Button>
-              </Tooltip>
-            </div>
+            <Button
+              type="submit"
+              variant="primary"
+              className="flex h-12 w-full items-center justify-center gap-2"
+              loading={loginMutation.isPending}
+            >
+              <LogIn className="size-4" />
+              {t("signIn")}
+            </Button>
+            <p className="text-center app-text-body text-[var(--muted-foreground)]">
+              <Link href="/sign-up" className="font-semibold text-[var(--accent)] hover:underline underline-offset-2">
+                {t("createAccount")}
+              </Link>
+            </p>
 
             {/* reCAPTCHA v3 badge */}
             <p className="flex items-center justify-center gap-1.5 app-text-caption text-[var(--muted-foreground)] opacity-70 pt-1">
