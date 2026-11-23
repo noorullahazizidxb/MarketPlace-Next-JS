@@ -10,7 +10,8 @@ export type ProductSlug =
   | "marketplace"
   | "jobs"
   | "budget-manager"
-  | "restaurant-maps";
+  | "restaurant-maps"
+  | "date-converter";
 
 export type LogoVariant = "light" | "dark" | "icon-light" | "icon-dark";
 
@@ -39,6 +40,7 @@ export const DEVMINDS_PRODUCTS: readonly DevmindsProduct[] = [
   { slug: "jobs", name: "DevMinds Jobs", url: "https://jobs.devminds.net/", descriptor: "Jobs, companies & hiring", description: "Jobs platform to search jobs, explore companies, hire services and learn new skills.", category: "BusinessApplication", logoWidths: { light: 129, dark: 162, "icon-light": 39, "icon-dark": 38 } },
   { slug: "budget-manager", name: "Budget Manager", url: "https://budget-manager.devminds.net/", descriptor: "Budget planning & tracking", description: "Budget app to plan, allocate and track your income and expenses by category.", category: "FinanceApplication", logoWidths: { light: 414, dark: 383, "icon-light": 29, "icon-dark": 27 } },
   { slug: "restaurant-maps", name: "Restaurant Maps", url: "https://resturant-maps.devminds.net/", descriptor: "Find restaurants on a map", description: "Interactive map to discover restaurants nearby, with menus, opening hours and directions.", category: "TravelApplication", logoWidths: { light: 410, dark: 381, "icon-light": 26, "icon-dark": 26 } },
+  { slug: "date-converter", name: "Date Converter", url: "https://date-converter.devminds.net/", descriptor: "Every calendar, one moment.", description: "Convert dates between the Gregorian, Solar Hijri (Afghan and Iranian Jalali), Islamic Hijri and Chinese lunar calendars, see today in every calendar and count the days between two dates.", category: "UtilitiesApplication", logoWidths: { light: 401, dark: 372, "icon-light": 32, "icon-dark": 32 } },
 ];
 
 export function productLogoSrc(slug: ProductSlug, variant: LogoVariant): string {
