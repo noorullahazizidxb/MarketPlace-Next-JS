@@ -159,7 +159,7 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
       <main
         id="main-content"
-        className="relative z-10 flex-1 overflow-x-clip container-padded py-[var(--space-page-y)]"
+        className="relative z-10 flex-1 overflow-x-clip container-padded py-[var(--space-page-y)] max-md:pt-16"
         dir={direction}
       >
         <PageTransition>{children}</PageTransition>

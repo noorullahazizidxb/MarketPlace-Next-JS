@@ -26,6 +26,8 @@ type Props = {
   onSubmitNavigate?: boolean; // when true, pressing Enter navigates to /listings?search=...
   onSubmitClose?: () => void; // optional callback to close a surrounding dialog/modal after submit
   mode?: "dropdown" | "sheet"; // sheet = inline results occupy vertical space
+  /** Stretch the input to the container width instead of the compact navbar width. */
+  fluid?: boolean;
 };
 
 function readRecentSearches(): string[] {
@@ -56,6 +58,7 @@ export function SearchBox({
   onSubmitNavigate = true,
   onSubmitClose,
   mode = "dropdown",
+  fluid = false,
 }: Props) {
   const [q, setQ] = useState("");
   const debounced = useDebounced(q, 350);
@@ -190,7 +193,7 @@ export function SearchBox({
       ref={boxRef}
       className={cn(isSheet ? "flex flex-col h-full" : "relative", className)}
     >
-      <div className={cn(isSheet ? "w-full" : "w-40 sm:w-56")}>
+      <div className={cn(isSheet || fluid ? "w-full" : "w-40 sm:w-56")}>
         <TextInputField
           id="search-box-input"
           name="q"

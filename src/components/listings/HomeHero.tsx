@@ -62,10 +62,10 @@ export function HomeHero() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, amount: 0.15 }}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className={`mt-6 grid items-center gap-3 ${isRtl ? "sm:grid-cols-[1fr_auto]" : "sm:grid-cols-[1fr_auto]"}`}
+            className="mt-6 grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
           >
-            <SearchBox placeholder={t("search")} className="w-full" />
-            <div className="flex items-center gap-2">
+            <SearchBox placeholder={t("search")} className="w-full min-w-0" fluid />
+            <div className="flex flex-wrap items-center gap-2">
               <Tooltip content={t("browseNow")} side="bottom">
                 <Button variant="accent" onClick={() => router.push("/listings")}>{t("browseNow")}</Button>
               </Tooltip>
