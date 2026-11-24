@@ -45,6 +45,36 @@ function setParam(params: URLSearchParams, key: string, value?: string | null) {
   return p;
 }
 
+type ChipIcon = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
+const GLYPH_CLASS = "absolute inset-0 grid place-items-center";
+
+/** Leading chip icon that swaps to a check mark when the chip is active. */
+function ChipGlyph({ active, Icon }: { active: boolean; Icon?: ChipIcon }) {
+  if (!active && !Icon) return null;
+  let glyph: React.ReactNode = null;
+  if (active) {
+    glyph = (
+      <motion.span key="check" variants={swap} initial="hidden" animate="visible" exit="exit" className={GLYPH_CLASS}>
+        <Check className="size-3.5" />
+      </motion.span>
+    );
+  } else if (Icon) {
+    glyph = (
+      <motion.span key="icon" variants={swap} initial="hidden" animate="visible" exit="exit" className={GLYPH_CLASS}>
+        <Icon className="size-3.5 text-muted-foreground" />
+      </motion.span>
+    );
+  }
+  return (
+    <span className="relative grid size-3.5 shrink-0 place-items-center" aria-hidden>
+      <AnimatePresence initial={false} mode="popLayout">
+        {glyph}
+      </AnimatePresence>
+    </span>
+  );
+}
+
 function Chip({
   label,
   active,
@@ -57,7 +87,7 @@ function Chip({
   active: boolean;
   onClick: () => void;
   id: string;
-  Icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  Icon?: ChipIcon;
   count?: number;
 }) {
   return (
@@ -77,21 +107,7 @@ function Chip({
       {active && (
         <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/30 to-transparent" />
       )}
-      {(active || Icon) && (
-        <span className="relative grid size-3.5 shrink-0 place-items-center" aria-hidden>
-          <AnimatePresence initial={false} mode="popLayout">
-            {active ? (
-              <motion.span key="check" variants={swap} initial="hidden" animate="visible" exit="exit" className="absolute inset-0 grid place-items-center">
-                <Check className="size-3.5" />
-              </motion.span>
-            ) : Icon ? (
-              <motion.span key="icon" variants={swap} initial="hidden" animate="visible" exit="exit" className="absolute inset-0 grid place-items-center">
-                <Icon className="size-3.5 text-muted-foreground" />
-              </motion.span>
-            ) : null}
-          </AnimatePresence>
-        </span>
-      )}
+      <ChipGlyph active={active} Icon={Icon} />
       <span>{label}</span>
       {typeof count === "number" && count > 0 && (
         <span
@@ -104,6 +120,62 @@ function Chip({
         </span>
       )}
     </motion.button>
+  );
+}
+
+const LISTING_TYPES = [
+  { value: "", labelKey: "all", suffix: "all", Icon: Layers3 },
+  { value: "RENT", labelKey: "rent", suffix: "rent", Icon: Home },
+  { value: "SALE", labelKey: "sale", suffix: "sale", Icon: Tag },
+] as const;
+
+function TypeChips({ idPrefix, value, onSelect }: { idPrefix: string; value: string; onSelect: (next: string) => void }) {
+  const { t } = useLanguage();
+  return (
+    <>
+      {LISTING_TYPES.map((item) => (
+        <Chip
+          key={item.suffix}
+          label={t(item.labelKey)}
+          active={value === item.value}
+          onClick={() => onSelect(item.value)}
+          id={`${idPrefix}-${item.suffix}`}
+          Icon={item.Icon}
+        />
+      ))}
+    </>
+  );
+}
+
+function CategoryChips({
+  idPrefix,
+  allIcon,
+  categories,
+  value,
+  onSelect,
+}: {
+  idPrefix: string;
+  allIcon: ChipIcon;
+  categories: Category[];
+  value: string;
+  onSelect: (next: string) => void;
+}) {
+  const { t } = useLanguage();
+  return (
+    <>
+      <Chip label={t("all")} active={value === ""} onClick={() => onSelect("")} id={`${idPrefix}-all`} Icon={allIcon} />
+      {categories.map((category) => (
+        <Chip
+          key={category.id}
+          label={category.name}
+          count={categoryCount(category)}
+          active={value === String(category.id)}
+          onClick={() => onSelect(String(category.id))}
+          id={`${idPrefix}-${category.id}`}
+          Icon={categoryIcon(category.slug || category.name)}
+        />
+      ))}
+    </>
   );
 }
 
@@ -199,32 +271,16 @@ export function FiltersBar() {
           )}
         </div>
 
-        <div role="group" aria-label={t("typeLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
+        <fieldset aria-label={t("typeLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
           <span className="me-1 shrink-0 app-text-micro font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             {t("typeLabel")}
           </span>
-          <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="type-all" Icon={Layers3} />
-          <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="type-rent" Icon={Home} />
-          <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="type-sale" Icon={Tag} />
-        </div>
+          <TypeChips idPrefix="type" value={type} onSelect={onType} />
+        </fieldset>
 
-        <div role="group" aria-label={t("categoryLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
-          <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="category-all" Icon={Layers3} />
-          {cats.map((category) => {
-            const Icon = categoryIcon(category.slug || category.name);
-            return (
-              <Chip
-                key={category.id}
-                label={category.name}
-                count={categoryCount(category)}
-                active={categoryId === String(category.id)}
-                onClick={() => onCategory(String(category.id))}
-                id={`category-${category.id}`}
-                Icon={Icon}
-              />
-            );
-          })}
-        </div>
+        <fieldset aria-label={t("categoryLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
+          <CategoryChips idPrefix="category" allIcon={Layers3} categories={cats} value={categoryId} onSelect={onCategory} />
+        </fieldset>
       </div>
 
       {/* Bottom sheet for mobile */}
@@ -238,33 +294,17 @@ export function FiltersBar() {
             <p id="m-filter-type" className="app-text-label font-semibold text-muted-foreground mb-3">
               {t("typeLabel")}
             </p>
-            <div role="group" aria-labelledby="m-filter-type" className="flex flex-wrap gap-[var(--space-gap)]">
-              <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="m-type-all" Icon={Layers3} />
-              <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="m-type-rent" Icon={Home} />
-              <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="m-type-sale" Icon={Tag} />
-            </div>
+            <fieldset aria-labelledby="m-filter-type" className="flex flex-wrap gap-[var(--space-gap)]">
+              <TypeChips idPrefix="m-type" value={type} onSelect={onType} />
+            </fieldset>
           </div>
           <div>
             <p id="m-filter-category" className="app-text-label font-semibold text-muted-foreground mb-3">
               {t("categoryLabel")}
             </p>
-            <div role="group" aria-labelledby="m-filter-category" className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto p-1">
-              <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="m-cat-all" Icon={Box} />
-              {cats.map((category) => {
-                const Icon = categoryIcon(category.slug || category.name);
-                return (
-                  <Chip
-                    key={category.id}
-                    label={category.name}
-                    count={categoryCount(category)}
-                    active={categoryId === String(category.id)}
-                    onClick={() => onCategory(String(category.id))}
-                    id={`m-cat-${category.id}`}
-                    Icon={Icon}
-                  />
-                );
-              })}
-            </div>
+            <fieldset aria-labelledby="m-filter-category" className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto p-1">
+              <CategoryChips idPrefix="m-cat" allIcon={Box} categories={cats} value={categoryId} onSelect={onCategory} />
+            </fieldset>
           </div>
           <div className="sticky bottom-0 flex items-center gap-2 border-t border-border bg-card/95 pt-3 backdrop-blur">
             {activeCount > 0 && (

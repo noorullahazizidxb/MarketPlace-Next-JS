@@ -31,6 +31,24 @@ const accountLinks = [
   { href: "/contact", key: "contact", Icon: MessageSquareText },
 ] as const;
 
+type FooterLink = (typeof exploreLinks)[number] | (typeof accountLinks)[number];
+
+function FooterLinkList({ links }: { links: readonly FooterLink[] }) {
+  const { t } = useLanguage();
+  return (
+    <ul className="mt-[var(--space-gap)] space-y-1">
+      {links.map(({ href, key, Icon }) => (
+        <li key={href}>
+          <Link href={href} className="app-footer-link">
+            <Icon className="app-icon-xs" aria-hidden />
+            {t(key)}
+          </Link>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 export default function Footer({
   variantOverride,
 }: {
@@ -178,32 +196,14 @@ export default function Footer({
               <h2 className="app-text-label uppercase app-tracking-caps">
                 {t("explore")}
               </h2>
-              <ul className="mt-[var(--space-gap)] space-y-1">
-                {exploreLinks.map(({ href, key, Icon }) => (
-                  <li key={href}>
-                    <Link href={href} className="app-footer-link">
-                      <Icon className="app-icon-xs" />
-                      {t(key)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <FooterLinkList links={exploreLinks} />
             </nav>
 
             <section>
               <h2 className="app-text-label uppercase app-tracking-caps">
                 {t("profile")}
               </h2>
-              <ul className="mt-[var(--space-gap)] space-y-1">
-                {accountLinks.map(({ href, key, Icon }) => (
-                  <li key={href}>
-                    <Link href={href} className="app-footer-link">
-                      <Icon className="app-icon-xs" />
-                      {t(key)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              <FooterLinkList links={accountLinks} />
               <Button asChild size="sm" className="mt-[var(--space-gap)]">
                 <Link href="/listings/create">
                   {t("createListing")}
