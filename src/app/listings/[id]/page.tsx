@@ -450,7 +450,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
         await (navigator as any).share({ url: pageUrl });
       } catch { }
     } else {
-      copy();
+      void copy();
     }
   };
   return (
@@ -460,14 +460,14 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
       </h3>
       <div className="grid grid-cols-2 gap-2">
         <Button
-          onClick={share}
+          onClick={() => void share()}
           size="sm"
           variant="secondary"
           className="w-full"
         >
           <Share2 className="app-icon-sm" /> {t("shareText")}
         </Button>
-        <Button onClick={copy} size="sm" variant="ghost" className="w-full" aria-live="polite">
+        <Button onClick={() => void copy()} size="sm" variant="ghost" className="w-full" aria-live="polite">
           <span className="relative grid app-icon-sm place-items-center" aria-hidden>
             <AnimatePresence initial={false} mode="popLayout">
               <motion.span
