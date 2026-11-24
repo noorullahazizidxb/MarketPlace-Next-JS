@@ -159,7 +159,7 @@ function ContactDialog({
         </span>
       }
     >
-      {phone && (
+      {Boolean(phone) && (
         <a
           href={`tel:${phone}`}
           className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-border bg-muted/25 px-4 py-3 font-medium transition-colors hover:border-primary/35 hover:bg-primary/5"
@@ -170,7 +170,7 @@ function ContactDialog({
           <span className="app-text-caption text-muted-foreground" dir="ltr">{phone}</span>
         </a>
       )}
-      {whatsapp && (
+      {Boolean(whatsapp) && (
         <a
           href={`https://wa.me/${String(whatsapp).replace(/[^\d]/g, "")}`}
           target="_blank"
@@ -237,7 +237,7 @@ function RepresentativesDialog({
                   {phone || t("noContact")}
                 </p>
               </div>
-              {phone && (
+              {Boolean(phone) && (
                 <a
                   href={`https://wa.me/${String(phone).replace(/[^\d]/g, "")}`}
                   target="_blank"
