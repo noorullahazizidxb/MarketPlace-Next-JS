@@ -5,6 +5,15 @@ import { ThemeLogo } from "@/components/ui/atoms/theme-logo";
 import { Suspense, useEffect, useRef, useState, type CSSProperties } from "react";
 import { NavbarCategories } from "@/components/layout/navbar-categories";
 import { motion } from "framer-motion";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/atoms/shadcn/dropdown-menu";
+import { hoverLift, spring, tapPress } from "@/lib/motion";
 import { usePathname } from "next/navigation";
 import {
   Bell,
@@ -35,6 +44,16 @@ import { useComponentVariants } from "@/hooks/use-component-variants";
 import type { NavbarVariant } from "@/lib/theme/types";
 import { DEFAULT_NAVBAR_OPACITY } from "@/store/component-variants.store";
 
+const NAV_ITEMS = [
+  { href: "/listings", labelKey: "home", Icon: Home },
+  { href: "/blogs", labelKey: "blogs", Icon: Newspaper },
+  { href: "/about", labelKey: "about", Icon: Info },
+  { href: "/contact", labelKey: "contact", Icon: Phone },
+] as const;
+
+const ACCOUNT_ITEM_CLASS =
+  "flex min-h-10 cursor-pointer items-center gap-[var(--space-gap)] rounded-xl px-3";
+
 export function Topbar({
   variantOverride,
   opacityOverride,
@@ -57,7 +76,6 @@ export function Topbar({
     80;
   const [notifOpen, setNotifOpen] = useState(false);
   useNotificationsRealtime(!!user && !preview);
-  const [open, setOpen] = useState(false);
   const avatar =
     (user as any)?.photo || (user as any)?.avatarUrl || "/favicon.svg";
   const name =
@@ -91,20 +109,12 @@ export function Topbar({
         style={{ "--nav-glass-alpha": glassAlpha } as CSSProperties}
         dir={locale === "fa" ? "rtl" : "ltr"}
       >
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
-          className="modern-navbar-pill relative overflow-visible"
-        >
+        <div className="modern-navbar-pill relative overflow-visible">
           <div
             className="relative w-full liquid-glass liquid-glass--borderless"
           >
             <div className="modern-navbar-grid">
-              <motion.div
-                whileHover={{ y: -2 }}
-                className="flex items-center gap-[var(--space-gap)]"
-              >
+              <div className="flex items-center gap-[var(--space-gap)]">
                 {navbarVariant === "fullwidth" && (
                   <Tooltip
                     content={t("toggleTheme" as any) || "Toggle theme"}
@@ -117,76 +127,26 @@ export function Topbar({
                 <span className="font-semibold tracking-tight">
                   {t("marketplace")}
                 </span>
-              </motion.div>
+              </div>
               <nav className="app-nav-tray hidden items-center justify-center gap-[var(--space-gap)] lg:flex">
-                <motion.div
-                  whileHover={{ y: -2, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Tooltip content={t("home")} side="bottom">
-                    <Link
-                      href="/listings"
-                      className={`app-nav-link ${isActive("/listings") ? "is-active" : ""}`}
-                    >
-                      <Home className="size-4" />
-                      <span>{t("home")}</span>
-                      {isActive("/listings") && (
-                        <ActiveNavUnderline />
-                      )}
-                    </Link>
-                  </Tooltip>
-                </motion.div>
-                <motion.div
-                  whileHover={{ y: -2, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Tooltip content={t("blogs")} side="bottom">
-                    <Link
-                      href="/blogs"
-                      className={`app-nav-link ${isActive("/blogs") ? "is-active" : ""}`}
-                    >
-                      <Newspaper className="size-4" />
-                      <span>{t("blogs")}</span>
-                      {isActive("/blogs") && (
-                        <ActiveNavUnderline />
-                      )}
-                    </Link>
-                  </Tooltip>
-                </motion.div>
-                <motion.div
-                  whileHover={{ y: -2, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Tooltip content={t("about")} side="bottom">
-                    <Link
-                      href="/about"
-                      className={`app-nav-link ${isActive("/about") ? "is-active" : ""}`}
-                    >
-                      <Info className="size-4" />
-                      <span>{t("about")}</span>
-                      {isActive("/about") && (
-                        <ActiveNavUnderline />
-                      )}
-                    </Link>
-                  </Tooltip>
-                </motion.div>
-                <motion.div
-                  whileHover={{ y: -2, scale: 1.02 }}
-                  whileTap={{ scale: 0.98 }}
-                >
-                  <Tooltip content={t("contact")} side="bottom">
-                    <Link
-                      href="/contact"
-                      className={`app-nav-link ${isActive("/contact") ? "is-active" : ""}`}
-                    >
-                      <Phone className="size-4" />
-                      <span>{t("contact")}</span>
-                      {isActive("/contact") && (
-                        <ActiveNavUnderline />
-                      )}
-                    </Link>
-                  </Tooltip>
-                </motion.div>
+                {NAV_ITEMS.map(({ href, labelKey, Icon }) => {
+                  const active = isActive(href);
+                  return (
+                    <motion.div key={href} whileHover={hoverLift} whileTap={tapPress}>
+                      <Tooltip content={t(labelKey)} side="bottom">
+                        <Link
+                          href={href}
+                          aria-current={active ? "page" : undefined}
+                          className={`app-nav-link ${active ? "is-active" : ""}`}
+                        >
+                          <Icon className="size-4" aria-hidden />
+                          <span>{t(labelKey)}</span>
+                          {active && <ActiveNavUnderline />}
+                        </Link>
+                      </Tooltip>
+                    </motion.div>
+                  );
+                })}
                 {/* My listings removed from top nav to avoid duplicate links (profile menu has it) */}
               </nav>
 
@@ -197,24 +157,19 @@ export function Topbar({
                     <Tooltip
                       content={
                         unreadCount > 0
-                          ? `${unreadCount} unread notification${unreadCount !== 1 ? "s" : ""}`
-                          : "Notifications"
+                          ? `${unreadCount} ${t("notifications")}`
+                          : t("notifications")
                       }
                       side="bottom"
                     >
                       <button
-                        className="relative glass size-9 rounded-xl grid place-items-center hover:ring-1 ring-ring/30"
-                        aria-label="Toggle notifications"
-                        onClick={() => {
-                          try {
-                            console.log(
-                              "[notifications] bell clicked -> toggle panel",
-                            );
-                          } catch {}
-                          setNotifOpen((v) => !v);
-                        }}
+                        type="button"
+                        className="relative glass size-10 rounded-xl grid place-items-center hover:ring-1 ring-ring/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        aria-label={unreadCount > 0 ? `${t("notifications")} (${unreadCount})` : t("notifications")}
+                        aria-expanded={notifOpen}
+                        onClick={() => setNotifOpen((v) => !v)}
                       >
-                        <Bell className="size-4" />
+                        <Bell className="size-4" aria-hidden />
                         {unreadCount > 0 && (
                           <span className="absolute -top-1 -right-1 min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground app-text-micro font-semibold grid place-items-center">
                             {unreadCount > 99 ? "99+" : unreadCount}
@@ -243,94 +198,86 @@ export function Topbar({
                     Sign In
                   </Link>
                 ) : user ? (
-                  <div className="relative">
-                    <button
-                      onClick={() => setOpen((v) => !v)}
-                      className="relative glass rounded-2xl pl-2 pr-3 h-[var(--ctrl-h)] min-h-[var(--ctrl-h)] flex items-center gap-[var(--space-gap)] hover:ring-1 ring-ring/30"
-                    >
-                      <Image
-                        src={asset(avatar)}
-                        alt="avatar"
-                        width={24}
-                        height={24}
-                        className="rounded-xl"
-                      />
-                      <span className="hidden sm:block app-text-body font-medium">
-                        {name}
-                      </span>
-                      {counts?.listings > 0 && (
-                        <span
-                          className="absolute -top-1 -right-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground app-text-caption font-semibold"
-                          aria-hidden
-                        >
-                          {counts.listings > 99 ? "99+" : counts.listings}
-                        </span>
-                      )}
-                    </button>
-                    {open && (
-                      <motion.div
-                        initial={{ opacity: 0, y: -6, scale: 0.98 }}
-                        animate={{ opacity: 1, y: 0, scale: 1 }}
-                        transition={{ duration: 0.15 }}
-                        className="absolute right-0 top-[calc(100%+8px)] z-1000 w-64 rounded-2xl overflow-hidden border border-border bg-card text-card-foreground shadow-2xl"
+                  <DropdownMenu dir={isRtl ? "rtl" : "ltr"}>
+                    <DropdownMenuTrigger asChild>
+                      <button
+                        type="button"
+                        aria-label={t("accountMenu")}
+                        className="relative glass rounded-2xl ps-2 pe-3 h-[var(--ctrl-h)] min-h-10 flex items-center gap-[var(--space-gap)] hover:ring-1 ring-ring/30 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       >
-                        <div className="p-[var(--space-filter)] border-b border-border/40 flex items-center gap-[var(--space-gap)]">
-                          <Image
-                            src={asset(avatar)}
-                            alt="avatar"
-                            width={32}
-                            height={32}
-                            className="rounded-xl"
-                          />
-                          <div>
-                            <p className="app-text-body font-medium line-clamp-1">
-                              {(user as any)?.name || name}
-                            </p>
-                            <p className="app-text-caption subtle">
-                              {user?.email || ""}
-                            </p>
-                          </div>
-                        </div>
-                        <div className="py-1">
-                          <Link
-                            href="/profile"
-                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
+                        <Image
+                          src={asset(avatar)}
+                          alt=""
+                          width={24}
+                          height={24}
+                          className="rounded-xl"
+                        />
+                        <span className="hidden sm:block app-text-body font-medium">
+                          {name}
+                        </span>
+                        {counts?.listings > 0 && (
+                          <span
+                            className="absolute -top-1 -end-1 flex items-center justify-center min-w-[18px] h-5 px-1 rounded-full bg-destructive text-destructive-foreground app-text-caption font-semibold"
+                            aria-hidden
                           >
-                            <User2 className="size-4" />
-                            <span className="app-text-body">
-                              {t("profile")}
-                            </span>
+                            {counts.listings > 99 ? "99+" : counts.listings}
+                          </span>
+                        )}
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                      align="end"
+                      sideOffset={8}
+                      className="z-[1000] w-64 rounded-2xl border-border bg-card p-0 text-card-foreground shadow-2xl"
+                    >
+                      <DropdownMenuLabel className="flex items-center gap-[var(--space-gap)] border-b border-border/40 p-[var(--space-filter)] font-normal">
+                        <Image
+                          src={asset(avatar)}
+                          alt=""
+                          width={32}
+                          height={32}
+                          className="rounded-xl"
+                        />
+                        <span className="min-w-0">
+                          <span className="block app-text-body font-medium line-clamp-1">
+                            {name}
+                          </span>
+                          <span className="block app-text-caption subtle truncate">
+                            {user?.email || ""}
+                          </span>
+                        </span>
+                      </DropdownMenuLabel>
+                      <div className="p-1">
+                        <DropdownMenuItem asChild className={ACCOUNT_ITEM_CLASS}>
+                          <Link href="/profile">
+                            <User2 className="size-4" aria-hidden />
+                            <span className="app-text-body">{t("profile")}</span>
                           </Link>
-                          <Link
-                            href="/my-listings"
-                            className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
-                          >
-                            <LayoutGrid className="size-4" />
-                            <span className="app-text-body">
-                              {t("myListings")}
-                            </span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild className={ACCOUNT_ITEM_CLASS}>
+                          <Link href="/my-listings">
+                            <LayoutGrid className="size-4" aria-hidden />
+                            <span className="app-text-body">{t("myListings")}</span>
                             {!!counts?.listings && (
-                              <span className="ml-auto app-text-caption px-2 py-0.5 rounded bg-background/10">
+                              <span className="ms-auto app-text-caption px-2 py-0.5 rounded-md bg-muted tabular-nums">
                                 {counts.listings}
                               </span>
                             )}
                           </Link>
-                          {isAdmin && (
-                            <Link
-                              href="/admin"
-                              className="flex items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] rounded-xl"
-                            >
-                              <ShieldCheck className="size-4" />
-                              <span className="app-text-body">
-                                Admin
-                              </span>
+                        </DropdownMenuItem>
+                        {isAdmin && (
+                          <DropdownMenuItem asChild className={ACCOUNT_ITEM_CLASS}>
+                            <Link href="/admin">
+                              <ShieldCheck className="size-4" aria-hidden />
+                              <span className="app-text-body">{t("admin")}</span>
                             </Link>
-                          )}
-                          <LogoutButton />
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
+                          </DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
+                        <LogoutItem />
+                      </div>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 ) : (
                   <>
                     {/* Desktop Sign In */}
@@ -364,7 +311,7 @@ export function Topbar({
           <Suspense fallback={null}>
             <NavbarCategories />
           </Suspense>
-        </motion.div>
+        </div>
       </header>
     </>
   );
@@ -375,28 +322,32 @@ function ActiveNavUnderline() {
   return (
     <motion.span
       layoutId="top-underline"
+      transition={spring.indicator}
       aria-hidden
       className="absolute left-3 right-3 -bottom-1 h-0.5 rounded-full bg-accent"
     />
   );
 }
 
-function LogoutButton() {
+function LogoutItem() {
   const { t } = useLanguage();
   const { signOut, isPending } = useSignOut();
   return (
-    <button
-      type="button"
-      onClick={signOut}
+    <DropdownMenuItem
+      variant="destructive"
       disabled={isPending}
-      className="flex w-full items-center gap-[var(--space-gap)] px-3 min-h-[var(--ctrl-h)] hover:bg-background/10 text-left"
+      onSelect={(event) => {
+        event.preventDefault();
+        void signOut();
+      }}
+      className={ACCOUNT_ITEM_CLASS}
     >
       {isPending ? (
-        <span className="size-4 rounded-full border-2 border-border border-t-white animate-spin" />
+        <span className="size-4 rounded-full border-2 border-border border-t-current animate-spin" aria-hidden />
       ) : (
-        <LogOut className="size-4" />
+        <LogOut className="size-4" aria-hidden />
       )}
       <span className="app-text-body">{t("logout")}</span>
-    </button>
+    </DropdownMenuItem>
   );
 }

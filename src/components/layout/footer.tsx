@@ -146,11 +146,11 @@ export default function Footer({
             <section className="min-w-0">
               <Link
                 href="/listings"
-                className="inline-flex items-center gap-[var(--space-gap)]"
+                className="inline-flex max-w-full flex-col items-start gap-[var(--space-gap)] sm:flex-row sm:items-center"
                 aria-label={t("marketplace")}
               >
-                <ThemeLogo alt="" className="h-12 w-auto shrink-0" />
-                <span>
+                <ThemeLogo alt="" className="h-12 w-auto max-w-full shrink-0" />
+                <span className="min-w-0">
                   <strong className="block app-text-heading-sm">
                     {t("marketplace")}
                   </strong>
@@ -164,12 +164,12 @@ export default function Footer({
               </p>
               <div className="mt-[var(--space-gap)] flex flex-wrap gap-[var(--space-gap)]">
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/45 px-3 py-1 app-text-caption text-muted-foreground">
-                  <ShieldCheck className="app-icon-xs text-primary" />
-                  Safer community discovery
+                  <ShieldCheck className="app-icon-xs text-primary" aria-hidden />
+                  {t("saferCommunity")}
                 </span>
                 <span className="inline-flex items-center gap-1.5 rounded-full border border-border bg-muted/45 px-3 py-1 app-text-caption text-muted-foreground">
-                  <Sparkles className="app-icon-xs text-primary" />
-                  Modern local marketplace
+                  <Sparkles className="app-icon-xs text-primary" aria-hidden />
+                  {t("modernLocalMarketplace")}
                 </span>
               </div>
             </section>
@@ -206,8 +206,8 @@ export default function Footer({
               </ul>
               <Button asChild size="sm" className="mt-[var(--space-gap)]">
                 <Link href="/listings/create">
-                  Create listing
-                  <ArrowUpRight className="app-icon-xs" />
+                  {t("createListing")}
+                  <ArrowUpRight className="app-icon-xs rtl:-scale-x-100" aria-hidden />
                 </Link>
               </Button>
             </section>

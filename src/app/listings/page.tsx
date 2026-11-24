@@ -17,7 +17,7 @@ import { ListingCardSelector } from "@/components/ui/organisms/listing-card-sele
 import { FiltersBar } from "@/components/ui/organisms/filters-bar";
 import { HomeHero } from "@/components/listings/HomeHero";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
-import { motion } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { Button } from "@/components/ui/molecules/button";
 import { AdPlaceholder } from "@/components/ads/home-page-ad-placeholder";
 import { useLanguage } from "@/components/providers/language-provider";
@@ -33,11 +33,20 @@ import {
   listingGridNumCols,
 } from "@/lib/listing-grid";
 import {
-  LayoutGrid,
+  CloudOff,
   RefreshCw,
+  RotateCcw,
   SearchX,
   SlidersHorizontal,
 } from "lucide-react";
+import { Reveal } from "@/components/ui/atoms/reveal";
+import { duration, ease, spring, swap, tapPress } from "@/lib/motion";
+import type { TranslationKey } from "@/lib/i18n";
+
+function resultsLabelKey(total: number, filtered: boolean): TranslationKey {
+  if (filtered) return total === 1 ? "listingsMatchingOne" : "listingsMatchingMany";
+  return total === 1 ? "listingsAvailableOne" : "listingsAvailableMany";
+}
 
 // Lazy-load below-fold / heavy components to keep initial bundle small
 const HiddenListingsSlider = dynamic(
@@ -191,7 +200,7 @@ function ListingsContent() {
   });
 
   const activeFilters = [
-    type ? `${t("typeLabel")}: ${type}` : null,
+    type ? `${t("typeLabel")} ${type}` : null,
     categoryId ? t("categoryLabel") : null,
     searchText ? `“${searchText}”` : null,
   ].filter(Boolean);
@@ -229,46 +238,20 @@ function ListingsContent() {
       <HiddenListingsSlider items={allItems} />
       {/* Promo banner placed in listings page (before global Partners section) */}
       <ListingsPromoBanner />
-      {(() => {
-        // Map dynamic distance to a discrete height class to avoid inline style lint issue
-        const h = pulling ? Math.round(distance / 10) * 10 : 0; // nearest 10
-        const heightClass =
-          h >= 110
-            ? "h-[110px]"
-            : h >= 100
-              ? "h-[100px]"
-              : h >= 90
-                ? "h-[90px]"
-                : h >= 80
-                  ? "h-[80px]"
-                  : h >= 70
-                    ? "h-[70px]"
-                    : h >= 60
-                      ? "h-[60px]"
-                      : h >= 50
-                        ? "h-[50px]"
-                        : h >= 40
-                          ? "h-[40px]"
-                          : h >= 30
-                            ? "h-[30px]"
-                            : h >= 20
-                              ? "h-[20px]"
-                              : h >= 10
-                                ? "h-[10px]"
-                                : "h-0";
-        return (
-          <div
-            className={`sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden ${heightClass} ${
-              pulling ? "" : "transition-[height] duration-300 ease-in-out"
-            }`}
-          >
-            <div className="app-text-micro tracking-wide font-medium text-foreground/60">
-              {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
-            </div>
-            <div className="mt-1 h-1 w-28 rounded-full bg-gradient-to-r from-primary/40 via-primary/40 to-info/40" />
-          </div>
-        );
-      })()}
+      <motion.div
+        aria-hidden={!pulling}
+        initial={false}
+        animate={{ height: pulling ? distance : 0 }}
+        transition={pulling ? { duration: 0 } : { duration: duration.base, ease: ease.out }}
+        className="sticky top-0 z-10 flex flex-col items-center justify-end overflow-hidden"
+      >
+        <motion.span animate={{ rotate: distance * 3 }} transition={{ duration: 0 }}>
+          <RefreshCw className="size-4 text-primary" aria-hidden />
+        </motion.span>
+        <div className="mt-1 app-text-micro tracking-wide font-medium text-muted-foreground">
+          {distance > 75 ? t("releaseToRefresh") : t("pullToRefresh")}
+        </div>
+      </motion.div>
       <section
         id="listings"
         ref={listingsAnchorRef}
@@ -278,9 +261,6 @@ function ListingsContent() {
         <div className="border-b border-border/60 p-4 sm:p-5 lg:p-6">
           <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <div className="mb-1.5 inline-flex items-center gap-1.5 app-text-caption font-semibold uppercase tracking-[0.12em] text-primary">
-                <LayoutGrid className="size-3.5" /> Marketplace catalog
-              </div>
               <h2
                 id="listings-heading"
                 className="app-text-heading font-semibold tracking-tight"
@@ -291,22 +271,27 @@ function ListingsContent() {
                 className="mt-1 app-text-body text-muted-foreground"
                 aria-live="polite"
               >
-                {isLoading
-                  ? t("loading")
-                  : `${total} ${total === 1 ? "listing" : "listings"}${activeFilters.length ? " match your filters" : " available"}`}
+                {isLoading ? t("loading") : `${total} ${t(resultsLabelKey(total, activeFilters.length > 0))}`}
               </p>
             </div>
             {activeFilters.length > 0 && (
               <div className="flex max-w-full items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar sm:justify-end">
                 <SlidersHorizontal className="size-3.5 shrink-0 text-muted-foreground" />
-                {activeFilters.map((filter) => (
-                  <span
-                    key={filter}
-                    className="shrink-0 rounded-full border border-primary/15 bg-primary/8 px-2.5 py-1 app-text-caption font-medium text-primary"
-                  >
-                    {filter}
-                  </span>
-                ))}
+                <AnimatePresence initial={false} mode="popLayout">
+                  {activeFilters.map((filter) => (
+                    <motion.span
+                      key={filter}
+                      layout
+                      variants={swap}
+                      initial="hidden"
+                      animate="visible"
+                      exit="exit"
+                      className="shrink-0 rounded-full border border-primary/15 bg-primary/8 px-2.5 py-1 app-text-caption font-medium text-primary"
+                    >
+                      {filter}
+                    </motion.span>
+                  ))}
+                </AnimatePresence>
               </div>
             )}
           </div>
@@ -315,14 +300,20 @@ function ListingsContent() {
 
         <div className="p-3 sm:p-4 lg:p-5">
           {error && (
-            <div className="mb-4 flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center">
-              <div>
-                <p className="font-semibold text-destructive">
-                  Unable to load listings
-                </p>
-                <p className="mt-1 app-text-caption text-muted-foreground">
-                  {String((error as any).message || error)}
-                </p>
+            <div
+              role="alert"
+              className="mb-4 flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center"
+            >
+              <div className="flex items-start gap-3">
+                <CloudOff className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden />
+                <div>
+                  <p className="font-semibold text-destructive">
+                    {t("listingsLoadError")}
+                  </p>
+                  <p className="mt-1 app-text-caption text-muted-foreground">
+                    {error.message}
+                  </p>
+                </div>
               </div>
               <Button
                 variant="secondary"
@@ -330,7 +321,7 @@ function ListingsContent() {
                 LeftIcon={RefreshCw}
                 onClick={() => void refetch()}
               >
-                Try again
+                {t("tryAgain")}
               </Button>
             </div>
           )}
@@ -361,27 +352,28 @@ function ListingsContent() {
                 ))
               : !error &&
                 (items.length === 0 ? (
-                  <div className="col-span-full grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
+                  <Reveal className="col-span-full grid min-h-72 place-items-center rounded-[1.35rem] border border-dashed border-border bg-muted/15 p-6 text-center">
                     <div>
-                      <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-muted text-muted-foreground">
-                        <SearchX className="size-5" />
+                      <span className="mx-auto grid size-12 place-items-center rounded-2xl bg-primary/10 text-primary">
+                        <SearchX className="size-5" aria-hidden />
                       </span>
                       <h3 className="mt-4 app-text-heading-sm font-semibold">
                         {t("noListingsFound")}
                       </h3>
                       <p className="mx-auto mt-2 max-w-md app-text-body text-muted-foreground">
-                        Try a broader search or clear one of the active filters.
+                        {t("broaderSearchHint")}
                       </p>
                       <Button
                         variant="secondary"
                         size="sm"
+                        LeftIcon={RotateCcw}
                         className="mt-4"
                         onClick={() => router.push(pathname)}
                       >
-                        Clear filters
+                        {t("clearFilters")}
                       </Button>
                     </div>
-                  </div>
+                  </Reveal>
                 ) : (
                   <>
                     {pageItems.map((item, idx) => {
@@ -459,13 +451,15 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
   const visible = generateVisible(page, pageCount);
 
   return (
-    <div
+    <nav
+      aria-label={t("pagination")}
       className={`mt-4 flex items-center justify-center gap-[var(--space-gap)] transition-opacity duration-200 ${isPending ? "opacity-60 pointer-events-none" : ""}`}
     >
       <Tooltip content={t("prev")} side="top">
         <Button
           variant="accent"
           size="sm"
+          className="min-h-10"
           onClick={() => page > 1 && set(page - 1)}
           disabled={page <= 1 || isPending}
         >
@@ -482,19 +476,28 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
                 <span className="px-2 app-text-caption opacity-60">…</span>
               )}
               <Tooltip
-                content={`${t("page" as any) || "Page"} ${p}`}
+                content={`${t("page")} ${p}`}
                 side="top"
               >
                 <motion.button
-                  whileTap={{ scale: 0.98 }}
+                  type="button"
+                  whileTap={tapPress}
                   onClick={() => set(p)}
                   className={
                     p === page
-                      ? "px-3 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-xl bg-primary border border-primary/35 text-primary-foreground"
-                      : "px-3 min-h-[var(--ctrl-h-sm)] h-[var(--ctrl-h-sm)] rounded-xl bg-accent border border-border text-accent-foreground hover:bg-primary hover:text-primary-foreground focus:bg-primary"
+                      ? "relative isolate min-w-10 px-3 min-h-10 rounded-xl border border-primary/35 font-semibold text-primary-foreground tabular-nums"
+                      : "relative isolate min-w-10 px-3 min-h-10 rounded-xl border border-border bg-accent text-accent-foreground tabular-nums transition-colors hover:border-primary/40 hover:text-primary"
                   }
                   aria-current={p === page ? "page" : undefined}
                 >
+                  {p === page && (
+                    <motion.span
+                      layoutId="listings-page-indicator"
+                      transition={spring.indicator}
+                      className="absolute inset-0 -z-10 rounded-[inherit] bg-primary"
+                      aria-hidden
+                    />
+                  )}
                   {p}
                 </motion.button>
               </Tooltip>
@@ -506,12 +509,13 @@ function Pagination({ page, pageCount }: { page: number; pageCount: number }) {
         <Button
           variant="accent"
           size="sm"
+          className="min-h-10"
           onClick={() => page < pageCount && set(page + 1)}
           disabled={page >= pageCount || isPending}
         >
           {t("next")}
         </Button>
       </Tooltip>
-    </div>
+    </nav>
   );
 }

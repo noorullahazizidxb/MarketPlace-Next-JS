@@ -3,6 +3,7 @@
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { swap, tapPress } from "@/lib/motion";
 import {
   Box,
   Check,
@@ -61,47 +62,36 @@ function Chip({
 }) {
   return (
     <motion.button
-      layout
-      layoutId={undefined}
-      key={id}
-      whileTap={{ scale: 0.95 }}
-      animate={{ opacity: 1 }}
+      type="button"
+      id={id}
+      aria-pressed={active}
+      whileTap={tapPress}
       onClick={onClick}
       className={cn(
-        "relative min-h-[var(--ctrl-h-sm)] shrink-0 overflow-hidden rounded-full border px-3.5 app-text-label font-medium inline-flex items-center gap-1.5 transition-all duration-200 select-none",
+        "relative min-h-10 shrink-0 overflow-hidden rounded-full border px-3.5 app-text-label font-medium inline-flex items-center gap-1.5 transition-[background-color,border-color,color,box-shadow] duration-200 select-none focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background",
         active
-          ? "bg-primary border-primary/40 text-primary-foreground shadow-[0_2px_12px_-3px_color-mix(in oklab, var(--primary) 50%, transparent)]"
-          : "bg-card/60 backdrop-blur-sm border-border/60 text-foreground/70 hover:border-primary/40 hover:text-foreground hover:bg-card"
+          ? "bg-primary border-primary/40 text-primary-foreground shadow-[0_2px_12px_-3px_color-mix(in_oklab,var(--primary)_50%,transparent)]"
+          : "bg-card/60 backdrop-blur-sm border-border/60 text-foreground/80 hover:border-primary/40 hover:text-foreground hover:bg-card"
       )}
     >
-      {/* active shimmer */}
       {active && (
         <span className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-overlay-light/30 to-transparent" />
       )}
-      <AnimatePresence mode="wait">
-        {active ? (
-          <motion.span
-            key="check"
-            initial={{ scale: 0, opacity: 0, width: 0 }}
-            animate={{ scale: 1, opacity: 1, width: "1rem" }}
-            exit={{ scale: 0, opacity: 0, width: 0 }}
-            transition={{ duration: 0.18 }}
-            className="overflow-hidden flex-shrink-0"
-          >
-            <Check className="size-3.5" />
-          </motion.span>
-        ) : Icon ? (
-          <motion.span
-            key="icon"
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            exit={{ scale: 0.8, opacity: 0 }}
-            transition={{ duration: 0.15 }}
-          >
-            <Icon className="size-3.5 text-muted-foreground" />
-          </motion.span>
-        ) : null}
-      </AnimatePresence>
+      {(active || Icon) && (
+        <span className="relative grid size-3.5 shrink-0 place-items-center" aria-hidden>
+          <AnimatePresence initial={false} mode="popLayout">
+            {active ? (
+              <motion.span key="check" variants={swap} initial="hidden" animate="visible" exit="exit" className="absolute inset-0 grid place-items-center">
+                <Check className="size-3.5" />
+              </motion.span>
+            ) : Icon ? (
+              <motion.span key="icon" variants={swap} initial="hidden" animate="visible" exit="exit" className="absolute inset-0 grid place-items-center">
+                <Icon className="size-3.5 text-muted-foreground" />
+              </motion.span>
+            ) : null}
+          </AnimatePresence>
+        </span>
+      )}
       <span>{label}</span>
       {typeof count === "number" && count > 0 && (
         <span
@@ -172,7 +162,7 @@ export function FiltersBar() {
           className="relative min-h-[var(--ctrl-h)] h-[var(--ctrl-h)] px-4"
         >
           <span className="app-text-label font-semibold">
-            {(t as any)("filters") || "Filters"}
+            {t("filters")}
           </span>
           {activeCount > 0 && (
             <span className="size-5 rounded-full bg-background/20 app-text-caption font-bold flex items-center justify-center">
@@ -182,7 +172,7 @@ export function FiltersBar() {
         </Button>
         <span className="app-text-caption text-muted-foreground">
           {activeCount > 0
-            ? `${activeCount} ${(t as any)("filtersActive") || "active"}`
+            ? `${activeCount} ${t("filtersActive")}`
             : `${cats.length} ${t("categoryLabel")}`}
         </span>
       </div>
@@ -195,22 +185,22 @@ export function FiltersBar() {
               <Layers3 className="size-3.5" /> {t("categoryLabel")}
             </div>
             <p className="mt-1 app-text-body text-muted-foreground">
-              Narrow the marketplace by offer type and category.
+              {t("filtersHint")}
             </p>
           </div>
           {activeCount > 0 && (
             <button
               type="button"
               onClick={clearFilters}
-              className="inline-flex min-h-9 shrink-0 items-center gap-1.5 rounded-xl px-3 app-text-label font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+              className="inline-flex min-h-10 shrink-0 items-center gap-1.5 rounded-xl px-3 app-text-label font-medium text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
-              <RotateCcw className="size-3.5" /> Clear filters
+              <RotateCcw className="size-3.5" aria-hidden /> {t("clearFilters")}
             </button>
           )}
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
-          <span className="mr-1 shrink-0 app-text-micro font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+        <div role="group" aria-label={t("typeLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
+          <span className="me-1 shrink-0 app-text-micro font-semibold uppercase tracking-[0.12em] text-muted-foreground">
             {t("typeLabel")}
           </span>
           <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="type-all" Icon={Layers3} />
@@ -218,7 +208,7 @@ export function FiltersBar() {
           <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="type-sale" Icon={Tag} />
         </div>
 
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+        <div role="group" aria-label={t("categoryLabel")} className="flex items-center gap-2 overflow-x-auto p-1 no-scrollbar">
           <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="category-all" Icon={Layers3} />
           {cats.map((category) => {
             const Icon = categoryIcon(category.slug || category.name);
@@ -241,24 +231,24 @@ export function FiltersBar() {
       <BottomSheet
         open={open}
         onOpenChange={setOpen}
-        title={(t as any)("filters") || "Filters"}
+        title={t("filters")}
       >
         <div className="p-[var(--space-card)] space-y-[var(--space-section)]">
           <div>
-            <p className="app-text-caption uppercase tracking-widest font-semibold text-foreground/40 mb-3">
+            <p id="m-filter-type" className="app-text-label font-semibold text-muted-foreground mb-3">
               {t("typeLabel")}
             </p>
-            <div className="flex flex-wrap gap-[var(--space-gap)]">
-              <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="m-type-all" Icon={Home} />
+            <div role="group" aria-labelledby="m-filter-type" className="flex flex-wrap gap-[var(--space-gap)]">
+              <Chip label={t("all")} active={type === ""} onClick={() => onType("")} id="m-type-all" Icon={Layers3} />
               <Chip label={t("rent")} active={type === "RENT"} onClick={() => onType("RENT")} id="m-type-rent" Icon={Home} />
               <Chip label={t("sale")} active={type === "SALE"} onClick={() => onType("SALE")} id="m-type-sale" Icon={Tag} />
             </div>
           </div>
           <div>
-            <p className="app-text-caption uppercase tracking-widest font-semibold text-foreground/40 mb-3">
+            <p id="m-filter-category" className="app-text-label font-semibold text-muted-foreground mb-3">
               {t("categoryLabel")}
             </p>
-            <div className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto pr-1">
+            <div role="group" aria-labelledby="m-filter-category" className="flex flex-wrap gap-[var(--space-gap)] max-h-60 overflow-y-auto p-1">
               <Chip label={t("all")} active={categoryId === ""} onClick={() => onCategory("")} id="m-cat-all" Icon={Box} />
               {cats.map((category) => {
                 const Icon = categoryIcon(category.slug || category.name);
@@ -279,11 +269,11 @@ export function FiltersBar() {
           <div className="sticky bottom-0 flex items-center gap-2 border-t border-border bg-card/95 pt-3 backdrop-blur">
             {activeCount > 0 && (
               <Button variant="secondary" size="sm" onClick={clearFilters} className="flex-1">
-                Clear
+                {t("clearFilters")}
               </Button>
             )}
             <Button variant="accent" size="sm" onClick={() => setOpen(false)} className="flex-1">
-              Show results
+              {t("showResults")}
             </Button>
           </div>
         </div>

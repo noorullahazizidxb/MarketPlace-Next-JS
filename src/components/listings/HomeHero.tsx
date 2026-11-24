@@ -9,6 +9,11 @@ import React from "react";
 import { homeHeroImages } from "@/lib/public-images";
 import { useAuth } from "@/lib/use-auth";
 import { Tooltip } from "@/components/ui/molecules/tooltip";
+import { duration, ease } from "@/lib/motion";
+
+function browseCatalog() {
+  document.getElementById("listings")?.scrollIntoView({ behavior: "smooth", block: "start" });
+}
 
 export function HomeHero() {
   const { t, isRtl } = useLanguage();
@@ -19,14 +24,14 @@ export function HomeHero() {
     <section className="relative overflow-hidden mt-2 md:mt-3 rounded-3xl border border-border bg-card">
       {/* ----------  accent gradients + glass shapes ---------- */}
       <div className="pointer-events-none absolute inset-0 z-0">
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,color-mix(in oklab, var(--accent) 30%, transparent),transparent_50%)]" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_20%_20%,color-mix(in_oklab,var(--accent)_30%,transparent),transparent_50%)]" />
         <motion.div
-          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[color-mix(in oklab, var(--accent) 12%, transparent)] backdrop-blur-2xl border border-border"
+          className="absolute -left-20 -top-20 w-72 h-72 rotate-45 rounded-3xl bg-[color-mix(in_oklab,var(--accent)_12%,transparent)] backdrop-blur-2xl border border-border"
           animate={{ rotate: [40, 58, 40], y: [0, 12, 0] }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div
-          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[color-mix(in oklab, var(--accent) 10%, transparent)] backdrop-blur-2xl border border-border"
+          className="absolute -right-32 -bottom-16 w-96 h-32 rounded-full bg-[color-mix(in_oklab,var(--accent)_10%,transparent)] backdrop-blur-2xl border border-border"
           animate={{ x: [0, -10, 0], y: [0, 10, 0] }}
           transition={{ duration: 9.2, repeat: Infinity, ease: "easeInOut" }}
         />
@@ -36,38 +41,30 @@ export function HomeHero() {
       <div className="relative z-10 px-5 sm:px-8 md:px-10 py-8 sm:py-10 md:py-14 grid lg:grid-cols-2 items-center gap-6 md:gap-8">
         {/* ----------  left side ---------- */}
         <div dir={isRtl ? "rtl" : "ltr"} className={isRtl ? "text-right" : "text-left"}>
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-            className={`app-text-h1 sm:app-text-h1 md:app-text-h1 font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
+          <h1
+            className={`app-text-h1 font-extrabold tracking-tight relative w-fit ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroHeadline")}
-            <span className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-accent ${isRtl ? "right-0" : "left-0"}`} />
-          </motion.h1>
+            <motion.span
+              aria-hidden
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              transition={{ duration: duration.slow, delay: 0.15, ease: ease.out }}
+              className={`absolute -bottom-2 h-1 w-2/3 rounded-full bg-accent ${isRtl ? "right-0 origin-right" : "left-0 origin-left"}`}
+            />
+          </h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 12 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.6, delay: 0.05 }}
-            className={`mt-4 max-w-xl app-text-body sm:app-text-body text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
+          <p
+            className={`mt-4 max-w-xl app-text-body text-[var(--muted-foreground)] ${isRtl ? "mr-auto" : "ml-0"}`}
           >
             {t("heroSubheadline")}
-          </motion.p>
+          </p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 8 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.15 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-            className="mt-6 grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]"
-          >
+          <div className="mt-6 grid items-center gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
             <SearchBox placeholder={t("search")} className="w-full min-w-0" fluid />
             <div className="flex flex-wrap items-center gap-2">
               <Tooltip content={t("browseNow")} side="bottom">
-                <Button variant="accent" onClick={() => router.push("/listings")}>{t("browseNow")}</Button>
+                <Button variant="accent" onClick={browseCatalog}>{t("browseNow")}</Button>
               </Tooltip>
               <Tooltip content={t("listYourProperty")} side="bottom">
                 <Button
@@ -84,51 +81,39 @@ export function HomeHero() {
                 </Button>
               </Tooltip>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* ----------  right side ---------- */}
         <motion.div
-          initial={{ opacity: 0, scale: 0.98 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true, amount: 0.15 }}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          initial={{ scale: 1.015 }}
+          animate={{ scale: 1 }}
+          transition={{ duration: 0.9, ease: ease.out }}
           className="relative h-56 sm:h-64 md:h-72 lg:h-80 rounded-2xl border border-border overflow-hidden"
         >
           <Image
             src={homeHeroImages.main}
-            alt="Hero property"
+            alt=""
             fill
             priority
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 92vw, 50vw"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-overlay-dark/40 via-overlay-dark/10 to-transparent" />
-          <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-3">
+          <div className="absolute bottom-3 left-3 right-3 grid grid-cols-3 gap-3" aria-hidden>
             {homeHeroImages.gallery.map((url, i) => (
               <div
                 key={i}
-                className="relative h-20 rounded-xl overflow-hidden border border-border"
+                className="relative h-16 sm:h-20 rounded-xl overflow-hidden border border-overlay-light/25 shadow-md"
               >
                 <Image
                   src={url}
-                  alt={`Gallery ${i + 1}`}
+                  alt=""
                   fill
                   sizes="(max-width: 640px) 28vw, (max-width: 1024px) 18vw, 12vw"
                   loading="lazy"
                   className="object-cover"
                 />
-                {i === 1 && (
-                  <div className="absolute inset-0 grid place-items-center bg-foreground/20">
-                    <svg
-                      className="size-6 text-primary-foreground"
-                      fill="none"
-                      stroke="currentColor"
-                    >
-                      <polygon points="5,3 19,12 5,21" />
-                    </svg>
-                  </div>
-                )}
               </div>
             ))}
           </div>
