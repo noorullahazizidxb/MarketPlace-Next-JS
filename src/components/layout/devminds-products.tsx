@@ -3,7 +3,8 @@
 import "./devminds-products.css";
 
 import type { CSSProperties } from "react";
-import { MotionConfig, motion } from "framer-motion";
+import { motion } from "framer-motion";
+import { reveal, revealGroup, revealViewport } from "@/lib/motion";
 import { DEVMINDS_PRODUCTS, LOGO_HEIGHT, footerDesktopColumns, productLogoSrc, type DevmindsProduct, type ProductSlug } from "@/lib/devminds-products";
 
 interface DevmindsProductsProps {
@@ -59,35 +60,37 @@ function CardBody({ product, isCurrent }: { product: DevmindsProduct; isCurrent:
 export function DevmindsProducts({ current }: DevmindsProductsProps) {
   const gridStyle: GridStyle = { "--dmp-cols": footerDesktopColumns(DEVMINDS_PRODUCTS.length) };
   return (
-    <MotionConfig reducedMotion="user">
-      <nav className="dmp" aria-labelledby="dmp-title">
-        <h2 id="dmp-title" className="dmp-title">More from DevMinds</h2>
-        <ul className="dmp-grid" style={gridStyle}>
-          {DEVMINDS_PRODUCTS.map((product, index) => {
-            const isCurrent = product.slug === current;
-            return (
-              <motion.li
-                key={product.slug}
-                className="dmp-item"
-                initial={{ opacity: 0, y: 8 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "0px 0px -40px 0px" }}
-                transition={{ duration: 0.3, ease: "easeOut", delay: index * 0.04 }}
-              >
-                {isCurrent ? (
-                  <div className="dmp-card dmp-card--current" aria-current="page">
-                    <CardBody product={product} isCurrent />
-                  </div>
-                ) : (
-                  <a className="dmp-card" href={product.url} target="_blank" rel="noopener" aria-label={`${product.name}: ${product.descriptor} (opens in new tab)`}>
-                    <CardBody product={product} isCurrent={false} />
-                  </a>
-                )}
-              </motion.li>
-            );
-          })}
-        </ul>
-      </nav>
-    </MotionConfig>
+    <nav className="dmp" aria-labelledby="dmp-title">
+      <h2 id="dmp-title" className="dmp-title">More from DevMinds</h2>
+      <motion.ul
+        className="dmp-grid"
+        style={gridStyle}
+        variants={revealGroup}
+        initial="hidden"
+        whileInView="visible"
+        viewport={revealViewport}
+      >
+        {DEVMINDS_PRODUCTS.map((product) => {
+          const isCurrent = product.slug === current;
+          return (
+            <motion.li
+              key={product.slug}
+              className="dmp-item"
+              variants={reveal}
+            >
+              {isCurrent ? (
+                <div className="dmp-card dmp-card--current" aria-current="page">
+                  <CardBody product={product} isCurrent />
+                </div>
+              ) : (
+                <a className="dmp-card" href={product.url} target="_blank" rel="noopener" aria-label={`${product.name}: ${product.descriptor} (opens in new tab)`}>
+                  <CardBody product={product} isCurrent={false} />
+                </a>
+              )}
+            </motion.li>
+          );
+        })}
+      </motion.ul>
+    </nav>
   );
 }

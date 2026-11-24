@@ -18,8 +18,10 @@ import {
   MessageCircle,
   User,
   Phone,
-  Link2,
   Copy,
+  Check,
+  CloudOff,
+  RefreshCw,
   Banknote,
   CreditCard,
 } from "lucide-react";
@@ -34,11 +36,15 @@ import Image from "next/image";
 import { useLanguage } from "@/components/providers/language-provider";
 import { RelatedListingsSlider } from "@/components/listings/RelatedListingsSlider";
 import { listingPlaceholderImages } from "@/lib/public-images";
-import { Tooltip } from "@/components/ui/molecules/tooltip";
+import { AnimatePresence, motion } from "framer-motion";
+import { ListingDetailSkeleton } from "@/components/skeletons/ListingDetailSkeleton";
+import { RevealGroup, RevealItem } from "@/components/ui/atoms/reveal";
+import { swap } from "@/lib/motion";
+import { toastError, toastSuccess } from "@/lib/toast";
 
 export default function ListingDetailsPage() {
   return (
-    <Suspense fallback={<div className="p-[var(--space-card)]">Loading…</div>}>
+    <Suspense fallback={<ListingDetailSkeleton />}>
       <ListingDetailsContent />
     </Suspense>
   );
@@ -52,6 +58,7 @@ function ListingDetailsContent() {
     isLoading,
     error,
     mutate,
+    refetch,
   } = useApiGet<any>(["listing", id], `/listings/${id}`);
   const { user } = useAuth();
 
@@ -74,42 +81,59 @@ function ListingDetailsContent() {
 
   return (
     <div className="space-y-[var(--space-section)] app-shell-page" data-app-page="listing-detail">
-      <div className="flex flex-wrap items-center gap-3">
-        <Link
-          href="/listings"
-          className="subtle inline-flex items-center gap-1"
-        >
-          <ArrowLeft className="app-icon-sm" /> {t("back")}
-        </Link>
-        <h1 className="heading-xl flex items-center gap-3">
-          {listing?.title ?? t("listing")}
-          {avgRating > 0 && (
-            <span className="inline-flex items-center gap-1 rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 px-2 py-1 app-text-body">
-              <Stars count={Math.round(avgRating)} />
-              <span className="app-text-caption">
-                {avgRating.toFixed(1)} ({reviewCount})
+      {isLoading ? (
+        <ListingDetailSkeleton />
+      ) : (
+        <header className="space-y-3">
+          <Link
+            href="/listings"
+            className="inline-flex min-h-10 items-center gap-1.5 rounded-xl border border-border bg-card/70 px-3 app-text-label font-medium text-muted-foreground transition-colors hover:border-primary/35 hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <ArrowLeft className="app-icon-sm rtl:-scale-x-100" aria-hidden /> {t("backToListings")}
+          </Link>
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-2">
+            <h1 className="heading-xl min-w-0 break-words">
+              {listing?.title ?? t("listing")}
+            </h1>
+            {avgRating > 0 && (
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-border bg-muted/30 px-2.5 py-1 app-text-body">
+                <Stars count={Math.round(avgRating)} />
+                <span className="app-text-caption tabular-nums">
+                  {avgRating.toFixed(1)} ({reviewCount})
+                </span>
               </span>
-            </span>
-          )}
-        </h1>
-      </div>
-      {isLoading && <p>{t("loading")}</p>}
+            )}
+          </div>
+        </header>
+      )}
       {error && (
-        <p className="text-destructive">
-          {String((error as any).message || error)}
-        </p>
+        <div
+          role="alert"
+          className="flex flex-col items-start justify-between gap-3 rounded-2xl border border-destructive/25 bg-destructive/5 p-4 sm:flex-row sm:items-center"
+        >
+          <div className="flex items-start gap-3">
+            <CloudOff className="mt-0.5 size-5 shrink-0 text-destructive" aria-hidden />
+            <div>
+              <p className="font-semibold text-destructive">{t("listingLoadError")}</p>
+              <p className="mt-1 app-text-caption text-muted-foreground">{error.message}</p>
+            </div>
+          </div>
+          <Button variant="secondary" size="sm" LeftIcon={RefreshCw} onClick={() => void refetch()}>
+            {t("tryAgain")}
+          </Button>
+        </div>
       )}
       {!isLoading && !error && (
         <div className="grid grid-cols-1 gap-[var(--space-section)] lg:grid-cols-3">
           <div className="space-y-[var(--space-gap)] lg:col-span-2">
             <div className="rounded-3xl border border-[var(--border)] bg-[var(--card)]/80 backdrop-blur overflow-hidden">
-              <ImageSlider images={images} aspect="1/1" />
+              <ImageSlider images={images} aspect="4/3" firstSlideIsPriority />
             </div>
             <div className="card p-[var(--space-card)] space-y-[var(--space-gap)]">
               <div className="flex flex-wrap items-center gap-3">
                 {listing?.price && (
-                  <div className="px-3 py-1 rounded-xl tabular-nums app-text-body border border-[var(--border)] bg-[var(--accent)]/10 text-[var(--accent)]">
-                    <CreditCard className="app-icon-md mr-1 inline-flex" />{" "}
+                  <div className="inline-flex items-center gap-2 rounded-xl border border-primary/25 bg-primary/10 px-3 py-1.5 app-text-heading-sm font-semibold tabular-nums text-foreground">
+                    <CreditCard className="app-icon-md text-primary" aria-hidden />
                     {listing.price} {listing.currency}
                   </div>
                 )}
@@ -202,20 +226,26 @@ function ListingDetailsContent() {
             <DetailAdSlot placement="DETAIL_PAGE_2ND" />
           </div>
 
-          <div className="space-y-[var(--space-gap)]">
-            {contactHidden ? (
-              <RepresentativesCard reps={listing?.representatives || []} />
-            ) : (
-              <SellerCard user={listing?.user} />
-            )}
-
-            <ActionsCard pageUrl={pageUrl} />
-            <SocialsCard />
-            <NewsletterCard />
-            <QRCard url={pageUrl} />
+          <RevealGroup className="space-y-[var(--space-gap)]">
+            <RevealItem>
+              {contactHidden ? (
+                <RepresentativesCard reps={listing?.representatives || []} />
+              ) : (
+                <SellerCard user={listing?.user} />
+              )}
+            </RevealItem>
+            <RevealItem>
+              <ActionsCard pageUrl={pageUrl} />
+            </RevealItem>
+            <RevealItem>
+              <NewsletterCard />
+            </RevealItem>
+            <RevealItem>
+              <QRCard url={pageUrl} />
+            </RevealItem>
             {/* Sidebar large ad slot (DETAIL_PAGE_SIDEBAR) */}
             <DetailAdSlot placement="DETAIL_PAGE_SIDEBAR" />
-          </div>
+          </RevealGroup>
         </div>
       )}
       {/* Related listings by category */}
@@ -223,7 +253,7 @@ function ListingDetailsContent() {
         <RelatedListingsSlider
           categoryId={(listing as any).categoryId ?? listing.category.id}
           currentId={String(id)}
-          title={"Related Listings"}
+          title={t("relatedListings")}
         />
       )}
     </div>
@@ -239,12 +269,12 @@ function InfoPill({
   value: string;
 }) {
   return (
-    <div className="rounded-lg border border-[var(--border)] bg-[var(--muted)]/5 px-2 py-1.5">
-      <div className="flex items-center gap-2">
-        <span className="text-[var(--foreground)]/70">{icon}</span>
-        <span className="subtle">{label}:</span>
-        <span>{value}</span>
-      </div>
+    <div className="flex min-w-0 items-start gap-2 rounded-xl border border-border bg-muted/20 px-3 py-2">
+      <span className="mt-0.5 text-muted-foreground" aria-hidden>{icon}</span>
+      <dl className="min-w-0">
+        <dt className="app-text-micro text-muted-foreground">{label}</dt>
+        <dd className="truncate app-text-caption font-medium tabular-nums">{value}</dd>
+      </dl>
     </div>
   );
 }
@@ -403,10 +433,16 @@ function SellerCard({ user }: { user?: any }) {
 
 function ActionsCard({ pageUrl }: { pageUrl: string }) {
   const { t } = useLanguage();
+  const [copied, setCopied] = useState(false);
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(pageUrl);
-    } catch { }
+      setCopied(true);
+      toastSuccess(t("linkCopied"));
+      window.setTimeout(() => setCopied(false), 2000);
+    } catch {
+      toastError(t("linkCopyFailed"));
+    }
   };
   const share = async () => {
     if ((navigator as any).share) {
@@ -414,7 +450,7 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
         await (navigator as any).share({ url: pageUrl });
       } catch { }
     } else {
-      copy();
+      void copy();
     }
   };
   return (
@@ -424,15 +460,29 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
       </h3>
       <div className="grid grid-cols-2 gap-2">
         <Button
-          onClick={share}
+          onClick={() => void share()}
           size="sm"
           variant="secondary"
           className="w-full"
         >
           <Share2 className="app-icon-sm" /> {t("shareText")}
         </Button>
-        <Button onClick={copy} size="sm" variant="ghost" className="w-full">
-          <Copy className="app-icon-sm" /> {t("copyLink")}
+        <Button onClick={() => void copy()} size="sm" variant="ghost" className="w-full" aria-live="polite">
+          <span className="relative grid app-icon-sm place-items-center" aria-hidden>
+            <AnimatePresence initial={false} mode="popLayout">
+              <motion.span
+                key={copied ? "copied" : "copy"}
+                variants={swap}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                className="absolute inset-0 grid place-items-center"
+              >
+                {copied ? <Check className="app-icon-sm text-success" /> : <Copy className="app-icon-sm" />}
+              </motion.span>
+            </AnimatePresence>
+          </span>
+          {copied ? t("linkCopied") : t("copyLink")}
         </Button>
         <Button size="sm" variant="ghost" className="w-full">
           <Heart className="app-icon-sm" /> {t("save")}
@@ -440,61 +490,6 @@ function ActionsCard({ pageUrl }: { pageUrl: string }) {
         <Button size="sm" variant="ghost" className="w-full">
           <Flag className="app-icon-sm" /> {t("report") || "Report"}
         </Button>
-      </div>
-    </div>
-  );
-}
-
-function SocialsCard() {
-  return (
-    <div className="card p-[var(--space-card)]">
-      <h3 className="font-semibold mb-3">Follow</h3>
-      <div className="flex items-center gap-2">
-        <Tooltip content="Follow on X" side="top">
-          <Link
-            href="#"
-            aria-label="Follow on X"
-            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
-          >
-            <svg
-              aria-hidden
-              className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M22.46 6c-.77.35-1.6.58-2.46.69a4.16 4.16 0 0 0 1.82-2.3a8.3 8.3 0 0 1-2.63 1a4.15 4.15 0 0 0-7.07 3.78A11.8 11.8 0 0 1 3.15 4.6a4.13 4.13 0 0 0 1.28 5.54a4.1 4.1 0 0 1-1.88-.52v.05a4.15 4.15 0 0 0 3.33 4.07a4.2 4.2 0 0 1-1.88.07a4.16 4.16 0 0 0 3.88 2.89A8.33 8.33 0 0 1 2 19.54a11.76 11.76 0 0 0 6.36 1.86c7.63 0 11.8-6.32 11.8-11.8l-.01-.54A8.4 8.4 0 0 0 22.46 6Z"
-              />
-            </svg>
-          </Link>
-        </Tooltip>
-        <Tooltip content="Verified" side="top">
-          <Link
-            href="#"
-            aria-label="Verified"
-            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
-          >
-            <svg
-              aria-hidden
-              className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]"
-              viewBox="0 0 24 24"
-            >
-              <path
-                fill="currentColor"
-                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10s10-4.48 10-10S17.52 2 12 2Zm3.95 7.05L10.5 14.5L8.05 12.05l-1.4 1.4L10.5 17.3l7.85-7.85l-1.4-1.4Z"
-              />
-            </svg>
-          </Link>
-        </Tooltip>
-        <Tooltip content="Copy link" side="top">
-          <Link
-            href="#"
-            aria-label="Copy link"
-            className="group rounded-xl border border-[var(--border)] bg-[var(--muted)]/10 p-2 transition-all hover:-translate-y-0.5"
-          >
-            <Link2 className="app-icon-sm text-[var(--foreground)]/70 group-hover:text-[var(--primary)]" />
-          </Link>
-        </Tooltip>
       </div>
     </div>
   );

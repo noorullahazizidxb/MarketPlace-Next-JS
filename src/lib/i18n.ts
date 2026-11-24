@@ -1,3 +1,37 @@
+/** Strings added in the UX pass, kept side by side per key so locales stay in sync. */
+const sharedUiMessages = {
+  listingsAvailableOne: { en: "listing available", fa: "آگهی موجود است" },
+  listingsAvailableMany: { en: "listings available", fa: "آگهی موجود است" },
+  listingsMatchingOne: { en: "listing matches your filters", fa: "آگهی با فیلترهای شما مطابقت دارد" },
+  listingsMatchingMany: { en: "listings match your filters", fa: "آگهی با فیلترهای شما مطابقت دارد" },
+  listingsLoadError: { en: "We couldn't load listings. Check your connection and try again.", fa: "آگهی‌ها بارگذاری نشد. اتصال خود را بررسی کرده و دوباره تلاش کنید." },
+  listingLoadError: { en: "We couldn't load this listing. Check your connection and try again.", fa: "این آگهی بارگذاری نشد. اتصال خود را بررسی کرده و دوباره تلاش کنید." },
+  tryAgain: { en: "Try again", fa: "تلاش دوباره" },
+  clearFilters: { en: "Clear filters", fa: "پاک کردن فیلترها" },
+  broaderSearchHint: { en: "Try a broader search or clear one of the active filters.", fa: "جستجوی گسترده‌تری امتحان کنید یا یکی از فیلترهای فعال را پاک کنید." },
+  filters: { en: "Filters", fa: "فیلترها" },
+  filtersActive: { en: "active", fa: "فعال" },
+  filtersHint: { en: "Narrow the marketplace by offer type and category.", fa: "بازار را بر اساس نوع پیشنهاد و دسته‌بندی محدود کنید." },
+  showResults: { en: "Show results", fa: "نمایش نتایج" },
+  relatedListings: { en: "Related listings", fa: "آگهی‌های مرتبط" },
+  linkCopied: { en: "Link copied", fa: "لینک کپی شد" },
+  linkCopyFailed: { en: "Couldn't copy the link", fa: "کپی لینک ممکن نشد" },
+  backToListings: { en: "Back to listings", fa: "بازگشت به آگهی‌ها" },
+  accountMenu: { en: "Account menu", fa: "منوی حساب" },
+  pagination: { en: "Pagination", fa: "صفحه‌بندی" },
+  saferCommunity: { en: "Safer community discovery", fa: "کشف امن‌تر در جامعه" },
+  modernLocalMarketplace: { en: "Modern local marketplace", fa: "بازار محلی مدرن" },
+} as const satisfies Record<string, Record<"en" | "fa", string>>;
+
+function localizedMessages<M extends Record<string, Record<"en" | "fa", string>>>(
+  messages: M,
+  locale: "en" | "fa",
+): { [K in keyof M]: string } {
+  return Object.fromEntries(
+    Object.entries(messages).map(([key, value]) => [key, value[locale]]),
+  ) as { [K in keyof M]: string };
+}
+
 // Keep this module lightweight and SSR-safe: avoid importing UI libs here.
 export const translations = {
   en: {
@@ -653,6 +687,7 @@ export const translations = {
     dragDropOrClick: "Drag & drop or click to upload",
     maxFileSize: "Max file size: 5 MB",
     supportedFormats: "Supported: JPG, PNG, WEBP, GIF",
+    ...localizedMessages(sharedUiMessages, "en"),
   },
   fa: {
     welcome: "خوش آمدید",
@@ -1273,6 +1308,7 @@ export const translations = {
     dragDropOrClick: "بکشید و رها کنید یا برای آپلود کلیک کنید",
     maxFileSize: "حداکثر حجم فایل: ۵ مگابایت",
     supportedFormats: "فرمت‌های پشتیبانی: JPG، PNG، WEBP، GIF",
+    ...localizedMessages(sharedUiMessages, "fa"),
   },
 };
 

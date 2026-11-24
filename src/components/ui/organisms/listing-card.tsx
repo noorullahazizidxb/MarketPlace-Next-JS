@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
@@ -12,13 +12,15 @@ import {
   Phone,
   ShieldCheck,
   Star,
+  X,
 } from "lucide-react";
 import { ImageSlider } from "@/components/ui/organisms/image-slider";
-import { Dialog, DialogClose, DialogContent, DialogTitle } from "@/components/ui/molecules/dialog";
+import { Dialog, DialogClose, DialogContent, DialogDescription, DialogTitle } from "@/components/ui/molecules/dialog";
 import { Tooltip } from "@/components/ui/molecules/tooltip";
 import { useLanguage } from "@/components/providers/language-provider";
 import { listingFallbackImage, type AssetImage } from "@/lib/assets";
 import { cn } from "@/lib/cn";
+import { hoverLift, reveal, revealViewport } from "@/lib/motion";
 
 type Representative = {
   representative?: {
@@ -71,6 +73,67 @@ function normalizeImages(listing: Listing) {
     : [];
 }
 
+function ListingDialogShell({
+  open,
+  onOpenChange,
+  icon,
+  title,
+  subtitle,
+  className,
+  children,
+}: {
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  icon: ReactNode;
+  title: string;
+  subtitle: string;
+  className?: string;
+  children: ReactNode;
+}) {
+  const { t } = useLanguage();
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className={cn("flex max-h-[min(88dvh,38rem)] max-w-md flex-col overflow-hidden p-0", className)}>
+        <div className="flex items-start gap-3 border-b border-border px-5 py-4">
+          {icon}
+          <div className="min-w-0 flex-1">
+            <DialogTitle className="app-text-heading-sm font-semibold">
+              {title}
+            </DialogTitle>
+            <DialogDescription className="mt-1 app-text-caption text-muted-foreground">
+              {subtitle}
+            </DialogDescription>
+          </div>
+          <DialogClose asChild>
+            <button
+              type="button"
+              aria-label={t("close")}
+              className="grid size-10 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              <X className="size-4" aria-hidden />
+            </button>
+          </DialogClose>
+        </div>
+
+        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-5">
+          {children}
+        </div>
+
+        <div className="shrink-0 border-t border-border bg-card/95 p-4 backdrop-blur">
+          <DialogClose asChild>
+            <button
+              type="button"
+              className="min-h-11 w-full rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+            >
+              {t("close")}
+            </button>
+          </DialogClose>
+        </div>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
 function ContactDialog({
   listing,
   open,
@@ -85,72 +148,47 @@ function ContactDialog({
   const whatsapp = listing.user?.contacts?.whatsapp;
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(88dvh,38rem)] max-w-md flex-col overflow-hidden p-0">
-        <div className="flex items-start gap-3 border-b border-border px-5 py-4">
-          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-success/12 text-success">
-            <Phone className="size-4" />
+    <ListingDialogShell
+      open={open}
+      onOpenChange={onOpenChange}
+      title={t("contactSellerTitle")}
+      subtitle={t("contactSellerSubtitle")}
+      icon={
+        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-success/12 text-success">
+          <Phone className="size-4" aria-hidden />
+        </span>
+      }
+    >
+      {Boolean(phone) && (
+        <a
+          href={`tel:${phone}`}
+          className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-border bg-muted/25 px-4 py-3 font-medium transition-colors hover:border-primary/35 hover:bg-primary/5"
+        >
+          <span className="inline-flex items-center gap-2">
+            <Phone className="size-4 text-primary" aria-hidden /> {t("call")}
           </span>
-          <div className="min-w-0 flex-1">
-            <DialogTitle className="app-text-heading-sm font-semibold">
-              {t("contactSellerTitle")}
-            </DialogTitle>
-            <p className="mt-1 app-text-caption text-muted-foreground">
-              {t("contactSellerSubtitle")}
-            </p>
-          </div>
-          <DialogClose asChild>
-            <button
-              type="button"
-              aria-label={t("close")}
-              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
-            >
-              <span aria-hidden>×</span>
-            </button>
-          </DialogClose>
+          <span className="app-text-caption text-muted-foreground" dir="ltr">{phone}</span>
+        </a>
+      )}
+      {Boolean(whatsapp) && (
+        <a
+          href={`https://wa.me/${String(whatsapp).replace(/[^\d]/g, "")}`}
+          target="_blank"
+          rel="noreferrer"
+          className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-success/25 bg-success/8 px-4 py-3 font-medium text-success transition-colors hover:bg-success/12"
+        >
+          <span className="inline-flex items-center gap-2">
+            <MessageSquare className="size-4" aria-hidden /> {t("whatsApp")}
+          </span>
+          <span className="app-text-caption" dir="ltr">{whatsapp}</span>
+        </a>
+      )}
+      {!phone && !whatsapp && (
+        <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
+          {t("noContact")}
         </div>
-
-        <div className="min-h-0 flex-1 space-y-3 overflow-y-auto p-5">
-          {phone && (
-            <a
-              href={`tel:${phone}`}
-              className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-border bg-muted/25 px-4 py-3 font-medium transition-colors hover:border-primary/35 hover:bg-primary/5"
-            >
-              <span className="inline-flex items-center gap-2">
-                <Phone className="size-4 text-primary" /> {t("call")}
-              </span>
-              <span className="app-text-caption text-muted-foreground">{phone}</span>
-            </a>
-          )}
-          {whatsapp && (
-            <a
-              href={`https://wa.me/${String(whatsapp).replace(/[^\d]/g, "")}`}
-              target="_blank"
-              rel="noreferrer"
-              className="flex min-h-12 items-center justify-between gap-3 rounded-2xl border border-success/25 bg-success/8 px-4 py-3 font-medium text-success transition-colors hover:bg-success/12"
-            >
-              <span className="inline-flex items-center gap-2">
-                <MessageSquare className="size-4" /> {t("whatsApp")}
-              </span>
-              <span className="app-text-caption">{whatsapp}</span>
-            </a>
-          )}
-          {!phone && !whatsapp && (
-            <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
-              {t("noContact")}
-            </div>
-          )}
-        </div>
-
-        <div className="shrink-0 border-t border-border bg-card/95 p-4 backdrop-blur">
-          <DialogClose asChild>
-            <button className="min-h-11 w-full rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-opacity hover:opacity-90">
-              {t("close")}
-            </button>
-          </DialogClose>
-        </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </ListingDialogShell>
   );
 }
 
@@ -169,79 +207,55 @@ function RepresentativesDialog({
     : [];
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex max-h-[min(88dvh,40rem)] max-w-lg flex-col overflow-hidden p-0">
-        <div className="flex items-start gap-3 border-b border-border px-5 py-4">
-          <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
-            <ShieldCheck className="size-4" />
-          </span>
-          <div className="min-w-0 flex-1">
-            <DialogTitle className="app-text-heading-sm font-semibold">
-              {t("representatives")}
-            </DialogTitle>
-            <p className="mt-1 app-text-caption text-muted-foreground">
-              {t("representativesSubtitle")}
-            </p>
-          </div>
-          <DialogClose asChild>
-            <button
-              type="button"
-              aria-label={t("close")}
-              className="grid size-9 shrink-0 place-items-center rounded-xl border border-border text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+    <ListingDialogShell
+      open={open}
+      onOpenChange={onOpenChange}
+      className="max-h-[min(88dvh,40rem)] max-w-lg"
+      title={t("representatives")}
+      subtitle={t("representativesSubtitle")}
+      icon={
+        <span className="grid size-10 shrink-0 place-items-center rounded-2xl bg-primary/10 text-primary">
+          <ShieldCheck className="size-4" aria-hidden />
+        </span>
+      }
+    >
+      {representatives.length > 0 ? (
+        representatives.map((row, index) => {
+          const representative = row.representative ?? row;
+          const phone =
+            representative.whatsappNumber ?? representative.whatsapp ?? "";
+          return (
+            <div
+              key={representative.id ?? index}
+              className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 p-3"
             >
-              <span aria-hidden>×</span>
-            </button>
-          </DialogClose>
-        </div>
-
-        <div className="min-h-0 flex-1 space-y-2 overflow-y-auto p-5">
-          {representatives.length > 0 ? (
-            representatives.map((row, index) => {
-              const representative = row.representative ?? row;
-              const phone =
-                representative.whatsappNumber ?? representative.whatsapp ?? "";
-              return (
-                <div
-                  key={representative.id ?? index}
-                  className="flex items-center justify-between gap-3 rounded-2xl border border-border bg-muted/20 p-3"
+              <div className="min-w-0">
+                <p className="font-medium">
+                  {representative.region || t("unknown")}
+                </p>
+                <p className="mt-0.5 app-text-caption text-muted-foreground" dir="ltr">
+                  {phone || t("noContact")}
+                </p>
+              </div>
+              {Boolean(phone) && (
+                <a
+                  href={`https://wa.me/${String(phone).replace(/[^\d]/g, "")}`}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-success px-3 app-text-label font-medium text-primary-foreground"
                 >
-                  <div className="min-w-0">
-                    <p className="font-medium">
-                      {representative.region || t("unknown")}
-                    </p>
-                    <p className="mt-0.5 app-text-caption text-muted-foreground">
-                      {phone || t("noContact")}
-                    </p>
-                  </div>
-                  {phone && (
-                    <a
-                      href={`https://wa.me/${String(phone).replace(/[^\d]/g, "")}`}
-                      target="_blank"
-                      rel="noreferrer"
-                      className="inline-flex min-h-10 shrink-0 items-center gap-2 rounded-xl bg-success px-3 app-text-label font-medium text-primary-foreground"
-                    >
-                      <MessageSquare className="size-4" /> {t("whatsApp")}
-                    </a>
-                  )}
-                </div>
-              );
-            })
-          ) : (
-            <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
-              {t("noRepresentatives")}
+                  <MessageSquare className="size-4" aria-hidden /> {t("whatsApp")}
+                </a>
+              )}
             </div>
-          )}
+          );
+        })
+      ) : (
+        <div className="rounded-2xl border border-dashed border-border p-5 text-center app-text-body text-muted-foreground">
+          {t("noRepresentatives")}
         </div>
-
-        <div className="shrink-0 border-t border-border bg-card/95 p-4 backdrop-blur">
-          <DialogClose asChild>
-            <button className="min-h-11 w-full rounded-xl bg-primary px-4 font-medium text-primary-foreground transition-opacity hover:opacity-90">
-              {t("close")}
-            </button>
-          </DialogClose>
-        </div>
-      </DialogContent>
-    </Dialog>
+      )}
+    </ListingDialogShell>
   );
 }
 
@@ -275,12 +289,13 @@ export function ListingCard({
 
   return (
     <motion.article
-      initial={{ opacity: 0, y: 12 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, amount: 0.15 }}
-      transition={{ duration: 0.36, ease: [0.22, 1, 0.36, 1] }}
+      variants={reveal}
+      initial="hidden"
+      whileInView="visible"
+      viewport={revealViewport}
+      whileHover={hoverLift}
       className={cn(
-        "group relative flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-px hover:border-primary/25 hover:shadow-md",
+        "group relative flex h-full min-w-0 flex-col overflow-hidden rounded-xl border border-border/70 bg-card shadow-sm transition-[box-shadow,border-color] duration-300 hover:border-primary/25 hover:shadow-lg focus-within:border-primary/35",
         className,
       )}
     >
@@ -388,18 +403,19 @@ export function ListingCard({
                 : t("chooseRepresentativeHint")
             }
             side="top"
+            className="flex min-w-0 flex-1"
           >
             <button
               type="button"
               onClick={() =>
                 showSeller ? setContactOpen(true) : setRepresentativesOpen(true)
               }
-              className="inline-flex min-h-7 min-w-0 flex-1 items-center justify-center gap-1 rounded-md border border-primary/20 bg-primary/8 px-1.5 app-text-micro font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground"
+              className="inline-flex min-h-10 min-w-0 flex-1 items-center justify-center gap-1.5 rounded-lg border border-primary/20 bg-primary/8 px-2 app-text-caption font-semibold text-primary transition-colors hover:bg-primary hover:text-primary-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               {showSeller ? (
-                <Phone className="size-3 shrink-0" />
+                <Phone className="size-3.5 shrink-0" aria-hidden />
               ) : (
-                <ShieldCheck className="size-3 shrink-0" />
+                <ShieldCheck className="size-3.5 shrink-0" aria-hidden />
               )}
               <span className="truncate">
                 {showSeller ? t("contactSeller") : t("chooseRepresentative")}
@@ -410,9 +426,9 @@ export function ListingCard({
             <Link
               href={`/listings/${listing.id}`}
               aria-label={`${t("details")}: ${listing.title}`}
-              className="inline-flex size-7 shrink-0 items-center justify-center rounded-md bg-primary text-primary-foreground transition-transform hover:-translate-y-0.5 hover:shadow-md"
+              className="inline-flex size-10 shrink-0 items-center justify-center rounded-lg bg-primary text-primary-foreground transition-[box-shadow,transform] hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 rtl:-scale-x-100"
             >
-              <ArrowUpRight className="size-3" />
+              <ArrowUpRight className="size-4" aria-hidden />
             </Link>
           </Tooltip>
         </div>
